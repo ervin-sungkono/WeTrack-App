@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@next/bundle-analyzer": "^14.0.4",
     "@tanstack/react-table": "^8.9.3",
     "firebase": "^10.7.1",
     "flowbite": "^1.8.1",
@@ -24,6 +23,7 @@
     "yup": "^1.2.0"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^13.5.6",
     "autoprefixer": "^10",
     "eslint": "^8",
     "eslint-config-next": "13.5.6",
