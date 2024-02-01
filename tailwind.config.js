@@ -19,12 +19,16 @@ module.exports = {
         sm: '2rem',
         lg: '4rem',
         xl: '5rem',
-        '2xl': '6rem',
+        '2xl': '6.25rem',
       },
     },
     extend: {
       colors: {
         // Tambah warna disini dengan format 'nama-warna': 'kode warna (hex atau rgb)'
+        'dark-blue': '#1A1B36',
+        'basic-blue': '#47389F',
+        'light-blue': '#BBB7D3',
+        'danger-red': '#FF594E'
       },
       zIndex:{
         'fixed': 9999
