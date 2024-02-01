@@ -1,9 +1,9 @@
-// import Navbar from "../components/common/navbar/Navbar";
+import Navbar from "../components/common/navbar/Navbar";
 
 export default function DashboardPage(){
     return(
         <div>
-            {/* <Navbar/> */}
+            <Navbar/>
             Dashboard
         </div>
     )
