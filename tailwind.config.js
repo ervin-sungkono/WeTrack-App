@@ -25,6 +25,12 @@ module.exports = {
     extend: {
       colors: {
         // Tambah warna disini dengan format 'nama-warna': 'kode warna (hex atau rgb)'
+        'background': '#F5F5F5',
+        'white': '#FFFFFF',
+        'dark-blue': '#1A1B36',
+        'basic-blue': '#47389F',
+        'light-blue': '#BBB7D3',
+        'red': '#FF594E'
       },
       zIndex:{
         'fixed': 9999
