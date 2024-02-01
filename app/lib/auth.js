@@ -35,27 +35,14 @@ export const nextAuthOptions = {
     }),
   ],
   callbacks: {
-    session: ({ session, token }) => {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: token.id,
-          randomKey: token.randomKey,
-        },
-      };
+    jwt: async ({ token, user }) => {
+        user && (token.user = user)
+        return token
     },
-    jwt: ({ token, user }) => {
-      if (user) {
-        const u = user;
-        return {
-          ...token,
-          id: u.id,
-          randomKey: u.randomKey,
-        };
-      }
-      return token;
-    },
+    session: async ({ session, token }) => {
+        session.user = token.user
+        return session
+    }
   },
   pages:{
     signIn: "/login",
