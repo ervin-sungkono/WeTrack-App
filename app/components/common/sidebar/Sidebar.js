@@ -1,12 +1,21 @@
 "use client"
-import { useState } from "react";
+import { useState } from "react"
 
-import SidebarMenu from "./SidebarMenu";
+import SidebarMenu from "./SidebarMenu"
 
 import { 
     TbLayoutSidebarLeftCollapseFilled as SidebarCollapseIcon, 
     TbLayoutSidebarLeftExpandFilled as SidebarExpandIcon 
 } from "react-icons/tb"
+
+import { 
+    MdViewComfy as OverviewIcon ,
+    MdViewTimeline as TimelineIcon,
+    MdViewKanban as BoardIcon,
+    MdTask as IssueIcon,
+    MdGroup as TeamIcon,
+    MdSettings as SettingIcon
+} from "react-icons/md"
 
 export default function Sidebar(){
     const [open, setOpen] = useState(true)
@@ -14,28 +23,33 @@ export default function Sidebar(){
         setOpen(!open)
     }
 
-    const baseUrl = '/dashboard'
+    const baseUrl = '/projects/{id}'
 
     const mainLinks = [
         { 
             label: 'Overview',
-            url: '/projects/{id}/overview', 
+            url: '/projects/{id}/overview',
+            icon: <OverviewIcon size={16}/>
         },
         { 
             label: 'Timeline',
             url: '/projects/{id}/timeline', 
+            icon: <TimelineIcon size={16}/>
         },
         { 
             label: 'Board',
             url: '/projects/{id}/board', 
+            icon: <BoardIcon size={16}/>
         },
         { 
             label: 'Issues',
             url: '/projects/{id}/issues', 
+            icon: <IssueIcon size={16}/>
         },
         { 
             label: 'Team',
             url: '/projects/{id}/team', 
+            icon: <TeamIcon size={16}/>
         },
     ]
 
@@ -43,7 +57,7 @@ export default function Sidebar(){
         { 
             label: 'Project Settings',
             url: '/projects/{id}/setting', 
-            type: 'single' 
+            icon: <SettingIcon size={16}/>
         },
     ]
 
@@ -55,10 +69,10 @@ export default function Sidebar(){
                     {open ? <SidebarCollapseIcon size={20}/> : <SidebarExpandIcon size={20}/>}
                 </button>
             </div>
-            <div className={`w-full flex flex-col gap-4 px-4 pb-4 flex-grow transition-opacity ${open ? "opacity-100" : "opacity-0"} duration-300 overflow-x-hidden divide-gray-300`}>
-                <SidebarMenu links={mainLinks} baseUrl={baseUrl}/>
+            <div className={`w-full flex flex-col gap-4 px-4 pb-4 flex-grow transition-opacity duration-300 overflow-x-hidden divide-gray-300`}>
+                <SidebarMenu links={mainLinks} baseUrl={baseUrl} open={open}/>
                 <hr className="border-dark-blue/30"/>
-                <SidebarMenu links={settingLinks} baseUrl={baseUrl}/>
+                <SidebarMenu links={settingLinks} baseUrl={baseUrl} open={open}/>
             </div>
         </section>
     )
