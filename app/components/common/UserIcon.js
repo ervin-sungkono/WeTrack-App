@@ -6,10 +6,10 @@ import {
 } from "@/app/lib/color"
 import Image from "next/image"
 
-export default function UserIcon({ src, alt, username }){
+export default function UserIcon({ src, alt, fullName }){
     const [error, setError] = useState(null)
-    const userInitials = username.toUpperCase().split(' ').map(word => word[0]).join('').slice(0, 2)
-    const backgroundColor = stringToColour(username)
+    const userInitials = fullName.toUpperCase().split(' ').map(word => word[0]).join('').slice(0, 2)
+    const backgroundColor = stringToColour(fullName)
     const textColor = pickTextColorBasedOnBgColor(backgroundColor)
   
     useEffect(() => {

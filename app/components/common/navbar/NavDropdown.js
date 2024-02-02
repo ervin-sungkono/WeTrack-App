@@ -23,14 +23,14 @@ export default function NavDropdown({ label, dropdownLinks = [] }){
                 data-dropdown-placement="bottom-start"
                 data-dropdown-trigger="click"
                 data-dropdown-delay="0"
-                data-dropdown-offset-distance="-16"
+                data-dropdown-offset-distance="-10"
             >
                 {label}
                 <DropdownIcon size={20}/>
             </button>
             <div
                 id={label.toLowerCase().split(' ').join('-')}
-                className="z-10 hidden bg-white divide-y divide-gray-100 border border-black/20 rounded-md shadow-sm w-64"
+                className="z-10 hidden bg-white divide-y divide-gray-100 border border-dark-blue/30 rounded-md shadow-sm w-64"
             >
                 <ul className="py-2 text-sm text-dark-blue/80">
                 {dropdownLinks.map(({label, url}) => (

@@ -1,10 +1,9 @@
-import Navbar from "../components/common/navbar/Navbar";
+import DashboardLayout from "../components/common/layout/DashboardLayout";
 
 export default function DashboardPage(){
     return(
-        <div>
-            <Navbar/>
+        <DashboardLayout>
             Dashboard
-        </div>
+        </DashboardLayout>
     )
 }
