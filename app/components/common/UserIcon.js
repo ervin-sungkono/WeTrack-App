@@ -6,7 +6,7 @@ import {
 } from "@/app/lib/color"
 import Image from "next/image"
 
-export default function UserIcon({ src, alt, fullName }){
+export default function UserIcon({ src, alt = "", fullName }){
     const [error, setError] = useState(null)
     const userInitials = fullName.toUpperCase().split(' ').map(word => word[0]).join('').slice(0, 2)
     const backgroundColor = stringToColour(fullName)
@@ -31,13 +31,13 @@ export default function UserIcon({ src, alt, fullName }){
     )
   
     return (
-        <div>
+        <div className="relative w-10 h-10">
             <Image
                 alt={alt}
                 onError={setError}
                 src={src}
+                fill
             />
         </div>
-      
     )
 }
