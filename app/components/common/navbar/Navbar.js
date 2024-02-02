@@ -15,7 +15,10 @@ import { getServerSession } from "next-auth"
 export default async function Navbar(){
     const session = await getServerSession() ?? true
 
-    const userName = "ervin cahyadinata sungkono" // ini sementara sampai session jadi
+    const user = { 
+        fullName: "ervin cahyadinata sungkono",
+        email: "ervin.sungkono@binus.ac.id"
+    } // ini sementara sampai session jadi
     const projectLinks = [
         { label: 'Create a new project', url: '/projects/create' },
         { label: 'View all projects', url: '/projects' },
@@ -41,20 +44,20 @@ export default async function Navbar(){
                         null
                     }
                 </div>
-                <div className="flex items-center">
+                <div className="h-full flex items-center">
                     {   
                         session ?
-                        <div className="flex items-center gap-2">
+                        <div className="h-full flex items-center gap-2">
                             {/* Ini nanti dropdown */}
                             <div className="flex items-center">
-                                <Link href={"/notifications"} className="p-2 text-dark-blue hover:text-basic-blue">
+                                <Link href={"/notifications"} className="p-2 text-dark-blue hover:text-basic-blue transition-colors">
                                     <NotificationIcon size={24}/>
                                 </Link>
-                                <Link href={"/help"} className="p-2 text-dark-blue hover:text-basic-blue">
+                                <Link href={"/help"} className="p-2 text-dark-blue hover:text-basic-blue transition-colors">
                                     <HelpIcon size={24}/>
                                 </Link>
                             </div>
-                            <UserDropdown username={userName}/>
+                            <UserDropdown {...user}/>
                         </div>
                         : 
                         <LinkButton

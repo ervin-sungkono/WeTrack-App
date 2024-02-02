@@ -10,9 +10,9 @@ export const nextAuthOptions = {
       name: "Credentials",
       credentials: {
         username: {
-          label: "Username",
+          label: "Email",
           type: "text",
-          placeholder: "Enter your username",
+          placeholder: "Enter your email",
         },
         password: { 
           label: "Password",
@@ -22,7 +22,7 @@ export const nextAuthOptions = {
       },
       async authorize(credentials, req) {
         // Call Login API and pass in credentials variable
-        if (!credentials?.username || !credentials?.password) return null
+        if (!credentials?.email || !credentials?.password) return null
 
         const user = null
         // const user = await loginUser(credentials)
