@@ -12,7 +12,7 @@ import {
 
 import { getServerSession } from "next-auth"
 
-export default async function Navbar(){
+export default async function Navbar({ hideMenu }){
     const session = await getServerSession() ?? true
 
     const user = { 
@@ -34,7 +34,7 @@ export default async function Navbar(){
                         <WeTrackLogo/>
                     </Link>
                     {   
-                        session ?
+                        (session && !hideMenu) ?
                         <div className="flex h-full items-center">
                             <NavLink label={"Dashboard"} href={"/dashboard"}/>
                             <NavDropdown label={"Projects"} dropdownLinks={projectLinks}/>
