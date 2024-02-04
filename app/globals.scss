@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+$black: #2B2B2B;
+$dark-blue: #1A1B36;
+$basic-blue: #47389F;
+$light-blue: #BBB7D3;
+$white: #FFFFFF;
+
+body{
+    background-color: #F5F5F5;
+}
+
+.container{
+    max-width: 1600px !important; 
+}
+
+.hamburger-btn{
+    padding: 0.5rem;
+    display: none;
+    gap: 8px;
+    > div{
+        width: 32px;
+        height: 3px;
+        background-color: $basic-blue;
+        border-radius: 4px;
+        transition: 0.5s ease-in-out;
+    }
+    &.active{
+        > div:nth-child(1){
+            transform: rotate(45deg);
+            -webkit-transform: rotate(45deg);
+            -moz-transform: rotate(45deg);
+            -o-transform: rotate(45deg);
+            transform-origin: left;
+        }
+        > div:nth-child(2) {
+            transform: translateX(-20px);
+            -webkit-transform: translateX(-20px);
+            -moz-transform: translateX(-20px);
+            -o-transform: translateX(-20px);
+            opacity: 0;
+        }
+        > div:nth-child(3) {
+            transform: rotate(-45deg);
+            -webkit-transform: rotate(-45deg);
+            -moz-transform: rotate(-45deg);
+            -o-transform: rotate(-45deg);
+            transform-origin: left;
+        }
+    }
+}
+
+@media only screen and (max-width: 1024px){
+    .hamburger-btn{
+        display: flex;
+        flex-direction: column;
+        z-index: 1;
+    }
+
+    .nav-menu{
+        height: 100vh;
+        position: absolute;
+        top: 0;
+        right: 0;
+        transform: translateX(100%);
+        flex-direction: column;
+        background-color: white;
+        padding-top: 5rem;
+        padding-bottom: 1rem;
+        padding-inline: 1rem;
+        transition: 0.5s transform ease-in-out;
+
+        &.active{
+            transform: translateX(0);
+        }
+    }
+}

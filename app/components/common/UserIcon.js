@@ -16,7 +16,7 @@ export default function UserIcon({ src, alt = "", fullName }){
       setError(null)
     }, [src])
 
-    if(error) return(
+    if(!src || error) return(
         <div 
             className={`relative inline-flex items-center justify-center w-10 h-10 overflow-hidden rounded-full`}
             style={{backgroundColor: backgroundColor}}
