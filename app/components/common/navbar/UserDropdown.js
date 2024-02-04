@@ -13,7 +13,7 @@ export default function UserDropdown({ fullName, email }){
     return(
         <>
             <button 
-                className="h-full flex items-center gap-1 px-2"
+                className="h-full flex items-center gap-1 px-2 py-4 lg:py-0"
                 data-dropdown-toggle="user-dropdown"
                 data-dropdown-placement="bottom-end"
                 data-dropdown-trigger="click"
