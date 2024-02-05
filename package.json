@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tanstack/react-table": "^8.9.3",
+    "chart.js": "^4.4.1",
     "firebase": "^10.7.1",
     "flowbite": "^1.8.1",
     "formik": "^2.4.5",
