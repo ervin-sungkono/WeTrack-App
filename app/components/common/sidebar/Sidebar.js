@@ -23,12 +23,12 @@ export default function Sidebar(){
         setOpen(!open)
     }
 
-    const baseUrl = '/projects' // {id}
+    const baseUrl = '/projects/abc' // {id}
 
     const mainLinks = [
         { 
             label: 'Overview',
-            url: '/overview',
+            url: '/',
             icon: <OverviewIcon size={16}/>
         },
         { 
@@ -56,7 +56,7 @@ export default function Sidebar(){
     const settingLinks = [
         { 
             label: 'Project Settings',
-            url: '/projects/setting', 
+            url: '/setting', 
             icon: <SettingIcon size={16}/>
         },
     ]
