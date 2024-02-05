@@ -23,32 +23,32 @@ export default function Sidebar(){
         setOpen(!open)
     }
 
-    const baseUrl = '/projects/{id}'
+    const baseUrl = '/projects' // {id}
 
     const mainLinks = [
         { 
             label: 'Overview',
-            url: '/projects/{id}/overview',
+            url: '/overview',
             icon: <OverviewIcon size={16}/>
         },
         { 
             label: 'Timeline',
-            url: '/projects/{id}/timeline', 
+            url: '/timeline', 
             icon: <TimelineIcon size={16}/>
         },
         { 
             label: 'Board',
-            url: '/projects/{id}/board', 
+            url: '/board', 
             icon: <BoardIcon size={16}/>
         },
         { 
             label: 'Issues',
-            url: '/projects/{id}/issues', 
+            url: '/issues', 
             icon: <IssueIcon size={16}/>
         },
         { 
             label: 'Team',
-            url: '/projects/{id}/team', 
+            url: '/team', 
             icon: <TeamIcon size={16}/>
         },
     ]
@@ -56,7 +56,7 @@ export default function Sidebar(){
     const settingLinks = [
         { 
             label: 'Project Settings',
-            url: '/projects/{id}/setting', 
+            url: '/projects/setting', 
             icon: <SettingIcon size={16}/>
         },
     ]
