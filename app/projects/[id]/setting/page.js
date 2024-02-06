@@ -1,10 +1,10 @@
 // Project Setting Page
-import ProjectLayout from "@/app/components/common/layout/ProjectLayout"
+import SideLayout from "@/app/components/common/layout/SideLayout"
 
 export default function SettingPage({ params: { id } }){
     return(
-        <ProjectLayout>
+        <SideLayout>
             Setting
-        </ProjectLayout>
+        </SideLayout>
     )
 }
