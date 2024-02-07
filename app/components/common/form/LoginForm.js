@@ -9,6 +9,7 @@ import { useState } from "react"
 import * as Yup from "yup"
 import Link from "next/link"
 import { FaGoogle } from "react-icons/fa";
+import Button from "../button/Button"
 
 export default function LoginForm(){
     const initialValues = {
@@ -42,10 +43,10 @@ export default function LoginForm(){
     return(
         <div className="flex min-h-screen flex-col items-center justify-center text-dark-blue">
             <div className="flex flex-col justify-center items-center ">
-                <h1 className="text-3xl font-bold">
+                <h1 className="text-2xl font-bold">
                     Sign In
                 </h1>
-                <p className="text-sm mt-2">
+                <p className="text-sm mt-1">
                     Welcome back, please sign in to continue.
                 </p>
             </div>
@@ -65,7 +66,7 @@ export default function LoginForm(){
                                     placeholder="Enter email..."
                                 />
                             </div>
-                            <div className="mt-4">
+                            <div className="mt-3">
                                 <FormikField
                                     name="password"
                                     required
@@ -80,34 +81,29 @@ export default function LoginForm(){
                                 </Link>
                             </div>
                             <div className="flex justify-center">
-                                <button
-                                    onClick={formik.handleSubmit}
-                                    className="w-full px-4 py-2 mt-4 rounded-md bg-basic-blue text-white font-semibold text-sm md:text-base"
-                                >
+                                <Button variant="primary" size="sm" onClick={formik.handleSubmit} className="w-full mt-4">
                                     Sign In
-                                </button>
+                                </Button>
                             </div>
                             {error && <p className="text-sm text-red">{error}</p>}
-                            <div className="mt-2 text-basic-blue text-center">
-                                <Link href="#">
+                            <div className="mt-2 text-basic-blue text-center text-xs">
+                                <Link href="/register">
                                     Create an account
                                 </Link>
                             </div>
                             <div className="mt-4 flex justify-center items-center">
-                                <hr style={{backgroundColor:'#1A1B36', height: '3px', width: '100%'}}/>
+                                <hr style={{backgroundColor:'#1A1B36', height: '2px', width: '100%'}}/>
                                 <span className="mx-3">
                                     OR
                                 </span>
-                                <hr style={{backgroundColor:'#1A1B36', height: '3px', width: '100%'}}/>
+                                <hr style={{backgroundColor:'#1A1B36', height: '2px', width: '100%'}}/>
                             </div>
                             <div className="mt-4">
                                 <Link href="#">
-                                    <button
-                                        className="w-full px-4 py-2 rounded-md border-2 border-basic-blue text-basic-blue font-semibold text-sm md:text-base flex justify-center items-center"
-                                    >
+                                    <Button variant="secondary" size="sm" className="w-full mt-4 flex justify-center items-center">
                                         <FaGoogle className="inline-block mr-2" />
                                         Sign in with Google
-                                    </button>
+                                    </Button>
                                 </Link>
                             </div>
                         </div>

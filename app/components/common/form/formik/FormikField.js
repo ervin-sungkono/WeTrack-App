@@ -12,7 +12,7 @@ export default function FormikField({ name, required, type, label, placeholder }
             {(formikField) => {
                 return (
                     <div className="flex flex-col gap-2">
-                        <label htmlFor={name} className="block font-semibold text-sm md:text-base">
+                        <label htmlFor={name} className="block font-semibold text-sm">
                             {label}
                             {/* {required && <span className="text-red-600">*</span>} */}
                         </label>
@@ -22,7 +22,7 @@ export default function FormikField({ name, required, type, label, placeholder }
                             type={(checked && type === "password") ? "text" : type}
                             id={name}
                             placeholder={placeholder}
-                            className={`px-4 py-2.5 rounded-md ${formikField.meta.error && formikField.meta.touched ? "border-red-600" : "border-dark/30"} text-sm md:text-base`}
+                            className={`px-4 py-2.5 rounded-md ${formikField.meta.error && formikField.meta.touched ? "border-red-600" : "border-dark/30"} text-sm`}
                         />
                         <FormikErrorMessage name={name}/>
                         {/* {type === "password" &&
