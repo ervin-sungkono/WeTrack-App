@@ -1,10 +1,10 @@
 // Team Page
-import ProjectLayout from "@/app/components/common/layout/ProjectLayout"
+import SideLayout from "@/app/components/common/layout/SideLayout"
 
 export default function TeamPage({ params: { id } }){
     return(
-        <ProjectLayout>
+        <SideLayout>
             Team
-        </ProjectLayout>
+        </SideLayout>
     )
 }

@@ -1,10 +1,10 @@
 // Issue Page
-import ProjectLayout from "@/app/components/common/layout/ProjectLayout"
+import SideLayout from "@/app/components/common/layout/SideLayout"
 
 export default function IssuesPage({ params: { id } }){
     return(
-        <ProjectLayout>
+        <SideLayout>
             Issues
-        </ProjectLayout>
+        </SideLayout>
     )
 }
