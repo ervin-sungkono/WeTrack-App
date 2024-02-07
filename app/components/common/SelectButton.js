@@ -26,7 +26,7 @@ export default function SelectButton({ name, placeholder, options = [], onChange
                 data-dropdown-placement="bottom-start"
                 data-dropdown-delay="0"
                 data-dropdown-offset-distance="4"
-                className="flex items-center gap-1 font-semibold text-xs md:text-sm text-dark-blue hover:text-basic-blue px-4 py-2 rounded-full focus:ring-0 focus:outline-none border border-dark-blue/30" type="button"
+                className="flex items-center gap-1 font-semibold text-xs md:text-sm text-dark-blue hover:text-basic-blue px-4 py-2 rounded-full focus:ring-0 focus:outline-none border border-dark-blue/30 transition-colors duration-300 ease-in-out" type="button"
             >
                 {selected ?? placeholder} 
                 <DropdownIcon size={16}/>
@@ -36,7 +36,7 @@ export default function SelectButton({ name, placeholder, options = [], onChange
                     {options.map(({label, value}) => (
                         <li key={value}>
                             <button 
-                                onClick={() => handleSelectedUpdate(label, value)} className="block w-full text-start px-4 py-2 hover:bg-gray-100 hover:text-basic-blue"
+                                onClick={() => handleSelectedUpdate(label, value)} className="block w-full text-start px-4 py-2 hover:bg-gray-100 hover:text-basic-blue transition-colors duration-300 ease-in-out"
                             >
                                 {label}
                             </button>
