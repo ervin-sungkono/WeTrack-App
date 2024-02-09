@@ -4,8 +4,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 
 export async function POST (request) {
   try {
-    const body = await request.json();
-    const { email, password } = body
+    const { email, password } = await request.json();
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     
     const user = userCredential.user;
