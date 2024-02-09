@@ -1,22 +1,31 @@
-import app from "@/app/firebase/config";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth"
+import { NextResponse } from "next/server";
+import { auth } from "@/app/firebase/config";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
 
-const auth = getAuth(app);
-
-const signUp = async (email, password) => {
-    console.log("auth", auth)
-    let result = null, 
-        error = null
+export async function POST (request) {
     try {
-        result = await createUserWithEmailAndPassword(auth, email, password)
-        console.log("result", result)
+        const { fullName, email, password } = await request.json();
+       
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+
+        await updateProfile(auth.currentUser, { displayName: fullName })
+
+        const user = userCredential.user
+
+        return NextResponse.json({ 
+            statusCode: 200, 
+            data: user, 
+            message: "Register Successful" 
+        })
         
-    } catch (e) {
-        error = e
-        console.error("Database error", error)
+    } catch (error) {
+        console.error("Registration error", error)
+
+        return NextResponse.json({ 
+            statusCode: 500, 
+            data: null,
+            message: error.message 
+        })
+    
     }
-
-    return { result, error }
 }
-
-export default signUp;

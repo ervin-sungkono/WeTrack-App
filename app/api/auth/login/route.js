@@ -1,22 +1,33 @@
-import app from "@/app/firebase/config";
-import { signInWithCredential, getAuth } from "firebase/auth";
+import { NextResponse } from "next/server"
+import { auth } from "@/app/firebase/config";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
-const auth = getAuth(app);
+export async function POST (request) {
+  try {
+    const body = await request.json();
+    const { email, password } = body
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    
+    const user = userCredential.user;
+   
+    return NextResponse.json({
+        status: 200,
+        data: {
+            uid: user.uid,
+            email: user.email,
+            fullName: user.displayName,
+            accessToken: user.accessToken
+        },
+        message: "Successfully logged in"
+    })
 
-const login = async (email, password) => {
-    console.log("auth", auth)
-    let result = null,
-        error = null
-    try {
-        result = await signInWithCredential(auth, email, password)
-        console.log("result", result)
+  } catch (error) {
+    console.error("Authentication error", error);
 
-    } catch (e) {
-        error = e
-        console.error("Database error", error)
-    }
-
-    return { result, error }
+    return NextResponse.json({
+        status: 500,
+        data: null,
+        message: error.message
+    })
+  }
 }
-
-export default login;
