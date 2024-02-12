@@ -20,6 +20,7 @@
     "react-dom": "^18",
     "react-icons": "^4.10.1",
     "react-loader-spinner": "^5.3.4",
+    "react-responsive": "^9.0.2",
     "sharp": "^0.32.6",
     "uuid": "^9.0.1",
     "yup": "^1.2.0"

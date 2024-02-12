@@ -9,7 +9,7 @@ import FormikWrapper from "./formik/FormikWrapper"
 import FormikField from "./formik/FormikField"
 import Link from "next/link"
 import Button from "../button/Button"
-import { FaGoogle } from "react-icons/fa"
+import { FaGoogle as Google } from "react-icons/fa"
 
 export default function RegisterForm(){
     const initialValues = {
@@ -51,7 +51,7 @@ export default function RegisterForm(){
                     Create an account to start tracking your project now!
                 </p>
             </div>
-            <div className="p-6 mt-4 bg-white shadow-lg text-sm" style={{ width: "40%" }}>
+            <div className="p-4 md:p-6 mt-4 bg-white shadow-lg w-4/5 md:w-3/5 lg:w-2/5">
                 <FormikWrapper
                     initialValues={initialValues}
                     onSubmit={onSubmit}
@@ -106,16 +106,16 @@ export default function RegisterForm(){
                                 </Link>
                             </div>
                             <div className="mt-4 flex justify-center items-center">
-                                <hr style={{backgroundColor:'#1A1B36', height: '2px', width: '100%'}}/>
+                                <div className="w-full bg-dark-blue" style={{height: '2px'}}/>
                                 <span className="mx-3">
                                     OR
                                 </span>
-                                <hr style={{backgroundColor:'#1A1B36', height: '2px', width: '100%'}}/>
+                                <div className="w-full  bg-dark-blue" style={{height: '2px'}}/>
                             </div>
                             <div className="mt-4">
                                 <Link href="#">
                                     <Button variant="secondary" size="sm" className="w-full mt-4 flex justify-center items-center">
-                                        <FaGoogle className="inline-block mr-2" />
+                                        <Google className="inline-block mr-2" />
                                         Sign up with Google
                                     </Button>
                                 </Link>
