@@ -11,7 +11,7 @@ export default function FormikField({ name, required, type, label, placeholder }
         <Field name={name}>
             {(formikField) => {
                 return (
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-1">
                         <label htmlFor={name} className="block font-semibold text-sm">
                             {label}
                             {/* {required && <span className="text-red-600">*</span>} */}

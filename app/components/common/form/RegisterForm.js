@@ -10,30 +10,30 @@ import FormikField from "./formik/FormikField"
 import Link from "next/link"
 import Button from "../button/Button"
 import { FaGoogle as Google } from "react-icons/fa"
+import { POST } from "@/app/api/auth/register/route"
 
 export default function RegisterForm(){
     const initialValues = {
         fullName: "",
         email: "",
-        password: ""
+        password: "",
+        confirmPassword: ""
     }
     
     const validationSchema = Yup.object({
-        fullName: Yup.string().required("Required"),
-        email: Yup.string().email("Invalid email address").required("Required"),
-        password: Yup.string().required("Required")
+        fullName: Yup.string().required("Full name must be filled!"),
+        email: Yup.string().email("Invalid email address").required("Email must be filled!"),
+        password: Yup.string().required("Password must be filled!"),
+        confirmPassword: Yup.string().oneOf([Yup.ref('password')], 'Password and password confirmation must match!').required("Password confirmation must be filled!")
     })
 
     const [error, setError] = useState("")
     const router = useRouter()
     const searchParams = useSearchParams()
+    const callbackUrl = searchParams.get('callbackUrl')
 
-    const onSubmit = async(values) => {
-        const res = await signIn("credentials", {
-            ...values,
-            redirect: false,
-        })
-
+    const handleSubmit = async(values) => {
+        const res = await POST(JSON.stringify(values))
         if (res.error) {
             setError(JSON.parse(res.error).errors)
         }else{
@@ -42,7 +42,7 @@ export default function RegisterForm(){
     }
 
     return(
-        <div className="flex min-h-screen flex-col items-center justify-center text-dark-blue">
+        <div className="flex min-h-screen flex-col items-center justify-center text-dark-blue py-8">
             <div className="flex flex-col justify-center items-center">
                 <h1 className="text-2xl font-bold">
                     Sign Up
@@ -51,10 +51,10 @@ export default function RegisterForm(){
                     Create an account to start tracking your project now!
                 </p>
             </div>
-            <div className="p-4 md:p-6 mt-4 bg-white shadow-lg w-4/5 md:w-3/5 lg:w-2/5">
+            <div className="p-4 md:p-6 mt-4 bg-white shadow-lg w-5/6 xl:w-2/5">
                 <FormikWrapper
                     initialValues={initialValues}
-                    onSubmit={onSubmit}
+                    onSubmit={handleSubmit}
                     validationSchema={validationSchema}
                     children={(formik) => (
                         <div>
@@ -67,7 +67,7 @@ export default function RegisterForm(){
                                     placeholder="Enter full name..."
                                 />
                             </div>
-                            <div className="mt-3">
+                            <div className="mt-2">
                                 <FormikField
                                     name="email"
                                     required
@@ -76,7 +76,7 @@ export default function RegisterForm(){
                                     placeholder="Enter email..."
                                 />
                             </div>
-                            <div className="mt-3">
+                            <div className="mt-2">
                                 <FormikField
                                     name="password"
                                     required
@@ -85,7 +85,7 @@ export default function RegisterForm(){
                                     placeholder="Enter password..."
                                 />
                             </div>
-                            <div className="mt-3">
+                            <div className="mt-2">
                                 <FormikField
                                     name="confirmPassword"
                                     required
@@ -95,22 +95,22 @@ export default function RegisterForm(){
                                 />
                             </div>
                             <div className="flex justify-center mt-4">
-                                <Button variant="primary" size="sm" onClick={formik.handleSubmit} className="w-full">
+                                <Button variant="primary" size="sm" type="submit" className="w-full">
                                     Sign Up
                                 </Button>
                             </div>
                             {error && <p className="text-sm text-red">{error}</p>}
-                            <div className="mt-2 text-basic-blue text-center text-xs">
+                            <div className="mt-2 text-basic-blue text-center text-xs hover:underline">
                                 <Link href="/login">
                                     Already have an account? Sign in
                                 </Link>
                             </div>
                             <div className="mt-4 flex justify-center items-center">
-                                <div className="w-full bg-dark-blue" style={{height: '2px'}}/>
+                                <div className="w-full bg-dark-blue" style={{height: '1px'}}/>
                                 <span className="mx-3">
                                     OR
                                 </span>
-                                <div className="w-full  bg-dark-blue" style={{height: '2px'}}/>
+                                <div className="w-full  bg-dark-blue" style={{height: '1px'}}/>
                             </div>
                             <div className="mt-4">
                                 <Link href="#">

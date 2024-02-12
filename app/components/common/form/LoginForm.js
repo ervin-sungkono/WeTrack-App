@@ -10,6 +10,7 @@ import * as Yup from "yup"
 import Link from "next/link"
 import { FaGoogle as Google } from "react-icons/fa";
 import Button from "../button/Button"
+import { POST } from "@/app/api/auth/login/route"
 
 export default function LoginForm(){
     const initialValues = {
@@ -27,12 +28,8 @@ export default function LoginForm(){
     const searchParams = useSearchParams()
     const callbackUrl = searchParams.get('callbackUrl')
 
-    const onSubmit = async(values) => {
-        const res = await signIn("credentials", {
-            ...values,
-            redirect: false,
-        })
-
+    const handleSubmit = async(values) => {
+        const res = await POST(JSON.stringify(values))
         if (res.error) {
             setError(JSON.parse(res.error).errors)
         }else{
@@ -41,8 +38,8 @@ export default function LoginForm(){
     }
 
     return(
-        <div className="flex min-h-screen flex-col items-center justify-center text-dark-blue">
-            <div className="flex flex-col justify-center items-center ">
+        <div className="flex min-h-screen flex-col items-center justify-center text-dark-blue py-8">
+            <div className="flex flex-col justify-center items-center">
                 <h1 className="text-2xl font-bold">
                     Sign In
                 </h1>
@@ -50,10 +47,10 @@ export default function LoginForm(){
                     Welcome back, please sign in to continue.
                 </p>
             </div>
-            <div className="p-4 md:p-6 mt-4 bg-white shadow-lg w-4/5 md:w-3/5 lg:w-2/5">
+            <div className="p-4 md:p-6 mt-4 bg-white shadow-lg w-5/6 xl:w-2/5">
                 <FormikWrapper
                     initialValues={initialValues}
-                    onSubmit={onSubmit}
+                    onSubmit={handleSubmit}
                     validationSchema={validationSchema}
                     children={(formik) => (
                         <div>
@@ -66,7 +63,7 @@ export default function LoginForm(){
                                     placeholder="Enter email..."
                                 />
                             </div>
-                            <div className="mt-3">
+                            <div className="mt-2">
                                 <FormikField
                                     name="password"
                                     required
@@ -75,28 +72,28 @@ export default function LoginForm(){
                                     placeholder="Enter password..."
                                 />
                             </div>
-                            <div className="mt-2 text-basic-blue">
+                            <div className="mt-2 text-basic-blue text-xs hover:underline">
                                 <Link href="#">
                                     Forgot password?
                                 </Link>
                             </div>
                             <div className="flex justify-center">
-                                <Button variant="primary" size="sm" onClick={formik.handleSubmit} className="w-full mt-4">
+                                <Button variant="primary" size="sm" type="submit" className="w-full mt-4">
                                     Sign In
                                 </Button>
                             </div>
                             {error && <p className="text-sm text-red">{error}</p>}
-                            <div className="mt-2 text-basic-blue text-center text-xs">
+                            <div className="mt-2 text-basic-blue text-center text-xs hover:underline">
                                 <Link href="/register">
                                     Create an account
                                 </Link>
                             </div>
                             <div className="mt-4 flex justify-center items-center">
-                                <div className="w-full bg-dark-blue" style={{height: '2px'}}/>
+                                <div className="w-full bg-dark-blue" style={{height: '1px'}}/>
                                 <span className="mx-2">
                                     OR
                                 </span>
-                                <div className="w-full bg-dark-blue" style={{height: '2px'}}/>
+                                <div className="w-full bg-dark-blue" style={{height: '1px'}}/>
                             </div>
                             <div className="mt-4">
                                 <Link href="#">
