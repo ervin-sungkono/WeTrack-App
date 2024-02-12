@@ -8,7 +8,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useState } from "react"
 import * as Yup from "yup"
 import Link from "next/link"
-import { FaGoogle } from "react-icons/fa";
+import { FaGoogle as Google } from "react-icons/fa";
 import Button from "../button/Button"
 
 export default function LoginForm(){
@@ -50,7 +50,7 @@ export default function LoginForm(){
                     Welcome back, please sign in to continue.
                 </p>
             </div>
-            <div className="p-6 mt-4 bg-white shadow-lg" style={{ width: "40%" }}>
+            <div className="p-4 md:p-6 mt-4 bg-white shadow-lg w-4/5 md:w-3/5 lg:w-2/5">
                 <FormikWrapper
                     initialValues={initialValues}
                     onSubmit={onSubmit}
@@ -92,16 +92,16 @@ export default function LoginForm(){
                                 </Link>
                             </div>
                             <div className="mt-4 flex justify-center items-center">
-                                <hr style={{backgroundColor:'#1A1B36', height: '2px', width: '100%'}}/>
-                                <span className="mx-3">
+                                <div className="w-full bg-dark-blue" style={{height: '2px'}}/>
+                                <span className="mx-2">
                                     OR
                                 </span>
-                                <hr style={{backgroundColor:'#1A1B36', height: '2px', width: '100%'}}/>
+                                <div className="w-full bg-dark-blue" style={{height: '2px'}}/>
                             </div>
                             <div className="mt-4">
                                 <Link href="#">
-                                    <Button variant="secondary" size="sm" className="w-full mt-4 flex justify-center items-center">
-                                        <FaGoogle className="inline-block mr-2" />
+                                    <Button variant="secondary" size="sm" className="w-full flex justify-center items-center">
+                                        <Google className="inline-block mr-2" />
                                         Sign in with Google
                                     </Button>
                                 </Link>
