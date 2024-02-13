@@ -22,7 +22,7 @@ export default function FormikField({ name, required, type, label, placeholder }
                             type={(checked && type === "password") ? "text" : type}
                             id={name}
                             placeholder={placeholder}
-                            className={`px-3 py-2 rounded-md ${formikField.meta.error && formikField.meta.touched ? "border-red-600" : "border-dark/30"} text-sm`}
+                            className={`px-2 md:px-3 py-1 md:py-2 rounded-md ${formikField.meta.error && formikField.meta.touched ? "border-red-600" : "border-dark/30"} text-sm`}
                         />
                         <FormikErrorMessage name={name}/>
                         {/* {type === "password" &&

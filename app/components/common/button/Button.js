@@ -2,9 +2,9 @@ export default function Button({ type = 'button', variant = 'primary', size = 'm
     const getSizeClass = () => {
         switch(size){
             case 'md':
-                return 'text-xs xl:text-sm px-3 xl:px-6 py-1 xl:py-3'
+                return 'text-xs lg:text-sm px-3 lg:px-6 py-1 lg:py-3'
             case 'sm':
-                return 'text-xs xl:text-sm px-2 xl:px-4 py-1 xl:py-2'
+                return 'text-xs lg:text-sm px-2 lg:px-4 py-1 lg:py-2'
             default:
                 return ''
         }
