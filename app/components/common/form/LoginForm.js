@@ -39,7 +39,7 @@ export default function LoginForm(){
 
     return(
         <div className="flex min-h-screen flex-col items-center justify-center text-dark-blue py-8">
-            <div className="flex flex-col justify-center items-center">
+            <div className="flex flex-col justify-center items-center text-center w-5/6">
                 <h1 className="text-2xl font-bold">
                     Sign In
                 </h1>
@@ -47,7 +47,7 @@ export default function LoginForm(){
                     Welcome back, please sign in to continue.
                 </p>
             </div>
-            <div className="p-4 md:p-6 mt-4 bg-white shadow-lg w-5/6 xl:w-2/5 rounded-xl max-w-lg xl:max-w-2xl">
+            <div className="p-4 md:p-6 mt-4 bg-white shadow-lg w-5/6 lg:w-2/5 rounded-xl max-w-lg lg:max-w-2xl">
                 <FormikWrapper
                     initialValues={initialValues}
                     onSubmit={handleSubmit}
