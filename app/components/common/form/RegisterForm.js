@@ -22,7 +22,7 @@ export default function RegisterForm(){
     
     const validationSchema = Yup.object({
         fullName: Yup.string().required("Full name must be filled!"),
-        email: Yup.string().email("Invalid email address").required("Email must be filled!"),
+        email: Yup.string().email("Invalid email address!").required("Email must be filled!"),
         password: Yup.string().required("Password must be filled!"),
         confirmPassword: Yup.string().oneOf([Yup.ref('password')], 'Password and password confirmation must match!').required("Password confirmation must be filled!")
     })
@@ -51,7 +51,7 @@ export default function RegisterForm(){
                     Create an account to start tracking your project now!
                 </p>
             </div>
-            <div className="p-4 md:p-6 mt-4 bg-white shadow-lg w-5/6 xl:w-2/5">
+            <div className="p-4 md:p-6 mt-4 bg-white shadow-lg w-5/6 xl:w-2/5 rounded-xl max-w-lg xl:max-w-2xl">
                 <FormikWrapper
                     initialValues={initialValues}
                     onSubmit={handleSubmit}

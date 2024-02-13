@@ -19,8 +19,8 @@ export default function LoginForm(){
     }
 
     const validationSchema = Yup.object({
-        email: Yup.string().email("Invalid email address").required("Required"),
-        password: Yup.string().required("Required")
+        email: Yup.string().email("Invalid email address!").required("Email must be filled!"),
+        password: Yup.string().required("Password must be filled!")
     })
 
     const [error, setError] = useState("")
@@ -47,7 +47,7 @@ export default function LoginForm(){
                     Welcome back, please sign in to continue.
                 </p>
             </div>
-            <div className="p-4 md:p-6 mt-4 bg-white shadow-lg w-5/6 xl:w-2/5">
+            <div className="p-4 md:p-6 mt-4 bg-white shadow-lg w-5/6 xl:w-2/5 rounded-xl max-w-lg xl:max-w-2xl">
                 <FormikWrapper
                     initialValues={initialValues}
                     onSubmit={handleSubmit}
