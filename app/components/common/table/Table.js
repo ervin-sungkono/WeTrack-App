@@ -4,6 +4,7 @@ import {
     useReactTable,
     flexRender,
     getCoreRowModel,
+    getPaginationRowModel,
 } from '@tanstack/react-table'
 import TablePagination from './TablePagination'
 
@@ -13,42 +14,35 @@ import { RevolvingDot } from "react-loader-spinner"
 export default function Table({
     data, 
     columns, 
-    sorting, 
-    setSorting,
-    pagination,
     pageSize = 10,
-    setPagination,
-    pageCount,
+    pageCount = data ? (data.length / pageSize) : -1,
 }){
     const memoizedData = useMemo(() => data, [data])
     const memoizedColumns = useMemo(() => columns, [columns])
 
-    const hasPrevPage = pagination.pageIndex > 1
-    const hasNextPage = (pagination.pageIndex + 1) < pageCount
-
     const { 
+        getState,
         getHeaderGroups, 
         getRowModel, 
-        setPageIndex, 
+        nextPage,
+        previousPage,
+        getCanPreviousPage,
+        getCanNextPage, 
         setPageSize
     } = useReactTable({
         data: memoizedData,
         columns: memoizedColumns,
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
         defaultColumn: {
-            size: 260
+            size: 240
         },
         state: {
-            sorting,
-            pagination,
             columnVisibility: {
                 Id: false
             }
         },
         getCoreRowModel: getCoreRowModel(),
-        manualSorting: true,
-        onSortingChange: setSorting,
-        manualPagination: true,
-        onPaginationChange: setPagination,
         pageCount: pageCount ?? -1,
     })
 
@@ -57,11 +51,6 @@ export default function Table({
             setPageSize(pageSize)
         }
     }, [setPageSize, pageSize])
-
-    const handlePageChange = (page) => {
-        if(page > 0 && page <= pageCount)
-        setPageIndex(page)
-    }
 
     if(!data){
         return (
@@ -80,7 +69,7 @@ export default function Table({
         <div className="h-full flex flex-col gap-4 overflow-hidden">
             <div className='h-full overflow-auto'>
                 <table className='w-full table-fixed'>
-                    <thead className='sticky top-0 z-40'>
+                    <thead className='sticky top-0 z-40 bg-white'>
                         {getHeaderGroups().map(headerGroup => (
                             <tr key={headerGroup.id} className='border-b border-b-dark-blue/20' >
                                 {headerGroup.headers.map((header, index) => (
@@ -130,10 +119,11 @@ export default function Table({
                 </table>
             </div>
             <TablePagination 
-                {...pagination}
-                handlePageChange={handlePageChange}
-                hasPrevPage={hasPrevPage}
-                hasNextPage={hasNextPage}
+                {...getState().pagination}
+                hasPrevPage={getCanPreviousPage()}
+                hasNextPage={getCanNextPage()}
+                nextPage={nextPage}
+                previousPage={previousPage}
                 totalCount={data.length}
             />
         </div>
