@@ -64,7 +64,7 @@ function FeatureCard({image, title, description}){
 export default function HomeLayout(){
     return (
         <div className="pt-2 xl:pt-8">
-            <div className="py-4 md:py-6 xl:py-8 px-8 md:px-16 lg:px-24 xl:px-32 flex flex-col lg:flex-row items-center justify-center lg:justify-between text-center lg:text-left">
+            <div className="py-4 md:py-6 xl:py-8 container flex flex-col lg:flex-row items-center justify-center lg:justify-between text-center lg:text-left">
                 <div>
                     <h1 className="text-2xl md:text-3xl lg:text-4xl lg:leading-tight font-bold">
                         Solve issues efficiently, <br />
@@ -81,7 +81,7 @@ export default function HomeLayout(){
                     <Image src={'/WelcomePicture.png'} alt="WeTrack" width={600} height={600}/>
                 </div>
             </div>
-            <div className="bg-light-blue py-4 md:py-6 lg:py-8 px-8 md:px-16 lg:px-24 xl:px-32 text-center lg:text-left">
+            <div className="bg-light-blue py-4 md:py-6 lg:py-8 container text-center lg:text-left">
                 <h1 className="text-lg md:text-xl lg:text-2xl font-bold">About WeTrack</h1>
                 <div className="mt-1 md:mt-2 flex items-center lg:items-start justify-center lg:justify-start">
                     <CustomLine size="md"/>
@@ -90,7 +90,7 @@ export default function HomeLayout(){
                 WeTrack is an innovative collaborative project management platform that empowers developers to streamline project development processes with efficiency and precision, boasting seamless integration with cutting-edge artificial intelligence capabilities to assist in task creation and issue resolution, thereby enhancing productivity and driving project success.
                 </p>
             </div>
-            <div className="py-4 md:py-6 lg:py-8 pb-10 md:pb-10 lg:pb-12 px-8 md:px-16 lg:px-24 xl:px-32">
+            <div className="py-4 md:py-6 lg:py-8 pb-10 md:pb-10 lg:pb-12 container">
                 <div className="flex flex-col justify-center items-center">
                     <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-center">
                         Features
