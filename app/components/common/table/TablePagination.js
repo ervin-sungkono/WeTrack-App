@@ -1,4 +1,9 @@
-import Button from "../button/Button"
+import {
+    MdKeyboardArrowLeft as ArrowLeft,
+    MdKeyboardArrowRight as ArrowRight,
+    MdKeyboardDoubleArrowLeft as DoubleArrowLeft,
+    MdKeyboardDoubleArrowRight as DoubleArrowRight
+} from "react-icons/md"
 
 export default function TablePagination({ 
     pageIndex, 
@@ -7,34 +12,47 @@ export default function TablePagination({
     hasNextPage, 
     previousPage,
     nextPage,
+    firstPage,
+    lastPage,
     totalCount 
 }){
     const startIndex = (pageIndex * pageSize) + 1
     const endIndex = Math.min((pageIndex + 1) * pageSize, totalCount)
 
     return(
-        <div className="flex flex-col-reverse md:flex-row justify-between items-center rounded-md">
-            <p className="text-sm">Showing {startIndex} to {endIndex} of {totalCount} entries</p>
-            <div className="flex justify-center items-center">
-                <Button 
-                    onClick={() => previousPage()} 
-                    size="sm" 
-                    variant="secondary" 
-                    className={"rounded-none rounded-l-lg"}
+        <div className="flex justify-center items-center">
+            <div className="flex items-center">
+                <button 
+                    className="hover:text-basic-blue p-1 disabled:text-dark-blue/60" 
+                    onClick={() => firstPage()}
                     disabled={!hasPrevPage}
                 >
-                    Prev
-                </Button>
-                <div className="px-4 py-1.5 text-sm md:text-base bg-basic-blue text-white font-bold border border-basic-blue">{pageIndex + 1}</div>
-                <Button 
-                    onClick={() => nextPage()} 
-                    size="sm" 
-                    variant="secondary" 
-                    className={"rounded-none rounded-r-lg"}
+                    <DoubleArrowLeft className="text-xl md:text-2xl"/>
+                </button>
+                <button 
+                    className="hover:text-basic-blue p-1 disabled:text-dark-blue/60" 
+                    onClick={() =>previousPage()}
+                    disabled={!hasPrevPage}
+                >
+                    <ArrowLeft className="text-xl md:text-2xl"/>
+                </button>
+            </div>
+            <p className="text-xs md:text-sm px-4">{startIndex} to {endIndex} of {totalCount}</p>
+            <div className="flex items-center">
+                <button 
+                    className="hover:text-basic-blue p-1 disabled:text-dark-blue/60" 
+                    onClick={() => nextPage()}
                     disabled={!hasNextPage}
                 >
-                    Next
-                </Button>
+                    <ArrowRight className="text-xl md:text-2xl"/>
+                </button>
+                <button 
+                    className="hover:text-basic-blue p-1 disabled:text-dark-blue/60" 
+                    onClick={() => lastPage()}
+                    disabled={!hasNextPage}
+                >
+                    <DoubleArrowRight className="text-xl md:text-2xl"/>
+                </button>
             </div>
         </div>
     )

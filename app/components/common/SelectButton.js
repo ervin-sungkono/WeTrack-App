@@ -12,9 +12,9 @@ export default function SelectButton({ name, placeholder, options = [], onChange
         initDropdowns()
     })
 
-    const handleSelectedUpdate = (label, value) => {
-        setSelected(label)
+    const handleSelectedUpdate = (label, value) => { 
         buttonRef.current.click()
+        setSelected(label)
         if(typeof onChange == "function") onChange(value)
     }
 
@@ -35,8 +35,9 @@ export default function SelectButton({ name, placeholder, options = [], onChange
                 <ul className="py-2 text-xs md:text-sm text-gray-700">
                     {options.map(({label, value}) => (
                         <li key={value}>
-                            <button 
-                                onClick={() => handleSelectedUpdate(label, value)} className="block w-full text-start px-4 py-2 hover:bg-gray-100 hover:text-basic-blue transition-colors duration-300 ease-in-out"
+                            <button
+                                disabled={selected === label}
+                                onClick={() => handleSelectedUpdate(label, value)} className="block w-full text-start px-4 py-2 disabled:bg-gray-300 disabled:text-dark-blue hover:bg-gray-100 hover:text-basic-blue transition-colors duration-300 ease-in-out"
                             >
                                 {label}
                             </button>
