@@ -31,7 +31,7 @@ export default function SelectButton({ name, placeholder, options = [], onChange
                 {selected ?? placeholder} 
                 <DropdownIcon size={16}/>
             </button>
-            <div id={name} className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg border border-dark-blue/30 min-w-40">
+            <div id={name} className="z-50 hidden bg-white divide-y divide-gray-100 rounded-lg border border-dark-blue/30 min-w-40">
                 <ul className="py-2 text-xs md:text-sm text-gray-700">
                     {options.map(({label, value}) => (
                         <li key={value}>
