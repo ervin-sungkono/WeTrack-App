@@ -1,4 +1,4 @@
-import Navbar from "../navbar/Navbar"
+import Navbar from "../common/navbar/Navbar"
 
 export default function ProjectLayout({ children }){
     return(

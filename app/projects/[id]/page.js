@@ -1,5 +1,5 @@
 // Overview Page
-import SideLayout from "@/app/components/common/layout/SideLayout"
+import SideLayout from "@/app/components/layout/SideLayout"
 
 export default function OverviewPage({ params: { id } }){
     return(

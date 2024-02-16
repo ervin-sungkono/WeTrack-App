@@ -1,5 +1,5 @@
-import Navbar from "../navbar/Navbar"
-import Sidebar from "../sidebar/Sidebar"
+import Navbar from "../common/navbar/Navbar"
+import Sidebar from "../common/sidebar/Sidebar"
 
 export default function SideLayout({ children, hideSidebar }){
     return(
