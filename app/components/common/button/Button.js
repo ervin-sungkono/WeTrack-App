@@ -26,7 +26,7 @@ export default function Button({ type = 'button', variant = 'primary', size = 'm
     return(
         <button 
             type={type}
-            className={`${getSizeClass()} ${getVariantClass()} ${className} font-semibold rounded-md disabled:bg-gray-300 disabled:border-gray-300 disabled:text-gray-500 transition-colors duration-300`}
+            className={`${getSizeClass()} ${getVariantClass()} ${className} font-semibold rounded-md disabled:bg-gray-300 disabled:border-gray-300 disabled:text-gray-500 transition-colors duration-300 text-nowrap`}
             onClick={onClick}
             disabled={disabled}
         >

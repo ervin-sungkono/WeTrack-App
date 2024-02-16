@@ -6,6 +6,7 @@ import SelectButton from "../common/SelectButton"
 import Table from "../common/table/Table"
 import TableActionButton from "../common/table/TableActionButton"
 import UserIcon from "../common/UserIcon"
+import LinkButton from "../common/button/LinkButton"
 
 export default function ProjectContent(){
     const [sorting, setSorting] = useState([])
@@ -24,7 +25,7 @@ export default function ProjectContent(){
     ]
 
     const handlePageSizeChange = (value) => {
-        console.log(value)
+        setPageSize(value)
     }
 
     const handleSearch = (query) => {
@@ -32,18 +33,23 @@ export default function ProjectContent(){
     }
 
     useEffect(() => {
-        setProjectData([
-            {
-                Id: 1,
-                ProjectName: 'New Project',
-                Key: 'NP',
+        const projectData = []
+        for(let i = 0; i < 50; i++){
+            projectData.push({
+                Id: i,
+                ProjectName: `${i}-New Project`,
+                Key: `NP${i}`,
                 CreatedBy: 'userId',
                 action: ['Edit', 'Delete']
-            },
-        ])
+            })
+        }
+        setProjectData(projectData)
     }, [])
 
     const columns = [
+        {
+            accessorKey: 'Id',
+        },
         {
             accessorKey: 'ProjectName',
             header: 'Name',
@@ -75,25 +81,30 @@ export default function ProjectContent(){
                 return <TableActionButton actions={actions} id={id}/>
             },
             enableSorting: false,
-            size: 48
+            size: 60
         },
     ]
     
     return(
         <div className="h-full flex flex-col mt-4 md:mt-6 gap-4">
-            <div className="flex items-center gap-3 md:gap-6">
-                <SearchBar placeholder={"Search task.."} handleSearch={handleSearch}/>
-                <div className="flex items-center gap-2 md:gap-4">
-                    <div className="flex items-center gap-2">
-                        <b className="text-sm">Show:</b>
-                        <SelectButton 
-                            name={"status-button"}
-                            placeholder={pageSize} 
-                            options={pageSizeOptions} 
-                            onChange={handlePageSizeChange}
-                        />
+            <div className="flex justify-between items-center">
+                <div className="w-full flex items-center gap-3 md:gap-6">
+                    <SearchBar placeholder={"Search task.."} handleSearch={handleSearch}/>
+                    <div className="flex items-center gap-2 md:gap-4">
+                        <div className="flex items-center gap-2">
+                            <b className="text-sm">Show:</b>
+                            <SelectButton 
+                                name={"status-button"}
+                                placeholder={pageSize} 
+                                options={pageSizeOptions} 
+                                onChange={handlePageSizeChange}
+                            />
+                        </div>
                     </div>
                 </div>
+                <LinkButton href="/projects/create">
+                    Create Project
+                </LinkButton>
             </div>
             <Table
                 data={projectData}
@@ -102,6 +113,7 @@ export default function ProjectContent(){
                 setPagination={setPagination}
                 sorting={sorting}
                 setSorting={setSorting}
+                pageSize={pageSize}
             />
         </div>
     )
