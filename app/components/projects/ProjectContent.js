@@ -15,13 +15,14 @@ export default function ProjectContent(){
         pageSize: 10
     })
     const [pageSize, setPageSize] = useState(10)
+    const [query, setQuery] = useState("")
     const [projectData, setProjectData] = useState(null)
 
     const pageSizeOptions = [
+        {label: "5", value: 5},
         {label: "10", value: 10},
         {label: "25", value: 25},
-        {label: "50", value: 50},
-        {label: "100", value: 100}
+        {label: "50", value: 50}
     ]
 
     const handlePageSizeChange = (value) => {
@@ -29,7 +30,7 @@ export default function ProjectContent(){
     }
 
     const handleSearch = (query) => {
-        console.log(query)
+        setQuery(query)
     }
 
     useEffect(() => {
@@ -52,7 +53,7 @@ export default function ProjectContent(){
         },
         {
             accessorKey: 'ProjectName',
-            header: 'Name',
+            header: 'Project Name',
         },
         {
             accessorKey: 'Key',
@@ -87,12 +88,12 @@ export default function ProjectContent(){
     
     return(
         <div className="h-full flex flex-col mt-4 md:mt-6 gap-4">
-            <div className="flex justify-between items-center">
-                <div className="w-full flex items-center gap-3 md:gap-6">
-                    <SearchBar placeholder={"Search task.."} handleSearch={handleSearch}/>
+            <div className="flex flex-col md:flex-row justify-between items-center gap-2">
+                <div className="w-full flex justify-center items-center gap-3 md:gap-6">
+                    <SearchBar placeholder={"Search project.."} handleSearch={handleSearch}/>
                     <div className="flex items-center gap-2 md:gap-4">
                         <div className="flex items-center gap-2">
-                            <b className="text-sm">Show:</b>
+                            <b className="hidden xs:block text-xs md:text-sm">Show:</b>
                             <SelectButton 
                                 name={"status-button"}
                                 placeholder={pageSize} 
@@ -107,7 +108,7 @@ export default function ProjectContent(){
                 </LinkButton>
             </div>
             <Table
-                data={projectData}
+                data={projectData?.filter(project => project.ProjectName.includes(query))}
                 columns={columns}
                 pagination={pagination}
                 setPagination={setPagination}

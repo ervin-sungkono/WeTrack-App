@@ -1,7 +1,6 @@
 // View All Project Page
 import Header from "../components/common/Header"
 import ProjectLayout from "../components/layout/ProjectLayout"
-import SearchBar from "../components/common/SearchBar"
 import ProjectContent from "../components/projects/ProjectContent"
 
 export default function ProjectsPage(){

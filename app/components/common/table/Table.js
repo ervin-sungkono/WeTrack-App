@@ -5,6 +5,7 @@ import {
     flexRender,
     getCoreRowModel,
     getPaginationRowModel,
+    getSortedRowModel,
 } from '@tanstack/react-table'
 import TablePagination from './TablePagination'
 
@@ -26,14 +27,17 @@ export default function Table({
         getRowModel, 
         nextPage,
         previousPage,
+        getPageCount,
         getCanPreviousPage,
         getCanNextPage, 
-        setPageSize
+        setPageSize,
+        setPageIndex
     } = useReactTable({
         data: memoizedData,
         columns: memoizedColumns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
         defaultColumn: {
             size: 240
         },
@@ -59,14 +63,14 @@ export default function Table({
                     height="100"
                     width="100"
                     radius="48"
-                    color="#4fa94d"
+                    color="#47389F"
                 />
                 <p className='text-sm md:text-base text-dark/80'>Loading Table Data...</p>
             </div>
         )
     }
     return(
-        <div className="h-full flex flex-col gap-4 overflow-hidden">
+        <div className="max-h-full flex flex-col gap-4 overflow-hidden">
             <div className='h-full overflow-auto'>
                 <table className='w-full table-fixed'>
                     <thead className='sticky top-0 z-40 bg-white'>
@@ -124,6 +128,8 @@ export default function Table({
                 hasNextPage={getCanNextPage()}
                 nextPage={nextPage}
                 previousPage={previousPage}
+                firstPage={() => setPageIndex(0)}
+                lastPage={() => setPageIndex(getPageCount() - 1)}
                 totalCount={data.length}
             />
         </div>
