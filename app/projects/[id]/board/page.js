@@ -1,5 +1,5 @@
 // Board Page
-import SideLayout from "@/app/components/common/layout/SideLayout"
+import SideLayout from "@/app/components/layout/SideLayout"
 
 export default function BoardPage({ params: { id } }){
     console.log(id)

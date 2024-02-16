@@ -1,5 +1,5 @@
 // Issue Page
-import SideLayout from "@/app/components/common/layout/SideLayout"
+import SideLayout from "@/app/components/layout/SideLayout"
 
 export default function IssuesPage({ params: { id } }){
     return(
