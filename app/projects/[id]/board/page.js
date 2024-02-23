@@ -1,11 +1,11 @@
 // Board Page
-import SideLayout from "@/app/components/layout/SideLayout"
+import ProjectLayout from "@/app/components/layout/ProjectLayout"
 
 export default function BoardPage({ params: { id } }){
     console.log(id)
     return(
-        <SideLayout>
+        <ProjectLayout>
             Board
-        </SideLayout>
+        </ProjectLayout>
     )
 }
