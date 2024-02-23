@@ -1,5 +1,5 @@
 import CredentialsProvider from "next-auth/providers/credentials";
-// import { loginUser } from "./fetch/user";
+import { loginUser } from "./fetch/user";
 
 export const nextAuthOptions = {
   session: {
@@ -24,8 +24,8 @@ export const nextAuthOptions = {
         // Call Login API and pass in credentials variable
         if (!credentials?.email || !credentials?.password) return null
 
-        const user = null
-        // const user = await loginUser(credentials)
+        // const user = null
+        const user = await loginUser(credentials)
 
         if(user.data) return user.data
         else {

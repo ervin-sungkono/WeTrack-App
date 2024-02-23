@@ -6,11 +6,11 @@ import FormikWrapper from "@/app/components/common/form/formik/FormikWrapper"
 import FormikField from "@/app/components/common/form/formik/FormikField"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState } from "react"
-import * as Yup from "yup"
 import Link from "next/link"
 import { FaGoogle as Google } from "react-icons/fa";
 import Button from "../button/Button"
-import { POST } from "@/app/api/auth/login/route"
+import { loginSchema } from "@/app/lib/schema"
+import { signIn } from "@/app/lib/fetch/user"
 
 export default function LoginForm(){
     const initialValues = {
@@ -18,18 +18,17 @@ export default function LoginForm(){
         password: ""
     }
 
-    const validationSchema = Yup.object({
-        email: Yup.string().email("Invalid email address!").required("Email must be filled!"),
-        password: Yup.string().required("Password must be filled!")
-    })
-
     const [error, setError] = useState("")
+    const [loading, setLoading] = useState(false)
     const router = useRouter()
     const searchParams = useSearchParams()
     const callbackUrl = searchParams.get('callbackUrl')
 
     const handleSubmit = async(values) => {
-        const res = await POST(JSON.stringify(values))
+        const res = await signIn("credentials", {
+            ...values,
+            redirect: false
+        })
         if (res.error) {
             setError(JSON.parse(res.error).errors)
         }else{
@@ -51,7 +50,7 @@ export default function LoginForm(){
                 <FormikWrapper
                     initialValues={initialValues}
                     onSubmit={handleSubmit}
-                    validationSchema={validationSchema}
+                    validationSchema={loginSchema}
                     children={(formik) => (
                         <div>
                             <div>
@@ -70,6 +69,7 @@ export default function LoginForm(){
                                     type="password"
                                     label="Password"
                                     placeholder="Enter password..."
+
                                 />
                             </div>
                             <div className="mt-2 text-basic-blue text-xs hover:underline">
