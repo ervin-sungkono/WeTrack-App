@@ -1,10 +1,10 @@
 // Overview Page
-import SideLayout from "@/app/components/layout/SideLayout"
+import ProjectLayout from "@/app/components/layout/ProjectLayout"
 
 export default function OverviewPage({ params: { id } }){
     return(
-        <SideLayout>
+        <ProjectLayout>
             Overview
-        </SideLayout>
+        </ProjectLayout>
     )
 }

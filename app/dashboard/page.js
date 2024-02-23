@@ -1,5 +1,5 @@
 import Header from "../components/common/Header";
-import ProjectLayout from "../components/layout/ProjectLayout";
+import DashboardLayout from "../components/layout/DashboardLayout";
 
 export default function DashboardPage(){
     const links = [
@@ -8,10 +8,10 @@ export default function DashboardPage(){
     ]
 
     return(
-        <ProjectLayout hideMenu={false}>
+        <DashboardLayout hideMenu={false}>
             <div className="flex flex-col gap-4">
                 <Header title={"Dashboard"} links={links}/>
             </div>
-        </ProjectLayout>
+        </DashboardLayout>
     )
 }
