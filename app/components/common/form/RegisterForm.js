@@ -26,18 +26,26 @@ export default function RegisterForm(){
     const searchParams = useSearchParams()
     const callbackUrl = searchParams.get('callbackUrl')
 
-    const handleSubmit = async(values) => {
-        setLoading(true)
-        const res = await signUp("credentials", {
-            ...values,
-            redirect: false
-        })
-        if (res.error) {
-            setError(JSON.parse(res.error).errors)
-        }else{
-            router.push(callbackUrl ?? "/")
+    const handleSubmit = async (values) => {
+        setError(false);
+        setLoading(true);
+        try {
+            const res = await signUp(values);
+            if (res.error) {
+                setLoading(false);
+                setError(true);
+                console.log(JSON.parse(res.error).errors)
+            } else {
+                router.push(callbackUrl ?? "/");
+            }
+        } catch (error) {
+            setLoading(false);
+            setError(true);
+            console.log(error)
+        } finally {
+            setLoading(false);
         }
-    }
+    };
 
     return(
         <div className="flex min-h-screen flex-col items-center justify-center text-dark-blue py-8">
@@ -83,7 +91,7 @@ export default function RegisterForm(){
                                     placeholder="Enter password..."
                                 />
                             </div>
-                            <div className="mt-2">
+                            <div className="mt-2 mb-4">
                                 <FormikField
                                     name="confirmPassword"
                                     required
@@ -92,12 +100,12 @@ export default function RegisterForm(){
                                     placeholder="Enter password confirmation..."
                                 />
                             </div>
-                            <div className="flex justify-center mt-4">
+                            {error && <p className="mb-2 text-md text-center text-danger-red font-bold">Something went wrong, please try again later.</p>}
+                            <div className="flex justify-center">
                                 <Button variant="primary" size="sm" type="submit" className="w-full">
                                     Sign Up
                                 </Button>
                             </div>
-                            {error && <p className="text-sm text-red">{error}</p>}
                             <div className="mt-2 text-basic-blue text-center text-xs hover:underline">
                                 <Link href="/login">
                                     Already have an account? Sign in

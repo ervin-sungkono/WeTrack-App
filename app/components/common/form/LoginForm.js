@@ -11,6 +11,7 @@ import { FaGoogle as Google } from "react-icons/fa";
 import Button from "../button/Button"
 import { loginSchema } from "@/app/lib/schema"
 import { signIn } from "@/app/lib/fetch/user"
+import LoadingAlert from "../alert/LoadingAlert"
 
 export default function LoginForm(){
     const initialValues = {
@@ -18,23 +19,32 @@ export default function LoginForm(){
         password: ""
     }
 
-    const [error, setError] = useState("")
+    const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false)
     const router = useRouter()
     const searchParams = useSearchParams()
     const callbackUrl = searchParams.get('callbackUrl')
 
-    const handleSubmit = async(values) => {
-        const res = await signIn("credentials", {
-            ...values,
-            redirect: false
-        })
-        if (res.error) {
-            setError(JSON.parse(res.error).errors)
-        }else{
-            router.push(callbackUrl ?? "/")
+    const handleSubmit = async (values) => {
+        setError(false);
+        setLoading(true);
+        try {
+            const res = await signIn(values);
+            if (res.error) {
+                setLoading(false);
+                setError(true);
+                console.log(JSON.parse(res.error).errors)
+            } else {
+                router.push(callbackUrl ?? "/");
+            }
+        } catch (error) {
+            setLoading(false);
+            setError(true);
+            console.log(error)
+        } finally {
+            setLoading(false);
         }
-    }
+    };
 
     return(
         <div className="flex min-h-screen flex-col items-center justify-center text-dark-blue py-8">
@@ -72,17 +82,17 @@ export default function LoginForm(){
 
                                 />
                             </div>
-                            <div className="mt-2 text-basic-blue text-xs hover:underline">
+                            <div className="mt-2 mb-4 text-basic-blue text-xs hover:underline">
                                 <Link href="#">
                                     Forgot password?
                                 </Link>
                             </div>
+                            {error && <p className="mb-2 text-md text-center text-danger-red font-bold">Invalid credentials entered!</p>}
                             <div className="flex justify-center">
-                                <Button variant="primary" size="sm" type="submit" className="w-full mt-4">
+                                <Button variant="primary" size="sm" type="submit" className="w-full">
                                     Sign In
                                 </Button>
                             </div>
-                            {error && <p className="text-sm text-red">{error}</p>}
                             <div className="mt-2 text-basic-blue text-center text-xs hover:underline">
                                 <Link href="/register">
                                     Create an account
@@ -115,6 +125,7 @@ export default function LoginForm(){
                     &copy; 2024 All Rights Reserved
                 </p>
             </div>
+            {loading && <LoadingAlert />}
         </div>
     )
 }

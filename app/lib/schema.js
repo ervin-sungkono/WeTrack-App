@@ -2,15 +2,36 @@
 import * as yup from 'yup'
 
 export const loginSchema = yup.object().shape({
-    email: yup.string().email("Invalid email address!").required("Email must be filled!"),
-    password: yup.string().required("Password must be filled!")
+    email: yup
+        .string()
+        .required("Email must be filled!")
+        .email("Invalid email address!"),
+    password: yup
+        .string()
+        .required("Password must be filled!")
 })
 
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
 export const registerSchema = yup.object().shape({
-    fullName: yup.string().required("Full name must be filled!"),
-    email: yup.string().email("Invalid email address!").required("Email must be filled!"),
-    password: yup.string().required("Password must be filled!"),
-    confirmPassword: yup.string().oneOf([yup.ref('password')], 'Password and password confirmation must match!').required("Password confirmation must be filled!")
+    fullName: yup
+        .string()
+        .required("Full name must be filled!")
+        .min(3, "Full name must contain at least 3 characters!")
+        .max(50, "Full name must contain at most 50 characters!"),
+    email: yup
+        .string()
+        .required("Email must be filled!")
+        .email("Invalid email address!"),
+    password: yup
+        .string()
+        .required("Password must be filled!")
+        .min(8, "Password must contain at least 8 characters!")
+        .matches(passwordRegex, "Password must contain at least one uppercase letter, one lowercase letter, and one number!"),
+    confirmPassword: yup
+        .string()
+        .required("Password confirmation must be filled!")
+        .oneOf([yup.ref('password')], 'Password and password confirmation must match!')  
 })
 
 export const projectTemplateSchema = yup.object().shape({
