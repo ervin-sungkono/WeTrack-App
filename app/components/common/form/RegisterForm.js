@@ -3,14 +3,14 @@
 
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState } from "react"
-import * as Yup from "yup"
 import WeTrackLogo from "../Logo"
 import FormikWrapper from "./formik/FormikWrapper"
 import FormikField from "./formik/FormikField"
 import Link from "next/link"
 import Button from "../button/Button"
 import { FaGoogle as Google } from "react-icons/fa"
-import { POST } from "@/app/api/auth/register/route"
+import { registerSchema } from "@/app/lib/schema"
+import { signUp } from "@/app/lib/fetch/user"
 
 export default function RegisterForm(){
     const initialValues = {
@@ -19,21 +19,19 @@ export default function RegisterForm(){
         password: "",
         confirmPassword: ""
     }
-    
-    const validationSchema = Yup.object({
-        fullName: Yup.string().required("Full name must be filled!"),
-        email: Yup.string().email("Invalid email address!").required("Email must be filled!"),
-        password: Yup.string().required("Password must be filled!"),
-        confirmPassword: Yup.string().oneOf([Yup.ref('password')], 'Password and password confirmation must match!').required("Password confirmation must be filled!")
-    })
 
     const [error, setError] = useState("")
+    const [loading, setLoading] = useState(false)
     const router = useRouter()
     const searchParams = useSearchParams()
     const callbackUrl = searchParams.get('callbackUrl')
 
     const handleSubmit = async(values) => {
-        const res = await POST(JSON.stringify(values))
+        setLoading(true)
+        const res = await signUp("credentials", {
+            ...values,
+            redirect: false
+        })
         if (res.error) {
             setError(JSON.parse(res.error).errors)
         }else{
@@ -55,7 +53,7 @@ export default function RegisterForm(){
                 <FormikWrapper
                     initialValues={initialValues}
                     onSubmit={handleSubmit}
-                    validationSchema={validationSchema}
+                    validationSchema={registerSchema}
                     children={(formik) => (
                         <div>
                             <div>
