@@ -10,7 +10,7 @@ import Link from "next/link"
 import { FaGoogle as Google } from "react-icons/fa";
 import Button from "../button/Button"
 import { loginSchema } from "@/app/lib/schema"
-import { signIn } from "@/app/lib/fetch/user"
+import { signIn } from "next-auth/react"
 import LoadingAlert from "../alert/LoadingAlert"
 
 export default function LoginForm(){
@@ -29,18 +29,18 @@ export default function LoginForm(){
         setError(false);
         setLoading(true);
         try {
-            const res = await signIn(values);
+            const res = await signIn("credentials", {
+                ...values,
+                redirect: false
+            })
             if (res.error) {
-                setLoading(false);
                 setError(true);
                 console.log(JSON.parse(res.error).errors)
             } else {
-                router.push(callbackUrl ?? "/");
+                router.replace(callbackUrl ?? "/dashboard");
             }
         } catch (error) {
-            setLoading(false);
             setError(true);
-            console.log(error)
         } finally {
             setLoading(false);
         }
@@ -87,7 +87,7 @@ export default function LoginForm(){
                                     Forgot password?
                                 </Link>
                             </div>
-                            {error && <p className="mb-2 text-md text-center text-danger-red font-bold">Invalid credentials entered!</p>}
+                            {error && <p className="mb-2 text-xs md:text-sm text-center text-danger-red font-medium">Invalid credentials entered!</p>}
                             <div className="flex justify-center">
                                 <Button variant="primary" size="sm" type="submit" className="w-full">
                                     Sign In
