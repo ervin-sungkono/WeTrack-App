@@ -49,6 +49,7 @@ export default function LoginForm(){
             }
         } catch (error) {
             setError(true);
+            console.log(error)
         } finally {
             setLoading(false);
         }

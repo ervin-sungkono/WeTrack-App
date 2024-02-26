@@ -7,6 +7,7 @@ import { registerSchema } from "@/app/lib/schema"
 import { useSession } from "next-auth/react"
 import { signUp } from "@/app/lib/fetch/user"
 import { FaGoogle as Google } from "react-icons/fa"
+import { sanitizeName } from "@/app/lib/string"
 
 import WeTrackLogo from "../Logo"
 import FormikWrapper from "./formik/FormikWrapper"
@@ -37,19 +38,25 @@ export default function RegisterForm(){
     })
 
     const handleSubmit = async (values) => {
+        let fullName = sanitizeName(values.fullName)
+        let email = values.email.toLowerCase()
+
         setError(false);
         setLoading(true);
         try {
-            const res = await signUp(values);
+            const res = await signUp({
+                ...values,
+                fullName: fullName,
+                email: email,
+                redirect: false
+            });
             if (res.error) {
-                setLoading(false);
                 setError(true);
                 console.log(JSON.parse(res.error).errors)
             } else {
                 router.push(callbackUrl ?? "/dashboard");
             }
         } catch (error) {
-            setLoading(false);
             setError(true);
             console.log(error)
         } finally {
