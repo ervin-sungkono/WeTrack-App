@@ -9,7 +9,7 @@ export const nextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: {
+        email: {
           label: "Email",
           type: "text",
           placeholder: "Enter your email",
@@ -20,11 +20,10 @@ export const nextAuthOptions = {
           placeholder: "Enter your password"
         },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         // Call Login API and pass in credentials variable
         if (!credentials?.email || !credentials?.password) return null
 
-        // const user = null
         const user = await signIn(credentials)
 
         if(user.data) return user.data
