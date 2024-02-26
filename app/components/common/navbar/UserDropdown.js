@@ -6,7 +6,7 @@ import { useEffect } from "react"
 import { initDropdowns } from "flowbite"
 import { signOut } from "next-auth/react"
 
-export default function UserDropdown({ fullName, email }){
+export default function UserDropdown({ fullName, email, profileImage }){
     useEffect(() => {
         initDropdowns()
     })
@@ -20,7 +20,7 @@ export default function UserDropdown({ fullName, email }){
                 data-dropdown-delay="0"
                 data-dropdown-offset-distance="-10"
             >
-                <UserIcon fullName={fullName}/>
+                <UserIcon fullName={fullName} src={profileImage}/>
                 <DropdownIcon size={20}/>
             </button>
             <div

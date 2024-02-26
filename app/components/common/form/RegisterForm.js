@@ -2,15 +2,17 @@
 "use client"
 
 import { useRouter, useSearchParams } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { registerSchema } from "@/app/lib/schema"
+import { useSession } from "next-auth/react"
+import { signUp } from "@/app/lib/fetch/user"
+import { FaGoogle as Google } from "react-icons/fa"
+
 import WeTrackLogo from "../Logo"
 import FormikWrapper from "./formik/FormikWrapper"
 import FormikField from "./formik/FormikField"
 import Link from "next/link"
 import Button from "../button/Button"
-import { FaGoogle as Google } from "react-icons/fa"
-import { registerSchema } from "@/app/lib/schema"
-import { signUp } from "@/app/lib/fetch/user"
 import LoadingIcon from "../alert/LoadingIcon"
 
 export default function RegisterForm(){
@@ -26,6 +28,13 @@ export default function RegisterForm(){
     const router = useRouter()
     const searchParams = useSearchParams()
     const callbackUrl = searchParams.get('callbackUrl')
+    const { status } = useSession()
+
+    useEffect(() => {
+        if(status === 'authenticated'){
+            router.replace('/dashboard')
+        }
+    })
 
     const handleSubmit = async (values) => {
         setError(false);

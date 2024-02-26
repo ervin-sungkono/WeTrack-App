@@ -18,10 +18,6 @@ export default function NavbarMenu({ hideMenu }){
     const { data: session } = useSession()
     console.log("session:", session)
 
-    const user = { 
-        fullName: "ervin cahyadinata sungkono",
-        email: "ervin.sungkono@binus.ac.id"
-    } // ini sementara sampai session jadi
     const projectLinks = [
         { label: 'Create a new project', url: '/projects/create' },
         { label: 'View all projects', url: '/projects' },
@@ -64,7 +60,7 @@ export default function NavbarMenu({ hideMenu }){
                                         <HelpIcon size={24}/>
                                     </Link>
                                 </div>
-                                <UserDropdown {...user}/>
+                                <UserDropdown {...session.user}/>
                             </div>
                             : 
                             <LinkButton
