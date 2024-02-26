@@ -6,14 +6,18 @@ import NavLink from "./NavLink"
 import NavDropdown from "./NavDropdown"
 import UserDropdown from "./UserDropdown"
 import { useState } from "react"
+import { useSession } from "next-auth/react"
 
 import { 
     IoMdNotifications as NotificationIcon, 
     IoIosHelpCircle as HelpIcon,
 } from "react-icons/io"
 
-export default function NavbarMenu({ session, hideMenu }){
+export default function NavbarMenu({ hideMenu }){
     const [hamburgerState, setHamburgerState] = useState(false)
+    const { data: session } = useSession()
+    console.log("session:", session)
+
     const user = { 
         fullName: "ervin cahyadinata sungkono",
         email: "ervin.sungkono@binus.ac.id"

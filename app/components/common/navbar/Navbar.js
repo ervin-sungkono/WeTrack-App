@@ -1,15 +1,15 @@
-import { getServerSession } from "next-auth"
+"use client"
+import { SessionProvider } from "next-auth/react"
 import NavbarMenu from "./NavbarMenu"
 
-export default async function Navbar({ hideMenu }){
-    const session = await getServerSession() ?? true
-    
-    console.log(session)
+export default function Navbar({ hideMenu }){
     return(
-        <nav className="navbar w-full fixed z-fixed top-0 bg-white shadow-md">
-            <div className="container h-20 flex justify-between items-center">
-                <NavbarMenu session={session} hideMenu={hideMenu}/>
-            </div>
-        </nav>
+        <SessionProvider>
+            <nav className="navbar w-full fixed z-fixed top-0 bg-white shadow-md">
+                <div className="container h-20 flex justify-between items-center">
+                    <NavbarMenu hideMenu={hideMenu}/>
+                </div>
+            </nav>
+        </SessionProvider>
     )
 }
