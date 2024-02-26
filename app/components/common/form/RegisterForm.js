@@ -11,6 +11,7 @@ import Button from "../button/Button"
 import { FaGoogle as Google } from "react-icons/fa"
 import { registerSchema } from "@/app/lib/schema"
 import { signUp } from "@/app/lib/fetch/user"
+import LoadingIcon from "../alert/LoadingIcon"
 
 export default function RegisterForm(){
     const initialValues = {
@@ -36,7 +37,7 @@ export default function RegisterForm(){
                 setError(true);
                 console.log(JSON.parse(res.error).errors)
             } else {
-                router.push(callbackUrl ?? "/");
+                router.push(callbackUrl ?? "/dashboard");
             }
         } catch (error) {
             setLoading(false);
@@ -138,6 +139,7 @@ export default function RegisterForm(){
                     &copy; 2024 All Rights Reserved
                 </p>
             </div>
+            {loading && <LoadingIcon />}
         </div>
     )
 }

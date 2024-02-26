@@ -1,4 +1,6 @@
-export default function LoadingAlert() {
+import { TailSpin } from "react-loader-spinner"
+
+export default function LoadingIcon() {
     return (
         <div style={
             {
@@ -8,10 +10,10 @@ export default function LoadingAlert() {
                 width: "100%",
                 height: "100%",
                 zIndex: 999,
-                backgroundColor: "rgba(0, 0, 0, 0.4)",
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
             }
         }>
-            <div className="bg-basic-blue text-white p-6 rounded text-center" style={
+            <div style={
                 {
                     position: "absolute",
                     top: "50%",
@@ -19,7 +21,11 @@ export default function LoadingAlert() {
                     transform: "translate(-50%, -50%)",
                 }
             }>
-                <h1 className="text-md md:text-lg xl:text-xl">Loading...</h1>
+                <TailSpin 
+                    color="#47389F"
+                    height={100}
+                    width={100}
+                />
             </div>
         </div>
     )

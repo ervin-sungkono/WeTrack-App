@@ -11,7 +11,7 @@ import { FaGoogle as Google } from "react-icons/fa";
 import Button from "../button/Button"
 import { loginSchema } from "@/app/lib/schema"
 import { signIn } from "next-auth/react"
-import LoadingAlert from "../alert/LoadingAlert"
+import LoadingIcon from "../alert/LoadingIcon"
 
 export default function LoginForm(){
     const initialValues = {
@@ -125,7 +125,7 @@ export default function LoginForm(){
                     &copy; 2024 All Rights Reserved
                 </p>
             </div>
-            {loading && <LoadingAlert />}
+            {loading && <LoadingIcon />}
         </div>
     )
 }
