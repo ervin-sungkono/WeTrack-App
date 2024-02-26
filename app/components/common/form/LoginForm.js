@@ -21,6 +21,7 @@ export default function LoginForm(){
     }
     
     const [error, setError] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("Invalid credentials entered!")
     const [loading, setLoading] = useState(false)
     const router = useRouter()
     const searchParams = useSearchParams()
@@ -45,7 +46,8 @@ export default function LoginForm(){
                 setError(true);
                 console.log(JSON.parse(res.error).errors)
             } else {
-                router.replace(callbackUrl ?? "/dashboard");
+                // router.replace(callbackUrl ?? "/dashboard");
+                router.push("/dashboard")
             }
         } catch (error) {
             setError(true);
@@ -96,7 +98,7 @@ export default function LoginForm(){
                                     Forgot password?
                                 </Link>
                             </div>
-                            {error && <p className="mb-2 text-xs md:text-sm text-center text-danger-red font-medium">Invalid credentials entered!</p>}
+                            {error && <p className="mb-2 text-xs md:text-sm text-center text-danger-red font-medium">{errorMessage}</p>}
                             <div className="flex justify-center">
                                 <Button variant="primary" size="sm" type="submit" className="w-full">
                                     Sign In
