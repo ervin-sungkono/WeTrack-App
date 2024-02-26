@@ -1,16 +1,17 @@
 /* eslint-disable react/no-children-prop */
 "use client"
 
+import { useRouter, useSearchParams } from "next/navigation"
+import { useState, useEffect } from "react"
+import { SessionProvider, signIn, useSession } from "next-auth/react"
+import { loginSchema } from "@/app/lib/schema"
+import { FaGoogle as Google } from "react-icons/fa";
+
+import Link from "next/link"
 import WeTrackLogo from "@/app/components/common/Logo"
 import FormikWrapper from "@/app/components/common/form/formik/FormikWrapper"
 import FormikField from "@/app/components/common/form/formik/FormikField"
-import { useRouter, useSearchParams } from "next/navigation"
-import { useState } from "react"
-import Link from "next/link"
-import { FaGoogle as Google } from "react-icons/fa";
 import Button from "../button/Button"
-import { loginSchema } from "@/app/lib/schema"
-import { signIn } from "next-auth/react"
 import LoadingIcon from "../alert/LoadingIcon"
 
 export default function LoginForm(){
@@ -18,12 +19,19 @@ export default function LoginForm(){
         email: "",
         password: ""
     }
-
+    
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false)
     const router = useRouter()
     const searchParams = useSearchParams()
     const callbackUrl = searchParams.get('callbackUrl')
+    const { status } = useSession()
+
+    useEffect(() => {
+        if(status === 'authenticated'){
+            router.replace('/dashboard')
+        }
+    })
 
     const handleSubmit = async (values) => {
         setError(false);
