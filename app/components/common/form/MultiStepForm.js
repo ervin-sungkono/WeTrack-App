@@ -9,7 +9,7 @@ export default function MultiStepForm({ steps }){
     const prevFormStep = () => setFormStep((currentStep) => currentStep - 1)
 
     return(
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 pb-6 md:pb-8">
             <div className="flex items-center gap-2">
                 {steps.map((step, index) => (
                     <div className={`text-xs md:text-sm font-medium py-3 flex-grow border-b-[3px] 
