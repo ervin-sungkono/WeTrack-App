@@ -9,11 +9,6 @@ import UserIcon from "../common/UserIcon"
 import LinkButton from "../common/button/LinkButton"
 
 export default function ProjectContent(){
-    const [sorting, setSorting] = useState([])
-    const [pagination, setPagination] = useState({
-        pageIndex: 1,
-        pageSize: 10
-    })
     const [pageSize, setPageSize] = useState(10)
     const [query, setQuery] = useState("")
     const [projectData, setProjectData] = useState(null)
@@ -110,10 +105,6 @@ export default function ProjectContent(){
             <Table
                 data={projectData?.filter(project => project.ProjectName.includes(query))}
                 columns={columns}
-                pagination={pagination}
-                setPagination={setPagination}
-                sorting={sorting}
-                setSorting={setSorting}
                 pageSize={pageSize}
             />
         </div>

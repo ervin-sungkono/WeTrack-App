@@ -16,7 +16,6 @@ export default function Table({
     data, 
     columns, 
     pageSize = 10,
-    pageCount = data ? (data.length / pageSize) : -1,
 }){
     const memoizedData = useMemo(() => data, [data])
     const memoizedColumns = useMemo(() => columns, [columns])
@@ -47,7 +46,6 @@ export default function Table({
             }
         },
         getCoreRowModel: getCoreRowModel(),
-        pageCount: pageCount ?? -1,
     })
 
     useEffect(() => {
