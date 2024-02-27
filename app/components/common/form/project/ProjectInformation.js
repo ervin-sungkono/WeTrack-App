@@ -3,6 +3,7 @@ import { Formik, Form } from "formik"
 import { useEffect, useState } from "react"
 import { useProjectData } from "@/app/lib/context/project"
 import { projectInformationSchema } from "@/app/lib/schema"
+import { useSession } from "next-auth/react"
 
 import FormikField from "../formik/FormikField"
 import FormikTextarea from "../formik/FormikTextarea"
@@ -16,22 +17,25 @@ export default function ProjectInformation({nextFormStep, prevFormStep}){
     const [isLoading, setLoading] = useState(true)
     const [completed, setCompleted] = useState(false)
     const { projectData, submitProjectData } = useProjectData()
+    const { data: session } = useSession()
     
     useEffect(() => setLoading(false), [])
 
     const initialValues = {
         projectName: projectData.projectName ?? "",
         key: projectData.key ?? "",
-        userStory: null
+        userStory: ""
     }
 
     const onSubmit = (values) => {
-        console.log("step 2: ",values)
-        submitProjectData(values)
+        // console.log("step 2: ",values)
+        submitProjectData({
+            ...values,
+            createdBy: session.user.uid
+        })
             .then(res => {
-                if(res.success){
+                if(res.data){
                     setCompleted(true)
-                    nextFormStep()
                     // TODO: Tambah logic untuk generate issue apabila template nya AI Generate
                     // TODO-2: Tambah logic untuk integrasi dengan API chatGPT
                 }else{

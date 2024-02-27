@@ -1,4 +1,6 @@
 import { createContext, useState, useContext } from "react"
+import { createNewProject } from "../fetch/project"
+import { SessionProvider } from "next-auth/react"
 
 const ProjectContext = createContext({})
 
@@ -10,18 +12,20 @@ export const ProjectProvider = ({ children }) => {
             ...projectData,
             ...values
         }
-        const response = {}
-        // const response = await ProjectUser(payload)
-        // TODO: integrate with API create project
+
+        const response = await createNewProject(payload)
+        console.log(response)
 
         setProjectData({})
         return response
     }
 
     return(
-        <ProjectContext.Provider value={{projectData, setProjectData, submitProjectData}}>
-            {children}
-        </ProjectContext.Provider>
+        <SessionProvider>
+            <ProjectContext.Provider value={{projectData, setProjectData, submitProjectData}}>
+                {children}
+            </ProjectContext.Provider>
+        </SessionProvider>
     )
 }
 
