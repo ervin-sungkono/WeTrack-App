@@ -18,6 +18,7 @@
     "next-auth": "^4.24.5",
     "ngrok": "^5.0.0-beta.2",
     "react": "^18",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18",
     "react-icons": "^4.10.1",
     "react-loader-spinner": "^5.4.5",
