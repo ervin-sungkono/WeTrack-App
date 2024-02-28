@@ -22,6 +22,16 @@ export default function UserIcon({ src, alt = "", fullName, size = 'md' }){
                 return "text-xs"
             case 'md':
                 return "text-sm"
+            case 'lg':
+                return "text-md"
+            case 'xl':
+                return "text-lg"
+            case '2xl':
+                return "text-xl"
+            case '3xl':
+                return "text-2xl"
+            case '4xl':
+                return "text-3xl"
         }
     }
 
@@ -31,6 +41,16 @@ export default function UserIcon({ src, alt = "", fullName, size = 'md' }){
                 return "w-8 h-8"
             case 'md':
                 return "w-10 h-10"
+            case 'lg': 
+                return "w-12 h-12"
+            case 'xl':
+                return "w-16 h-16"
+            case '2xl':
+                return "w-20 h-20"
+            case '3xl':
+                return "w-24 h-24"
+            case '4xl':
+                return "w-28 h-28 border-4 border-white"
         }
     }
 
