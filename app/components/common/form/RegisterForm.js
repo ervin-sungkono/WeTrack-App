@@ -14,7 +14,7 @@ import FormikWrapper from "./formik/FormikWrapper"
 import FormikField from "./formik/FormikField"
 import Link from "next/link"
 import Button from "../button/Button"
-import LoadingIcon from "../alert/LoadingIcon"
+import PopUpLoad from "../alert/PopUpLoad"
 
 export default function RegisterForm(){
     const initialValues = {
@@ -67,7 +67,7 @@ export default function RegisterForm(){
         } finally {
             setLoading(false);
         }
-    };
+    }
 
     return(
         <div className="flex min-h-screen flex-col items-center justify-center text-dark-blue py-8">
@@ -160,7 +160,7 @@ export default function RegisterForm(){
                     &copy; 2024 All Rights Reserved
                 </p>
             </div>
-            {loading && <LoadingIcon />}
+            {loading && <PopUpLoad />}
         </div>
     )
 }
