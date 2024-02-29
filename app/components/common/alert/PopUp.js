@@ -1,6 +1,4 @@
-import { TailSpin } from "react-loader-spinner"
-
-export default function LoadingIcon() {
+export default function PopUp({width, children}) {
     return (
         <div style={
             {
@@ -19,13 +17,10 @@ export default function LoadingIcon() {
                     top: "50%",
                     left: "50%",
                     transform: "translate(-50%, -50%)",
+                    width: width,
                 }
             }>
-                <TailSpin 
-                    color="#47389F"
-                    height={100}
-                    width={100}
-                />
+                {children}
             </div>
         </div>
     )

@@ -28,7 +28,9 @@ module.exports = {
         'dark-blue': '#1A1B36',
         'basic-blue': '#47389F',
         'light-blue': '#BBB7D3',
-        'danger-red': '#FF594E'
+        'danger-red': '#FF594E',
+        'warning-yellow': '#E3D55B',
+        'success-green': '#4CAF50',
       },
       zIndex:{
         'fixed': 9999

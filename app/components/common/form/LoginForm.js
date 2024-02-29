@@ -3,7 +3,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState, useEffect } from "react"
-import { SessionProvider, signIn, useSession } from "next-auth/react"
+import { signIn, useSession } from "next-auth/react"
 import { loginSchema } from "@/app/lib/schema"
 import { FaGoogle as Google } from "react-icons/fa";
 
@@ -12,7 +12,7 @@ import WeTrackLogo from "@/app/components/common/Logo"
 import FormikWrapper from "@/app/components/common/form/formik/FormikWrapper"
 import FormikField from "@/app/components/common/form/formik/FormikField"
 import Button from "../button/Button"
-import LoadingIcon from "../alert/LoadingIcon"
+import PopUpLoad from "../alert/PopUpLoad"
 
 export default function LoginForm(){
     const initialValues = {
@@ -90,7 +90,6 @@ export default function LoginForm(){
                                     type="password"
                                     label="Password"
                                     placeholder="Enter password..."
-
                                 />
                             </div>
                             <div className="mt-2 mb-4 text-basic-blue text-xs hover:underline">
@@ -136,7 +135,7 @@ export default function LoginForm(){
                     &copy; 2024 All Rights Reserved
                 </p>
             </div>
-            {loading && <LoadingIcon />}
+            {loading && <PopUpLoad />}
         </div>
     )
 }

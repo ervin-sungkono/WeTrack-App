@@ -15,12 +15,20 @@ export default function Button({ type = 'button', variant = 'primary', size = 'm
                 return 'bg-basic-blue text-white'
             case 'secondary':
                 return 'border text-basic-blue border-basic-blue'
+            case 'pop-up-primary':
+                return 'border bg-white text-basic-blue border-basic-blue'
+            case 'pop-up-secondary':
+                return 'border bg-basic-blue text-white border-white'
             case 'gray':
                 return 'bg-gray-200 text-basic-blue'
-            case 'danger-primary':
+            case 'danger':
                 return 'bg-danger-red text-white'
             case 'danger-secondary':
-                return 'border text-danger-red border-danger-red'
+                return 'border border text-danger-red border-danger-red'
+            case 'white-danger':
+                return 'border bg-white text-danger-red border-danger-red'
+            case 'white-danger-secondary':
+                return 'border bg-danger-red text-white border-white'
             default:
                 return ''
         }

@@ -34,6 +34,36 @@ export const registerSchema = yup.object().shape({
         .oneOf([yup.ref('password')], 'Password and password confirmation must match!')  
 })
 
+export const changePasswordSchema = yup.object().shape({
+    oldPassword: yup
+        .string()
+        .required("Old password must be filled!"),
+    newPassword: yup
+        .string()
+        .required("New password must be filled!")
+        .min(8, "New password must contain at least 8 characters!")
+        .matches(passwordRegex, "New password must contain at least one uppercase letter, one lowercase letter, and one number!"),
+    confirmPassword: yup
+        .string()
+        .required("New password confirmation must be filled!")
+        .oneOf([yup.ref('newPassword')], 'New password and password confirmation must match!')
+})
+
+export const updateProfileSchema = yup.object().shape({
+    description: yup
+        .string()
+        .required("Description must be filled!")
+        .max(256, "Description must contain at most 256 characters!"),
+    jobPosition: yup
+        .string()
+        .required("Job position must be filled!")
+        .max(50, "Job position must contain at most 50 characters!"),
+    location: yup
+        .string()
+        .required("Location must be filled!")
+        .max(50, "Location must contain at most 50 characters!")
+})
+
 export const projectTemplateSchema = yup.object().shape({
     templateType: yup
         .string()
