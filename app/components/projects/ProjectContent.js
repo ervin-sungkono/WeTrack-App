@@ -9,17 +9,11 @@ import UserIcon from "../common/UserIcon"
 import LinkButton from "../common/button/LinkButton"
 
 export default function ProjectContent(){
-    const [sorting, setSorting] = useState([])
-    const [pagination, setPagination] = useState({
-        pageIndex: 1,
-        pageSize: 10
-    })
     const [pageSize, setPageSize] = useState(10)
     const [query, setQuery] = useState("")
     const [projectData, setProjectData] = useState(null)
 
     const pageSizeOptions = [
-        {label: "5", value: 5},
         {label: "10", value: 10},
         {label: "25", value: 25},
         {label: "50", value: 50}
@@ -35,7 +29,7 @@ export default function ProjectContent(){
 
     useEffect(() => {
         const projectData = []
-        for(let i = 0; i < 50; i++){
+        for(let i = 0; i < 45; i++){
             projectData.push({
                 Id: i,
                 ProjectName: `${i}-New Project`,
@@ -89,7 +83,7 @@ export default function ProjectContent(){
     return(
         <div className="h-full flex flex-col mt-4 md:mt-6 gap-4">
             <div className="flex flex-col md:flex-row justify-between items-center gap-2">
-                <div className="w-full flex justify-center items-center gap-3 md:gap-6">
+                <div className="w-full flex justify-center md:justify-start items-center gap-3 md:gap-6">
                     <SearchBar placeholder={"Search project.."} handleSearch={handleSearch}/>
                     <div className="flex items-center gap-2 md:gap-4">
                         <div className="flex items-center gap-2">
@@ -110,10 +104,6 @@ export default function ProjectContent(){
             <Table
                 data={projectData?.filter(project => project.ProjectName.includes(query))}
                 columns={columns}
-                pagination={pagination}
-                setPagination={setPagination}
-                sorting={sorting}
-                setSorting={setSorting}
                 pageSize={pageSize}
             />
         </div>

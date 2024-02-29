@@ -27,7 +27,7 @@ export default function UserDropdown({ fullName, email, profileImage }){
                 id="user-dropdown"
                 className="z-10 hidden bg-white divide-y divide-gray-300 border border-dark-blue/30 rounded-md shadow-sm w-48"
             >
-                <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
+                <div className="px-4 py-3 text-sm text-gray-900">
                     <div className="font-semibold">{fullName}</div>
                     <div className="text-dark-blue/80 truncate">{email}</div>
                 </div>

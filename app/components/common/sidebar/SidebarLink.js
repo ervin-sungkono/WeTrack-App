@@ -5,7 +5,6 @@ import { removeTrailingSlash } from "@/app/lib/string"
 export default function SidebarLink({ label, url, icon, baseUrl, open }){
     const pathname = usePathname()
     const pathString = removeTrailingSlash(`${baseUrl}${url}`)
-    console.log(pathname, pathString)
     
     return(
         <Link href={pathString} className="group">

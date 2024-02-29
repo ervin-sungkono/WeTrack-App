@@ -16,7 +16,6 @@ export default function Table({
     data, 
     columns, 
     pageSize = 10,
-    pageCount = data ? (data.length / pageSize) : -1,
 }){
     const memoizedData = useMemo(() => data, [data])
     const memoizedColumns = useMemo(() => columns, [columns])
@@ -47,7 +46,6 @@ export default function Table({
             }
         },
         getCoreRowModel: getCoreRowModel(),
-        pageCount: pageCount ?? -1,
     })
 
     useEffect(() => {
@@ -70,7 +68,7 @@ export default function Table({
         )
     }
     return(
-        <div className="max-h-full flex flex-col gap-4 overflow-hidden">
+        <div className="h-full max-h-full flex flex-col gap-4 overflow-hidden">
             <div className='h-full overflow-auto'>
                 <table className='w-full table-fixed'>
                     <thead className='sticky top-0 z-40 bg-white'>

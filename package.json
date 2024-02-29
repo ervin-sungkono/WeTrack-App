@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hello-pangea/dnd": "^16.5.0",
     "@tanstack/react-table": "^8.9.3",
     "chart.js": "^4.4.1",
     "firebase": "^10.7.1",

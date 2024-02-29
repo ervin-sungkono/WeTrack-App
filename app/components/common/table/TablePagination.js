@@ -20,7 +20,7 @@ export default function TablePagination({
     const endIndex = Math.min((pageIndex + 1) * pageSize, totalCount)
 
     return(
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center mt-auto">
             <div className="flex items-center">
                 <button 
                     className="hover:text-basic-blue p-1 disabled:text-dark-blue/60" 
