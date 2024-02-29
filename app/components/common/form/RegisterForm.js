@@ -7,6 +7,7 @@ import { registerSchema } from "@/app/lib/schema"
 import { useSession } from "next-auth/react"
 import { signUp } from "@/app/lib/fetch/user"
 import { FaGoogle as Google } from "react-icons/fa"
+import { sanitizeName } from "@/app/lib/string"
 
 import WeTrackLogo from "../Logo"
 import FormikWrapper from "./formik/FormikWrapper"
@@ -24,6 +25,7 @@ export default function RegisterForm(){
     }
 
     const [error, setError] = useState("")
+    const [errorMessage, setErrorMessage] = useState("Something went wrong, please try again later.")
     const [loading, setLoading] = useState(false)
     const router = useRouter()
     const searchParams = useSearchParams()
@@ -37,21 +39,31 @@ export default function RegisterForm(){
     })
 
     const handleSubmit = async (values) => {
+        let fullName = sanitizeName(values.fullName)
+        let email = values.email.toLowerCase()
+
         setError(false);
         setLoading(true);
         try {
-            const res = await signUp(values);
+            const res = await signUp({
+                ...values,
+                fullName: fullName,
+                email: email,
+                redirect: false
+            });
             if (res.error) {
-                setLoading(false);
                 setError(true);
                 console.log(JSON.parse(res.error).errors)
             } else {
-                router.push(callbackUrl ?? "/dashboard");
+                // router.replace(callbackUrl ?? "/dashboard");
+                router.push("/login")
             }
         } catch (error) {
-            setLoading(false);
             setError(true);
-            console.log(error)
+            if(error.message.includes("auth/email-already-in-use")){
+                setErrorMessage("Email already in use!")
+            }
+            console.log(error.message)
         } finally {
             setLoading(false);
         }
@@ -110,7 +122,7 @@ export default function RegisterForm(){
                                     placeholder="Enter password confirmation..."
                                 />
                             </div>
-                            {error && <p className="mb-2 text-md text-center text-danger-red font-bold">Something went wrong, please try again later.</p>}
+                            {error && <p className="mb-2 text-md text-center text-danger-red font-bold">{errorMessage}</p>}
                             <div className="flex justify-center">
                                 <Button variant="primary" size="sm" type="submit" className="w-full">
                                     Sign Up
