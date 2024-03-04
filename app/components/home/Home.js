@@ -1,5 +1,5 @@
-import Button from "./button/Button";
-import Footer from "./footer/Footer";
+import Button from "../common/button/Button";
+import Footer from "../common/footer/Footer";
 import Image from "next/image";
 
 function CustomLine({size='md'}){
