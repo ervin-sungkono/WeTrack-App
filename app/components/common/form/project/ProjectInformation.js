@@ -1,5 +1,5 @@
 "use client"
-import { Formik, Form } from "formik"
+import FormikWrapper from "../formik/FormikWrapper"
 import { useEffect, useState } from "react"
 import { useProjectData } from "@/app/lib/context/project"
 import { projectInformationSchema } from "@/app/lib/schema"
@@ -66,14 +66,14 @@ export default function ProjectInformation({nextFormStep, prevFormStep}){
         </div> 
     )
     return(
-        <Formik
+        <FormikWrapper
             initialValues={initialValues}
             onSubmit={onSubmit}
             validationSchema={projectInformationSchema}
         >
             {(formik) => {
                 return(
-                    <Form className="w-full flex flex-col gap-6">
+                    <div className="w-full flex flex-col gap-6">
                         <div className="flex flex-col gap-4">
                             <FormikField label="Project Name" required name="projectName" type="text" placeholder={"Enter project name.."}/>
                             <KeyFormikField/>
@@ -81,11 +81,11 @@ export default function ProjectInformation({nextFormStep, prevFormStep}){
                         </div>
                         <div className="flex justify-end gap-2 md:gap-4">
                             <Button variant="gray" onClick={prevFormStep} className="w-24 md:w-32">Back</Button>
-                            <Button type={"submit"} className="w-24 md:w-32">Next</Button>
+                            <Button type={"submit"} className="w-24 md:w-32">Submit</Button>
                         </div>
-                    </Form>
+                    </div>
                 ) 
             }}
-        </Formik>
+        </FormikWrapper>
     )
 }
