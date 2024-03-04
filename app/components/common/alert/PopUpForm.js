@@ -49,19 +49,19 @@ export default function PopUpForm({variant = 'primary', title, message, onConfir
     }
 
     return (
-        <PopUp width={"50%"}>
-            <div className={`p-8 ${getVariantClass()} rounded-lg shadow-lg`}>
-                <h1 className="text-2xl font-bold">{title}</h1>
-                {message}
-                <div className="mt-8">
+        <PopUp>
+            <div className={`p-4 md:p-8 ${getVariantClass()} rounded-lg shadow-lg`}>
+                <h1 className="text-lg md:text-xl font-bold">{title}</h1>
+                <p className="text-xs md:text-sm">{message}</p>
+                <div className="mt-4 md:mt-8">
                     {children}
                 </div>
-                <div className="flex gap-4 items-center justify-end">
+                <div className="flex gap-2 md:gap-4 items-center justify-end">
                     {onConfirm && onConfirmOption && (
-                        <Button variant={`${getConfirmButtonVariantClass()}`} onClick={onConfirm}>{onConfirmOption}</Button>
+                        <Button size="sm" variant={`${getConfirmButtonVariantClass()}`} onClick={onConfirm}>{onConfirmOption}</Button>
                     )}
                     {onClose && onCloseOption && (
-                        <Button variant={`${getCloseButtonVariantClass()}`} onClick={onClose}>{onCloseOption}</Button>
+                        <Button size="sm" variant={`${getCloseButtonVariantClass()}`} onClick={onClose}>{onCloseOption}</Button>
                     )}
                 </div>
             </div>
