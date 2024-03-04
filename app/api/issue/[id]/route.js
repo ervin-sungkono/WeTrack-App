@@ -1,15 +1,61 @@
-import { updateDoc, serverTimestamp, getDoc, deleteDoc, doc } from 'firebase/firestore';
+import { updateDoc, serverTimestamp, getDoc, deleteDoc, doc, collection } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 
-export async function PUT(request, { params }) {
+export async function GET(request, context) {
     try {
-        const { id }  = params;
+        const { id } = context.params
+        const projectId = request.nextUrl.searchParams.get("projectId")
+
+        const projectRef = doc(db, "projects", projectId)
+
+        if(!projectRef) {
+            return NextResponse.json({
+                message: "Project not found"
+            }, { status: 404 });
+        }
+
+        const projectSnap = await getDoc(projectRef);
+        const projectData = projectSnap.data()
+
+        if(!projectData) {
+            return  NextResponse.json({
+                message: "Project detail not found"
+            }, { status: 404 });
+        }
+
+        console.log("issue list", projectData.issueList)
+        const issueDetail = projectData.issueList.find((issue) => issue.id === id )
+
+        console.log("issue detail", issueDetail)
+
+        if(!issueDetail) {
+            return NextResponse.json({
+                message: "No issue found"
+            }, { status: 404 })
+        }
+
+        return NextResponse.json({
+            data: issueDetail,
+            message: "Successfully get Issue detail"
+        }, { status: 200 })
+
+    } catch (error) {
+        console.error("Cannot update project", error);
+        return NextResponse.json({
+            data: null,
+            message: error.message
+        }, { status: 500 });
+    }
+}
+
+export async function PUT(request, context) {
+    try {
+        const { id }  = context.params;
         const { 
             projectId, 
             assignedTo,
             typeId,
-            createdBy,
             issueName,
             label,
             statusId,
@@ -20,9 +66,7 @@ export async function PUT(request, { params }) {
         } = await request.json();
 
         const projectDocRef = doc(db, 'projects', projectId);
-        console.log("projectDocRef", projectDocRef)
         const projectSnap = await getDoc(projectDocRef);
-        console.log("project snap", projectSnap)
 
         if (!projectSnap.exists()) {
             return NextResponse.json({
@@ -44,15 +88,14 @@ export async function PUT(request, { params }) {
         const issueToUpdate = issueList[issueIndex];
         const updatedIssue = {
             ...issueToUpdate,
-            assignedTo,
-            typeId,
-            createdBy,
-            issueName,
-            label,
-            statusId,
-            description,
-            startDate,
-            dueDate,
+            assignedTo: assignedTo ?? projectData.assignedTo,
+            typeId: typeId ?? projectData.typeId,
+            issueName: issueName ?? projectData.issueName,
+            label: label ?? projectData.label,
+            statusId: statusId ?? projectData.statusId,
+            description: description ?? projectData.description,
+            startDate: startDate ?? projectData.startDate,
+            dueDate: dueDate ?? projectData.dueDate,
             updatedAt: new Date().toISOString(),
         };
 
@@ -79,10 +122,10 @@ export async function PUT(request, { params }) {
     }
 }
 
-export async function DELETE(request, { params }) {
+export async function DELETE(request, context) {
     try {
-        const { id } = params;
-        const { projectId } = request.nextUrl.searchParams.get("projectid")
+        const { id } = context.params;
+        const projectId = request.nextUrl.searchParams.get("projectId")
 
         const projectDocRef = doc(db, 'projects', projectId);
         const projectSnap = await getDoc(projectDocRef);

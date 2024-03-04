@@ -6,7 +6,7 @@ export async function GET(request) {
     try {
         const userId = request.nextUrl.searchParams.get("userId")
 
-        const projectsRef = await collection(db, 'projects')
+        const projectsRef = collection(db, 'projects')
 
         const q = query(projectsRef, where("createdBy", "==", userId));
         const querySnapshot = await getDocs(q);
