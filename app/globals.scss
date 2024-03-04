@@ -12,6 +12,24 @@ body{
     background-color: #F5F5F5;
 }
 
+/* width */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #7e7e7e;
+    border-radius: 4px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #bbbbbb;
+    border-radius: 4px;
+}
+
 .container{
     max-width: 1600px !important; 
 }
