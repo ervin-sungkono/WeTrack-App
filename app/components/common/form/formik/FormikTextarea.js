@@ -1,12 +1,10 @@
-
-
 import { Field } from "formik"
 import FormikErrorMessage from "./FormikErrorMessage"
 
 /**
  * FormikTextarea Component
  */
-export default function FormikTextarea({ name, required, label, placeholder, rows = 4 }){
+export default function FormikTextarea({ name, required, label, placeholder, rows = 4, resize = true }){
     return(
         <Field name={name}>
             {(formikField) => {
@@ -22,8 +20,9 @@ export default function FormikTextarea({ name, required, label, placeholder, row
                             placeholder={placeholder}
                             rows={rows}
                             className={
-                                `bg-transparent text-sm rounded-lg focus:ring-normal-green block w-full px-2 md:px-3 py-1.5 md:py-2
-                                ${formikField.meta.error && formikField.meta.touched ? "border-red-600" : "border-dark-blue/30"}`
+                                `bg-transparent text-xs md:text-sm rounded-lg focus:ring-normal-green block w-full px-2 md:px-3 py-1.5 md:py-2
+                                ${formikField.meta.error && formikField.meta.touched ? "border-red-600" : "border-dark-blue/30"} 
+                                ${resize ? "" : "resize-none"}` 
                             }
                         />
                         <FormikErrorMessage name={name}/>
