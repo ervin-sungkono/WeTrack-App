@@ -1,4 +1,4 @@
-import PopUpForm from "../alert/PopUpForm"
+import PopUpForm from "../../alert/PopUpForm"
 
 export default function DeleteAccountForm({onConfirm, onClose}){
     return (

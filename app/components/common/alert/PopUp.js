@@ -7,17 +7,16 @@ export default function PopUp({width, children}) {
                 left: 0,
                 width: "100%",
                 height: "100%",
-                zIndex: 999,
+                zIndex: 10000,
                 backgroundColor: "rgba(0, 0, 0, 0.5)",
             }
         }>
-            <div style={
+            <div className="w-9/10 md:w-1/2" style={
                 {
                     position: "absolute",
                     top: "50%",
                     left: "50%",
                     transform: "translate(-50%, -50%)",
-                    width: width,
                 }
             }>
                 {children}
