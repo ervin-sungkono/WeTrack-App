@@ -1,7 +1,7 @@
 // Board Page
 import ProjectLayout from "@/app/components/layout/ProjectLayout"
 import Header from "@/app/components/common/Header"
-// import BoardContent from "@/app/components/projects/board/BoardContent"
+import BoardContent from "@/app/components/projects/board/BoardContent"
 
 export default function BoardPage({ params: { id } }){
     const links = [
@@ -13,7 +13,7 @@ export default function BoardPage({ params: { id } }){
         <ProjectLayout>
             <Header title={"Board"} links={links}/>
             {/* TODO: Develop Board untuk Board Page */}
-            {/* <BoardContent/> */}
+            <BoardContent/>
         </ProjectLayout>
     )
 }

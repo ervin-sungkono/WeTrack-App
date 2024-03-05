@@ -20,7 +20,7 @@ export default function FormikField({ name, required, type, label, placeholder, 
                     <div className="flex flex-col gap-1">
                         <label htmlFor={name} className="block font-semibold text-xs md:text-sm">
                             {label}
-                            {/* {required && <span className="text-red-600">*</span>} */}
+                            {required && <span className="text-red-600">*</span>}
                         </label>
                         <div className="relative flex items-center">
                             <input
