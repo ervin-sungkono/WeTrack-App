@@ -142,7 +142,7 @@ export default function RegisterForm(){
                             </div>
                             <div className="mt-4">
                                 <Link href="#">
-                                    <Button variant="secondary" size="sm" className="w-full mt-4 flex justify-center items-center">
+                                    <Button variant="primary" outline size="sm" className="w-full mt-4 flex justify-center items-center">
                                         <Google className="inline-block mr-2" />
                                         Sign up with Google
                                     </Button>

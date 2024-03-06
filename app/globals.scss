@@ -15,19 +15,19 @@ body{
 }
 
 /* width */
-::-webkit-scrollbar {
+.custom-scrollbar ::-webkit-scrollbar {
     width: 6px;
     height: 10px;
 }
 
 /* Track */
-::-webkit-scrollbar-track {
+.custom-scrollbar ::-webkit-scrollbar-track {
     background: #7e7e7e;
     border-radius: 4px;
 }
 
 /* Handle */
-::-webkit-scrollbar-thumb {
+.custom-scrollbar ::-webkit-scrollbar-thumb {
     background: #bbbbbb;
     border-radius: 4px;
 }

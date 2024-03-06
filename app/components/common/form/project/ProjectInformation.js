@@ -80,7 +80,7 @@ export default function ProjectInformation({nextFormStep, prevFormStep}){
                             {projectData.templateType === 'ai-generated' && <FormikTextarea label="User Story" name="userStory" placeholder={"Enter user story.."} rows={4}/>}
                         </div>
                         <div className="flex justify-end gap-2 md:gap-4">
-                            <Button variant="gray" onClick={prevFormStep} className="w-24 md:w-32">Back</Button>
+                            <Button variant="secondary" onClick={prevFormStep} className="w-24 md:w-32">Back</Button>
                             <Button type={"submit"} className="w-24 md:w-32">Submit</Button>
                         </div>
                     </div>

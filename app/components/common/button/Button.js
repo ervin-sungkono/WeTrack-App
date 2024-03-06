@@ -1,44 +1,80 @@
-export default function Button({ type = 'button', variant = 'primary', size = 'md', onClick, disabled, className, children }){
+export default function Button({ 
+    type = 'button', 
+    outline = false,
+    variant = 'primary',
+    size = 'md', 
+    onClick, 
+    disabled, 
+    className, 
+    children 
+}){
+    const getButtonColor = () => {
+        switch(variant){
+            case 'primary':
+                return ({
+                    bgColor: 'basic-blue',
+                    textColor: 'white',
+                    hover: 'hover:bg-basic-blue/80',
+                    hoverOutline: 'hover:bg-basic-blue hover:text-white'
+                })
+            case 'secondary':
+                return ({
+                    bgColor: 'light-blue',
+                    textColor: 'dark-blue',
+                    hover: 'hover:bg-light-blue/80',
+                    hoverOutline: 'hover:bg-light-blue hover:text-white'
+                })
+            case 'success': 
+                return ({
+                    bgColor: 'success-green',
+                    textColor: 'white',
+                    hover: 'hover:bg-success-green/80',
+                    hoverOutline: 'hover:bg-success-green hover:text-white'
+                })
+            case 'warning': 
+                return ({
+                    bgColor: 'warning-yellow',
+                    textColor: 'dark-blue',
+                    hover: 'hover:bg-warning-yellow/80',
+                    hoverOutline: 'hover:bg-warning-yellow hover:text-dark-blue'
+                })
+            case 'danger':
+                return({
+                    bgColor: 'danger-red',
+                    textColor: 'white',
+                    hover: 'hover:bg-danger-red/80',
+                    hoverOutline: 'hover:bg-danger-red hover:text-white'
+                })
+            default:
+                return ({
+                    bgColor: '',
+                    textColor: ''
+                })
+        }
+    }
+
     const getSizeClass = () => {
         switch(size){
             case 'md':
                 return 'text-xs md:text-sm px-4 md:px-6 py-2 md:py-3'
             case 'sm':
                 return 'text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2'
-            default:
-                return ''
         }
     }
+
     const getVariantClass = () => {
-        switch(variant){
-            case 'primary':
-                return 'bg-basic-blue text-white'
-            case 'secondary':
-                return 'border text-basic-blue border-basic-blue'
-            case 'pop-up-primary':
-                return 'border bg-white text-basic-blue border-basic-blue'
-            case 'pop-up-secondary':
-                return 'border bg-basic-blue text-white border-white'
-            case 'gray':
-                return 'bg-gray-200 text-basic-blue'
-            case 'danger':
-                return 'bg-danger-red text-white'
-            case 'danger-secondary':
-                return 'border border text-danger-red border-danger-red'
-            case 'white-danger':
-                return 'border bg-white text-danger-red border-danger-red'
-            case 'white-danger-secondary':
-                return 'border bg-danger-red text-white border-white'
-            default:
-                return ''
+        const { bgColor, textColor, hover, hoverOutline } = getButtonColor()
+
+        if(outline){
+            return `border border-${bgColor} text-${bgColor} ${hoverOutline}`
         }
+        return `bg-${bgColor} text-${textColor} ${hover}`
     }
-    // TODO-1: Add hover state
-    // TODO-2: Add disabled state
+
     return(
         <button 
             type={type}
-            className={`${getSizeClass()} ${getVariantClass()} ${className} font-semibold rounded-md disabled:bg-gray-300 disabled:border-gray-300 disabled:text-gray-500 transition-colors duration-300 text-nowrap`}
+            className={`${getVariantClass()} ${getSizeClass()} ${className} font-semibold rounded-md disabled:bg-gray-300 disabled:border-gray-300 disabled:text-gray-500 transition-colors duration-300 text-nowrap`}
             onClick={onClick}
             disabled={disabled}
         >

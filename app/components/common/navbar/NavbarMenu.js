@@ -16,7 +16,6 @@ import {
 export default function NavbarMenu({ hideMenu }){
     const [hamburgerState, setHamburgerState] = useState(false)
     const { data: session } = useSession()
-    console.log("session:", session)
 
     const projectLinks = [
         { label: 'Create a new project', url: '/projects/create' },
@@ -51,7 +50,6 @@ export default function NavbarMenu({ hideMenu }){
                         {   
                             session ?
                             <div className="h-full flex items-center gap-2">
-                                {/* Ini nanti dropdown */}
                                 <div className="flex items-center py-4 lg:py-0">
                                     <Link href={"/notifications"} className="p-2 text-dark-blue hover:text-basic-blue transition-colors">
                                         <NotificationIcon size={24}/>
