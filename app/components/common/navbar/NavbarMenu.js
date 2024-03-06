@@ -63,7 +63,8 @@ export default function NavbarMenu({ hideMenu }){
                             : 
                             <LinkButton
                                 href="/login"
-                                variant="secondary"
+                                variant="primary"
+                                outline
                             >
                                 Sign In
                             </LinkButton>

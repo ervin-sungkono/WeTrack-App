@@ -4,7 +4,6 @@ import BoardItem from "./BoardItem"
 
 const getListStyle = isDraggingOver => ({
     width: 250,
-    height: '100%',
     overflowX: 'hidden',
     overflowY: 'auto',
     marginRight: '-8px',
@@ -13,7 +12,7 @@ const getListStyle = isDraggingOver => ({
 
 function BoardList({ items, droppableId }){
     return(
-        <Droppable droppableId={droppableId} isCombineEnabled>
+        <Droppable droppableId={droppableId}>
             {(provided, snapshot) => (
                 <div 
                     ref={provided.innerRef} 
