@@ -3,7 +3,7 @@ import { IoIosArrowForward as ArrowIcon } from "react-icons/io"
 
 export default function Breadcrumb({ links }){
     return (
-      <p className="text-dark-blue/80 text-sm md:text-base flex items-center gap-1.5">
+      <p className="text-dark-blue/80 text-xs md:text-sm flex items-center gap-1.5">
         {links.map(({url, label}, index) =>
           index !== links.length - 1 ? (
             <span key={label} className="flex items-center gap-1.5">
