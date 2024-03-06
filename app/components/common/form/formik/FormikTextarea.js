@@ -20,7 +20,7 @@ export default function FormikTextarea({ name, required, label, placeholder, row
                             placeholder={placeholder}
                             rows={rows}
                             className={
-                                `bg-transparent text-xs md:text-sm rounded-lg focus:ring-normal-green block w-full px-2 md:px-3 py-1.5 md:py-2
+                                `bg-transparent text-xs md:text-sm rounded-lg focus:ring-normal-green block w-full px-2.5 md:px-4 py-1.5 md:py-2.5
                                 ${formikField.meta.error && formikField.meta.touched ? "border-red-600" : "border-dark-blue/30"} 
                                 ${resize ? "" : "resize-none"}` 
                             }
