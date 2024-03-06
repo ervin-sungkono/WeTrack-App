@@ -10,6 +10,7 @@ import { useState } from "react"
 import ChangePasswordForm from "../common/form/profile/ChangePasswordForm"
 import DeleteAccountForm from "../common/form/profile/DeleteAccountForm"
 import UpdateProfileForm from "../common/form/profile/UpdateProfileForm"
+import FormikField from "../common/form/formik/FormikField"
 
 export default function ProfileLayout(){
     const { data: session, status } = useSession()
@@ -39,6 +40,26 @@ export default function ProfileLayout(){
     const handleDeleteAccount = async () => {
         setError(false);
         setLoading(true);
+    }
+
+    const ProfileField = ({icon, label, value}) => {
+        return (
+            <div className="flex gap-3">
+                <div>
+                    {icon}
+                </div>
+                    <div className="flex flex-col gap-1 w-full">
+                        <p className="block font-semibold text-xs md:text-sm">
+                            {label}
+                        </p>
+                        <div className="relative flex items-center">
+                            <div className={`w-full rounded-md bg-transparent text-sm`}>
+                                {value}
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        )             
     }
     
     if(status === "loading"){
@@ -71,41 +92,33 @@ export default function ProfileLayout(){
                             <p className="text-xs md:text-sm mt-1 md:mt-0">Joined at</p>
                         </div>
                     </div>
-                    <div className="mt-56 md:mt-72 overflow-auto sm:overflow-hidden">
+                    <div className="mt-52 md:mt-64 overflow-auto sm:overflow-hidden">
                         {updateProfile && (
                             <UpdateProfileForm initialValues={initialValues} setUpdateProfile={setUpdateProfile} handleUpdateProfile={handleUpdateProfile} />
                         )}
                         {!updateProfile && (
                             <div>
-                                <div>
-                                    <div>
-                                        <div className="flex items-center">
-                                            <IoIosInformationCircle size={24}/>
-                                            <p className="text-sm md:text-base font-bold ml-2">Description</p>
-                                        </div>
-                                        <p className="text-xs md:text-sm ml-8">No description yet.</p>
-                                    </div>
-                                    <div className="mt-6">
-                                        <div className="flex items-center">
-                                            <MdEmail size={24}/>
-                                            <p className="text-sm md:text-base font-bold ml-2">Email</p>
-                                        </div>
-                                        <p className="text-xs md:text-sm ml-8">{session.user.email}</p>
-                                    </div>
-                                    <div className="mt-6">
-                                        <div className="flex items-center">
-                                            <TbBriefcaseFilled size={24}/>
-                                            <p className="text-sm md:text-base font-bold ml-2">Job Position</p>
-                                        </div>
-                                        <p className="text-xs md:text-sm ml-8">No job position yet.</p>
-                                    </div>
-                                    <div className="mt-6">
-                                        <div className="flex items-center">
-                                            <IoMdPin size={24}/>
-                                            <p className="text-sm md:text-base font-bold ml-2">Location</p>
-                                        </div>
-                                        <p className="text-xs md:text-sm ml-8">No location yet.</p>
-                                    </div>
+                                <div className="overflow-auto h-1/4 md:h-full flex flex-col gap-4">
+                                    <ProfileField
+                                        icon={<IoIosInformationCircle className="text-lg md:text-xl"/>}
+                                        label={"Description"}
+                                        value={"No description yet."}
+                                    />
+                                    <ProfileField
+                                        icon={<MdEmail className="text-lg md:text-xl"/>}
+                                        label={"Email"}
+                                        value={session.user.email}
+                                    />
+                                    <ProfileField
+                                        icon={<TbBriefcaseFilled className="text-lg md:text-xl"/>}
+                                        label={"Job Position"}
+                                        value={"No job position yet."}
+                                    />
+                                    <ProfileField
+                                        icon={<IoMdPin className="text-lg md:text-xl"/>}
+                                        label={"Location"}
+                                        value={"No location yet."}
+                                    />
                                 </div>
                                 <div className="mt-4 text-center md:text-left">
                                     <p className="text-md md:text-lg font-bold">Manage Account</p>

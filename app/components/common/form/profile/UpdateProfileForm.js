@@ -18,72 +18,44 @@ export default function UpdateProfileForm({initialValues, setUpdateProfile, hand
             validationSchema={updateProfileSchema}
             children={(formik) => (
                 <div>
-                    <div className="overflow-auto h-1/4 md:h-full">
-                        <div>
-                            <div className="flex items-center">
-                                <IoIosInformationCircle size={24} />
-                                <p className="text-sm md:text-base font-bold ml-2">
-                                    Description
-                                </p>
-                            </div>
-                            <p className="text-xs md:text-sm ml-8">
-                                <FormikField
-                                    name="description"
-                                    required
-                                    type="text"
-                                    placeholder="Enter description..."
-                                />
-                            </p>
-                        </div>
-                        <div className="mt-6">
-                            <div className="flex items-center">
-                                <MdEmail size={24} />
-                                <p className="text-sm md:text-base font-bold ml-2">
-                                    Email
-                                </p>
-                            </div>
-                            <p className="text-xs md:text-sm ml-8">
-                                <FormikField
-                                    name="email"
-                                    required
-                                    type="email"
-                                    placeholder="Enter description..."
-                                    value={session.user.email}
-                                />
-                            </p>
-                        </div>
-                        <div className="mt-6">
-                            <div className="flex items-center">
-                                <TbBriefcaseFilled size={24} />
-                                <p className="text-sm md:text-base font-bold ml-2">
-                                    Job Position
-                                </p>
-                            </div>
-                            <p className="text-xs md:text-sm ml-8">
-                                <FormikField
-                                    name="jobPosition"
-                                    required
-                                    type="text"
-                                    placeholder="Enter job position..."
-                                />
-                            </p>
-                        </div>
-                        <div className="mt-6">
-                            <div className="flex items-center">
-                                <IoMdPin size={24} />
-                                <p className="text-sm md:text-base font-bold ml-2">
-                                    Location
-                                </p>
-                            </div>
-                            <p className="text-xs md:text-sm ml-8">
-                                <FormikField
-                                    name="location"
-                                    required
-                                    type="text"
-                                    placeholder="Enter location..."
-                                />
-                            </p>
-                        </div>
+                    <div className="overflow-auto h-1/4 md:h-full flex flex-col gap-4">
+                        <FormikField
+                            icon={<IoIosInformationCircle className="text-lg md:text-xl"/>}
+                            name="description"
+                            label={"Description"}
+                            required
+                            type="text"
+                            disabled={false}
+                            placeholder="Enter description..."
+                        />
+                        <FormikField
+                            icon={<MdEmail className="text-lg md:text-xl"/>}
+                            name="email"
+                            label={"Email"}
+                            required
+                            type="text"
+                            value={session.user.email}
+                            disabled={true}
+                            placeholder="Enter email..."
+                        />
+                        <FormikField
+                            icon={<TbBriefcaseFilled className="text-lg md:text-xl"/>}
+                            name="jobPosition"
+                            label={"Job Position"}
+                            required
+                            type="text"
+                            disabled={false}
+                            placeholder="Enter job position..."
+                        />
+                        <FormikField
+                            icon={<IoMdPin className="text-lg md:text-xl"/>}
+                            name="location"
+                            label={"Location"}
+                            required
+                            type="text"
+                            disabled={false}
+                            placeholder="Enter location..."
+                        />
                     </div>
                     <div className="flex flex-col md:flex-row gap-3 md:gap-4 mt-4">
                         <Button variant="primary" type="submit">

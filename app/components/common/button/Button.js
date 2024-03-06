@@ -66,7 +66,7 @@ export default function Button({
         const { bgColor, textColor, hover, hoverOutline } = getButtonColor()
 
         if(outline){
-            return `border border-${bgColor} text-${bgColor} ${hoverOutline}`
+            return `border-${bgColor} text-${bgColor} ${hoverOutline}`
         }
         return `bg-${bgColor} text-${textColor} ${hover}`
     }
