@@ -117,7 +117,7 @@ export default function LoginForm(){
                             </div>
                             <div className="mt-4">
                                 <Link href="#">
-                                    <Button variant="secondary" size="sm" className="w-full flex justify-center items-center">
+                                    <Button outline variant="primary" size="sm" className="w-full flex justify-center items-center">
                                         <Google className="inline-block mr-2" />
                                         Sign in with Google
                                     </Button>

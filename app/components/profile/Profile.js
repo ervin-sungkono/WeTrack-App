@@ -111,8 +111,8 @@ export default function ProfileLayout(){
                                     <p className="text-md md:text-lg font-bold">Manage Account</p>
                                     <div className="flex flex-col md:flex-row gap-3 md:gap-4 mt-3 md:mt-4">
                                         <Button variant="primary" onClick={() => setChangePassword(true)}>Change Password</Button>
-                                        <Button variant="secondary" onClick={() => setUpdateProfile(true)}>Update Profile</Button>
-                                        <Button variant="danger-secondary" onClick={() => setDeleteAccount(true)}>Delete Account</Button>
+                                        <Button variant="primary" outline onClick={() => setUpdateProfile(true)}>Update Profile</Button>
+                                        <Button variant="danger" outline onClick={() => setDeleteAccount(true)}>Delete Account</Button>
                                     </div>
                                 </div>
                             </div>
