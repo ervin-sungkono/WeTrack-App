@@ -54,8 +54,8 @@ export default function ChangePasswordForm({onConfirm, onClose}){
                             </div>
                         </div>
                         <div className="flex gap-2 md:gap-4 items-center justify-end mt-4 md:mt-8">
-                            <Button size="sm" variant="pop-up-primary" type="submit">OK</Button>
-                            <Button size="sm" variant="pop-up-secondary" onClick={onClose}>Cancel</Button>
+                            <Button size="sm" variant="primary" type="submit">Save Changes</Button>
+                            <Button size="sm" variant="secondary" onClick={onClose}>Cancel</Button>
                         </div>
                     </>
                 )}

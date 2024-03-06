@@ -14,7 +14,6 @@ export const ProjectProvider = ({ children }) => {
         }
 
         const response = await createNewProject(payload)
-        console.log(response)
 
         setProjectData({})
         return response

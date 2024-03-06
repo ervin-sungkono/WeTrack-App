@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "@yaireo/tagify/dist/tagify.css";
+
 $black: #2B2B2B;
 $dark-blue: #1A1B36;
 $basic-blue: #47389F;
@@ -10,6 +12,28 @@ $white: #FFFFFF;
 
 body{
     background-color: #F5F5F5;
+}
+
+/* width */
+.custom-scrollbar ::-webkit-scrollbar{
+    width: 6px;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #bbbbbb;
+    border-radius: 4px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #7e7e7e;
+    border-radius: 4px;
 }
 
 .container{
@@ -81,4 +105,42 @@ body{
 input::-ms-reveal,
 input::-ms-clear {
     display: none;
+}
+
+.tagify {
+    width: 100%;
+    border-radius: 6px;
+    --tag-bg: rgb(71, 56, 159);
+    --tag-text-color: white;
+    --tag-text-color--edit: var(--tag-bg);
+    --tag-hover: rgb(114, 98, 202);
+    --tag-remove-btn-color: white;
+    --tag-remove-bg: rgb(168, 155, 240);
+    --tag-remove-btn-bg--hover: rgb(71, 56, 159);
+    --tag-border-radius: 99px;
+
+    .tagify__input{
+        &::before{
+            display: block;
+            width: 100%;
+            font-size: 14px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            @media only screen and (max-width: 768px){
+                font-size: 12px;
+            }
+        }
+    }
+
+    .tagify__tag > div > :only-child {
+        width: unset; 
+    }
+
+    .tagify__tag-text{
+        font-size: 14px;
+        @media only screen and (max-width: 768px){
+            font-size: 12px;
+        }
+    }
 }

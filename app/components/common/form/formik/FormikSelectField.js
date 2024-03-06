@@ -17,7 +17,7 @@ export default function FormikSelectField({ name, required, options, label, plac
                             {...formikField.field}
                             id={name}
                             defaultValue={""}
-                            className={`px-4 py-2.5 rounded-md ${formikField.meta.error && formikField.meta.touched ? "border-red-600" : "border-dark/30"} text-sm md:text-base`}
+                            className={`px-2.5 md:px-4 py-1.5 md:py-2.5 rounded-md ${formikField.meta.error && formikField.meta.touched ? "border-red-600" : "border-dark/30"} text-sm md:text-base`}
                         >
                             <option value={""} disabled>{placeholder}</option>
                             {options.map(({ label, value }) => (
