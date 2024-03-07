@@ -18,12 +18,12 @@ export default function PopUpForm({
 
     return (
         <PopUp>
-            <div className={`flex flex-col gap-4 md:gap-6 px-6 py-4 md:px-8 md:py-6 bg-white text-dark-blue rounded-lg shadow-lg`}>
-                {title && message && <div className="flex flex-col gap-2">
-                    {title && <div className={`${getTitleSize()}`}>{title}</div>}
-                    {message && <p className="text-xs md:text-sm">{message}</p>}
-                </div>}
-                <div>
+            <div className={`p-4 md:p-8 bg-white text-dark-blue rounded-lg shadow-lg`}>
+                <div className={`${getTitleSize()}`}>
+                    {title}
+                </div>
+                {message && <p className="text-xs md:text-sm">{message}</p>}
+                <div className="mt-4 md:mt-8">
                     {children}
                 </div>
             </div>
