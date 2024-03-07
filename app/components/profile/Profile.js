@@ -10,7 +10,6 @@ import { useState } from "react"
 import ChangePasswordForm from "../common/form/profile/ChangePasswordForm"
 import DeleteAccountForm from "../common/form/profile/DeleteAccountForm"
 import UpdateProfileForm from "../common/form/profile/UpdateProfileForm"
-import FormikField from "../common/form/formik/FormikField"
 
 export default function ProfileLayout(){
     const { data: session, status } = useSession()
@@ -69,12 +68,9 @@ export default function ProfileLayout(){
         )
     }else{
         return (
-            <>
-                <div className="fixed h-[100px] md:h-[140px] bg-basic-blue w-full">
-                    
-                </div>
-                <div className="container flex-grow flex flex-col justify-center">
-                    <div>
+            <div className="h-full">
+                <div className="h-[200px] md:h-[260px]"> {/* DIV A */}
+                    <div className="fixed h-[100px] md:h-[140px] bg-basic-blue w-full">
                         <div className="flex items-center justify-center mt-12 md:mt-16">
                             <UserIcon
                                 fullName={session.user.fullName}
@@ -82,18 +78,22 @@ export default function ProfileLayout(){
                                 size="profile"
                             />
                         </div>
-                        <div className="text-center mt-2 mb-4">
+                        <div className="text-center mb-4">
                             <p className="text-lg md:text-xl font-bold leading-5">{session.user.fullName}</p>
                             <p className="text-sm md:text-base mt-1">Joined at</p>
                         </div>
                     </div>
-                    <div className="overflow-auto h-full">
+                </div>
+                <div className="container flex-grow flex flex-col justify-center"> {/* DIV A */}
+                    <div className="overflow-auto">
                         {updateProfile && (
-                            <UpdateProfileForm 
-                                initialValues={initialValues} 
-                                setUpdateProfile={setUpdateProfile} 
-                                handleUpdateProfile={handleUpdateProfile} 
-                            />
+                            <div className="max-w-2xl m-auto">
+                                <UpdateProfileForm 
+                                    initialValues={initialValues} 
+                                    setUpdateProfile={setUpdateProfile} 
+                                    handleUpdateProfile={handleUpdateProfile} 
+                                />
+                            </div>
                         )}
                         {!updateProfile && (
                             <div className="max-w-2xl m-auto">
@@ -121,7 +121,7 @@ export default function ProfileLayout(){
                                 </div>
                                 <div className="mt-4 md:mt-6 text-center xs:text-left">
                                     <p className="text-base md:text-lg font-semibold">Manage Account</p>
-                                    <div className="flex flex-col xs:flex-row gap-2 md:gap-4 mt-2 md:mt-4">
+                                    <div className="flex flex-col xs:flex-row gap-2 md:gap-4 mt-2 md:mt-4 mb-12">
                                         <Button variant="primary" onClick={() => setChangePassword(true)}>Change Password</Button>
                                         <Button variant="primary" outline onClick={() => setUpdateProfile(true)}>Update Profile</Button>
                                         <Button variant="danger" outline onClick={() => setDeleteAccount(true)}>Delete Account</Button>
@@ -146,7 +146,7 @@ export default function ProfileLayout(){
                 {loading && (
                     <PopUpLoad />
                 )}
-            </>
+            </div>
         )
     }
 }
