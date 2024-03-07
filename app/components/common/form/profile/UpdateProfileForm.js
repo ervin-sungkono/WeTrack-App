@@ -15,12 +15,10 @@ export default function UpdateProfileForm({initialValues, setUpdateProfile, hand
             onSubmit={handleUpdateProfile}
             validationSchema={updateProfileSchema}
             children={(formik) => (
-                <div>
-                    <div className="overflow-auto h-1/4 md:h-full">
-                        <div>
-                            <div className="flex items-center">
-                                <IoIosInformationCircle size={24} />
-                            </div>
+                <div className="overflow-auto h-full">
+                    <div className="overflow-auto flex flex-col gap-4 md:gap-6">
+                        <div className="flex gap-2">
+                            <IoIosInformationCircle className="text-xl md:text-2xl"/>
                             <FormikField
                                 name="description"
                                 label={"Description"}
@@ -29,56 +27,38 @@ export default function UpdateProfileForm({initialValues, setUpdateProfile, hand
                                 placeholder="Enter description..."
                             />
                         </div>
-                        <div className="mt-6">
-                            <div className="flex items-center">
-                                <MdEmail size={24} />
-                                <p className="text-sm md:text-base font-bold ml-2">
-                                    Email
-                                </p>
-                            </div>
-                            <p className="text-xs md:text-sm ml-8">
-                                <FormikField
-                                    name="email"
-                                    required
-                                    type="email"
-                                    placeholder="Enter description..."
-                                />
-                            </p>
+                        <div className="flex gap-2">
+                            <MdEmail className="text-xl md:text-2xl"/>
+                            <FormikField
+                                name="email"
+                                label={"Email"}
+                                required
+                                type="email"
+                                placeholder="Enter description..."
+                            />
                         </div>
-                        <div className="mt-6">
-                            <div className="flex items-center">
-                                <TbBriefcaseFilled size={24} />
-                                <p className="text-sm md:text-base font-bold ml-2">
-                                    Job Position
-                                </p>
-                            </div>
-                            <p className="text-xs md:text-sm ml-8">
-                                <FormikField
-                                    name="jobPosition"
-                                    required
-                                    type="text"
-                                    placeholder="Enter job position..."
-                                />
-                            </p>
+                        <div className="flex gap-2">
+                            <TbBriefcaseFilled className="text-xl md:text-2xl"/>
+                            <FormikField
+                                name="jobPosition"
+                                label={"Job Position"}
+                                required
+                                type="text"
+                                placeholder="Enter job position..."
+                            />
                         </div>
-                        <div className="mt-6">
-                            <div className="flex items-center">
-                                <IoMdPin size={24} />
-                                <p className="text-sm md:text-base font-bold ml-2">
-                                    Location
-                                </p>
-                            </div>
-                            <p className="text-xs md:text-sm ml-8">
-                                <FormikField
-                                    name="location"
-                                    required
-                                    type="text"
-                                    placeholder="Enter location..."
-                                />
-                            </p>
+                        <div className="flex gap-2">
+                            <IoMdPin className="text-xl md:text-2xl"/>
+                            <FormikField
+                                name="location"
+                                label={"Location"}
+                                required
+                                type="text"
+                                placeholder="Enter location..."
+                            />
                         </div>
                     </div>
-                    <div className="flex flex-col md:flex-row gap-3 md:gap-4 mt-4">
+                    <div className="flex flex-col md:flex-row gap-3 md:gap-4 mt-6">
                         <Button variant="primary" type="submit">
                             Confirm Update Profile
                         </Button>

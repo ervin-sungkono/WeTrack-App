@@ -9,7 +9,7 @@ import { FaEyeSlash } from "react-icons/fa";
  */
 export default function FormikField({ name, required, type, label, placeholder, defaultValue }){
     const [checked, setChecked] = useState(false)
-    const [fieldValue, setFieldValue] = useState(value)
+
     const togglePassword = () => {
         if(checked) setChecked(false)
         else setChecked(true)
@@ -18,7 +18,7 @@ export default function FormikField({ name, required, type, label, placeholder, 
         <Field name={name}>
             {(formikField) => {
                 return (
-                    <div className="flex flex-col gap-1">
+                    <div className="w-full flex flex-col gap-1">
                         <label htmlFor={name} className="block font-semibold text-xs md:text-sm">
                             {label}
                             {required && <span className="text-red-600">*</span>}
