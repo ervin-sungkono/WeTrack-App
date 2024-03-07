@@ -16,6 +16,7 @@ export default function ProfileLayout(){
     const { data: session, status } = useSession()
     
     const initialValues = {
+        email: session?.user.email,
         description: "",
         jobPosition: "",
         location: ""
@@ -44,60 +45,58 @@ export default function ProfileLayout(){
 
     const ProfileField = ({icon, label, value}) => {
         return (
-            <div className="flex gap-3">
+            <div className="flex gap-2">
                 <div>
                     {icon}
                 </div>
-                    <div className="flex flex-col gap-1 w-full">
-                        <p className="block font-semibold text-xs md:text-sm">
-                            {label}
-                        </p>
-                        <div className="relative flex items-center">
-                            <div className={`w-full rounded-md bg-transparent text-sm`}>
-                                {value}
-                            </div>
+                <div className="flex flex-col gap-1 w-full">
+                    <p className="block font-semibold text-sm md:text-base">
+                        {label}
+                    </p>
+                    <div className="relative flex items-center">
+                        <div className={`w-full rounded-md bg-transparent text-xs md:text-sm`}>
+                            {value}
                         </div>
                     </div>
+                </div>
             </div>
         )             
     }
     
-    if(status === "loading"){
+    if(!session){
         return (
             <PopUpLoad />
         )
     }else{
         return (
             <>
-                <div className="fixed h-1/8 md:h-1/6 bg-basic-blue w-full">
+                <div className="fixed h-[100px] md:h-[140px] bg-basic-blue w-full">
                     
                 </div>
-                <div className="container w-5/6 md:w-3/4 xl:w-3/5 flex flex-col justify-center">
-                    <div className="absolute" style={
-                        {
-                            top: "10%",
-                            left: "50%",
-                            transform: "translateX(-50%)",
-                        }
-                    }>
-                        <div className="flex items-center justify-center mt-16">
+                <div className="container flex-grow flex flex-col justify-center">
+                    <div>
+                        <div className="flex items-center justify-center mt-12 md:mt-16">
                             <UserIcon
                                 fullName={session.user.fullName}
                                 src={session.user.profileImage}
                                 size="profile"
                             />
                         </div>
-                        <div className="text-center mt-2 md:mt-4">
+                        <div className="text-center mt-2 mb-4">
                             <p className="text-lg md:text-xl font-bold leading-5">{session.user.fullName}</p>
-                            <p className="text-xs md:text-sm mt-1 md:mt-0">Joined at</p>
+                            <p className="text-sm md:text-base mt-1">Joined at</p>
                         </div>
                     </div>
-                    <div className="mt-52 md:mt-64 overflow-auto sm:overflow-hidden">
+                    <div className="overflow-auto h-full">
                         {updateProfile && (
-                            <UpdateProfileForm initialValues={initialValues} setUpdateProfile={setUpdateProfile} handleUpdateProfile={handleUpdateProfile} />
+                            <UpdateProfileForm 
+                                initialValues={initialValues} 
+                                setUpdateProfile={setUpdateProfile} 
+                                handleUpdateProfile={handleUpdateProfile} 
+                            />
                         )}
                         {!updateProfile && (
-                            <div>
+                            <div className="max-w-2xl m-auto">
                                 <div className="overflow-auto h-1/4 md:h-full flex flex-col gap-4">
                                     <ProfileField
                                         icon={<IoIosInformationCircle className="text-lg md:text-xl"/>}
@@ -120,9 +119,9 @@ export default function ProfileLayout(){
                                         value={"No location yet."}
                                     />
                                 </div>
-                                <div className="mt-4 text-center md:text-left">
-                                    <p className="text-md md:text-lg font-bold">Manage Account</p>
-                                    <div className="flex flex-col md:flex-row gap-3 md:gap-4 mt-3 md:mt-4">
+                                <div className="mt-4 md:mt-6 text-center xs:text-left">
+                                    <p className="text-base md:text-lg font-semibold">Manage Account</p>
+                                    <div className="flex flex-col xs:flex-row gap-2 md:gap-4 mt-2 md:mt-4">
                                         <Button variant="primary" onClick={() => setChangePassword(true)}>Change Password</Button>
                                         <Button variant="primary" outline onClick={() => setUpdateProfile(true)}>Update Profile</Button>
                                         <Button variant="danger" outline onClick={() => setDeleteAccount(true)}>Delete Account</Button>

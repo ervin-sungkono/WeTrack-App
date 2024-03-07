@@ -6,10 +6,8 @@ import { MdEmail } from "react-icons/md";
 import { TbBriefcaseFilled } from "react-icons/tb";
 import Button from "../../button/Button";
 import { updateProfileSchema } from "@/app/lib/schema";
-import { useSession } from "next-auth/react";
 
 export default function UpdateProfileForm({initialValues, setUpdateProfile, handleUpdateProfile}) {
-    const { data: session } = useSession()
 
     return (
         <FormikWrapper
@@ -17,47 +15,50 @@ export default function UpdateProfileForm({initialValues, setUpdateProfile, hand
             onSubmit={handleUpdateProfile}
             validationSchema={updateProfileSchema}
             children={(formik) => (
-                <div>
-                    <div className="overflow-auto h-1/4 md:h-full flex flex-col gap-4">
-                        <FormikField
-                            icon={<IoIosInformationCircle className="text-lg md:text-xl"/>}
-                            name="description"
-                            label={"Description"}
-                            required
-                            type="text"
-                            disabled={false}
-                            placeholder="Enter description..."
-                        />
-                        <FormikField
-                            icon={<MdEmail className="text-lg md:text-xl"/>}
-                            name="email"
-                            label={"Email"}
-                            required
-                            type="text"
-                            value={session.user.email}
-                            disabled={true}
-                            placeholder="Enter email..."
-                        />
-                        <FormikField
-                            icon={<TbBriefcaseFilled className="text-lg md:text-xl"/>}
-                            name="jobPosition"
-                            label={"Job Position"}
-                            required
-                            type="text"
-                            disabled={false}
-                            placeholder="Enter job position..."
-                        />
-                        <FormikField
-                            icon={<IoMdPin className="text-lg md:text-xl"/>}
-                            name="location"
-                            label={"Location"}
-                            required
-                            type="text"
-                            disabled={false}
-                            placeholder="Enter location..."
-                        />
+                <div className="overflow-auto h-full">
+                    <div className="overflow-auto flex flex-col gap-4 md:gap-6">
+                        <div className="flex gap-2">
+                            <IoIosInformationCircle className="text-xl md:text-2xl"/>
+                            <FormikField
+                                name="description"
+                                label={"Description"}
+                                required
+                                type="text"
+                                placeholder="Enter description..."
+                            />
+                        </div>
+                        <div className="flex gap-2">
+                            <MdEmail className="text-xl md:text-2xl"/>
+                            <FormikField
+                                name="email"
+                                label={"Email"}
+                                required
+                                type="email"
+                                placeholder="Enter description..."
+                            />
+                        </div>
+                        <div className="flex gap-2">
+                            <TbBriefcaseFilled className="text-xl md:text-2xl"/>
+                            <FormikField
+                                name="jobPosition"
+                                label={"Job Position"}
+                                required
+                                type="text"
+                                placeholder="Enter job position..."
+                            />
+                        </div>
+                        <div className="flex gap-2">
+                            <IoMdPin className="text-xl md:text-2xl"/>
+                            <FormikField
+                                name="location"
+                                label={"Location"}
+                                required
+                                type="text"
+                                placeholder="Enter location..."
+                            />
+                        </div>
                     </div>
-                    <div className="flex flex-col md:flex-row gap-3 md:gap-4 mt-4">
+                    <div className="flex flex-col md:flex-row gap-3 md:gap-4 mt-6">
                         <Button variant="primary" type="submit">
                             Confirm Update Profile
                         </Button>
