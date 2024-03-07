@@ -20,18 +20,14 @@ export default function UpdateProfileForm({initialValues, setUpdateProfile, hand
                         <div>
                             <div className="flex items-center">
                                 <IoIosInformationCircle size={24} />
-                                <p className="text-sm md:text-base font-bold ml-2">
-                                    Description
-                                </p>
                             </div>
-                            <p className="text-xs md:text-sm ml-8">
-                                <FormikField
-                                    name="description"
-                                    required
-                                    type="text"
-                                    placeholder="Enter description..."
-                                />
-                            </p>
+                            <FormikField
+                                name="description"
+                                label={"Description"}
+                                required
+                                type="text"
+                                placeholder="Enter description..."
+                            />
                         </div>
                         <div className="mt-6">
                             <div className="flex items-center">
