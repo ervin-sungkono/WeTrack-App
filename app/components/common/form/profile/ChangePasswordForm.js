@@ -16,6 +16,7 @@ export default function ChangePasswordForm({onConfirm, onClose}){
         <PopUpForm
             variant="secondary"
             title={"Change Password"}
+            titleSize={"large"}
             message={"Make sure to confirm your new password before submitting."}
         >
             <FormikWrapper

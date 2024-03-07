@@ -5,6 +5,7 @@ export default function DeleteAccountForm({onConfirm, onClose}){
         <PopUpForm
             variant="danger"
             title={"Delete Account"}
+            titleSize={"large"}
             message={"Are you sure to delete your account?"}
             onConfirm={onConfirm}
             onConfirmOption={"Yes"}
