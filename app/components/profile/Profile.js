@@ -15,6 +15,7 @@ export default function ProfileLayout(){
     const { data: session, status } = useSession()
     
     const initialValues = {
+        email: session?.user.email,
         description: "",
         jobPosition: "",
         location: ""
@@ -73,7 +74,11 @@ export default function ProfileLayout(){
                     </div>
                     <div className="mt-56 md:mt-72 overflow-auto sm:overflow-hidden">
                         {updateProfile && (
-                            <UpdateProfileForm initialValues={initialValues} setUpdateProfile={setUpdateProfile} handleUpdateProfile={handleUpdateProfile} />
+                            <UpdateProfileForm 
+                                initialValues={initialValues} 
+                                setUpdateProfile={setUpdateProfile} 
+                                handleUpdateProfile={handleUpdateProfile} 
+                            />
                         )}
                         {!updateProfile && (
                             <div>

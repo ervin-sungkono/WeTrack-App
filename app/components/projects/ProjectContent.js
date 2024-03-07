@@ -7,6 +7,7 @@ import Table from "../common/table/Table"
 import TableActionButton from "../common/table/TableActionButton"
 import UserIcon from "../common/UserIcon"
 import LinkButton from "../common/button/LinkButton"
+import { getAllProject } from "@/app/lib/fetch/project"
 
 export default function ProjectContent(){
     const [pageSize, setPageSize] = useState(10)
@@ -28,17 +29,16 @@ export default function ProjectContent(){
     }
 
     useEffect(() => {
-        const projectData = []
-        for(let i = 0; i < 45; i++){
-            projectData.push({
-                Id: i,
-                ProjectName: `${i}-New Project`,
-                Key: `NP${i}`,
-                CreatedBy: 'userId',
-                action: ['Edit', 'Delete']
+        getAllProject()
+            .then(projects => {
+                if(projects.data) setProjectData(
+                    projects.data.map(project => ({
+                        ...project,
+                        action: ['Edit', 'Update']
+                    }))
+                )
+                else alert("Fail to get projects data")
             })
-        }
-        setProjectData(projectData)
     }, [])
 
     const columns = [
@@ -46,23 +46,22 @@ export default function ProjectContent(){
             accessorKey: 'Id',
         },
         {
-            accessorKey: 'ProjectName',
+            accessorKey: 'projectName',
             header: 'Project Name',
         },
         {
-            accessorKey: 'Key',
+            accessorKey: 'key',
             header: 'Key',
         },
         {
-            accessorKey: 'CreatedBy',
+            accessorKey: 'createdBy',
             header: 'Owner',
             cell: ({ row }) => {
-                const userId = row.getValue('CreatedBy')
-                const userName = "ervin cahyadinata sungkono" // TODO: Fetch API dari sini
+                const { fullName, profileImage } = row.getValue('createdBy') ?? {}
                 return(
                     <div className="flex gap-2 items-center">
-                        <UserIcon size="sm" fullName={userName}/>
-                        <p>{userName.split(' ')[0]}</p>
+                        <UserIcon size="sm" fullName={fullName} src={profileImage} alt=""/>
+                        <p>{fullName?.split(' ')[0]}</p>
                     </div>
                 )
             }
@@ -102,7 +101,7 @@ export default function ProjectContent(){
                 </LinkButton>
             </div>
             <Table
-                data={projectData?.filter(project => project.ProjectName.includes(query))}
+                data={projectData?.filter(project => project.projectName.includes(query))}
                 columns={columns}
                 pageSize={pageSize}
             />

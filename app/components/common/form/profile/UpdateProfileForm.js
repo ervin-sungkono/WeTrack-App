@@ -6,10 +6,8 @@ import { MdEmail } from "react-icons/md";
 import { TbBriefcaseFilled } from "react-icons/tb";
 import Button from "../../button/Button";
 import { updateProfileSchema } from "@/app/lib/schema";
-import { useSession } from "next-auth/react";
 
 export default function UpdateProfileForm({initialValues, setUpdateProfile, handleUpdateProfile}) {
-    const { data: session } = useSession()
 
     return (
         <FormikWrapper
@@ -48,7 +46,6 @@ export default function UpdateProfileForm({initialValues, setUpdateProfile, hand
                                     required
                                     type="email"
                                     placeholder="Enter description..."
-                                    value={session.user.email}
                                 />
                             </p>
                         </div>

@@ -8,8 +8,8 @@ import Image from "next/image"
 
 export default function UserIcon({ src, alt = "", fullName, size = 'md' }){
     const [error, setError] = useState(null)
-    const userInitials = fullName.toUpperCase().split(' ').map(word => word[0]).join('').slice(0, 2)
-    const backgroundColor = stringToColour(fullName)
+    const userInitials = fullName?.toUpperCase().split(' ').map(word => word[0]).join('').slice(0, 2)
+    const backgroundColor = stringToColour(fullName ?? "random")
     const textColor = pickTextColorBasedOnBgColor(backgroundColor)
   
     useEffect(() => {
