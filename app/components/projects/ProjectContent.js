@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useState } from "react"
+import Link from "next/link"
 
 import SearchBar from "../common/SearchBar"
 import SelectButton from "../common/SelectButton"
@@ -43,11 +44,23 @@ export default function ProjectContent(){
 
     const columns = [
         {
-            accessorKey: 'Id',
+            accessorKey: 'id',
         },
         {
             accessorKey: 'projectName',
             header: 'Project Name',
+            cell: ({ row }) => {
+                const id = row.getValue('id')
+                const projectName = row.getValue('projectName')
+                return(
+                    <Link 
+                        href={`/projects/${id}`} 
+                        className="w-full h-full block hover:underline text-basic-blue"
+                    >
+                        {projectName}
+                    </Link>
+                )
+            }
         },
         {
             accessorKey: 'key',
