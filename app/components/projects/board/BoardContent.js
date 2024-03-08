@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { DragDropContext } from "@hello-pangea/dnd"
 import BoardList from "./BoardList"
 import SearchBar from "../../common/SearchBar"
@@ -7,10 +7,11 @@ import SelectButton from "../../common/SelectButton"
 
 import { BsThreeDots as DotIcon } from "react-icons/bs"
 import { IoFilter as FilterIcon } from "react-icons/io5"
+import useLocalStorage from "@/app/lib/hooks/useLocalStorage"
 
-const getItems = (count, offset = 0) =>
+const getItems = (count, offset = 0, id) =>
   Array.from({ length: count }, (v, k) => k).map(k => ({
-    id: `item-${k + offset}`,
+    id: `item-${k + offset}-${id}`,
     content: `item ${k + offset}`
 }));
 
@@ -37,9 +38,21 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 }
 
 export default function BoardContent() {
-  const [state, setState] = useState([getItems(10), getItems(5, 10)]);
+  const [state, setState] = useState();
   const [query, setQuery] = useState("")
   const [filterDropdown, setFilterDropdown] = useState(false)
+  const [project, _] = useLocalStorage("project")
+
+  useEffect(() => {
+    if(project){
+      setState(project.issueStatusList
+        .map(issueStatus => ({
+          ...issueStatus,
+          content: getItems(10,0,issueStatus.id)
+        })
+      ))
+    }
+  }, [project])
 
   const handleSearch = (query) => {
     setQuery(query)
@@ -56,17 +69,16 @@ export default function BoardContent() {
     const dInd = +destination.droppableId;
 
     if (sInd === dInd) {
-      const items = reorder(state[sInd], source.index, destination.index);
+      const items = reorder(state[sInd].content, source.index, destination.index);
       const newState = [...state];
-      newState[sInd] = items;
+      newState[sInd].content = items;
       setState(newState);
     } else {
-      const result = move(state[sInd], state[dInd], source, destination);
+      const result = move(state[sInd].content, state[dInd].content, source, destination);
       const newState = [...state];
-      newState[sInd] = result[sInd];
-      newState[dInd] = result[dInd];
-
-      setState(newState);
+      newState[sInd].content = result[sInd];
+      newState[dInd].content = result[dInd];
+      setState(newState)
     }
   }
 
@@ -105,13 +117,13 @@ export default function BoardContent() {
       </div>
       <div className="h-full flex items-start gap-4 overflow-y-auto pb-4">
         <DragDropContext onDragEnd={onDragEnd}>
-          {state.map((el, ind) => (
-            <div key={ind} className="custom-scrollbar max-h-full flex-shrink-0 flex flex-col px-2 py-4 gap-4 bg-gray-200 rounded-md overflow-y-auto pb-4">
+          {state?.map((el, ind) => (
+            <div key={el.id} className="custom-scrollbar max-h-full flex-shrink-0 flex flex-col px-2 py-4 gap-4 bg-gray-200 rounded-md overflow-y-auto pb-4">
               <div className="flex items-center gap-2 px-1 text-dark-blue/80">
-                <div className="uppercase flex-grow text-sm md:text-base font-semibold">TODO</div>
+                <div className="uppercase flex-grow text-sm md:text-base font-semibold">{el.status}</div>
                 <DotIcon size={20}/>
               </div>
-              <BoardList items={el} droppableId={`${ind}`}/>
+              <BoardList items={el.content} droppableId={`${ind}`}/>
             </div>
           ))}
         </DragDropContext>
