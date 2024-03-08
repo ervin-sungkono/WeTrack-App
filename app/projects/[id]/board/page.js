@@ -10,7 +10,7 @@ export default function BoardPage({ params: { id } }){
     ]
 
     return(
-        <ProjectLayout>
+        <ProjectLayout projectId={id}>
             <Header title={"Board"} links={links}/>
             {/* TODO: Develop Board untuk Board Page */}
             <BoardContent/>

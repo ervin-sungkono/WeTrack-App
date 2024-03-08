@@ -3,7 +3,7 @@ import ProjectLayout from "@/app/components/layout/ProjectLayout"
 
 export default function TeamPage({ params: { id } }){
     return(
-        <ProjectLayout>
+        <ProjectLayout projectId={id}>
             Team
         </ProjectLayout>
     )
