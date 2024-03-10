@@ -1,15 +1,13 @@
 /* eslint-disable react/no-children-prop */
 import { IoIosInformationCircle, IoMdPin } from "react-icons/io";
 import FormikWrapper from "../formik/FormikWrapper";
-import FormikField from "../formik/FormikField";
+import FormikFieldIcon from "../formik/FormikFieldIcon";
 import { MdEmail } from "react-icons/md";
 import { TbBriefcaseFilled } from "react-icons/tb";
 import Button from "../../button/Button";
 import { updateProfileSchema } from "@/app/lib/schema";
-import { useSession } from "next-auth/react";
 
 export default function UpdateProfileForm({initialValues, setUpdateProfile, handleUpdateProfile}) {
-    const { data: session } = useSession()
 
     return (
         <FormikWrapper
@@ -17,10 +15,10 @@ export default function UpdateProfileForm({initialValues, setUpdateProfile, hand
             onSubmit={handleUpdateProfile}
             validationSchema={updateProfileSchema}
             children={(formik) => (
-                <div>
-                    <div className="overflow-auto h-1/4 md:h-full flex flex-col gap-4">
-                        <FormikField
-                            icon={<IoIosInformationCircle className="text-lg md:text-xl"/>}
+                <div className="overflow-auto h-full">
+                    <div className="overflow-auto flex flex-col gap-4 md:gap-6">
+                        <FormikFieldIcon
+                            icon={<IoIosInformationCircle className="text-xl md:text-2xl" />}
                             name="description"
                             label={"Description"}
                             required
@@ -28,18 +26,17 @@ export default function UpdateProfileForm({initialValues, setUpdateProfile, hand
                             disabled={false}
                             placeholder="Enter description..."
                         />
-                        <FormikField
-                            icon={<MdEmail className="text-lg md:text-xl"/>}
+                        <FormikFieldIcon
+                            icon={<MdEmail className="text-xl md:text-2xl" />}
                             name="email"
                             label={"Email"}
                             required
-                            type="text"
-                            value={session.user.email}
+                            type="email"
                             disabled={true}
                             placeholder="Enter email..."
                         />
-                        <FormikField
-                            icon={<TbBriefcaseFilled className="text-lg md:text-xl"/>}
+                        <FormikFieldIcon
+                            icon={<TbBriefcaseFilled className="text-xl md:text-2xl"/>}
                             name="jobPosition"
                             label={"Job Position"}
                             required
@@ -47,7 +44,7 @@ export default function UpdateProfileForm({initialValues, setUpdateProfile, hand
                             disabled={false}
                             placeholder="Enter job position..."
                         />
-                        <FormikField
+                        <FormikFieldIcon
                             icon={<IoMdPin className="text-lg md:text-xl"/>}
                             name="location"
                             label={"Location"}
@@ -57,7 +54,7 @@ export default function UpdateProfileForm({initialValues, setUpdateProfile, hand
                             placeholder="Enter location..."
                         />
                     </div>
-                    <div className="flex flex-col md:flex-row gap-3 md:gap-4 mt-4">
+                    <div className="flex flex-col md:flex-row gap-3 md:gap-4 mt-6 mb-12">
                         <Button variant="primary" type="submit">
                             Confirm Update Profile
                         </Button>

@@ -1,14 +1,24 @@
-import { addDoc, collection, updateDoc, serverTimestamp, getDoc, query, where, getDocs } from 'firebase/firestore';
+import { addDoc, collection, updateDoc, serverTimestamp, getDoc, query, where, getDocs, doc, FieldPath } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
+import { getUserSession } from '@/app/lib/session';
+import { nextAuthOptions } from '@/app/lib/auth';
 
-export async function GET(request) {
+export async function GET(request, response) {
     try {
-        const userId = request.nextUrl.searchParams.get("userId")
+        const session = await getUserSession(request, response, nextAuthOptions)
+        const userId = session.user.uid
+        if(!userId){
+            return NextResponse.json({
+                data: null,
+                message: "Unauthorized, user id not found"
+            }, { status: 400 })
+        }
 
         const projectsRef = collection(db, 'projects')
+        const fieldRef = new FieldPath('createdBy', 'id')
 
-        const q = query(projectsRef, where("createdBy", "==", userId));
+        const q = query(projectsRef, where(fieldRef, "==", userId));
         const querySnapshot = await getDocs(q);
 
         const projects = querySnapshot.docs.map(doc => ({
@@ -34,10 +44,17 @@ export async function POST(request) {
     try {
         const { key, projectName, createdBy } = await request.json();
 
+        const user = await getDoc(doc(db, 'users', createdBy))
+        const { fullName, profileImage } = user.data()
+
         const docRef = await addDoc(collection(db, 'projects'), {
             key: key,
             projectName: projectName,
-            createdBy: createdBy,
+            createdBy: {
+                id: user.id,
+                fullName,
+                profileImage
+            },
             startStatus: null,
             endStatus: null,
             createdAt: serverTimestamp(),

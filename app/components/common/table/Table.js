@@ -69,7 +69,7 @@ export default function Table({
     }
     return(
         <div className="h-full max-h-full flex flex-col gap-4 overflow-hidden">
-            <div className='h-full overflow-auto'>
+            <div className='overflow-auto'>
                 <table className='w-full table-fixed'>
                     <thead className='sticky top-0 z-40 bg-white'>
                         {getHeaderGroups().map(headerGroup => (

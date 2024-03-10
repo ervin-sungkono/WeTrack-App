@@ -14,7 +14,6 @@ export default function KeyFormikField(){
     const updateKeyField = useCallback(
         debounce(
             projectName => {
-                console.log(projectName)
                 setFieldValue('key', generateProjectKey(projectName))
             }, 500),
         []
