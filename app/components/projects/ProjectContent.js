@@ -83,7 +83,7 @@ export default function ProjectContent(){
             accessorKey: 'action',
             header: () => <div className="w-full text-center">Action</div>,
             cell: ({ row }) => {
-                const id = row.getValue("Id")
+                const id = row.getValue("id")
                 const actions = row.getValue("action")
                 return <TableActionButton actions={actions} id={id}/>
             },
