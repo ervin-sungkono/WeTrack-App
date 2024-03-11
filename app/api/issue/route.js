@@ -1,7 +1,6 @@
-import { updateDoc, doc, getDoc, arrayUnion, serverTimestamp } from 'firebase/firestore';
+import { updateDoc, doc, getDoc, arrayUnion, serverTimestamp, addDoc, collection } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
-import { v4 as uuidv4 } from "uuid";
 
 export async function GET(request) {
     try {
@@ -18,9 +17,7 @@ export async function GET(request) {
         }
 
         const issueData = projectSnap.data()
-        console.log("issue data:", issueData)
         const issueList = issueData.issueList
-        console.log("issue list:", issueList)
 
         if (!issueList) {
             return NextResponse.json({
@@ -35,7 +32,7 @@ export async function GET(request) {
         }, { status: 200 });
         
     } catch (error) {
-        console.error("Cannot update project", error);
+        console.error("Cannot get issues in the project", error);
         return NextResponse.json({
             data: null,
             message: error.message
@@ -68,45 +65,123 @@ export async function POST(request) {
         
         const projectDocRef = doc(db, 'projects', projectId);
 
+        if(!projectDocRef){
+            return NextResponse.json({
+                message: "The referred project is not found"
+            }, { status: 404 })
+        }
+
+        let assignedToDetails = null;
+        if (assignedTo) {
+            const userDocRef = doc(db, 'users', assignedTo);
+
+            const userSnap = await getDoc(userDocRef);
+            if (userSnap.exists()) {
+                assignedToDetails = userSnap.data();
+                console.log("assigned to detail", assignedToDetails)
+
+            } else {
+                return NextResponse.json({
+                    message: "Assigned user not found"
+                }, { status: 404 })
+            }
+        }
+
+        let createdByDetails = null;
+        if (createdBy) {
+            const userDocRef = doc(db, 'users', createdBy);
+
+            const userSnap = await getDoc(userDocRef);
+            if (userSnap.exists()) {
+                createdByDetails = userSnap.data();
+
+            } else {
+                return NextResponse.json({
+                    message: "The user creator not found"
+                }, { status: 404 })
+            }
+        }
+
+        let issueTypeDetails = null;
+        if (typeId) {
+            const userDocRef = doc(db, 'issueTypes', typeId);
+            const issueTypeSnap = await getDoc(userDocRef);
+
+            if (issueTypeSnap.exists()) {
+                issueTypeDetails = issueTypeSnap.data();
+
+            } else {
+                return NextResponse.json({
+                    message: "The issue type not found"
+                }, { status: 404 })
+            }
+        }
+
+        let issueStatusDetails = null;
+        if (statusId) {
+            const userDocRef = doc(db, 'issueStatuses', statusId);
+           
+            const issueStatusSnap = await getDoc(userDocRef);
+            if (issueStatusSnap.exists()) {
+                issueStatusDetails = issueStatusSnap.data();
+
+            } else {
+                return NextResponse.json({
+                    message: "The issue status not found"
+                }, { status: 404 })
+            }
+        }
+
         const newIssue = {
-            id: uuidv4(),
             projectId: projectId, 
-            assignedTo: assignedTo? assignedTo : null,
-            typeId: typeId? typeId : null,
-            createdBy: createdBy,
+            assignedTo: assignedTo? { userId: assignedTo, assignedToDetails } : null,
+            type: typeId? { typeId, issueTypeDetails } : null,
+            createdBy: createdBy? { userId: createdBy, createdByDetails } : null,
             issueName: issueName,
             label: label? label : null,
-            statusId: statusId? statusId : null,
-            description: description? description : null,
-            startDate: startDate? startDate : null,
-            dueDate: dueDate? dueDate : null,
+            status: statusId? { statusId, issueStatusDetails } : null,
+            description: description ?? null,
+            startDate: startDate ?? null,
+            dueDate: dueDate ?? null,
             finishedDate: null,
+            comments: [],
+            attachments: [],
+            AIResponse: [],
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             deletedAt: null
         };
 
-        await updateDoc(projectDocRef, {
-            issueList: arrayUnion(newIssue)
-        });
+        const issuesCollectionRef = collection(db, 'issues');
+        const issueDocRef = await addDoc(issuesCollectionRef, newIssue);
 
-        const updatedProjectSnap = await getDoc(projectDocRef);
-        
-        if (updatedProjectSnap.exists()) {
+        if (!issueDocRef) {
             return NextResponse.json({
-                data: {
-                    id: updatedProjectSnap.id,
-                    ...updatedProjectSnap.data()
-                },
-                message: "Successfully added new issue to project"
-            }, { status: 200 });
-
-        } else {
-            throw new Error("Project document does not exist");
+                message: 'Failed to create new issue doc'
+            }, { status: 404 })
         }
 
+        await updateDoc(projectDocRef, {
+            issueList: arrayUnion({
+                id: issueDocRef.id,
+                issueName: newIssue.issueName,
+                assignedTo: newIssue.assignedTo,
+                type: newIssue.type,
+                status: newIssue.status,
+                label: newIssue.label
+            })
+        });
+        
+        return NextResponse.json({
+            data: {
+                id: issueDocRef.id,
+                ...newIssue
+            },
+            message: "Successfully added new issue to project and issue collection"
+        }, { status: 200 });
+
     } catch (error) {
-        console.error("Can't create project and issue statuses", error);
+        console.error("Can't create issue", error);
         return NextResponse.json({
             data: null,
             message: error.message
