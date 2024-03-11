@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useState } from "react"
+import Link from "next/link"
 
 import SearchBar from "../common/SearchBar"
 import SelectButton from "../common/SelectButton"
@@ -25,7 +26,7 @@ export default function ProjectContent(){
     }
 
     const handleSearch = (query) => {
-        setQuery(query)
+        setQuery(query.toLowerCase())
     }
 
     useEffect(() => {
@@ -43,11 +44,23 @@ export default function ProjectContent(){
 
     const columns = [
         {
-            accessorKey: 'Id',
+            accessorKey: 'id',
         },
         {
             accessorKey: 'projectName',
             header: 'Project Name',
+            cell: ({ row }) => {
+                const id = row.getValue('id')
+                const projectName = row.getValue('projectName')
+                return(
+                    <Link 
+                        href={`/projects/${id}`} 
+                        className="w-full h-full block hover:underline text-basic-blue"
+                    >
+                        {projectName}
+                    </Link>
+                )
+            }
         },
         {
             accessorKey: 'key',
@@ -70,7 +83,7 @@ export default function ProjectContent(){
             accessorKey: 'action',
             header: () => <div className="w-full text-center">Action</div>,
             cell: ({ row }) => {
-                const id = row.getValue("Id")
+                const id = row.getValue("id")
                 const actions = row.getValue("action")
                 return <TableActionButton actions={actions} id={id}/>
             },
@@ -101,7 +114,7 @@ export default function ProjectContent(){
                 </LinkButton>
             </div>
             <Table
-                data={projectData?.filter(project => project.projectName.includes(query))}
+                data={projectData?.filter(project => project.projectName.toLowerCase().includes(query))}
                 columns={columns}
                 pageSize={pageSize}
             />

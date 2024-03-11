@@ -3,7 +3,8 @@ import { Droppable } from "@hello-pangea/dnd"
 import BoardItem from "./BoardItem"
 
 const getListStyle = isDraggingOver => ({
-    width: 250,
+    width: 270,
+    minHeight: 240,
     overflowX: 'hidden',
     overflowY: 'auto',
     marginRight: '-8px',

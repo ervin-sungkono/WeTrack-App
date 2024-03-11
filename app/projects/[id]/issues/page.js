@@ -3,7 +3,7 @@ import ProjectLayout from "@/app/components/layout/ProjectLayout"
 
 export default function IssuesPage({ params: { id } }){
     return(
-        <ProjectLayout>
+        <ProjectLayout projectId={id}>
             Issues
         </ProjectLayout>
     )

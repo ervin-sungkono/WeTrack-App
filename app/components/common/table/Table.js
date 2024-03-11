@@ -42,7 +42,7 @@ export default function Table({
         },
         state: {
             columnVisibility: {
-                Id: false
+                id: false
             }
         },
         getCoreRowModel: getCoreRowModel(),
@@ -88,7 +88,7 @@ export default function Table({
                                         (<div  {...{
                                             className: `${header.column.getCanSort()
                                               ? "w-full select-none cursor-pointer"
-                                              : ""} px-2.5 py-2.5 text-xs md:text-sm flex justify-between items-center gap-1.5 z-fixed`,
+                                              : ""} px-2.5 py-2 text-xs md:text-sm flex justify-between items-center gap-1.5 z-fixed`,
                                             onClick: header.column.getToggleSortingHandler(),
                                           }}>
                                            {flexRender(header.column.columnDef.header, header.getContext())}
@@ -110,7 +110,7 @@ export default function Table({
                                         key={cell.id} 
                                         className={`text-dark`}
                                     >
-                                        <div className={'px-2.5 py-2.5 text-xs md:text-sm'}>
+                                        <div className={'px-2.5 py-2 text-xs md:text-sm'}>
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </div>
                                     </td>

@@ -29,7 +29,7 @@ export async function GET(request, context) {
                 ...projectData
             },
             message: "Successfully retrieved project"
-        }, { status: 404 });
+        }, { status: 200 });
 
     } catch (error) {
         console.error("Cannot get project detail", error);
