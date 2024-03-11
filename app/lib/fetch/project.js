@@ -1,3 +1,23 @@
+export function getProjectByID(id){
+    const response = fetch(`/api/project/${id}`,{
+        method: 'GET',
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
+
+    return response
+}
+
+export function getRecentProjects(){
+    const response = fetch('/api/project/recent',{
+        method: 'GET',
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
+
+    return response
+}
+
 export function getAllProject(){
     const response = fetch('/api/project',{
         method: 'GET',

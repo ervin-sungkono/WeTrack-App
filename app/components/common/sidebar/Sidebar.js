@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import SidebarMenu from "./SidebarMenu"
 
@@ -17,13 +17,21 @@ import {
     MdSettings as SettingIcon
 } from "react-icons/md"
 
-export default function Sidebar(){
+export default function Sidebar({ project }){
     const [open, setOpen] = useState(true)
+    const [mounted, setMounted] = useState(false)
+    const [baseUrl, setBaseUrl] = useState("/")
+
+    useEffect(() => {
+        setMounted(true)
+        if(project) {
+            setBaseUrl(`/projects/${project.id}`)
+        }
+    }, [project])
+
     const toggleSidebar = () => {
         setOpen(!open)
     }
-
-    const baseUrl = '/projects/abc' // {id}
 
     const mainLinks = [
         { 
@@ -61,10 +69,16 @@ export default function Sidebar(){
         },
     ]
 
-    return(
+    if(!mounted) return (
+        <section className={`sidebar fixed lg:relative w-[200px] bg-white flex-shrink-0 h-full flex flex-col z-[10000]`}></section>
+    )
+
+    return (
         <section className={`sidebar fixed lg:relative w-[200px] lg:translate-x-0 ${open ? "lg:w-[240px] translate-x-0" : "lg:w-20 -translate-x-full"} bg-white flex-shrink-0 h-full flex flex-col shadow-md z-[10000] transition-all duration-300 ease-in-out`}>
-            <div className="w-full flex justify-between items-center px-4 pt-4 lg:pt-6 pb-4">  
-                <div className="text-sm md:text-base text-center font-semibold whitespace-nowrap overflow-hidden transition-[width] duration-300" style={{width: (open ? "100%" : "0px")}}>Project Name</div>
+            <div className="w-full flex justify-between items-center px-4 pt-4 lg:pt-6 pb-2.5 md:pb-4">  
+                <div className="text-base md:text-lg text-center font-semibold whitespace-nowrap overflow-hidden transition-[width] duration-300" style={{width: (open ? "100%" : "0px")}}>
+                    {project?.projectName}
+                </div>
                 <button className="absolute top-2 lg:top-4 -right-6 lg:right-0 translate-x-1/2 text-white bg-basic-blue hover:bg-light-blue p-2.5 rounded-full transition-colors" onClick={toggleSidebar}>
                     {open ? <SidebarCollapseIcon size={20}/> : <SidebarExpandIcon size={20}/>}
                 </button>

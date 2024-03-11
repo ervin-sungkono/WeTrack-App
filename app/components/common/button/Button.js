@@ -50,6 +50,14 @@ export default function Button({
                     hover: 'hover:bg-danger-red/80',
                     hoverOutline: 'hover:bg-danger-red hover:text-white'
                 })
+            case 'gray':
+                return({
+                    bgColor: 'gray-200',
+                    textColor: 'dark-blue',
+                    borderClass: 'border-gray-400',
+                    hover: 'hover:bg-gray-300',
+                    hoverOutline: 'hover:bg-gray-300 hover:text-dark-blue'
+                })
             default:
                 return ({
                     bgColor: '',

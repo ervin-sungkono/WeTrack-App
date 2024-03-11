@@ -3,7 +3,7 @@ import ProjectLayout from "@/app/components/layout/ProjectLayout"
 
 export default function OverviewPage({ params: { id } }){
     return(
-        <ProjectLayout>
+        <ProjectLayout projectId={id}>
             Overview
         </ProjectLayout>
     )
