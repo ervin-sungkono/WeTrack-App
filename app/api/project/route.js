@@ -12,7 +12,7 @@ export async function GET(request, response) {
             return NextResponse.json({
                 data: null,
                 message: "Unauthorized, user id not found"
-            }, { status: 400 })
+            }, { status: 401 })
         }
 
         const projectsRef = collection(db, 'projects')
@@ -32,7 +32,7 @@ export async function GET(request, response) {
         }, { status: 200 });
         
     } catch (error) {
-        console.error("Cannot update project", error);
+        console.error("Cannot get projects", error);
         return NextResponse.json({
             data: null,
             message: error.message
@@ -57,6 +57,8 @@ export async function POST(request) {
             },
             startStatus: null,
             endStatus: null,
+            issueList: [],
+            team: null,
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
             deletedAt: null
