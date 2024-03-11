@@ -26,7 +26,7 @@ export default function ProjectContent(){
     }
 
     const handleSearch = (query) => {
-        setQuery(query)
+        setQuery(query.toLowerCase())
     }
 
     useEffect(() => {
@@ -114,7 +114,7 @@ export default function ProjectContent(){
                 </LinkButton>
             </div>
             <Table
-                data={projectData?.filter(project => project.projectName.includes(query))}
+                data={projectData?.filter(project => project.projectName.toLowerCase().includes(query))}
                 columns={columns}
                 pageSize={pageSize}
             />
