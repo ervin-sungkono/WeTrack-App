@@ -15,7 +15,7 @@ export default function UpdateProfileForm({initialValues, setUpdateProfile, hand
             onSubmit={handleUpdateProfile}
             validationSchema={updateProfileSchema}
             children={(formik) => (
-                <div className="overflow-auto h-full">
+                <div className="overflow-auto max-w-2xl mx-auto h-full">
                     <div className="overflow-auto flex flex-col gap-4 md:gap-6">
                         <div className="flex gap-2">
                             <IoIosInformationCircle className="text-xl md:text-2xl"/>
@@ -58,12 +58,12 @@ export default function UpdateProfileForm({initialValues, setUpdateProfile, hand
                             />
                         </div>
                     </div>
-                    <div className="flex flex-col md:flex-row gap-3 md:gap-4 mt-6">
+                    <div className="flex flex-col justify-end md:flex-row gap-3 md:gap-4 mt-6">
                         <Button variant="primary" type="submit">
-                            Confirm Update Profile
+                            Update Profile
                         </Button>
                         <Button variant="secondary" onClick={() => setUpdateProfile(false)}>
-                            Cancel Update Profile
+                            Cancel
                         </Button>
                     </div>
                 </div>
