@@ -12,8 +12,6 @@ export default function NavDropdown({ label, baseLink = '/', dropdownLinks = [],
        initDropdowns()
     })
 
-    console.log(pathname)
-
     return(
         <>
             <button 

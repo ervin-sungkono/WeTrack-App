@@ -9,7 +9,7 @@ import Button from "../../common/button/Button"
 import { BsThreeDots as DotIcon } from "react-icons/bs"
 import { IoFilter as FilterIcon } from "react-icons/io5"
 import { FiPlus as PlusIcon } from "react-icons/fi"
-import useLocalStorage from "@/app/lib/hooks/useLocalStorage"
+import useSessionStorage from "@/app/lib/hooks/useSessionStorage"
 import { getAllIssue } from "@/app/lib/fetch/issue"
 
 const reorder = (list, startIndex, endIndex) => {
@@ -38,7 +38,7 @@ export default function BoardContent() {
   const [state, setState] = useState();
   const [query, setQuery] = useState("")
   const [filterDropdown, setFilterDropdown] = useState(false)
-  const [project, _] = useLocalStorage("project")
+  const [project, _] = useSessionStorage("project")
 
   const queryAttr = "data-rbd-drag-handle-draggable-id";
   const destinationQuertAttr = "data-rbd-droppable-id";

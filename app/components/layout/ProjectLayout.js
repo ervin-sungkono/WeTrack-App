@@ -2,12 +2,12 @@
 import dynamic from "next/dynamic"
 import Navbar from "../common/navbar/Navbar"
 import Sidebar from "../common/sidebar/Sidebar"
-import useLocalStorage from "@/app/lib/hooks/useLocalStorage"
+import useSessionStorage from "@/app/lib/hooks/useSessionStorage"
 import { useEffect } from "react"
 import { getProjectByID } from "@/app/lib/fetch/project"
 
 export default function ProjectLayout({ children, hideSidebar, projectId }){
-    const [project, setProject] = useLocalStorage('project', null)
+    const [project, setProject] = useSessionStorage('project', null)
     useEffect(() => {
         if(projectId && (!project || project.id != projectId)){
             getProjectByID(projectId)
