@@ -60,7 +60,7 @@ export default function NavbarMenu({ hideMenu }){
                         (session && !hideMenu) ?
                         <div className={`w-full lg:w-auto flex flex-col lg:flex-row lg:h-full items-center`}>
                             <NavLink label={"Dashboard"} href={"/dashboard"}/>
-                            <NavDropdown label={"Projects"} dropdownLinks={projectLinks}>
+                            <NavDropdown label={"Projects"} baseLink={'/projects'} dropdownLinks={projectLinks}>
                                 <div className="py-2 flex flex-col gap-1">
                                     <p className="px-4 text-sm font-bold uppercase">Recent</p>
                                     {
