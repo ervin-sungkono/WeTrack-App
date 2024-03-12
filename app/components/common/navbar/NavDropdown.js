@@ -16,7 +16,7 @@ export default function NavDropdown({ label, baseLink = '/', dropdownLinks = [],
         <>
             <button 
                 className={`
-                    ${pathname.includes(baseLink) ? "text-basic-blue" : "text-dark-blue hover:text-basic-blue"}
+                    ${pathname.includes(baseLink) ? "text-basic-blue" : "text-dark-blue hover:text-basic-blue"} select-none
                     relative w-full h-full flex items-center gap-1 px-2 md:px-4 py-4 lg:py-0 font-medium text-sm transition-colors duration-300
                     after:absolute after:bottom-0 after:left-0 after:w-full after:scale-x-0 after:hover:scale-x-100 after:origin-center after:h-1 after:bg-basic-blue after:transition-transform after:duration-300
                 `}

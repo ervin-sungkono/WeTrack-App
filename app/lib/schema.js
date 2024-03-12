@@ -52,15 +52,12 @@ export const changePasswordSchema = yup.object().shape({
 export const updateProfileSchema = yup.object().shape({
     description: yup
         .string()
-        .required("Description must be filled!")
         .max(256, "Description must contain at most 256 characters!"),
     jobPosition: yup
         .string()
-        .required("Job position must be filled!")
         .max(50, "Job position must contain at most 50 characters!"),
     location: yup
         .string()
-        .required("Location must be filled!")
         .max(50, "Location must contain at most 50 characters!")
 })
 

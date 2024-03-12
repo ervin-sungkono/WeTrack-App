@@ -19,7 +19,7 @@ export default function FormikCheckbox({ name, label, placeholder }){
                                 placeholder={placeholder}
                                 className={`w-5 h-5 rounded`}
                             />
-                            <label htmlFor={name} className="block text-sm md:text-base">
+                            <label htmlFor={name} className="block text-xs md:text-sm text-dark-blue">
                                 {label}
                             </label>
                         </div>

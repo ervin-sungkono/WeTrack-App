@@ -7,6 +7,7 @@ import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { getRecentProjects } from "@/app/lib/fetch/project"
 import SkeletonText from "../../skeleton/SkeletonText"
+import Button from "../button/Button"
 
 import { 
     IoMdNotifications as NotificationIcon, 
@@ -18,7 +19,7 @@ const NavDropdown = dynamic(() => import("./NavDropdown"))
 const UserDropdown = dynamic(() => import("./UserDropdown"))
 const LinkButton = dynamic(() => import("../button/LinkButton"))
 
-export default function NavbarMenu({ hideMenu }){
+export default function NavbarMenu({ showForm, hideMenu }){
     const [hamburgerState, setHamburgerState] = useState(false)
     const { data: session, status } = useSession()
     const [recentProjects, setRecentProjects] = useState(null)
@@ -78,6 +79,7 @@ export default function NavbarMenu({ hideMenu }){
                                 </div>
                             </NavDropdown>
                             <NavLink label={"History"} href={"/history"}/>
+                            <Button variant="primary" size="md" className={"w-full mt-2 lg:mt-0 lg:ml-4"} onClick={showForm}>Create</Button>
                         </div> 
                         : 
                         null

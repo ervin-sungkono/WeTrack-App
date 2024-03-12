@@ -10,7 +10,7 @@ export default function FormikTextarea({ name, required, label, placeholder, row
             {(formikField) => {
                 return (
                     <div className="flex flex-col gap-1">
-                        <label htmlFor={name} className="block font-semibold text-xs md:text-sm">
+                        <label htmlFor={name} className="block font-semibold text-xs md:text-sm text-dark-blue">
                             {label}
                             {required && <span className="text-red-600">*</span>}
                         </label>
