@@ -69,7 +69,7 @@ export default function ProfileLayout(){
     }else{
         return (
             <div className="h-full">
-                <div className="h-[200px] md:h-[260px]"> {/* DIV A */}
+                <div className="h-[200px] md:h-[260px]"> 
                     <div className="fixed h-[100px] md:h-[140px] bg-basic-blue w-full">
                         <div className="flex items-center justify-center mt-12 md:mt-16">
                             <UserIcon
@@ -84,7 +84,7 @@ export default function ProfileLayout(){
                         </div>
                     </div>
                 </div>
-                <div className="container flex-grow flex flex-col justify-center"> {/* DIV A */}
+                <div className="container flex-grow flex flex-col justify-center"> 
                     <div className="overflow-auto">
                         {updateProfile && (
                             <div className="max-w-2xl m-auto">
