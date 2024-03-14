@@ -1,23 +1,22 @@
 /* eslint-disable react/no-children-prop */
+
 "use client"
 
-import { useRouter, useSearchParams } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react"
-import { loginSchema } from "@/app/lib/schema"
-import { FaGoogle as Google } from "react-icons/fa";
+import { forgotPasswordSchema } from "@/app/lib/schema"
 
-import Link from "next/link"
-import WeTrackLogo from "@/app/components/common/Logo"
-import FormikWrapper from "@/app/components/common/form/formik/FormikWrapper"
-import FormikField from "@/app/components/common/form/formik/FormikField"
-import Button from "../button/Button"
-import PopUpLoad from "../alert/PopUpLoad"
+import Link from "next/link";
+import WeTrackLogo from "../Logo";
+import FormikField from "./formik/FormikField";
+import FormikWrapper from "./formik/FormikWrapper";
+import Button from "../button/Button";
+import PopUpLoad from "../alert/PopUpLoad";
 
-export default function LoginForm(){
+export default function ForgotPasswordForm(){
     const initialValues = {
         email: "",
-        password: ""
     }
     
     const [error, setError] = useState(false)
@@ -38,7 +37,7 @@ export default function LoginForm(){
         setError(false);
         setLoading(true);
         try {
-            const res = await signIn("credentials", {
+            const res = await signIn("credentials", { //akan diganti dengan API forgot password jika sudah ada
                 ...values,
                 redirect: false
             })
@@ -56,25 +55,25 @@ export default function LoginForm(){
             setLoading(false);
         }
     };
-
-    return(
+    
+    return (
         <div className="flex min-h-screen flex-col items-center justify-center text-dark-blue py-8">
             <div className="flex flex-col justify-center items-center text-center w-5/6">
                 <h1 className="text-2xl font-bold">
-                    Masuk
+                    Lupa Kata Sandi
                 </h1>
                 <p className="text-sm mt-1">
-                    Selamat datang, silakan masuk untuk melanjutkan.
+                    Masukkan email terdaftar untuk mengatur ulang kata sandi.
                 </p>
             </div>
             <div className="p-4 md:p-6 mt-4 bg-white shadow-lg w-5/6 lg:w-2/5 rounded-xl max-w-lg lg:max-w-2xl">
                 <FormikWrapper
                     initialValues={initialValues}
                     onSubmit={handleSubmit}
-                    validationSchema={loginSchema}
+                    validationSchema={forgotPasswordSchema}
                     children={(formik) => (
                         <div>
-                            <div>
+                            <div className="mb-4">
                                 <FormikField
                                     name="email"
                                     required
@@ -83,44 +82,15 @@ export default function LoginForm(){
                                     placeholder="Masukkan email..."
                                 />
                             </div>
-                            <div className="mt-2">
-                                <FormikField
-                                    name="password"
-                                    required
-                                    type="password"
-                                    label="Kata Sandi"
-                                    placeholder="Masukkan kata sandi..."
-                                />
-                            </div>
-                            <div className="mt-2 mb-4 text-basic-blue text-xs hover:underline">
-                                <Link href="/forgotPassword">
-                                    Lupa kata sandi?
-                                </Link>
-                            </div>
-                            {error && <p className="mb-2 text-xs md:text-sm text-center text-danger-red font-medium">{errorMessage}</p>}
+                            {error && <p className="text-xs md:text-sm text-center text-danger-red font-medium">{errorMessage}</p>}
                             <div className="flex justify-center">
-                                <Button variant="primary" size="sm" type="submit" className="w-full">
-                                    Masuk
+                                <Button variant="primary" size="sm" type="submit" className="mt-2 w-full">
+                                    Kirim
                                 </Button>
                             </div>
                             <div className="mt-2 text-basic-blue text-center text-xs hover:underline">
-                                <Link href="/register">
-                                    Buat akun
-                                </Link>
-                            </div>
-                            <div className="mt-4 flex justify-center items-center">
-                                <div className="w-full bg-dark-blue" style={{height: '1px'}}/>
-                                <span className="mx-2">
-                                    ATAU
-                                </span>
-                                <div className="w-full bg-dark-blue" style={{height: '1px'}}/>
-                            </div>
-                            <div className="mt-4">
-                                <Link href="#">
-                                    <Button outline variant="primary" size="sm" className="w-full flex justify-center items-center">
-                                        <Google className="inline-block mr-2" />
-                                        Masuk dengan Google
-                                    </Button>
+                                <Link href="/login">
+                                    Kembali ke halaman masuk
                                 </Link>
                             </div>
                         </div>
