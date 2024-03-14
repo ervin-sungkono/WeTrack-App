@@ -122,7 +122,7 @@ export default function BoardContent() {
             {(provided, snapshot) => (
               <div
                 ref={provided.innerRef}
-                className="flex items-start"
+                className="h-full flex items-start"
                 {...provided.droppableProps}
               >
                 {state?.map((el, ind) => (
