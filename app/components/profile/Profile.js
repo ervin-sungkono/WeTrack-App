@@ -80,7 +80,7 @@ export default function ProfileLayout(){
                         </div>
                         <div className="text-center mb-4">
                             <p className="text-lg md:text-xl font-bold leading-5">{session.user.fullName}</p>
-                            <p className="text-sm md:text-base mt-1">Joined at</p>
+                            <p className="text-sm md:text-base mt-1">Bergabung pada</p>
                         </div>
                     </div>
                 </div>
@@ -100,8 +100,8 @@ export default function ProfileLayout(){
                                 <div className="overflow-auto h-1/4 md:h-full flex flex-col gap-4">
                                     <ProfileField
                                         icon={<IoIosInformationCircle className="text-lg md:text-xl"/>}
-                                        label={"Description"}
-                                        value={"No description yet."}
+                                        label={"Deskripsi"}
+                                        value={"Belum ada deskripsi."}
                                     />
                                     <ProfileField
                                         icon={<MdEmail className="text-lg md:text-xl"/>}
@@ -110,21 +110,21 @@ export default function ProfileLayout(){
                                     />
                                     <ProfileField
                                         icon={<TbBriefcaseFilled className="text-lg md:text-xl"/>}
-                                        label={"Job Position"}
-                                        value={"No job position yet."}
+                                        label={"Posisi Pekerjaan"}
+                                        value={"Belum ada posisi pekerjaan."}
                                     />
                                     <ProfileField
                                         icon={<IoMdPin className="text-lg md:text-xl"/>}
-                                        label={"Location"}
-                                        value={"No location yet."}
+                                        label={"Lokasi"}
+                                        value={"Belum ada lokasi."}
                                     />
                                 </div>
                                 <div className="mt-4 md:mt-6 text-center xs:text-left">
-                                    <p className="text-base md:text-lg font-semibold">Manage Account</p>
+                                    <p className="text-base md:text-lg font-semibold">Kelola Akun</p>
                                     <div className="flex flex-col xs:flex-row gap-2 md:gap-4 mt-2 md:mt-4 mb-12">
-                                        <Button variant="primary" onClick={() => setChangePassword(true)}>Change Password</Button>
-                                        <Button variant="primary" outline onClick={() => setUpdateProfile(true)}>Update Profile</Button>
-                                        <Button variant="danger" outline onClick={() => setDeleteAccount(true)}>Delete Account</Button>
+                                        <Button variant="primary" onClick={() => setChangePassword(true)}>Ganti Kata Sandi</Button>
+                                        <Button variant="primary" outline onClick={() => setUpdateProfile(true)}>Perbarui Profil</Button>
+                                        <Button variant="danger" outline onClick={() => setDeleteAccount(true)}>Hapus Akun</Button>
                                     </div>
                                 </div>
                             </div>

@@ -15,9 +15,9 @@ export default function ChangePasswordForm({onConfirm, onClose}){
     return (
         <PopUpForm
             variant="secondary"
-            title={"Change Password"}
+            title={"Ganti Kata Sandi"}
             titleSize={"large"}
-            message={"Make sure to confirm your new password before submitting."}
+            message={"Pastikan konfirmasi kata sandi baru Anda sebelum dikirim."}
         >
             <FormikWrapper
                 initialValues={initialValues}
@@ -31,8 +31,8 @@ export default function ChangePasswordForm({onConfirm, onClose}){
                                     name="oldPassword"
                                     required
                                     type="password"
-                                    label="Old Password"
-                                    placeholder="Enter old password..."
+                                    label="Kata Sandi Lama"
+                                    placeholder="Masukkan kata sandi lama..."
                                 />
                             </div>
                             <div>
@@ -40,8 +40,8 @@ export default function ChangePasswordForm({onConfirm, onClose}){
                                     name="newPassword"
                                     required
                                     type="password"
-                                    label="New Password"
-                                    placeholder="Enter new password..."
+                                    label="Kata Sandi Baru"
+                                    placeholder="Masukkan kata sandi baru..."
                                 />
                             </div>
                             <div>
@@ -49,14 +49,14 @@ export default function ChangePasswordForm({onConfirm, onClose}){
                                     name="confirmPassword"
                                     required
                                     type="password"
-                                    label="Confirm New Password"
-                                    placeholder="Enter new password confirmation..."
+                                    label="Konfirmasi Kata Sandi Baru"
+                                    placeholder="Masukkan konfirmasi kata sandi baru..."
                                 />
                             </div>
                         </div>
                         <div className="flex gap-2 md:gap-4 items-center justify-end mt-4 md:mt-8">
-                            <Button size="sm" variant="primary" type="submit">Save Changes</Button>
-                            <Button size="sm" variant="secondary" onClick={onClose}>Cancel</Button>
+                            <Button size="sm" variant="primary" type="submit">Simpan Perubahan</Button>
+                            <Button size="sm" variant="secondary" onClick={onClose}>Batal</Button>
                         </div>
                     </>
                 )}

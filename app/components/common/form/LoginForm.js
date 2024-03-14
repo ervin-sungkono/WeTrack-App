@@ -61,10 +61,10 @@ export default function LoginForm(){
         <div className="flex min-h-screen flex-col items-center justify-center text-dark-blue py-8">
             <div className="flex flex-col justify-center items-center text-center w-5/6">
                 <h1 className="text-2xl font-bold">
-                    Sign In
+                    Masuk
                 </h1>
                 <p className="text-sm mt-1">
-                    Welcome back, please sign in to continue.
+                    Selamat datang, silakan masuk untuk melanjutkan.
                 </p>
             </div>
             <div className="p-4 md:p-6 mt-4 bg-white shadow-lg w-5/6 lg:w-2/5 rounded-xl max-w-lg lg:max-w-2xl">
@@ -80,7 +80,7 @@ export default function LoginForm(){
                                     required
                                     type="email"
                                     label="Email"
-                                    placeholder="Enter email..."
+                                    placeholder="Masukkan email..."
                                 />
                             </div>
                             <div className="mt-2">
@@ -88,30 +88,30 @@ export default function LoginForm(){
                                     name="password"
                                     required
                                     type="password"
-                                    label="Password"
-                                    placeholder="Enter password..."
+                                    label="Kata Sandi"
+                                    placeholder="Masukkan kata sandi..."
                                 />
                             </div>
                             <div className="mt-2 mb-4 text-basic-blue text-xs hover:underline">
                                 <Link href="#">
-                                    Forgot password?
+                                    Lupa kata sandi?
                                 </Link>
                             </div>
                             {error && <p className="mb-2 text-xs md:text-sm text-center text-danger-red font-medium">{errorMessage}</p>}
                             <div className="flex justify-center">
                                 <Button variant="primary" size="sm" type="submit" className="w-full">
-                                    Sign In
+                                    Masuk
                                 </Button>
                             </div>
                             <div className="mt-2 text-basic-blue text-center text-xs hover:underline">
                                 <Link href="/register">
-                                    Create an account
+                                    Buat akun
                                 </Link>
                             </div>
                             <div className="mt-4 flex justify-center items-center">
                                 <div className="w-full bg-dark-blue" style={{height: '1px'}}/>
                                 <span className="mx-2">
-                                    OR
+                                    ATAU
                                 </span>
                                 <div className="w-full bg-dark-blue" style={{height: '1px'}}/>
                             </div>
@@ -119,7 +119,7 @@ export default function LoginForm(){
                                 <Link href="#">
                                     <Button outline variant="primary" size="sm" className="w-full flex justify-center items-center">
                                         <Google className="inline-block mr-2" />
-                                        Sign in with Google
+                                        Masuk dengan Google
                                     </Button>
                                 </Link>
                             </div>
