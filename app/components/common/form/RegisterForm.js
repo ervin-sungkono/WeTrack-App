@@ -25,7 +25,7 @@ export default function RegisterForm(){
     }
 
     const [error, setError] = useState("")
-    const [errorMessage, setErrorMessage] = useState("Something went wrong, please try again later.")
+    const [errorMessage, setErrorMessage] = useState("Ada kesalahan, silakan coba lagi nanti.")
     const [loading, setLoading] = useState(false)
     const router = useRouter()
     const searchParams = useSearchParams()
@@ -61,7 +61,7 @@ export default function RegisterForm(){
         } catch (error) {
             setError(true);
             if(error.message.includes("auth/email-already-in-use")){
-                setErrorMessage("Email already in use!")
+                setErrorMessage("Email sudah digunakan!")
             }
             console.log(error.message)
         } finally {
