@@ -37,7 +37,7 @@ export default function UserSelectButton({ name, userId, placeholder, options = 
                 data-dropdown-placement="bottom-start"
                 data-dropdown-delay="0"
                 data-dropdown-offset-distance="4"
-                className="w-full flex items-center gap-1 font-semibold text-xs md:text-sm text-dark-blue hover:text-basic-blue px-3 py-1.5 md:px-4 md:py-2 rounded-md focus:ring-0 focus:outline-none border border-dark-blue/30 transition-colors duration-300 ease-in-out" 
+                className="w-full flex items-center gap-1 font-semibold text-xs md:text-sm text-dark-blue disabled:text-gray-700 disabled:bg-gray-300 hover:text-basic-blue px-3 py-1.5 md:px-4 md:py-2 rounded-md focus:ring-0 focus:outline-none border border-dark-blue/30 transition-colors duration-300 ease-in-out" 
                 type="button"
                 disabled={disabled}
             >

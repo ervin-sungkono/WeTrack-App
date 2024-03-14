@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from "react"
-import { DragDropContext } from "@hello-pangea/dnd"
+import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import BoardList from "./BoardList"
 import SearchBar from "../../common/SearchBar"
 import SelectButton from "../../common/SelectButton"
@@ -40,11 +40,6 @@ export default function BoardContent() {
   const [filterDropdown, setFilterDropdown] = useState(false)
   const [project, _] = useSessionStorage("project")
 
-  const queryAttr = "data-rbd-drag-handle-draggable-id";
-  const destinationQuertAttr = "data-rbd-droppable-id";
-
-  const [placeholderProps, setPlaceholderProps] = useState({});
-
   useEffect(() => {
     if(project){
       getAllIssue(project.id).then(res => {
@@ -74,6 +69,12 @@ export default function BoardContent() {
     }
     const sInd = +source.droppableId;
     const dInd = +destination.droppableId;
+
+    if(source.droppableId === 'issue_status'){
+      const items = reorder(state, source.index, destination.index)
+      setState(items)
+      return
+    }
 
     if (sInd === dInd) {
       const items = reorder(state[sInd].content, source.index, destination.index);
@@ -114,33 +115,46 @@ export default function BoardContent() {
             </div>
           </div>
         </div>
-        <div className="flex flex-shrink-0 items-center gap-2">
-          <b className="text-xs md:text-sm">Group By:</b>
-          <SelectButton 
-              name={"groupby-button"}
-              placeholder={"None"}
-          />
-        </div>
       </div>
-      <div className="h-full flex items-start gap-4 overflow-y-auto pb-4">
+      <div className="h-full flex items-start overflow-y-auto pb-4">
         <DragDropContext onDragEnd={onDragEnd}>
-          {state?.map((el, ind) => (
-            <div key={el.id} className="custom-scrollbar max-h-full flex-shrink-0 flex flex-col p-2 gap-4 bg-gray-200 rounded-md overflow-y-auto">
-              <div className="flex items-center gap-2 px-1 text-dark-blue/80">
-                <div className="uppercase flex-grow text-xs md:text-sm font-semibold">{el.status} <span className="text-[10px] md:text-xs">({el.content.filter(issue => issue.issueName.toLowerCase().includes(query)).length})</span></div>
-                <button className="p-1.5 hover:bg-gray-300 duration-200 transition-colors rounded-sm">
-                  <DotIcon size={20}/>
-                </button>
+          <Droppable droppableId="issue_status" direction="horizontal" type="ISSUE-STATUS">
+            {(provided, snapshot) => (
+              <div
+                ref={provided.innerRef}
+                className="flex items-start"
+                {...provided.droppableProps}
+              >
+                {state?.map((el, ind) => (
+                  <Draggable draggableId={el.id} index={ind} key={el.id}>
+                    {(provided, snapshot) => (
+                      <div 
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        className="custom-scrollbar max-h-full flex-shrink-0 mr-4 flex flex-col p-2 gap-4 bg-gray-200 rounded-md overflow-y-auto"
+                      >
+                        <div className="flex items-center gap-2 px-1 text-dark-blue/80">
+                          <div className="uppercase flex-grow text-xs md:text-sm font-semibold">{el.status} <span className="text-[10px] md:text-xs">({el.content.filter(issue => issue.issueName.toLowerCase().includes(query)).length})</span></div>
+                          <button className="p-1.5 hover:bg-gray-300 duration-200 transition-colors rounded-sm">
+                            <DotIcon size={20}/>
+                          </button>
+                        </div>
+                        <BoardList items={el.content.filter(issue => issue.issueName.toLowerCase().includes(query))} droppableId={`${ind}`}/>
+                        <Button variant="gray" onClick={() => createIssueCard(el.status)}>
+                          <div className="flex justify-center items-center gap-2">
+                            <PlusIcon size={16}/>
+                            <p>Create Issue</p>
+                          </div>
+                        </Button>
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
               </div>
-              <BoardList items={el.content.filter(issue => issue.issueName.toLowerCase().includes(query))} droppableId={`${ind}`}/>
-              <Button variant="gray" onClick={() => createIssueCard(el.status)}>
-                <div className="flex justify-center items-center gap-2">
-                  <PlusIcon size={16}/>
-                  <p>Create Issue</p>
-                </div>
-              </Button>
-            </div>
-          ))}
+            )}
+          </Droppable>
         </DragDropContext>
         <Button variant="primary" className={"w-[270px] flex-shrink-0"} onClick={() => setState([...state, {status: "New Status", content: []}])}>
           <div className="flex items-center gap-2">

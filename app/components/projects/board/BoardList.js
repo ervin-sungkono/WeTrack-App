@@ -13,7 +13,7 @@ const getListStyle = isDraggingOver => ({
 
 function BoardList({ items, droppableId }){
     return(
-        <Droppable droppableId={droppableId}>
+        <Droppable droppableId={droppableId} type="ISSUE">
             {(provided, snapshot) => (
                 <div 
                     ref={provided.innerRef} 
