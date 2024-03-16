@@ -31,7 +31,7 @@ export default function FormikField({ name, required, type, label, placeholder, 
                                 id={name}
                                 defaultValue={defaultValue}
                                 placeholder={placeholder}
-                                className={`w-full px-2.5 md:px-4 py-1.5 md:py-2.5 rounded-md bg-transparent ${formikField.meta.error && formikField.meta.touched ? "border-red-600" : "border-dark/30"} text-sm`}
+                                className={`w-full px-2.5 md:px-4 py-1.5 md:py-2.5 rounded-md bg-transparent ${formikField.meta.error && formikField.meta.touched ? "border-red-600" : "border-dark-blue/30"} text-sm`}
                             />
                             {type === "password" && (
                                 <>

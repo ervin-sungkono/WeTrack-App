@@ -5,6 +5,7 @@ import BoardList from "./BoardList"
 import SearchBar from "../../common/SearchBar"
 import SelectButton from "../../common/SelectButton"
 import Button from "../../common/button/Button"
+import { RevolvingDot } from "react-loader-spinner"
 
 import { BsThreeDots as DotIcon } from "react-icons/bs"
 import { IoFilter as FilterIcon } from "react-icons/io5"
@@ -35,12 +36,14 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 }
 
 export default function BoardContent() {
+  const [loading, setLoading] = useState(true)
   const [state, setState] = useState();
   const [query, setQuery] = useState("")
   const [filterDropdown, setFilterDropdown] = useState(false)
   const [project, _] = useSessionStorage("project")
 
   useEffect(() => {
+    setLoading(true)
     if(project){
       getAllIssue(project.id).then(res => {
         if(res.data) {
@@ -52,6 +55,8 @@ export default function BoardContent() {
           ))
         }
         else alert("Fail to get issue data")
+
+        setLoading(false)
       })
     }
   }, [project])
@@ -116,6 +121,16 @@ export default function BoardContent() {
           </div>
         </div>
       </div>
+      {loading ? 
+      <div className='w-full h-full flex flex-col gap-4 justify-center items-center'>
+        <RevolvingDot
+            height="100"
+            width="100"
+            radius="48"
+            color="#47389F"
+        />
+        <p className='text-sm md:text-base text-dark/80'>Loading Issue Data...</p>
+      </div> : 
       <div className="h-full flex items-start overflow-y-auto pb-4">
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="issue_status" direction="horizontal" type="ISSUE-STATUS">
@@ -162,7 +177,7 @@ export default function BoardContent() {
             <p>Add List</p>
           </div>
         </Button>
-      </div>
+      </div>}
     </div>
   );
 }

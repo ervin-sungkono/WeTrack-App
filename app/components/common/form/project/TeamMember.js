@@ -48,7 +48,7 @@ export default function TeamMember({ prevFormStep, nextFormStep }){
                                     tagifyRef={tagifyRef}
                                     settings={tagifySettings}
                                     defaultValue={projectData.teams}
-                                    autoFocus={true}
+                                    autoFocus
                                     onChange={handleTagifyChange}
                                 />
                             </div>

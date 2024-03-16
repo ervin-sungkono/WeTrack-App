@@ -15,7 +15,6 @@ export default function UserSelectButton({ name, userId, placeholder, options = 
     })
 
     useEffect(() => {
-        console.log(selected)
         if(selected){
             setLoaded(true)
         }else{
@@ -51,6 +50,7 @@ export default function UserSelectButton({ name, userId, placeholder, options = 
                 <ul className="py-2 text-xs md:text-sm text-gray-700">
                     <li>
                         <button
+                            disabled={!selected.id}
                             onClick={() => handleSelectedUpdate({})} className="block w-full text-start px-4 py-2 disabled:bg-gray-300 disabled:text-dark-blue hover:bg-gray-100 hover:text-basic-blue transition-colors duration-300 ease-in-out"
                         >
                             <div className="flex flex-grow gap-2 items-center">

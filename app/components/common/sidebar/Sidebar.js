@@ -70,7 +70,8 @@ export default function Sidebar({ project }){
     ]
 
     if(!mounted) return (
-        <section className={`sidebar fixed lg:relative w-[200px] bg-white flex-shrink-0 h-full flex flex-col z-fixed`}></section>
+        <section className={`sidebar fixed lg:relative w-[200px] lg:translate-x-0 ${open ? "lg:w-[240px] translate-x-0" : "lg:w-20 -translate-x-full"} bg-white flex-shrink-0 h-full flex flex-col shadow-md z-fixed`}>
+        </section>
     )
 
     return (

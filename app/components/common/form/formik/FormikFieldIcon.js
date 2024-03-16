@@ -31,7 +31,7 @@ export default function FormikFieldIcon({icon, name, required, type, label, plac
                                     className={
                                         `w-full px-2.5 md:px-4 py-1.5 md:py-2.5 rounded-md
                                         ${!disabled ? 'bg-transparent' : 'bg-light-blue'}
-                                        ${formikField.meta.error && formikField.meta.touched ? "border-red-600" : "border-dark/30"}
+                                        ${formikField.meta.error && formikField.meta.touched ? "border-red-600" : "border-dark-blue/30"}
                                         text-sm`
                                     }
                                 />

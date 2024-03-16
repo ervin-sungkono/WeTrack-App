@@ -1,5 +1,4 @@
 "use client"
-import dynamic from "next/dynamic"
 import Navbar from "../common/navbar/Navbar"
 import Sidebar from "../common/sidebar/Sidebar"
 import useSessionStorage from "@/app/lib/hooks/useSessionStorage"
