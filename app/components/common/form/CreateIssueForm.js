@@ -176,9 +176,9 @@ export default function CreateIssueForm({ onCancel }){
                                     <Tags
                                         name="label"
                                         whitelist={[  
-                                            { value:'apple', tagColor: 'red' },
-                                            { value:'apple2', tagColor: 'blue' },
-                                            { value:'apple3', tagColor: 'yellow', style: 'background-color: yellow' }
+                                            { value:'apple', tagColor: 'red', style: 'background-color: red;' },
+                                            { value:'apple2', tagColor: 'blue', style: 'background-color: blue;' },
+                                            { value:'apple3', tagColor: 'yellow', style: 'background-color: yellow;' }
                                         ]}
                                         tagifyRef={tagifyRef}
                                         settings={tagifySettings}

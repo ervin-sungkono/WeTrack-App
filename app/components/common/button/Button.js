@@ -74,7 +74,7 @@ export default function Button({
             case 'md':
                 return 'text-xs md:text-sm px-4 md:px-6 py-2 md:py-3'
             case 'sm':
-                return 'text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2'
+                return 'text-[10px] md:text-xs px-3 md:px-4 py-1.5 md:py-2'
         }
     }
 

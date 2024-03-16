@@ -99,7 +99,7 @@ export default function LoginForm(){
                             </div>
                             {error && <p className="mb-2 text-xs md:text-sm text-center text-danger-red font-medium">{errorMessage}</p>}
                             <div className="flex justify-center">
-                                <Button variant="primary" size="sm" type="submit" className="w-full">
+                                <Button variant="primary" type="submit" className="w-full">
                                     Masuk
                                 </Button>
                             </div>
@@ -117,7 +117,7 @@ export default function LoginForm(){
                             </div>
                             <div className="mt-4">
                                 <Link href="#">
-                                    <Button outline variant="primary" size="sm" className="w-full flex justify-center items-center">
+                                    <Button outline variant="primary" className="w-full flex justify-center items-center">
                                         <Google className="inline-block mr-2" />
                                         Masuk dengan Google
                                     </Button>

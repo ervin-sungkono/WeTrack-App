@@ -12,6 +12,7 @@ import { IoFilter as FilterIcon } from "react-icons/io5"
 import { FiPlus as PlusIcon } from "react-icons/fi"
 import useSessionStorage from "@/app/lib/hooks/useSessionStorage"
 import { getAllIssue } from "@/app/lib/fetch/issue"
+import FormikField from "../../common/form/formik/FormikField"
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -41,6 +42,11 @@ export default function BoardContent() {
   const [query, setQuery] = useState("")
   const [filterDropdown, setFilterDropdown] = useState(false)
   const [project, _] = useSessionStorage("project")
+  const [activeStatusId, setActiveStatusId] = useState()
+
+  const createIssueCard = (statusId) => {
+    setActiveStatusId(statusId)
+  }
 
   useEffect(() => {
     setLoading(true)
@@ -155,13 +161,30 @@ export default function BoardContent() {
                             <DotIcon size={20}/>
                           </button>
                         </div>
-                        <BoardList items={el.content.filter(issue => issue.issueName.toLowerCase().includes(query))} droppableId={`${ind}`}/>
-                        <Button variant="gray" onClick={() => createIssueCard(el.status)}>
+                        <BoardList 
+                          items={el.content.filter(issue => issue.issueName.toLowerCase().includes(query))} 
+                          droppableId={`${ind}`}
+                        >
+                          {el.id === activeStatusId && 
+                          <div className="py-2.5 px-3 border-2 border-blue-300 rounded-md bg-white">
+                            <input 
+                              name="issueName" 
+                              type="text" 
+                              onBlur={() => setActiveStatusId(null)}
+                              autoFocus
+                              placeholder="Apa yang ingin dikerjakan?" 
+                              className="w-full text-xs md:text-sm border-none focus:ring-0"
+                            />
+                            <Button size="sm">Submit</Button>
+                          </div>}
+                        </BoardList>
+                        {!(el.id === activeStatusId) && 
+                        <Button variant="gray" onClick={() => createIssueCard(el.id)}>
                           <div className="flex justify-center items-center gap-2">
                             <PlusIcon size={16}/>
                             <p>Create Issue</p>
                           </div>
-                        </Button>
+                        </Button>}
                       </div>
                     )}
                   </Draggable>

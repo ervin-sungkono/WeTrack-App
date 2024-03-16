@@ -4,14 +4,14 @@ import BoardItem from "./BoardItem"
 
 const getListStyle = isDraggingOver => ({
     width: 270,
-    minHeight: 240,
+    minHeight: 160,
     overflowX: 'hidden',
     overflowY: 'auto',
     marginRight: '-8px',
     paddingRight: '8px'
 })
 
-function BoardList({ items, droppableId }){
+function BoardList({ items, droppableId, children }){
     return(
         <Droppable droppableId={droppableId} type="ISSUE">
             {(provided, snapshot) => (
@@ -24,6 +24,7 @@ function BoardList({ items, droppableId }){
                         <BoardItem item={item} index={index} key={item.id} />
                     ))}
                     {provided.placeholder}
+                    {children}
                 </div>
             )}
         </Droppable>

@@ -124,7 +124,7 @@ export default function RegisterForm(){
                             </div>
                             {error && <p className="mb-2 text-md text-center text-danger-red font-bold">{errorMessage}</p>}
                             <div className="flex justify-center">
-                                <Button variant="primary" size="sm" type="submit" className="w-full">
+                                <Button variant="primary" type="submit" className="w-full">
                                     Daftar
                                 </Button>
                             </div>
@@ -142,7 +142,7 @@ export default function RegisterForm(){
                             </div>
                             <div className="mt-4">
                                 <Link href="#">
-                                    <Button variant="primary" outline size="sm" className="w-full mt-4 flex justify-center items-center">
+                                    <Button variant="primary" outline className="w-full mt-4 flex justify-center items-center">
                                         <Google className="inline-block mr-2" />
                                         Daftar dengan Google
                                     </Button>
