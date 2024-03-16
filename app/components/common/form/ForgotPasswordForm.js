@@ -84,7 +84,7 @@ export default function ForgotPasswordForm(){
                             </div>
                             {error && <p className="text-xs md:text-sm text-center text-danger-red font-medium">{errorMessage}</p>}
                             <div className="flex justify-center">
-                                <Button variant="primary" size="sm" type="submit" className="mt-2 w-full">
+                                <Button variant="primary" type="submit" className="mt-2 w-full">
                                     Kirim
                                 </Button>
                             </div>

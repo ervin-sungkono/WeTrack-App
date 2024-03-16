@@ -59,15 +59,12 @@ export const changePasswordSchema = yup.object().shape({
 export const updateProfileSchema = yup.object().shape({
     description: yup
         .string()
-        .required("Deskripsi harus diisi!")
         .max(256, "Deskripsi harus memiliki paling banyak 256 karakter!"),
     jobPosition: yup
         .string()
-        .required("Posisi pekerjaan harus diisi!")
         .max(50, "Posisi pekerjaan harus memiliki paling banyak 50 karakter!"),
     location: yup
         .string()
-        .required("Lokasi harus diisi!")
         .max(50, "Lokasi harus memiliki paling banyak 50 karakter!")
 })
 

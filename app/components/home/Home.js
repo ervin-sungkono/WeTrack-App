@@ -50,11 +50,11 @@ function CustomLine({size='md'}){
 function FeatureCard({image, title, description}){
     return(
         <div className="rounded-xl flex flex-col justify-center items-center text-center bg-white shadow-lg p-4">
-            <Image src={image} alt={title} width={200} height={200}/>
+            <Image src={image} alt={title} width={200} height={200} quality={100}/>
             <h1 className="text-md md:text-lg xl:text-xl font-bold mt-2 md:mt-4">
                 {title}
             </h1>
-            <p className="text-xs xl:text-sm mt-2 md:mt-4 xl:mt-8">
+            <p className="text-xs md:text-sm mt-2 md:mt-4 xl:mt-6">
                 {description}
             </p>
         </div>
@@ -78,7 +78,7 @@ export default function HomeLayout(){
                     </Button>
                 </div>
                 <div>
-                    <Image src={'/WelcomePicture.png'} alt="WeTrack" width={600} height={600}/>
+                    <Image src={'/WelcomePicture.png'} alt="WeTrack" width={600} height={600} priority/>
                 </div>
             </div>
             <div className="bg-light-blue py-4 md:py-6 lg:py-8 container text-center lg:text-left">

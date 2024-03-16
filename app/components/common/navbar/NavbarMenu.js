@@ -7,6 +7,7 @@ import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { getRecentProjects } from "@/app/lib/fetch/project"
 import SkeletonText from "../../skeleton/SkeletonText"
+import Button from "../button/Button"
 
 import { 
     IoMdNotifications as NotificationIcon, 
@@ -18,7 +19,7 @@ const NavDropdown = dynamic(() => import("./NavDropdown"))
 const UserDropdown = dynamic(() => import("./UserDropdown"))
 const LinkButton = dynamic(() => import("../button/LinkButton"))
 
-export default function NavbarMenu({ hideMenu }){
+export default function NavbarMenu({ showForm, hideMenu }){
     const [hamburgerState, setHamburgerState] = useState(false)
     const { data: session, status } = useSession()
     const [recentProjects, setRecentProjects] = useState(null)
@@ -60,7 +61,7 @@ export default function NavbarMenu({ hideMenu }){
                         (session && !hideMenu) ?
                         <div className={`w-full lg:w-auto flex flex-col lg:flex-row lg:h-full items-center`}>
                             <NavLink label={"Dashboard"} href={"/dashboard"}/>
-                            <NavDropdown label={"Projects"} dropdownLinks={projectLinks}>
+                            <NavDropdown label={"Projects"} baseLink={'/projects'} dropdownLinks={projectLinks}>
                                 <div className="py-2 flex flex-col gap-1">
                                     <p className="px-4 text-sm font-bold uppercase">Recent</p>
                                     {
@@ -69,7 +70,7 @@ export default function NavbarMenu({ hideMenu }){
                                             <Link href={`/projects/${project.id}`} key={project.id}>
                                                 <div className="px-4 py-2 hover:bg-gray-100 flex flex-col gap-0.5">
                                                     <p className="text-xs md:text-sm font-semibold">{project.projectName}</p>
-                                                    <p className="text-[10px] text-xs text-dark-blue/80">{moment().date(project.createdAt).format("DD MMM YYYY")}</p>
+                                                    <p className="text-[10.8px] text-xs text-dark-blue/80">{moment.unix(project.createdAt.seconds).format("DD MMM YYYY")}</p>
                                                 </div>
                                             </Link>
                                         )) :
@@ -78,6 +79,7 @@ export default function NavbarMenu({ hideMenu }){
                                 </div>
                             </NavDropdown>
                             <NavLink label={"History"} href={"/history"}/>
+                            <Button variant="primary" size="md" className={"w-full mt-2 lg:mt-0 lg:ml-4"} onClick={showForm}>Create</Button>
                         </div> 
                         : 
                         null
