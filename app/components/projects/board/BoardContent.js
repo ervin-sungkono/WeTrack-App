@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import BoardList from "./BoardList"
 import SearchBar from "../../common/SearchBar"
@@ -12,7 +12,6 @@ import { IoFilter as FilterIcon } from "react-icons/io5"
 import { FiPlus as PlusIcon } from "react-icons/fi"
 import useSessionStorage from "@/app/lib/hooks/useSessionStorage"
 import { getAllIssue } from "@/app/lib/fetch/issue"
-import FormikField from "../../common/form/formik/FormikField"
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -43,9 +42,16 @@ export default function BoardContent() {
   const [filterDropdown, setFilterDropdown] = useState(false)
   const [project, _] = useSessionStorage("project")
   const [activeStatusId, setActiveStatusId] = useState()
+  const issueFormRef = useRef()
 
-  const createIssueCard = (statusId) => {
+  const showIssueCard = (statusId) => {
     setActiveStatusId(statusId)
+  }
+
+  const createIssue = (e) => {
+    e.preventDefault()
+
+    console.log("submitting form")
   }
 
   useEffect(() => {
@@ -153,7 +159,7 @@ export default function BoardContent() {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        className="custom-scrollbar max-h-full flex-shrink-0 mr-4 flex flex-col p-2 gap-4 bg-gray-200 rounded-md overflow-y-auto"
+                        className="custom-scrollbar min-h-[280px] max-h-full flex-shrink-0 mr-4 flex flex-col p-2 gap-4 bg-gray-200 rounded-md overflow-y-auto"
                       >
                         <div className="flex items-center gap-2 px-1 text-dark-blue/80">
                           <div className="uppercase flex-grow text-xs md:text-sm font-semibold">{el.status} <span className="text-[10.8px] md:text-xs">({el.content.filter(issue => issue.issueName.toLowerCase().includes(query)).length})</span></div>
@@ -166,25 +172,34 @@ export default function BoardContent() {
                           droppableId={`${ind}`}
                         >
                           {el.id === activeStatusId && 
-                          <div className="py-2.5 px-3 border-2 border-blue-300 rounded-md bg-white">
+                          <form 
+                            ref={issueFormRef} 
+                            action={"#"} 
+                            onBlur={() => setActiveStatusId(null)} 
+                            onSubmit={createIssue} 
+                            className="py-2.5 px-3 flex flex-col gap-2 items-end border border-basic-blue/60 rounded-md bg-white"
+                          >
                             <input 
                               name="issueName" 
                               type="text" 
-                              onBlur={() => setActiveStatusId(null)}
+                              onKeyDown={(e) => {
+                                if(e.key === 'Enter'){
+                                  issueFormRef.current.submit()
+                                }
+                              }}
                               autoFocus
                               placeholder="Apa yang ingin dikerjakan?" 
-                              className="w-full text-xs md:text-sm border-none focus:ring-0"
+                              className="w-full text-xs md:text-sm border-none bg-slate-100 rounded-sm focus:ring-0"
                             />
-                            <Button size="sm">Submit</Button>
-                          </div>}
+                            <Button size="sm" type="submit">Tambah</Button>
+                          </form>}
                         </BoardList>
-                        {!(el.id === activeStatusId) && 
-                        <Button variant="gray" onClick={() => createIssueCard(el.id)}>
-                          <div className="flex justify-center items-center gap-2">
+                        <Button variant="gray" outline onClick={() => showIssueCard(el.id)} className={`${el.id === activeStatusId ? "hidden" : ""}`}>
+                          <div className={`flex justify-center items-center gap-2`}>
                             <PlusIcon size={16}/>
-                            <p>Create Issue</p>
+                            <p>Tambah Tugas Baru</p>
                           </div>
-                        </Button>}
+                        </Button>
                       </div>
                     )}
                   </Draggable>

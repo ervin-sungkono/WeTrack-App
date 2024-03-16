@@ -4,7 +4,7 @@ import BoardItem from "./BoardItem"
 
 const getListStyle = isDraggingOver => ({
     width: 270,
-    minHeight: 160,
+    flexGrow: 1,
     overflowX: 'hidden',
     overflowY: 'auto',
     marginRight: '-8px',
