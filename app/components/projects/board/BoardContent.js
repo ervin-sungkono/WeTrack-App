@@ -156,7 +156,7 @@ export default function BoardContent() {
                         className="custom-scrollbar max-h-full flex-shrink-0 mr-4 flex flex-col p-2 gap-4 bg-gray-200 rounded-md overflow-y-auto"
                       >
                         <div className="flex items-center gap-2 px-1 text-dark-blue/80">
-                          <div className="uppercase flex-grow text-xs md:text-sm font-semibold">{el.status} <span className="text-[10px] md:text-xs">({el.content.filter(issue => issue.issueName.toLowerCase().includes(query)).length})</span></div>
+                          <div className="uppercase flex-grow text-xs md:text-sm font-semibold">{el.status} <span className="text-[10.8px] md:text-xs">({el.content.filter(issue => issue.issueName.toLowerCase().includes(query)).length})</span></div>
                           <button className="p-1.5 hover:bg-gray-300 duration-200 transition-colors rounded-sm">
                             <DotIcon size={20}/>
                           </button>

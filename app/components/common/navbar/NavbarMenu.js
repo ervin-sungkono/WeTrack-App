@@ -70,7 +70,7 @@ export default function NavbarMenu({ showForm, hideMenu }){
                                             <Link href={`/projects/${project.id}`} key={project.id}>
                                                 <div className="px-4 py-2 hover:bg-gray-100 flex flex-col gap-0.5">
                                                     <p className="text-xs md:text-sm font-semibold">{project.projectName}</p>
-                                                    <p className="text-[10px] text-xs text-dark-blue/80">{moment.unix(project.createdAt.seconds).format("DD MMM YYYY")}</p>
+                                                    <p className="text-[10.8px] text-xs text-dark-blue/80">{moment.unix(project.createdAt.seconds).format("DD MMM YYYY")}</p>
                                                 </div>
                                             </Link>
                                         )) :

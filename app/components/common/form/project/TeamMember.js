@@ -41,7 +41,7 @@ export default function TeamMember({ prevFormStep, nextFormStep }){
                         <div className="flex flex-col gap-4">
                             <div className="flex flex-col gap-2">
                                 <label htmlFor={"teams"} className="block font-semibold text-xs md:text-sm">
-                                    Invite Team Member <span className="text-[10px] md:text-xs font-medium">(optional)</span>
+                                    Invite Team Member <span className="text-[10.8px] md:text-xs font-medium">(optional)</span>
                                 </label>
                                 <Tags
                                     name="teams"

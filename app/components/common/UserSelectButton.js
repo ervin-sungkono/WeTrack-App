@@ -76,7 +76,7 @@ export default function UserSelectButton({ name, userId, placeholder, options = 
             </div>
             {!disabled && userId && 
             <button 
-                className="text-[10px] py-1 md:text-xs text-basic-blue font-semibold hover:underline"
+                className="text-[10.8px] py-1 md:text-xs text-basic-blue font-semibold hover:underline"
                 onClick={() => setSelected(options.find(({user}) => user.id === userId)?.user ?? {})}
             >
                 Assign to me
