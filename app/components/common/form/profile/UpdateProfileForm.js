@@ -20,10 +20,10 @@ export default function UpdateProfileForm({initialValues, setUpdateProfile, hand
                         <FormikFieldIcon
                             icon={<IoIosInformationCircle className="text-xl md:text-2xl" />}
                             name="description"
-                            label={"Description"}
+                            label={"Deskripsi"}
                             type="text"
                             disabled={false}
-                            placeholder="Enter description..."
+                            placeholder="Masukkan deskripsi..."
                         />
                         <FormikFieldIcon
                             icon={<MdEmail className="text-xl md:text-2xl" />}
@@ -32,31 +32,31 @@ export default function UpdateProfileForm({initialValues, setUpdateProfile, hand
                             required
                             type="email"
                             disabled={true}
-                            placeholder="Enter email..."
+                            placeholder="Masukkan email..."
                         />
                         <FormikFieldIcon
                             icon={<TbBriefcaseFilled className="text-xl md:text-2xl"/>}
                             name="jobPosition"
-                            label={"Job Position"}
+                            label={"Posisi Pekerjaan"}
                             type="text"
                             disabled={false}
-                            placeholder="Enter job position..."
+                            placeholder="Masukkan posisi pekerjaan..."
                         />
                         <FormikFieldIcon
                             icon={<IoMdPin className="text-lg md:text-xl"/>}
                             name="location"
-                            label={"Location"}
+                            label={"Lokasi"}
                             type="text"
                             disabled={false}
-                            placeholder="Enter location..."
+                            placeholder="Masukkan lokasi..."
                         />
                     </div>
                     <div className="flex flex-col md:flex-row gap-3 md:gap-4 mt-6 mb-12">
                         <Button variant="primary" type="submit">
-                            Update Profile
+                            Perbarui Profil
                         </Button>
                         <Button variant="secondary" onClick={() => setUpdateProfile(false)}>
-                            Cancel
+                            Batalkan
                         </Button>
                     </div>
                 </div>

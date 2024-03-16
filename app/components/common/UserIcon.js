@@ -26,6 +26,8 @@ export default function UserIcon({ src, alt = "", fullName, size = 'md' }){
                 return "text-md"
             case 'xl':
                 return "text-lg"
+            case 'team':
+                return "text-lg md:text-2xl"
             case 'profile':
                 return "text-xl md:text-3xl"
         }
@@ -41,6 +43,8 @@ export default function UserIcon({ src, alt = "", fullName, size = 'md' }){
                 return "w-12 h-12"
             case 'xl':
                 return "w-16 h-16"
+            case 'team':
+                return "w-16 md:w-20 h-16 md:h-20"
             case 'profile':
                 return "w-20 md:w-28 h-20 md:h-28 border-4 border-white"
         }
