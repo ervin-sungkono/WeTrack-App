@@ -4,16 +4,19 @@ import { useProjectData } from "@/app/lib/context/project"
 import FormikWrapper from "../formik/FormikWrapper"
 import Button from "../../button/Button"
 import Tags from "@/app/lib/tagify"
+import { useSession } from "next-auth/react"
 
 export default function TeamMember({ prevFormStep, nextFormStep }){
     const { projectData, setProjectData } = useProjectData()
-    const [teams, setTeams] = useState()
+    const [teams, setTeams] = useState(projectData.teams)
+    const { data: session } = useSession()
 
     const tagifyRef = useRef()
     const tagifySettings = {
         editTags: {
             keepInvalid: false,
         },
+        blacklist: [session.user.email],
         backspace: 'edit',
         delimiters: " ",
         keepInvalidTags: true,
@@ -51,6 +54,7 @@ export default function TeamMember({ prevFormStep, nextFormStep }){
                                     autoFocus
                                     onChange={handleTagifyChange}
                                 />
+                                <p className="text-[10.8px] md:text-xs text-dark-blue/80">User must have a WeTrack account to be invited to the team.</p>
                             </div>
                         </div>
                         <div className="flex justify-end gap-2 md:gap-4">
