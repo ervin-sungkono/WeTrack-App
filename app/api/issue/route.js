@@ -60,7 +60,7 @@ export async function POST(request) {
             return NextResponse.json({
                 data: null,
                 message: "Missing mandatory fields"
-            }, { status: 500 });
+            }, { status: 400 });
         }
         
         const projectDocRef = doc(db, 'projects', projectId);

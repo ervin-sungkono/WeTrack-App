@@ -1,15 +1,16 @@
 "use client"
-import { useEffect, useState } from "react"
-import { DragDropContext } from "@hello-pangea/dnd"
+import { useEffect, useRef, useState } from "react"
+import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import BoardList from "./BoardList"
 import SearchBar from "../../common/SearchBar"
 import SelectButton from "../../common/SelectButton"
 import Button from "../../common/button/Button"
+import { RevolvingDot } from "react-loader-spinner"
 
 import { BsThreeDots as DotIcon } from "react-icons/bs"
 import { IoFilter as FilterIcon } from "react-icons/io5"
 import { FiPlus as PlusIcon } from "react-icons/fi"
-import useLocalStorage from "@/app/lib/hooks/useLocalStorage"
+import useSessionStorage from "@/app/lib/hooks/useSessionStorage"
 import { getAllIssue } from "@/app/lib/fetch/issue"
 
 const reorder = (list, startIndex, endIndex) => {
@@ -35,17 +36,26 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 }
 
 export default function BoardContent() {
+  const [loading, setLoading] = useState(true)
   const [state, setState] = useState();
   const [query, setQuery] = useState("")
   const [filterDropdown, setFilterDropdown] = useState(false)
-  const [project, _] = useLocalStorage("project")
+  const [project, _] = useSessionStorage("project")
+  const [activeStatusId, setActiveStatusId] = useState()
+  const issueFormRef = useRef()
 
-  const queryAttr = "data-rbd-drag-handle-draggable-id";
-  const destinationQuertAttr = "data-rbd-droppable-id";
+  const showIssueCard = (statusId) => {
+    setActiveStatusId(statusId)
+  }
 
-  const [placeholderProps, setPlaceholderProps] = useState({});
+  const createIssue = (e) => {
+    e.preventDefault()
+
+    console.log("submitting form")
+  }
 
   useEffect(() => {
+    setLoading(true)
     if(project){
       getAllIssue(project.id).then(res => {
         if(res.data) {
@@ -57,6 +67,8 @@ export default function BoardContent() {
           ))
         }
         else alert("Fail to get issue data")
+
+        setLoading(false)
       })
     }
   }, [project])
@@ -74,6 +86,12 @@ export default function BoardContent() {
     }
     const sInd = +source.droppableId;
     const dInd = +destination.droppableId;
+
+    if(source.droppableId === 'issue_status'){
+      const items = reorder(state, source.index, destination.index)
+      setState(items)
+      return
+    }
 
     if (sInd === dInd) {
       const items = reorder(state[sInd].content, source.index, destination.index);
@@ -114,33 +132,82 @@ export default function BoardContent() {
             </div>
           </div>
         </div>
-        <div className="flex flex-shrink-0 items-center gap-2">
-          <b className="text-xs md:text-sm">Group By:</b>
-          <SelectButton 
-              name={"groupby-button"}
-              placeholder={"None"}
-          />
-        </div>
       </div>
-      <div className="h-full flex items-start gap-4 overflow-y-auto pb-4">
+      {loading ? 
+      <div className='w-full h-full flex flex-col gap-4 justify-center items-center'>
+        <RevolvingDot
+            height="100"
+            width="100"
+            radius="48"
+            color="#47389F"
+        />
+        <p className='text-sm md:text-base text-dark/80'>Loading Issue Data...</p>
+      </div> : 
+      <div className="h-full flex items-start overflow-y-auto pb-4">
         <DragDropContext onDragEnd={onDragEnd}>
-          {state?.map((el, ind) => (
-            <div key={el.id} className="custom-scrollbar max-h-full flex-shrink-0 flex flex-col p-2 gap-4 bg-gray-200 rounded-md overflow-y-auto">
-              <div className="flex items-center gap-2 px-1 text-dark-blue/80">
-                <div className="uppercase flex-grow text-xs md:text-sm font-semibold">{el.status} <span className="text-[10px] md:text-xs">({el.content.filter(issue => issue.issueName.toLowerCase().includes(query)).length})</span></div>
-                <button className="p-1.5 hover:bg-gray-300 duration-200 transition-colors rounded-sm">
-                  <DotIcon size={20}/>
-                </button>
+          <Droppable droppableId="issue_status" direction="horizontal" type="ISSUE-STATUS">
+            {(provided, snapshot) => (
+              <div
+                ref={provided.innerRef}
+                className="h-full flex items-start"
+                {...provided.droppableProps}
+              >
+                {state?.map((el, ind) => (
+                  <Draggable draggableId={el.id} index={ind} key={el.id}>
+                    {(provided, snapshot) => (
+                      <div 
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        className="custom-scrollbar min-h-[280px] max-h-full flex-shrink-0 mr-4 flex flex-col p-2 gap-4 bg-gray-200 rounded-md overflow-y-auto"
+                      >
+                        <div className="flex items-center gap-2 px-1 text-dark-blue/80">
+                          <div className="uppercase flex-grow text-xs md:text-sm font-semibold">{el.status} <span className="text-[10.8px] md:text-xs">({el.content.filter(issue => issue.issueName.toLowerCase().includes(query)).length})</span></div>
+                          <button className="p-1.5 hover:bg-gray-300 duration-200 transition-colors rounded-sm">
+                            <DotIcon size={20}/>
+                          </button>
+                        </div>
+                        <BoardList 
+                          items={el.content.filter(issue => issue.issueName.toLowerCase().includes(query))} 
+                          droppableId={`${ind}`}
+                        >
+                          {el.id === activeStatusId && 
+                          <form 
+                            ref={issueFormRef} 
+                            action={"#"} 
+                            onBlur={() => setActiveStatusId(null)} 
+                            onSubmit={createIssue} 
+                            className="py-2.5 px-3 flex flex-col gap-2 items-end border border-basic-blue/60 rounded-md bg-white"
+                          >
+                            <input 
+                              name="issueName" 
+                              type="text" 
+                              onKeyDown={(e) => {
+                                if(e.key === 'Enter'){
+                                  issueFormRef.current.submit()
+                                }
+                              }}
+                              autoFocus
+                              placeholder="Apa yang ingin dikerjakan?" 
+                              className="w-full text-xs md:text-sm border-none bg-slate-100 rounded-sm focus:ring-0"
+                            />
+                            <Button size="sm" type="submit">Tambah</Button>
+                          </form>}
+                        </BoardList>
+                        <Button variant="gray" outline onClick={() => showIssueCard(el.id)} className={`${el.id === activeStatusId ? "hidden" : ""}`}>
+                          <div className={`flex justify-center items-center gap-2`}>
+                            <PlusIcon size={16}/>
+                            <p>Tambah Tugas Baru</p>
+                          </div>
+                        </Button>
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
               </div>
-              <BoardList items={el.content.filter(issue => issue.issueName.toLowerCase().includes(query))} droppableId={`${ind}`}/>
-              <Button variant="gray" onClick={() => createIssueCard(el.status)}>
-                <div className="flex justify-center items-center gap-2">
-                  <PlusIcon size={16}/>
-                  <p>Create Issue</p>
-                </div>
-              </Button>
-            </div>
-          ))}
+            )}
+          </Droppable>
         </DragDropContext>
         <Button variant="primary" className={"w-[270px] flex-shrink-0"} onClick={() => setState([...state, {status: "New Status", content: []}])}>
           <div className="flex items-center gap-2">
@@ -148,7 +215,7 @@ export default function BoardContent() {
             <p>Add List</p>
           </div>
         </Button>
-      </div>
+      </div>}
     </div>
   );
 }

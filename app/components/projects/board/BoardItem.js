@@ -6,7 +6,7 @@ import { BsThreeDots as DotIcon } from "react-icons/bs";
 const getItemStyle = (isDragging, draggableStyle) => ({
     // some basic styles to make the items look a bit nicer
     userSelect: "none",
-    padding: '10px 16px',
+    padding: '10px 12px',
     borderRadius: '4px',
     marginBottom: '8px',
   

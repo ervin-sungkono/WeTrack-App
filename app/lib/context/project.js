@@ -15,7 +15,9 @@ export const ProjectProvider = ({ children }) => {
 
         const response = await createNewProject(payload)
 
-        setProjectData({})
+        if(response.data){
+            setProjectData({})
+        }
         return response
     }
 

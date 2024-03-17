@@ -70,11 +70,12 @@ export default function Sidebar({ project }){
     ]
 
     if(!mounted) return (
-        <section className={`sidebar fixed lg:relative w-[200px] bg-white flex-shrink-0 h-full flex flex-col z-[10000]`}></section>
+        <section className={`sidebar fixed lg:relative w-[200px] lg:translate-x-0 ${open ? "lg:w-[240px] translate-x-0" : "lg:w-20 -translate-x-full"} bg-white flex-shrink-0 h-full flex flex-col shadow-md z-fixed`}>
+        </section>
     )
 
     return (
-        <section className={`sidebar fixed lg:relative w-[200px] lg:translate-x-0 ${open ? "lg:w-[240px] translate-x-0" : "lg:w-20 -translate-x-full"} bg-white flex-shrink-0 h-full flex flex-col shadow-md z-[10000] transition-all duration-300 ease-in-out`}>
+        <section className={`sidebar fixed lg:relative w-[200px] lg:translate-x-0 ${open ? "lg:w-[240px] translate-x-0" : "lg:w-20 -translate-x-full"} bg-white flex-shrink-0 h-full flex flex-col shadow-md z-fixed transition-all duration-300 ease-in-out`}>
             <div className="w-full flex justify-between items-center px-4 pt-4 lg:pt-6 pb-2.5 md:pb-4">  
                 <div className="text-base md:text-lg text-center font-semibold whitespace-nowrap overflow-hidden transition-[width] duration-300" style={{width: (open ? "100%" : "0px")}}>
                     {project?.projectName}

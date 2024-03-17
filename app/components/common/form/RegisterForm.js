@@ -25,7 +25,7 @@ export default function RegisterForm(){
     }
 
     const [error, setError] = useState("")
-    const [errorMessage, setErrorMessage] = useState("Something went wrong, please try again later.")
+    const [errorMessage, setErrorMessage] = useState("Ada kesalahan, silakan coba lagi nanti.")
     const [loading, setLoading] = useState(false)
     const router = useRouter()
     const searchParams = useSearchParams()
@@ -61,7 +61,7 @@ export default function RegisterForm(){
         } catch (error) {
             setError(true);
             if(error.message.includes("auth/email-already-in-use")){
-                setErrorMessage("Email already in use!")
+                setErrorMessage("Email sudah digunakan!")
             }
             console.log(error.message)
         } finally {
@@ -73,10 +73,10 @@ export default function RegisterForm(){
         <div className="flex min-h-screen flex-col items-center justify-center text-dark-blue py-8">
             <div className="flex flex-col justify-center items-center text-center w-5/6">
                 <h1 className="text-2xl font-bold">
-                    Sign Up
+                    Daftar
                 </h1>
                 <p className="text-sm mt-1">
-                    Create an account to start tracking your project now!
+                    Buat akun untuk mulai melacak proyek Anda sekarang!
                 </p>
             </div>
             <div className="p-4 md:p-6 mt-4 bg-white shadow-lg w-5/6 lg:w-2/5 rounded-xl max-w-lg lg:max-w-2xl">
@@ -91,8 +91,8 @@ export default function RegisterForm(){
                                     name="fullName"
                                     required
                                     type="text"
-                                    label="Full Name"
-                                    placeholder="Enter full name..."
+                                    label="Nama Lengkap"
+                                    placeholder="Masukkan nama lengkap..."
                                 />
                             </div>
                             <div className="mt-2">
@@ -101,7 +101,7 @@ export default function RegisterForm(){
                                     required
                                     type="email"
                                     label="Email"
-                                    placeholder="Enter email..."
+                                    placeholder="Masukkan email..."
                                 />
                             </div>
                             <div className="mt-2">
@@ -109,8 +109,8 @@ export default function RegisterForm(){
                                     name="password"
                                     required
                                     type="password"
-                                    label="Password"
-                                    placeholder="Enter password..."
+                                    label="Kata Sandi"
+                                    placeholder="Masukkan kata sandi..."
                                 />
                             </div>
                             <div className="mt-2 mb-4">
@@ -118,33 +118,33 @@ export default function RegisterForm(){
                                     name="confirmPassword"
                                     required
                                     type="password"
-                                    label="Confirm Password"
-                                    placeholder="Enter password confirmation..."
+                                    label="Konfirmasi Kata Sandi"
+                                    placeholder="Masukkan konfirmasi kata sandi..."
                                 />
                             </div>
                             {error && <p className="mb-2 text-md text-center text-danger-red font-bold">{errorMessage}</p>}
                             <div className="flex justify-center">
-                                <Button variant="primary" size="sm" type="submit" className="w-full">
-                                    Sign Up
+                                <Button variant="primary" type="submit" className="w-full">
+                                    Daftar
                                 </Button>
                             </div>
                             <div className="mt-2 text-basic-blue text-center text-xs hover:underline">
                                 <Link href="/login">
-                                    Already have an account? Sign in
+                                    Sudah punya akun? Masuk
                                 </Link>
                             </div>
                             <div className="mt-4 flex justify-center items-center">
                                 <div className="w-full bg-dark-blue" style={{height: '1px'}}/>
                                 <span className="mx-3">
-                                    OR
+                                    ATAU
                                 </span>
                                 <div className="w-full  bg-dark-blue" style={{height: '1px'}}/>
                             </div>
                             <div className="mt-4">
                                 <Link href="#">
-                                    <Button variant="primary" outline size="sm" className="w-full mt-4 flex justify-center items-center">
+                                    <Button variant="primary" outline className="w-full mt-4 flex justify-center items-center">
                                         <Google className="inline-block mr-2" />
-                                        Sign up with Google
+                                        Daftar dengan Google
                                     </Button>
                                 </Link>
                             </div>
