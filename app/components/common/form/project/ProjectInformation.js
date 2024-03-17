@@ -3,7 +3,6 @@ import FormikWrapper from "../formik/FormikWrapper"
 import { useEffect, useState } from "react"
 import { useProjectData } from "@/app/lib/context/project"
 import { projectInformationSchema } from "@/app/lib/schema"
-import { useSession } from "next-auth/react"
 
 import FormikField from "../formik/FormikField"
 import FormikTextarea from "../formik/FormikTextarea"
@@ -13,11 +12,10 @@ import SkeletonButton from "@/app/components/skeleton/SkeletonButton"
 import KeyFormikField from "./KeyFormikField"
 import SkeletonTextarea from "@/app/components/skeleton/SkeletonTextarea"
 
-export default function ProjectInformation({nextFormStep, prevFormStep}){
+export default function ProjectInformation({prevFormStep}){
     const [isLoading, setLoading] = useState(true)
     const [completed, setCompleted] = useState(false)
     const { projectData, submitProjectData } = useProjectData()
-    const { data: session } = useSession()
     
     useEffect(() => setLoading(false), [])
 
@@ -29,10 +27,7 @@ export default function ProjectInformation({nextFormStep, prevFormStep}){
 
     const onSubmit = (values) => {
         // console.log("step 2: ",values)
-        submitProjectData({
-            ...values,
-            createdBy: session.user.uid
-        })
+        submitProjectData(values)
             .then(res => {
                 if(res.data){
                     setCompleted(true)
