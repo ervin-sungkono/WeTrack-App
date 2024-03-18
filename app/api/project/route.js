@@ -47,8 +47,6 @@ export async function POST(request, response) {
         const session = await getUserSession(request, response, nextAuthOptions)
         const createdBy = session.user.uid
 
-        console.log(teams)
-
         if(!createdBy){
             return NextResponse.json({
                 data: null,
@@ -111,7 +109,6 @@ export async function POST(request, response) {
             const userSnap = await getDocs(userDocRef)
             const userData = userSnap.docs?.[0]
             if(userData){
-                console.log(userData.id, userData.data())
                 const { email, fullName, profileImage } = userData.data()
                 return {
                     id: userData.id,
