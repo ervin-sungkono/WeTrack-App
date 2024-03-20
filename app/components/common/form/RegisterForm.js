@@ -6,7 +6,6 @@ import { useState, useEffect } from "react"
 import { registerSchema } from "@/app/lib/schema"
 import { useSession } from "next-auth/react"
 import { signUp } from "@/app/lib/fetch/user"
-import { FaGoogle as Google } from "react-icons/fa"
 import { sanitizeName } from "@/app/lib/string"
 
 import WeTrackLogo from "../Logo"
@@ -131,21 +130,6 @@ export default function RegisterForm(){
                             <div className="mt-2 text-basic-blue text-center text-xs hover:underline">
                                 <Link href="/login">
                                     Sudah punya akun? Masuk
-                                </Link>
-                            </div>
-                            <div className="mt-4 flex justify-center items-center">
-                                <div className="w-full bg-dark-blue" style={{height: '1px'}}/>
-                                <span className="mx-3">
-                                    ATAU
-                                </span>
-                                <div className="w-full  bg-dark-blue" style={{height: '1px'}}/>
-                            </div>
-                            <div className="mt-4">
-                                <Link href="#">
-                                    <Button variant="primary" outline className="w-full mt-4 flex justify-center items-center">
-                                        <Google className="inline-block mr-2" />
-                                        Daftar dengan Google
-                                    </Button>
                                 </Link>
                             </div>
                         </div>
