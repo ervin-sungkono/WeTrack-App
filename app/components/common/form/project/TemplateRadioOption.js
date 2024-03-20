@@ -29,13 +29,13 @@ export default function TemplateRadioOption({ name }){
                         <div role="group" className="grid grid-cols-1 xs:grid-cols-2 gap-2 md:gap-4">
                             <RadioButton 
                                 title={"Default"}
-                                description={"Default template for the project"}
+                                description={"Templat bawaan untuk proyek"}
                                 value={"default"}
                                 field={field}
                             />
                             <RadioButton 
                                 title={"AI Generated"}
-                                description={"Generates task for your project using AI based on given user story"}
+                                description={"Hasilkan tugas untuk proyek Anda dengan AI sesuai cerita pengguna yang diberikan"}
                                 value={"ai-generated"}
                                 field={field}
                             />

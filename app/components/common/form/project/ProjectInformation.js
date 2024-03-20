@@ -35,7 +35,7 @@ export default function ProjectInformation({prevFormStep}){
                     // TODO-2: Tambah logic untuk integrasi dengan API chatGPT
                 }else{
                     console.log(res)
-                    alert("Fail to submit form data")
+                    alert("Gagal mengirim data formulir")
                 }
             })
             .catch(err => console.log(err))
@@ -70,13 +70,13 @@ export default function ProjectInformation({prevFormStep}){
                 return(
                     <div className="w-full flex flex-col gap-6">
                         <div className="flex flex-col gap-4">
-                            <FormikField label="Project Name" required name="projectName" type="text" placeholder={"Enter project name.."}/>
+                            <FormikField label="Nama Proyek" required name="projectName" type="text" placeholder={"Masukkan nama proyek.."}/>
                             <KeyFormikField/>
-                            {projectData.templateType === 'ai-generated' && <FormikTextarea label="User Story" name="userStory" placeholder={"Enter user story.."} rows={4}/>}
+                            {projectData.templateType === 'ai-generated' && <FormikTextarea label="Cerita Pengguna" name="userStory" placeholder={"Masukkan cerita pengguna.."} rows={4}/>}
                         </div>
                         <div className="flex justify-end gap-2 md:gap-4">
-                            <Button variant="secondary" onClick={prevFormStep} className="w-24 md:w-32">Back</Button>
-                            <Button type={"submit"} className="w-24 md:w-32">Submit</Button>
+                            <Button variant="secondary" onClick={prevFormStep} className="w-24 md:w-32">Kembali</Button>
+                            <Button type={"submit"} className="w-24 md:w-32">Kirim</Button>
                         </div>
                     </div>
                 ) 

@@ -5,13 +5,13 @@ import BoardContent from "@/app/components/projects/board/BoardContent"
 
 export default function BoardPage({ params: { id } }){
     const links = [
-        { url: "/projects", label: "Projects" },
-        { url: `/projects/${id}`, label: "Project Name" }
+        { url: "/projects", label: "Proyek" },
+        { url: `/projects/${id}`, label: "Nama Proyek" }
     ]
 
     return(
         <ProjectLayout projectId={id}>
-            <Header title={"Board"} links={links}/>
+            <Header title={"Papan"} links={links}/>
             {/* TODO: Develop Board untuk Board Page */}
             <BoardContent/>
         </ProjectLayout>
