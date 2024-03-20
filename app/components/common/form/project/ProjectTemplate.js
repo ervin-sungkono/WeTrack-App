@@ -29,11 +29,11 @@ export default function ProjectTemplate({nextFormStep}){
                 return(
                     <div className="w-full flex flex-col gap-6">
                         <div className="flex flex-col gap-4">
-                            <div className="text-base md:text-xl font-semibold">Select Project Template</div>
+                            <div className="text-base md:text-xl font-semibold">Pilih Templat Proyek</div>
                             <TemplateRadioOption name="templateType"/>
                         </div>
                         <div className="flex justify-end">
-                            <Button type={"submit"} className="w-32">Next</Button>
+                            <Button type={"submit"} className="w-32">Berikutnya</Button>
                         </div>
                     </div>
                 ) 

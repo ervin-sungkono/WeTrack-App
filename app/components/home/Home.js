@@ -67,11 +67,11 @@ export default function HomeLayout(){
             <div className="py-4 md:py-6 xl:py-8 container flex flex-col lg:flex-row items-center justify-center lg:justify-between text-center lg:text-left">
                 <div>
                     <h1 className="text-2xl md:text-3xl lg:text-4xl lg:leading-tight font-bold">
-                        Selesaikan isu secara efisien, <br />
+                        Selesaikan tugas secara efisien, <br />
                         berkolaborasi dengan peralatan AI yang canggih.
                     </h1>
                     <p className="mt-1 lg:mt-2 text-sm lg:text-md">
-                        WeTrack menawarkan solusi terbaik dalam manajemen proyek dan pelacakan isu.
+                        WeTrack menawarkan solusi terbaik dalam manajemen proyek dan pelacakan tugas.
                     </p>
                     <Button variant="primary" size={`md`} className="mt-2 lg:mt-6 xl:mt-8 px-2 xl:px-8">
                         Mulai Sekarang
@@ -87,7 +87,7 @@ export default function HomeLayout(){
                     <CustomLine size="md"/>
                 </div>
                 <p className="text-sm md:text-md mt-2 md:mt-4 w-full lg:w-5/6 opacity-80">
-                WeTrack adalah sebuah platform manajemen proyek kolaboratif inovatif yang membantu developer mempercepat proses pengembangan proyek dengan efisiensi dan presisi, dengan integrasi yang mulus dengan kemampuan kecerdasan buatan terkini untuk membantu dalam pembuatan tugas dan penyelesaian isu, sehingga meningkatkan produktivitas dan mendorong kesuksesan proyek.
+                WeTrack adalah sebuah platform manajemen proyek kolaboratif inovatif yang membantu developer mempercepat proses pengembangan proyek dengan efisiensi dan presisi, dengan integrasi yang mulus dengan kemampuan kecerdasan buatan terkini untuk membantu dalam pembuatan tugas dan penyelesaian tugas, sehingga meningkatkan produktivitas dan mendorong kesuksesan proyek.
                 </p>
             </div>
             <div className="py-4 md:py-6 lg:py-8 pb-10 md:pb-10 lg:pb-12 container">

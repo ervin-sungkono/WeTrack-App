@@ -18,15 +18,15 @@ export default function TeamContent(){
         <div className="flex flex-col gap-4">
             <div className="flex flex-col xs:flex-row justify-between gap-4 items-center">
                 <div className="w-full flex justify-center xs:justify-start items-center">
-                    <SearchBar placeholder={"Search user.."} handleSearch={handleSearch}/>
+                    <SearchBar placeholder={"Cari anggota.."} handleSearch={handleSearch}/>
                 </div>
                 <div className="flex gap-3 md:gap-6">
                     <Button outline>
-                        Manage Users
+                        Atur Anggota
                     </Button>
                     <Button className="flex items-center">
                         <FaUserPlus className="mr-2"/>
-                        Add User
+                        Tambah Anggota
                     </Button>
                 </div>
             </div>
@@ -34,7 +34,7 @@ export default function TeamContent(){
                 <div>
                     <div className="flex items-baseline mb-2">
                         <div className="font-bold text-lg">
-                            Member
+                            Anggota
                         </div>
                         <div className="ml-2">
                             (0)
@@ -47,7 +47,7 @@ export default function TeamContent(){
                 <div className="mt-6">
                     <div className="flex items-baseline mb-2">
                         <div className="font-bold text-lg">
-                            Pending
+                            Menunggu Persetujuan
                         </div>
                         <div className="ml-2">
                             (0)

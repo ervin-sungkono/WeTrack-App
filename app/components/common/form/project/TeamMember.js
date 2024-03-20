@@ -21,7 +21,7 @@ export default function TeamMember({ prevFormStep, nextFormStep }){
         delimiters: " ",
         keepInvalidTags: true,
         pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-        placeholder: "Type your team member's email, separated by space or enter"
+        placeholder: "Ketik email anggota tim Anda, dipisahkan dengan spasi atau enter.."
     }
 
     const handleTagifyChange = (e) => {
@@ -44,7 +44,7 @@ export default function TeamMember({ prevFormStep, nextFormStep }){
                         <div className="flex flex-col gap-4">
                             <div className="flex flex-col gap-2">
                                 <label htmlFor={"teams"} className="block font-semibold text-xs md:text-sm">
-                                    Invite Team Member <span className="text-[10.8px] md:text-xs font-medium">(optional)</span>
+                                    Undang Anggota Tim <span className="text-[10.8px] md:text-xs font-medium">(opsional)</span>
                                 </label>
                                 <Tags
                                     name="teams"
@@ -54,12 +54,12 @@ export default function TeamMember({ prevFormStep, nextFormStep }){
                                     autoFocus
                                     onChange={handleTagifyChange}
                                 />
-                                <p className="text-[10.8px] md:text-xs text-dark-blue/80">User must have a WeTrack account to be invited to the team.</p>
+                                <p className="text-[10.8px] md:text-xs text-dark-blue/80">Pengguna harus memiliki akun WeTrack untuk diundang ke dalam tim.</p>
                             </div>
                         </div>
                         <div className="flex justify-end gap-2 md:gap-4">
-                            <Button variant="secondary" onClick={prevFormStep} className="w-24 md:w-32">Back</Button>
-                            <Button type={"submit"} className="w-24 md:w-32">Next</Button>
+                            <Button variant="secondary" onClick={prevFormStep} className="w-24 md:w-32">Kembali</Button>
+                            <Button type={"submit"} className="w-24 md:w-32">Berikutnya</Button>
                         </div>
                     </div>
                 ) 

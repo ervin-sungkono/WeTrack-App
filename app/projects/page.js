@@ -6,7 +6,7 @@ import ProjectContent from "../components/projects/ProjectContent"
 export default async function ProjectsPage(){
     return(
         <DashboardLayout hideMenu={false}>
-            <Header title={"Projects"}/>
+            <Header title={"Proyek"}/>
             <ProjectContent/>
         </DashboardLayout>
     )

@@ -3,14 +3,14 @@ import DashboardLayout from "../components/layout/DashboardLayout";
 
 export default function DashboardPage(){
     const links = [
-        {label: "Home", url: "/"},
-        {label: "Contact Us", url: "/contact"},
+        {label: "Beranda", url: "/"},
+        {label: "Hubungi Kami", url: "/contact"},
     ]
 
     return(
         <DashboardLayout hideMenu={false}>
             <div className="flex flex-col gap-4">
-                <Header title={"Dashboard"} links={links}/>
+                <Header title={"Dasbor"} links={links}/>
             </div>
         </DashboardLayout>
     )

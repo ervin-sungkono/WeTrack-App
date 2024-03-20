@@ -12,7 +12,7 @@ export default function ProjectLayout({ children, hideSidebar, projectId }){
             getProjectByID(projectId)
             .then(project => {
                 if(project.data) setProject(project.data)
-                else alert("Fail to get project details")
+                else alert("Gagal memperoleh rincian proyek")
             })
         }
     }, [project, projectId])

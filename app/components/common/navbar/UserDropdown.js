@@ -37,7 +37,7 @@ export default function UserDropdown({ fullName, email, profileImage }){
                             href={"/profile"}
                             className="block px-4 py-2 hover:bg-gray-100"
                         >
-                            Profile
+                            Profil
                         </Link>
                     </li>
                     <li>
@@ -46,7 +46,7 @@ export default function UserDropdown({ fullName, email, profileImage }){
                             className="block px-4 py-2 hover:bg-gray-100"
                             onClick={() => signOut()}
                         >
-                            Log out
+                            Keluar
                         </Link>
                     </li>
                 </ul>
