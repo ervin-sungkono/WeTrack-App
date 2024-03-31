@@ -78,6 +78,7 @@ export const projectInformationSchema = yup.object().shape({
     projectName: yup
         .string()
         .required("Project name is required")
+        .matches(/[^a-zA-Z0-9 ]/g, "Project name cannot contain special character")
         .max(50),
     key: yup
         .string()
