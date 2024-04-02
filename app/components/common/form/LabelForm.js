@@ -7,7 +7,7 @@ export default function LabelForm({ labels, onCancel }){
         <PopUpForm size={"small"}>
             Test
             <Button variant="secondary" onClick={onCancel}>
-                Cancel
+                Batal
             </Button>
         </PopUpForm>
     )

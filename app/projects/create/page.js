@@ -8,7 +8,7 @@ export default function CreateProjectPage(){
     return(
         <DashboardLayout>
             <div className="max-w-4xl h-full flex flex-col items-start mx-auto">
-                <Header title={"Create Project"}/>
+                <Header title={"Buat Proyek"}/>
                 <CreateProjectContent/>
             </div>
         </DashboardLayout>

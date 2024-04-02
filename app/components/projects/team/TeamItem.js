@@ -23,11 +23,11 @@ export default function TeamItem({image=null, name, role, status="active"}){
 
     const getRole = () => {
         switch(role){
-            case "Owner":
+            case "Pemilik":
                 return "bg-danger-red"
-            case "Developer":
+            case "Pengembang":
                 return "bg-basic-blue"
-            case "Viewer":
+            case "Pelihat":
                 return "bg-success-green"
         }
     }

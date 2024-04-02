@@ -25,15 +25,15 @@ export default function NavbarMenu({ showForm, hideMenu }){
     const [recentProjects, setRecentProjects] = useState(null)
 
     const projectLinks = [
-        { label: 'Create a new project', url: '/projects/create' },
-        { label: 'View all projects', url: '/projects' },
+        { label: 'Buat proyek baru', url: '/projects/create' },
+        { label: 'Lihat semua proyek', url: '/projects' },
     ]
 
     useEffect(() => {
         getRecentProjects()
             .then(projects => {
                 if(projects.data) setRecentProjects(projects.data)
-                else alert("Fail to get projects data")
+                else alert("Gagal memperoleh data proyek")
             })
     }, [])
 
@@ -60,10 +60,10 @@ export default function NavbarMenu({ showForm, hideMenu }){
                     {   
                         (session && !hideMenu) ?
                         <div className={`w-full lg:w-auto flex flex-col lg:flex-row lg:h-full items-center`}>
-                            <NavLink label={"Dashboard"} href={"/dashboard"}/>
-                            <NavDropdown label={"Projects"} baseLink={'/projects'} dropdownLinks={projectLinks}>
+                            <NavLink label={"Dasbor"} href={"/dashboard"}/>
+                            <NavDropdown label={"Proyek"} baseLink={'/projects'} dropdownLinks={projectLinks}>
                                 <div className="py-2 flex flex-col gap-1">
-                                    <p className="px-4 text-sm font-bold uppercase">Recent</p>
+                                    <p className="px-4 text-sm font-bold uppercase">Terbaru</p>
                                     {
                                         (recentProjects && recentProjects.length > 0) ? 
                                         recentProjects.map(project => (
@@ -74,12 +74,12 @@ export default function NavbarMenu({ showForm, hideMenu }){
                                                 </div>
                                             </Link>
                                         )) :
-                                        <p className="px-4 text-xs text-dark-blue/80">You currently have no recent projects.</p>
+                                        <p className="px-4 text-xs text-dark-blue/80">Anda belum memiliki proyek terbaru.</p>
                                     }
                                 </div>
                             </NavDropdown>
-                            <NavLink label={"History"} href={"/history"}/>
-                            <Button variant="primary" size="md" className={"w-full mt-2 lg:mt-0 lg:ml-4"} onClick={showForm}>Create</Button>
+                            <NavLink label={"Histori"} href={"/history"}/>
+                            <Button variant="primary" size="md" className={"w-full mt-2 lg:mt-0 lg:ml-4"} onClick={showForm}>Buat</Button>
                         </div> 
                         : 
                         null
@@ -104,7 +104,7 @@ export default function NavbarMenu({ showForm, hideMenu }){
                                 variant="primary"
                                 outline
                             >
-                                Sign In
+                                Masuk
                             </LinkButton>
                         }
                     </div>

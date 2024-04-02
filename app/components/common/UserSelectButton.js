@@ -42,7 +42,7 @@ export default function UserSelectButton({ name, userId, placeholder, options = 
             >
                 {(loaded || placeholder) && <div className="flex flex-grow gap-2 items-center">
                     <UserIcon size="sm" fullName={placeholder?.fullName ?? selected.fullName} src={placeholder ? placeholder?.profileImage : (selected.fullName ? selected.profileImage : '/user-placeholder.png')}/>
-                    <p className="text-start flex-grow truncate text-xs md:text-sm">{placeholder?.fullName ?? selected.fullName ?? "Unassigned"}</p>
+                    <p className="text-start flex-grow truncate text-xs md:text-sm">{placeholder?.fullName ?? selected.fullName ?? "Belum ditugaskan"}</p>
                 </div>}
                 {!disabled && <DropdownIcon size={16}/>}
             </button>
@@ -55,7 +55,7 @@ export default function UserSelectButton({ name, userId, placeholder, options = 
                         >
                             <div className="flex flex-grow gap-2 items-center">
                                 <UserIcon size="sm" src={"/user-placeholder.png"}/>
-                                <p className="text-start flex-grow truncate text-xs md:text-sm">Unassigned</p>
+                                <p className="text-start flex-grow truncate text-xs md:text-sm">Belum ditugaskan</p>
                             </div>
                         </button>
                     </li>
@@ -79,7 +79,7 @@ export default function UserSelectButton({ name, userId, placeholder, options = 
                 className="text-[10.8px] py-1 md:text-xs text-basic-blue font-semibold hover:underline"
                 onClick={() => setSelected(options.find(({user}) => user.id === userId)?.user ?? {})}
             >
-                Assign to me
+                Tugaskan kepada saya
             </button>}
         </div>
     )

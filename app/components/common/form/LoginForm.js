@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useState, useEffect } from "react"
 import { signIn, useSession } from "next-auth/react"
 import { loginSchema } from "@/app/lib/schema"
-import { FaGoogle as Google } from "react-icons/fa";
 
 import Link from "next/link"
 import WeTrackLogo from "@/app/components/common/Logo"
@@ -106,21 +105,6 @@ export default function LoginForm(){
                             <div className="mt-2 text-basic-blue text-center text-xs hover:underline">
                                 <Link href="/register">
                                     Buat akun
-                                </Link>
-                            </div>
-                            <div className="mt-4 flex justify-center items-center">
-                                <div className="w-full bg-dark-blue" style={{height: '1px'}}/>
-                                <span className="mx-2">
-                                    ATAU
-                                </span>
-                                <div className="w-full bg-dark-blue" style={{height: '1px'}}/>
-                            </div>
-                            <div className="mt-4">
-                                <Link href="#">
-                                    <Button outline variant="primary" className="w-full flex justify-center items-center">
-                                        <Google className="inline-block mr-2" />
-                                        Masuk dengan Google
-                                    </Button>
                                 </Link>
                             </div>
                         </div>

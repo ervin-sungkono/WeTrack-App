@@ -18,7 +18,7 @@ export default function Breadcrumb({ links }){
             </span>
           ) : (
             <span className="cursor-default text-basic-blue font-medium" key={label}>
-              {label === "Project Name" ? project?.projectName : label}
+              {label === "Nama Proyek" ? project?.projectName : label}
             </span>
           )
         )}

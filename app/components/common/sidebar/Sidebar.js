@@ -35,27 +35,27 @@ export default function Sidebar({ project }){
 
     const mainLinks = [
         { 
-            label: 'Overview',
+            label: 'Ikhtisar',
             url: '/',
             icon: <OverviewIcon size={16}/>
         },
         { 
-            label: 'Timeline',
+            label: 'Linimasa',
             url: '/timeline', 
             icon: <TimelineIcon size={16}/>
         },
         { 
-            label: 'Board',
+            label: 'Papan',
             url: '/board', 
             icon: <BoardIcon size={16}/>
         },
         { 
-            label: 'Issues',
+            label: 'Tugas',
             url: '/issues', 
             icon: <IssueIcon size={16}/>
         },
         { 
-            label: 'Team',
+            label: 'Tim',
             url: '/team', 
             icon: <TeamIcon size={16}/>
         },
@@ -63,7 +63,7 @@ export default function Sidebar({ project }){
 
     const settingLinks = [
         { 
-            label: 'Project Settings',
+            label: 'Pengaturan Proyek',
             url: '/setting', 
             icon: <SettingIcon size={16}/>
         },
