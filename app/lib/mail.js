@@ -21,7 +21,7 @@ const generateEmailContent = ({ sender_name, invitation_link, project_name }) =>
 
 export const sendMail = async({ email, fullName, projectId, projectName }) => {
     const receiver_email = email
-    console.log(receiver_email)
+
     try{
         await transporter.sendMail({
             from: sender_email,

@@ -47,15 +47,13 @@ export async function POST(request, response) {
         const session = await getUserSession(request, response, nextAuthOptions)
         const createdBy = session.user.uid
 
-        console.log(teams)
-
         if(!createdBy){
             return NextResponse.json({
                 data: null,
                 message: "Unauthorized, user id not found"
             }, { status: 401 })
         }
-        if(!key || !projectName || !teams){
+        if(!key || !projectName){
             return NextResponse.json({
                 data: null,
                 message: "Missing mandatory fields"
@@ -106,33 +104,35 @@ export async function POST(request, response) {
 
         const usersRef = collection(db, 'users')
         
-        const teamList = await Promise.all(teams.map(async(email) => {
-            const userDocRef = query(usersRef, where('email', '==', email))
-            const userSnap = await getDocs(userDocRef)
-            const userData = userSnap.docs?.[0]
-            if(userData){
-                console.log(userData.id, userData.data())
-                const { email, fullName, profileImage } = userData.data()
-                return {
-                    id: userData.id,
+        let teamList = []
+        if(teams){
+            teamList = await Promise.all(teams.map(async(email) => {
+                const userDocRef = query(usersRef, where('email', '==', email))
+                const userSnap = await getDocs(userDocRef)
+                const userData = userSnap.docs?.[0]
+                if(userData){
+                    const { email, fullName, profileImage } = userData.data()
+                    return {
+                        id: userData.id,
+                        email,
+                        fullName,
+                        profileImage,
+                        status: "pending" // status = pending OR accepted
+                    }
+                }
+                return null
+            })).then(arr => arr.filter(user => user != null))
+    
+            await Promise.all(teamList.map(({ email, fullName }) => {
+                return sendMail({
                     email,
                     fullName,
-                    profileImage,
-                    status: "pending" // status = pending OR accepted
-                }
-            }
-            return null
-        })).then(arr => arr.filter(user => user != null))
-
-        await Promise.all(teamList.map(({ email, fullName }) => {
-            return sendMail({
-                email,
-                fullName,
-                projectId: docRef.id,
-                projectName
-            })
-        }))
-
+                    projectId: docRef.id,
+                    projectName
+                })
+            }))
+        }
+        
         await updateDoc(docRef, {
             startStatus: startStatusId,
             endStatus: endStatusId,

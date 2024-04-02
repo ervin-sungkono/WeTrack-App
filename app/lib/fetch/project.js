@@ -33,7 +33,7 @@ export function createNewProject({ projectName, key, teams }){
     const payload = {
         projectName,
         key,
-        teams: JSON.parse(teams).map(user => user.value)
+        teams: teams ? JSON.parse(teams).map(user => user.value) : null
     }
 
     const response = fetch('/api/project',{

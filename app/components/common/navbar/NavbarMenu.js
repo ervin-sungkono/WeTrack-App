@@ -65,7 +65,7 @@ export default function NavbarMenu({ showForm, hideMenu }){
                                 <div className="py-2 flex flex-col gap-1">
                                     <p className="px-4 text-sm font-bold uppercase">Terbaru</p>
                                     {
-                                        recentProjects ? 
+                                        (recentProjects && recentProjects.length > 0) ? 
                                         recentProjects.map(project => (
                                             <Link href={`/projects/${project.id}`} key={project.id}>
                                                 <div className="px-4 py-2 hover:bg-gray-100 flex flex-col gap-0.5">
