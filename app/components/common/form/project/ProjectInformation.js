@@ -31,7 +31,7 @@ export default function ProjectInformation({prevFormStep}){
             .then(res => {
                 if(res.data){
                     setCompleted(true)
-                    // TODO: Tambah logic untuk generate issue apabila template nya AI Generate
+                    // TODO: Tambah logic untuk generate task apabila template nya AI Generate
                     // TODO-2: Tambah logic untuk integrasi dengan API chatGPT
                 }else{
                     console.log(res)

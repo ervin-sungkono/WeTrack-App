@@ -12,7 +12,7 @@ import {
     MdViewComfy as OverviewIcon ,
     MdViewTimeline as TimelineIcon,
     MdViewKanban as BoardIcon,
-    MdTask as IssueIcon,
+    MdTask as TaskIcon,
     MdGroup as TeamIcon,
     MdSettings as SettingIcon
 } from "react-icons/md"
@@ -51,8 +51,8 @@ export default function Sidebar({ project }){
         },
         { 
             label: 'Tugas',
-            url: '/issues', 
-            icon: <IssueIcon size={16}/>
+            url: '/tasks', 
+            icon: <TaskIcon size={16}/>
         },
         { 
             label: 'Tim',

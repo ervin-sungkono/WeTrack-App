@@ -12,32 +12,32 @@ export async function GET(request, context) {
             }, { status: 404 })
         }
 
-        const issueStatusColRef = collection(db, 'issueStatuses')
-        const q = query(issueStatusColRef, where('projectId', '==', projectId))
+        const taskStatusColRef = collection(db, 'taskStatuses')
+        const q = query(taskStatusColRef, where('projectId', '==', projectId))
         const querySnapshot = await getDocs(q)
 
-        let issueStatuses = [];
+        let taskStatuses = [];
         querySnapshot.forEach(doc => {
-            issueStatuses.push({
+            taskStatuses.push({
                 id: doc.id,
-                issueStatus: doc.data().status
+                taskStatus: doc.data().status
             })
-            return issueStatuses
+            return taskStatuses
         })
             
-        if(!issueStatuses) {
+        if(!taskStatuses) {
             return NextResponse.json({
-                message: "Can't get issue status docs"
+                message: "Can't get task status docs"
             }, { status: 404 })
         }
 
         return NextResponse.json({
-            data: issueStatuses, 
-            message: "Succesfully get all available issue statuses"
+            data: taskStatuses, 
+            message: "Succesfully get all available task statuses"
         }, { status: 200 })
 
     } catch (error) {
-        console.error("Cannot get issue statuses", error);
+        console.error("Cannot get task statuses", error);
         return NextResponse.json({
             data: null,
             message: error.message
