@@ -14,7 +14,7 @@ import { useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { pickTextColorBasedOnBgColor } from "@/app/lib/color";
 
-export default function CreateIssueForm({ onCancel }){
+export default function CreateTaskForm({ onCancel }){
     const [assignee, setAssignee] = useState()
     const [labels, setLabels] = useState([])
     const [labelModal, setLabelModal] = useState(false)
@@ -134,7 +134,7 @@ export default function CreateIssueForm({ onCancel }){
                                 <FormikField 
                                     label="Judul" 
                                     required
-                                    name="issueName" 
+                                    name="taskName" 
                                     type="text" 
                                     placeholder={"Masukkan judul tugas.."}
                                 />

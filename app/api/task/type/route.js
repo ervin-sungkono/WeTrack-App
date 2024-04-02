@@ -4,32 +4,32 @@ import { NextResponse } from 'next/server'
 
 export async function GET(request) {
     try {
-        const issueTypesColRef = collection(db, 'issueTypes')
-        const issueTypesDocsRef = await getDocs(issueTypesColRef)
+        const taskTypesColRef = collection(db, 'taskTypes')
+        const taskTypesDocsRef = await getDocs(taskTypesColRef)
 
-        if(!issueTypesDocsRef) {
+        if(!taskTypesDocsRef) {
             return NextResponse.json({
-                message: "Can't get issue type docs"
+                message: "Can't get task type docs"
             }, { status: 404 })
         }
 
-        let issueTypes = [];
+        let taskTypes = [];
 
-        issueTypesDocsRef.forEach((doc) => {
-            issueTypes.push({
+        taskTypesDocsRef.forEach((doc) => {
+            taskTypes.push({
                 id: doc.id,
-                issueType: doc.data().issueType
+                taskType: doc.data().taskType
             })
-            return issueTypes
+            return taskTypes
         })
 
         return NextResponse.json({
-            data: issueTypes, 
-            message: "Succesfully get all available issue types"
+            data: taskTypes, 
+            message: "Succesfully get all available task types"
         }, { status: 200 })
 
     } catch (error) {
-        console.error("Cannot get issue types", error);
+        console.error("Cannot get task types", error);
         return NextResponse.json({
             data: null,
             message: error.message

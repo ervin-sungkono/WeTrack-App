@@ -24,24 +24,24 @@ export async function GET(request, context) {
             }, { status: 404 });
         }
 
-        console.log("issue list", projectData.issueList)
-        const issueDetail = projectData.issueList.find((issue) => issue.id === id)
+        console.log("task list", projectData.taskList)
+        const taskDetail = projectData.taskList.find((task) => task.id === id)
 
-        console.log("issue detail", issueDetail)
+        console.log("task detail", taskDetail)
 
-        if (!issueDetail) {
+        if (!taskDetail) {
             return NextResponse.json({
-                message: "No issue found"
+                message: "No task found"
             }, { status: 404 })
         }
 
         return NextResponse.json({
-            data: issueDetail,
-            message: "Successfully get Issue detail"
+            data: taskDetail,
+            message: "Successfully get Task detail"
         }, { status: 200 })
 
     } catch (error) {
-        console.error("Cannot get issues in project", error);
+        console.error("Cannot get tasks in project", error);
         return NextResponse.json({
             data: null,
             message: error.message
@@ -76,15 +76,15 @@ export async function PUT(request, context) {
         }
 
         const projectData = projectSnap.data();
-        const issueList = projectData.issueList || [];
+        const taskList = projectData.taskList || [];
 
-        const issueIndex = issueList.findIndex(issue => issue.id === id);
+        const taskIndex = taskList.findIndex(task => task.id === id);
 
-        const issueToUpdate = issueList[issueIndex];
+        const taskToUpdate = taskList[taskIndex];
 
-        if (issueIndex === -1) {
+        if (taskIndex === -1) {
             return NextResponse.json({
-                message: 'Issue not found'
+                message: 'Task not found'
             }, { status: 404 });
         }
 
@@ -102,93 +102,93 @@ export async function PUT(request, context) {
             }
         }
 
-        let issueTypeDetails = null;
+        let taskTypeDetails = null;
         if (typeId) {
-            const userDocRef = doc(db, 'issueTypes', typeId);
-            const issueTypeSnap = await getDoc(userDocRef);
+            const userDocRef = doc(db, 'taskTypes', typeId);
+            const taskTypeSnap = await getDoc(userDocRef);
             
-            if (issueTypeSnap.exists()) {
-                issueTypeDetails = issueTypeSnap.data();
+            if (taskTypeSnap.exists()) {
+                taskTypeDetails = taskTypeSnap.data();
 
             } else {
                 return NextResponse.json({
-                    message: "The issue type not found"
+                    message: "The task type not found"
                 }, { status: 404 })
             }
         }
 
-        let issueStatusDetails = null;
+        let taskStatusDetails = null;
         if (statusId) {
-            const userDocRef = doc(db, 'issueStatuses', statusId);
+            const userDocRef = doc(db, 'taskStatuses', statusId);
 
-            const issueStatusSnap = await getDoc(userDocRef);
-            if (issueStatusSnap.exists()) {
-                issueStatusDetails = issueStatusSnap.data();
+            const taskStatusSnap = await getDoc(userDocRef);
+            if (taskStatusSnap.exists()) {
+                taskStatusDetails = taskStatusSnap.data();
 
             } else {
                 return NextResponse.json({
-                    message: "The issue status not found"
+                    message: "The task status not found"
                 }, { status: 404 })
             }
         }
 
-        const updatedIssue = {
-            ...issueToUpdate,
-            assignedTo: { assignedTo, assignedToDetails } ?? issueToUpdate.assignedTo,
-            type: { typeId, issueTypeDetails } ?? issueToUpdate.type,
-            taskName: taskName ?? issueToUpdate.taskName,
-            label: label ?? issueToUpdate.label,
-            status: { statusId, issueStatusDetails } ?? issueToUpdate.status,
-            description: description ?? issueToUpdate.description,
-            startDate: startDate ?? issueToUpdate.startDate,
-            dueDate: dueDate ?? issueToUpdate.dueDate,
+        const updatedTask = {
+            ...taskToUpdate,
+            assignedTo: { assignedTo, assignedToDetails } ?? taskToUpdate.assignedTo,
+            type: { typeId, taskTypeDetails } ?? taskToUpdate.type,
+            taskName: taskName ?? taskToUpdate.taskName,
+            label: label ?? taskToUpdate.label,
+            status: { statusId, taskStatusDetails } ?? taskToUpdate.status,
+            description: description ?? taskToUpdate.description,
+            startDate: startDate ?? taskToUpdate.startDate,
+            dueDate: dueDate ?? taskToUpdate.dueDate,
             updatedAt: new Date().toISOString(),
         };
 
-        const updatedIssueList = [
-            ...issueList.slice(0, issueIndex),
-            updatedIssue,
-            ...issueList.slice(issueIndex + 1),
+        const updatedTaskList = [
+            ...taskList.slice(0, taskIndex),
+            updatedTask,
+            ...taskList.slice(taskIndex + 1),
         ];
 
-        const issueDocRef = doc(db, 'issues', issueToUpdate.id)
-        const issueSnap = await getDoc(issueDocRef)
+        const taskDocRef = doc(db, 'tasks', taskToUpdate.id)
+        const taskSnap = await getDoc(taskDocRef)
         
-        let issueCollectionToUpdate;
-        if (issueSnap.exists()) {
-            issueCollectionToUpdate = issueSnap.data();
+        let taskCollectionToUpdate;
+        if (taskSnap.exists()) {
+            taskCollectionToUpdate = taskSnap.data();
             
         } else {
             return NextResponse.json({
-                message: "Can't find the issue collection"
+                message: "Can't find the task collection"
             }, { status: 404 })
         }
         
-        //update issue collection
-        await updateDoc(issueDocRef, {
-            assignedTo: { assignedTo, assignedToDetails } ?? issueCollectionToUpdate.assignedTo,
-            type: { typeId, issueTypeDetails } ?? issueCollectionToUpdate.type,
-            taskName: taskName ?? issueCollectionToUpdate.taskName,
-            label: label ?? issueCollectionToUpdate.label,
-            status: { statusId, issueStatusDetails } ?? issueCollectionToUpdate.status,
-            description: description ?? issueCollectionToUpdate.description,
-            startDate: startDate ?? issueCollectionToUpdate.startDate,
-            dueDate: dueDate ?? issueCollectionToUpdate.dueDate,
+        //update task collection
+        await updateDoc(taskDocRef, {
+            assignedTo: { assignedTo, assignedToDetails } ?? taskCollectionToUpdate.assignedTo,
+            type: { typeId, taskTypeDetails } ?? taskCollectionToUpdate.type,
+            taskName: taskName ?? taskCollectionToUpdate.taskName,
+            label: label ?? taskCollectionToUpdate.label,
+            status: { statusId, taskStatusDetails } ?? taskCollectionToUpdate.status,
+            description: description ?? taskCollectionToUpdate.description,
+            startDate: startDate ?? taskCollectionToUpdate.startDate,
+            dueDate: dueDate ?? taskCollectionToUpdate.dueDate,
             updatedAt: new Date().toISOString()
         })
         
-        //update issue in project collection
+        //update task in project collection
         await updateDoc(projectDocRef, {
-            issueList: updatedIssueList,
+            taskList: updatedTaskList,
         });
 
         return NextResponse.json({
-            data: updatedIssue,
-            message: 'Issue updated successfully'
+            data: updatedTask,
+            message: 'Task updated successfully'
         }, { status: 200 });
 
     } catch (error) {
-        console.error("Cannot update issue", error);
+        console.error("Cannot update task", error);
         return NextResponse.json({
             data: null,
             message: error.message
@@ -212,29 +212,29 @@ export async function DELETE(request, context) {
         }
 
         const projectData = projectSnap.data();
-        let issueList = projectData.issueList || [];
-        const issueIndex = issueList.findIndex(issue => issue.id === id);
+        let taskList = projectData.taskList || [];
+        const taskIndex = taskList.findIndex(task => task.id === id);
 
-        if (issueIndex === -1) {
+        if (taskIndex === -1) {
             return NextResponse.json({
                 data: null,
-                message: 'Issue not found'
+                message: 'Task not found'
             }, { status: 404 });
         }
 
-        issueList.splice(issueIndex, 1);
+        taskList.splice(taskIndex, 1);
 
         await updateDoc(projectDocRef, {
-            issueList: issueList
+            taskList: taskList
         });
 
         return NextResponse.json({
-            message: "Issue successfully deleted"
+            message: "Task successfully deleted"
         }, { status: 200 });
 
 
     } catch (error) {
-        console.error("Can't delete issue", error);
+        console.error("Can't delete task", error);
         return NextResponse.json({
             data: null,
             message: error.message
