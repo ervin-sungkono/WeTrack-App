@@ -79,12 +79,12 @@ body{
     .hamburger-btn{
         display: flex;
         flex-direction: column;
-        z-index: 1;
+        z-index: 9999;
     }
 
     .nav-menu{
         height: 100vh;
-        z-index: 10000;
+        z-index: 9999;
         position: absolute;
         top: 0;
         right: 0;
