@@ -47,7 +47,7 @@ export async function POST(request) {
             assignedTo,
             typeId,
             createdBy,
-            issueName,
+            taskName,
             label,
             statusId,
             description,
@@ -56,7 +56,7 @@ export async function POST(request) {
 
         } = await request.json();
         
-        if (!projectId ||!typeId ||!createdBy ||!issueName ||!statusId) {
+        if (!projectId ||!typeId ||!createdBy ||!taskName ||!statusId) {
             return NextResponse.json({
                 data: null,
                 message: "Missing mandatory fields"
@@ -137,7 +137,7 @@ export async function POST(request) {
             assignedTo: assignedTo? { userId: assignedTo, assignedToDetails } : null,
             type: typeId? { typeId, issueTypeDetails } : null,
             createdBy: createdBy? { userId: createdBy, createdByDetails } : null,
-            issueName: issueName,
+            taskName: taskName,
             label: label? label : null,
             status: statusId? { statusId, issueStatusDetails } : null,
             description: description ?? null,
@@ -164,7 +164,7 @@ export async function POST(request) {
         await updateDoc(projectDocRef, {
             issueList: arrayUnion({
                 id: issueDocRef.id,
-                issueName: newIssue.issueName,
+                taskName: newIssue.taskName,
                 assignedTo: newIssue.assignedTo,
                 type: newIssue.type,
                 status: newIssue.status,
