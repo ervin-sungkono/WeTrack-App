@@ -35,7 +35,7 @@ export default function Sidebar({ project }){
 
     const mainLinks = [
         { 
-            label: 'Ikhtisar',
+            label: 'Ringkasan',
             url: '/',
             icon: <OverviewIcon size={16}/>
         },
