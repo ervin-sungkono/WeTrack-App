@@ -186,7 +186,7 @@ export default function CreateTaskForm({ onCancel }){
                                         onChange={handleTagifyChange}
                                     />
                                     <Button variant="primary" size="sm" outline onClick={() => setLabelModal(true)}>
-                                        Atur Label
+                                        Kelola Label
                                     </Button>
                                 </div>   
                             </div>
