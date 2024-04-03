@@ -11,7 +11,7 @@ import { BsThreeDots as DotIcon } from "react-icons/bs"
 import { IoFilter as FilterIcon } from "react-icons/io5"
 import { FiPlus as PlusIcon } from "react-icons/fi"
 import useSessionStorage from "@/app/lib/hooks/useSessionStorage"
-import { getAllIssue } from "@/app/lib/fetch/issue"
+import { createNewTask, getAllTask } from "@/app/lib/fetch/task"
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -37,36 +37,52 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 
 export default function BoardContent() {
   const [loading, setLoading] = useState(true)
+  const [isCreatingTask, setCreatingTask] = useState(false)
   const [state, setState] = useState();
   const [query, setQuery] = useState("")
   const [filterDropdown, setFilterDropdown] = useState(false)
   const [project, _] = useSessionStorage("project")
   const [activeStatusId, setActiveStatusId] = useState()
-  const issueFormRef = useRef()
+  const taskFormRef = useRef()
 
-  const showIssueCard = (statusId) => {
+  const showTaskCard = (statusId) => {
     setActiveStatusId(statusId)
   }
 
-  const createIssue = (e) => {
+  const createTask = async(e, statusId) => {
     e.preventDefault()
+    setCreatingTask(true)
 
-    console.log("submitting form")
+    const formData = new FormData(taskFormRef.current)
+    const taskName = formData.get("taskName")
+    
+    await createNewTask({
+      taskName, 
+      projectId: project.id, 
+      statusId
+    }).then(res => {
+      if(res.data){
+        console.log(res.data)
+      }
+    })
+
+    setCreatingTask(false)
+    setActiveStatusId(null)
   }
 
   useEffect(() => {
     setLoading(true)
     if(project){
-      getAllIssue(project.id).then(res => {
+      getAllTask(project.id).then(res => {
         if(res.data) {
-          setState(project.issueStatusList
-            .map(issueStatus => ({
-              ...issueStatus,
-              content: res.data?.filter(issue => issue.statusId === issueStatus.id) ?? []
+          setState(project.taskStatusList
+            .map(taskStatus => ({
+              ...taskStatus,
+              content: res.data?.filter(task => task.statusId === taskStatus.id) ?? []
             })
           ))
         }
-        else alert("Fail to get issue data")
+        else alert("Gagal memperoleh data tugas")
 
         setLoading(false)
       })
@@ -87,7 +103,7 @@ export default function BoardContent() {
     const sInd = +source.droppableId;
     const dInd = +destination.droppableId;
 
-    if(source.droppableId === 'issue_status'){
+    if(source.droppableId === 'task_status'){
       const items = reorder(state, source.index, destination.index)
       setState(items)
       return
@@ -111,7 +127,7 @@ export default function BoardContent() {
     <div className="flex flex-col gap-4 h-full overflow-auto">
       <div className="flex flex-col xs:flex-row justify-between gap-4 items-center">
         <div className="w-full flex justify-center xs:justify-start items-center gap-3 md:gap-6"> 
-          <SearchBar placeholder={"Search task.."} handleSearch={handleSearch}/>
+          <SearchBar placeholder={"Cari tugas.."} handleSearch={handleSearch}/>
           <div className="relative">
             <button className="block md:hidden text-white bg-basic-blue hover:bg-basic-blue/80 rounded-md p-1.5" onClick={() => setFilterDropdown(!filterDropdown)}>
               <FilterIcon size={20}/>
@@ -119,7 +135,7 @@ export default function BoardContent() {
             <div className={`${filterDropdown ? "block" : "hidden"} border border-dark-blue/30 md:border-none md:flex z-50 absolute -bottom-2 right-0 translate-y-full md:translate-y-0 px-2 py-3 bg-white rounded-md md:bg-transparent md:p-0 md:static flex flex-col md:flex-row gap-2 md:gap-4`}>
               <SelectButton 
                   name={"assignee-button"}
-                  placeholder={"Assignee"}
+                  placeholder={"Penerima"}
               />
               <SelectButton 
                   name={"epic-button"}
@@ -141,15 +157,15 @@ export default function BoardContent() {
             radius="48"
             color="#47389F"
         />
-        <p className='text-sm md:text-base text-dark/80'>Loading Issue Data...</p>
+        <p className='text-sm md:text-base text-dark/80'>Memuat data tugas...</p>
       </div> : 
       <div className="h-full flex items-start overflow-y-auto pb-4">
         <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="issue_status" direction="horizontal" type="ISSUE-STATUS">
+          <Droppable droppableId="task_status" direction="horizontal" type="ISSUE-STATUS">
             {(provided, snapshot) => (
               <div
                 ref={provided.innerRef}
-                className="h-full flex items-start"
+                className="h-full flex items-start" 
                 {...provided.droppableProps}
               >
                 {state?.map((el, ind) => (
@@ -162,39 +178,42 @@ export default function BoardContent() {
                         className="custom-scrollbar min-h-[280px] max-h-full flex-shrink-0 mr-4 flex flex-col p-2 gap-4 bg-gray-200 rounded-md overflow-y-auto"
                       >
                         <div className="flex items-center gap-2 px-1 text-dark-blue/80">
-                          <div className="uppercase flex-grow text-xs md:text-sm font-semibold">{el.status} <span className="text-[10.8px] md:text-xs">({el.content.filter(issue => issue.issueName.toLowerCase().includes(query)).length})</span></div>
+                          <div className="uppercase flex-grow text-xs md:text-sm font-semibold">{el.status} <span className="text-[10.8px] md:text-xs">({el.content.filter(task => task.taskName.toLowerCase().includes(query)).length})</span></div>
                           <button className="p-1.5 hover:bg-gray-300 duration-200 transition-colors rounded-sm">
                             <DotIcon size={20}/>
                           </button>
                         </div>
                         <BoardList 
-                          items={el.content.filter(issue => issue.issueName.toLowerCase().includes(query))} 
+                          items={el.content.filter(task => task.taskName.toLowerCase().includes(query))} 
                           droppableId={`${ind}`}
                         >
-                          {el.id === activeStatusId && 
-                          <form 
-                            ref={issueFormRef} 
-                            action={"#"} 
-                            onBlur={() => setActiveStatusId(null)} 
-                            onSubmit={createIssue} 
-                            className="py-2.5 px-3 flex flex-col gap-2 items-end border border-basic-blue/60 rounded-md bg-white"
-                          >
-                            <input 
-                              name="issueName" 
-                              type="text" 
-                              onKeyDown={(e) => {
-                                if(e.key === 'Enter'){
-                                  issueFormRef.current.submit()
-                                }
-                              }}
-                              autoFocus
-                              placeholder="Apa yang ingin dikerjakan?" 
-                              className="w-full text-xs md:text-sm border-none bg-slate-100 rounded-sm focus:ring-0"
-                            />
-                            <Button size="sm" type="submit">Tambah</Button>
-                          </form>}
+                          {el.id === activeStatusId && (
+                            isCreatingTask ? 
+                            <div>Loading..</div> :
+                            <form 
+                              action={"#"}
+                              ref={taskFormRef}
+                              onSubmit={(e) => createTask(e, activeStatusId)} 
+                              className="py-2.5 px-3 flex flex-col gap-2 items-end border border-basic-blue/60 rounded-md bg-white"
+                            >
+                              <input 
+                                id="taskName"
+                                name="taskName" 
+                                type="text" 
+                                onBlur={() => setActiveStatusId(null)} 
+                                onKeyDown={(e) => {
+                                  if(e.key === 'Enter'){
+                                    taskFormRef.current.submit()
+                                  }
+                                }}
+                                autoFocus
+                                placeholder="Apa yang ingin dikerjakan?" 
+                                className="w-full text-xs md:text-sm border-none bg-slate-100 rounded-sm focus:ring-0"
+                              />
+                            </form>
+                          )}
                         </BoardList>
-                        <Button variant="gray" outline onClick={() => showIssueCard(el.id)} className={`${el.id === activeStatusId ? "hidden" : ""}`}>
+                        <Button variant="gray" outline onClick={() => showTaskCard(el.id)} className={`${el.id === activeStatusId ? "hidden" : ""}`}>
                           <div className={`flex justify-center items-center gap-2`}>
                             <PlusIcon size={16}/>
                             <p>Tambah Tugas Baru</p>

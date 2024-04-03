@@ -8,17 +8,17 @@ import { ProjectProvider } from "@/app/lib/context/project"
 export default function CreateProjectContent(){
     const steps = [
         {
-            label: "Choose Project Template",
+            label: "Pilih Templat Proyek",
             Form: (props) => 
                 <ProjectTemplate {...props}/>
         },
         {
-            label: "Invite Team Member",
+            label: "Undang Anggota Tim",
             Form: (props) => 
                 <TeamMember {...props}/>
         },
         {
-            label: "Add Project Information",
+            label: "Tambah Informasi Proyek",
             Form: (props) => 
                 <ProjectInformation {...props}/>
         }

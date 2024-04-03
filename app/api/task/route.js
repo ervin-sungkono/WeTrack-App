@@ -16,23 +16,16 @@ export async function GET(request) {
             }, { status: 404 });
         }
 
-        const issueData = projectSnap.data()
-        const issueList = issueData.issueList
-
-        if (!issueList) {
-            return NextResponse.json({
-                data: null,
-                message: "There are no issue available"
-            }, { status: 404 })
-        }
+        const taskData = projectSnap.data()
+        const taskList = taskData.taskList
 
         return NextResponse.json({
-            data: issueList,
+            data: taskList ?? [],
             message: "Projects retrieved successfully"
         }, { status: 200 });
         
     } catch (error) {
-        console.error("Cannot get issues in the project", error);
+        console.error("Cannot get tasks in the project", error);
         return NextResponse.json({
             data: null,
             message: error.message
@@ -47,7 +40,7 @@ export async function POST(request) {
             assignedTo,
             typeId,
             createdBy,
-            issueName,
+            taskName,
             label,
             statusId,
             description,
@@ -56,7 +49,7 @@ export async function POST(request) {
 
         } = await request.json();
         
-        if (!projectId ||!typeId ||!createdBy ||!issueName ||!statusId) {
+        if (!projectId ||!typeId ||!createdBy ||!taskName ||!statusId) {
             return NextResponse.json({
                 data: null,
                 message: "Missing mandatory fields"
@@ -102,44 +95,44 @@ export async function POST(request) {
             }
         }
 
-        let issueTypeDetails = null;
+        let taskTypeDetails = null;
         if (typeId) {
-            const userDocRef = doc(db, 'issueTypes', typeId);
-            const issueTypeSnap = await getDoc(userDocRef);
+            const userDocRef = doc(db, 'taskTypes', typeId);
+            const taskTypeSnap = await getDoc(userDocRef);
 
-            if (issueTypeSnap.exists()) {
-                issueTypeDetails = issueTypeSnap.data();
+            if (taskTypeSnap.exists()) {
+                taskTypeDetails = taskTypeSnap.data();
 
             } else {
                 return NextResponse.json({
-                    message: "The issue type not found"
+                    message: "The task type not found"
                 }, { status: 404 })
             }
         }
 
-        let issueStatusDetails = null;
+        let taskStatusDetails = null;
         if (statusId) {
-            const userDocRef = doc(db, 'issueStatuses', statusId);
+            const userDocRef = doc(db, 'taskStatuses', statusId);
            
-            const issueStatusSnap = await getDoc(userDocRef);
-            if (issueStatusSnap.exists()) {
-                issueStatusDetails = issueStatusSnap.data();
+            const taskStatusSnap = await getDoc(userDocRef);
+            if (taskStatusSnap.exists()) {
+                taskStatusDetails = taskStatusSnap.data();
 
             } else {
                 return NextResponse.json({
-                    message: "The issue status not found"
+                    message: "The task status not found"
                 }, { status: 404 })
             }
         }
 
-        const newIssue = {
+        const newTask = {
             projectId: projectId, 
             assignedTo: assignedTo? { userId: assignedTo, assignedToDetails } : null,
-            type: typeId? { typeId, issueTypeDetails } : null,
+            type: typeId? { typeId, taskTypeDetails } : null,
             createdBy: createdBy? { userId: createdBy, createdByDetails } : null,
-            issueName: issueName,
+            taskName: taskName,
             label: label? label : null,
-            status: statusId? { statusId, issueStatusDetails } : null,
+            status: statusId? { statusId, taskStatusDetails } : null,
             description: description ?? null,
             startDate: startDate ?? null,
             dueDate: dueDate ?? null,
@@ -152,36 +145,36 @@ export async function POST(request) {
             deletedAt: null
         };
 
-        const issuesCollectionRef = collection(db, 'issues');
-        const issueDocRef = await addDoc(issuesCollectionRef, newIssue);
+        const tasksCollectionRef = collection(db, 'tasks');
+        const taskDocRef = await addDoc(tasksCollectionRef, newTask);
 
-        if (!issueDocRef) {
+        if (!taskDocRef) {
             return NextResponse.json({
-                message: 'Failed to create new issue doc'
+                message: 'Failed to create new task doc'
             }, { status: 404 })
         }
 
         await updateDoc(projectDocRef, {
-            issueList: arrayUnion({
-                id: issueDocRef.id,
-                issueName: newIssue.issueName,
-                assignedTo: newIssue.assignedTo,
-                type: newIssue.type,
-                status: newIssue.status,
-                label: newIssue.label
+            taskList: arrayUnion({
+                id: taskDocRef.id,
+                taskName: newTask.taskName,
+                assignedTo: newTask.assignedTo,
+                type: newTask.type,
+                status: newTask.status,
+                label: newTask.label
             })
         });
         
         return NextResponse.json({
             data: {
-                id: issueDocRef.id,
-                ...newIssue
+                id: taskDocRef.id,
+                ...newTask
             },
-            message: "Successfully added new issue to project and issue collection"
+            message: "Successfully added new task to project and task collection"
         }, { status: 200 });
 
     } catch (error) {
-        console.error("Can't create issue", error);
+        console.error("Can't create task", error);
         return NextResponse.json({
             data: null,
             message: error.message

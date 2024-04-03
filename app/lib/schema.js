@@ -71,16 +71,17 @@ export const updateProfileSchema = yup.object().shape({
 export const projectTemplateSchema = yup.object().shape({
     templateType: yup
         .string()
-        .required("Please choose one of the given template")
+        .required("Pilih salah satu dari templat proyek yang diberikan!")
 })
 
 export const projectInformationSchema = yup.object().shape({
     projectName: yup
         .string()
-        .required("Project name is required")
+        .required("Nama proyek harus diisi!")
+        .matches(/^[a-zA-Z0-9\s]+$/, "Nama Proyek tidak boleh mengandung karakter spesial")
         .max(50),
     key: yup
         .string()
-        .required("Key is required")
+        .required("Kunci harus diisi!")
         .max(7)
 })

@@ -1,5 +1,7 @@
 "use client"
 import FormikWrapper from "../formik/FormikWrapper"
+import Image from "next/image"
+import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useProjectData } from "@/app/lib/context/project"
 import { projectInformationSchema } from "@/app/lib/schema"
@@ -15,6 +17,7 @@ import SkeletonTextarea from "@/app/components/skeleton/SkeletonTextarea"
 export default function ProjectInformation({prevFormStep}){
     const [isLoading, setLoading] = useState(true)
     const [completed, setCompleted] = useState(false)
+    const [projectId, setProjectId] = useState(null)
     const { projectData, submitProjectData } = useProjectData()
     
     useEffect(() => setLoading(false), [])
@@ -31,11 +34,12 @@ export default function ProjectInformation({prevFormStep}){
             .then(res => {
                 if(res.data){
                     setCompleted(true)
-                    // TODO: Tambah logic untuk generate issue apabila template nya AI Generate
+                    setProjectId(res.data.id)
+                    // TODO: Tambah logic untuk generate task apabila template nya AI Generate
                     // TODO-2: Tambah logic untuk integrasi dengan API chatGPT
                 }else{
                     console.log(res)
-                    alert("Fail to submit form data")
+                    alert("Gagal mengirim data formulir")
                 }
             })
             .catch(err => console.log(err))
@@ -43,8 +47,19 @@ export default function ProjectInformation({prevFormStep}){
 
     if(completed){
         return(
-            <div>
-                Project Successfully created!
+            <div className="w-full py-12 flex flex-col justify-center items-center gap-4">
+                <Image
+                    width={280}
+                    height={280}
+                    src={"/CompletedState.svg"}
+                    alt="completed"
+                />
+                <p className="text-dark-blue/80 text-sm md:text-base text-center font-semibold">
+                    Proyek berhasil dibuat!{' '}
+                    <span>
+                        <Link href={projectId ? `/projects/${projectId}` : "#"} className="text-basic-blue hover:underline">Klik disini</Link>
+                    </span> untuk melihat proyek tersebut.
+                </p>
             </div>
         )
     }
@@ -70,13 +85,13 @@ export default function ProjectInformation({prevFormStep}){
                 return(
                     <div className="w-full flex flex-col gap-6">
                         <div className="flex flex-col gap-4">
-                            <FormikField label="Project Name" required name="projectName" type="text" placeholder={"Enter project name.."}/>
+                            <FormikField label="Nama Proyek" required name="projectName" type="text" placeholder={"Masukkan nama proyek.."}/>
                             <KeyFormikField/>
-                            {projectData.templateType === 'ai-generated' && <FormikTextarea label="User Story" name="userStory" placeholder={"Enter user story.."} rows={4}/>}
+                            {projectData.templateType === 'ai-generated' && <FormikTextarea label="Cerita Pengguna" name="userStory" placeholder={"Masukkan cerita pengguna.."} rows={4}/>}
                         </div>
                         <div className="flex justify-end gap-2 md:gap-4">
-                            <Button variant="secondary" onClick={prevFormStep} className="w-24 md:w-32">Back</Button>
-                            <Button type={"submit"} className="w-24 md:w-32">Submit</Button>
+                            <Button variant="secondary" onClick={prevFormStep} className="w-24 md:w-32">Kembali</Button>
+                            <Button type={"submit"} className="w-24 md:w-32">Kirim</Button>
                         </div>
                     </div>
                 ) 

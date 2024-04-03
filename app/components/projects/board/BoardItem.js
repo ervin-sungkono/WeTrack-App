@@ -36,7 +36,7 @@ export default function BoardItem({ item, index }){
             >
               <div className="flex flex-col gap-1">
                 <div className="flex items-center">
-                  <p className="flex-grow text-xs md:text-sm font-semibold">{item.issueName}</p>
+                  <p className="flex-grow text-xs md:text-sm font-semibold">{item.taskName}</p>
                   <button className="p-1.5 hover:bg-gray-200 duration-200 transition-colors rounded-sm">
                     <DotIcon size={20}/>
                   </button>

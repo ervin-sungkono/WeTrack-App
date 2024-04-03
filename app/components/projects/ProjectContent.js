@@ -35,10 +35,10 @@ export default function ProjectContent(){
                 if(projects.data) setProjectData(
                     projects.data.map(project => ({
                         ...project,
-                        action: ['Edit', 'Update']
+                        action: ['Sunting', 'Perbarui']
                     }))
                 )
-                else alert("Fail to get projects data")
+                else alert("Gagal memperoleh data proyek")
             })
     }, [])
 
@@ -48,7 +48,7 @@ export default function ProjectContent(){
         },
         {
             accessorKey: 'projectName',
-            header: 'Project Name',
+            header: 'Nama Proyek',
             cell: ({ row }) => {
                 const id = row.getValue('id')
                 const projectName = row.getValue('projectName')
@@ -64,11 +64,11 @@ export default function ProjectContent(){
         },
         {
             accessorKey: 'key',
-            header: 'Key',
+            header: 'Kunci',
         },
         {
             accessorKey: 'createdBy',
-            header: 'Owner',
+            header: 'Pemilik',
             cell: ({ row }) => {
                 const { fullName, profileImage } = row.getValue('createdBy') ?? {}
                 return(
@@ -81,7 +81,7 @@ export default function ProjectContent(){
         },
         {
             accessorKey: 'action',
-            header: () => <div className="w-full text-center">Action</div>,
+            header: () => <div className="w-full text-center">Aksi</div>,
             cell: ({ row }) => {
                 const id = row.getValue("id")
                 const actions = row.getValue("action")
@@ -96,10 +96,10 @@ export default function ProjectContent(){
         <div className="h-full flex flex-col mt-4 md:mt-6 gap-4">
             <div className="flex flex-col md:flex-row justify-between items-center gap-2">
                 <div className="w-full flex justify-center md:justify-start items-center gap-3 md:gap-6">
-                    <SearchBar placeholder={"Search project.."} handleSearch={handleSearch}/>
+                    <SearchBar placeholder={"Cari proyek.."} handleSearch={handleSearch}/>
                     <div className="flex items-center gap-2 md:gap-4">
                         <div className="flex items-center gap-2">
-                            <b className="hidden xs:block text-xs md:text-sm">Show:</b>
+                            <b className="hidden xs:block text-xs md:text-sm">Tampilkan:</b>
                             <SelectButton 
                                 name={"status-button"}
                                 placeholder={pageSize} 
@@ -110,7 +110,7 @@ export default function ProjectContent(){
                     </div>
                 </div>
                 <LinkButton href="/projects/create">
-                    Create Project
+                    Buat Proyek
                 </LinkButton>
             </div>
             <Table

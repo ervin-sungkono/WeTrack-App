@@ -12,7 +12,7 @@ import {
     MdViewComfy as OverviewIcon ,
     MdViewTimeline as TimelineIcon,
     MdViewKanban as BoardIcon,
-    MdTask as IssueIcon,
+    MdTask as TaskIcon,
     MdGroup as TeamIcon,
     MdSettings as SettingIcon
 } from "react-icons/md"
@@ -35,27 +35,27 @@ export default function Sidebar({ project }){
 
     const mainLinks = [
         { 
-            label: 'Overview',
+            label: 'Ikhtisar',
             url: '/',
             icon: <OverviewIcon size={16}/>
         },
         { 
-            label: 'Timeline',
+            label: 'Linimasa',
             url: '/timeline', 
             icon: <TimelineIcon size={16}/>
         },
         { 
-            label: 'Board',
+            label: 'Papan',
             url: '/board', 
             icon: <BoardIcon size={16}/>
         },
         { 
-            label: 'Issues',
-            url: '/issues', 
-            icon: <IssueIcon size={16}/>
+            label: 'Tugas',
+            url: '/tasks', 
+            icon: <TaskIcon size={16}/>
         },
         { 
-            label: 'Team',
+            label: 'Tim',
             url: '/team', 
             icon: <TeamIcon size={16}/>
         },
@@ -63,7 +63,7 @@ export default function Sidebar({ project }){
 
     const settingLinks = [
         { 
-            label: 'Project Settings',
+            label: 'Pengaturan Proyek',
             url: '/setting', 
             icon: <SettingIcon size={16}/>
         },
@@ -76,8 +76,8 @@ export default function Sidebar({ project }){
 
     return (
         <section className={`sidebar fixed lg:relative w-[200px] lg:translate-x-0 ${open ? "lg:w-[240px] translate-x-0" : "lg:w-20 -translate-x-full"} bg-white flex-shrink-0 h-full flex flex-col shadow-md z-fixed transition-all duration-300 ease-in-out`}>
-            <div className="w-full flex justify-between items-center px-4 pt-4 lg:pt-6 pb-2.5 md:pb-4">  
-                <div className="text-base md:text-lg text-center font-semibold whitespace-nowrap overflow-hidden transition-[width] duration-300" style={{width: (open ? "100%" : "0px")}}>
+            <div className="w-full flex justify-between items-center px-4 md:px-6 pt-4 lg:pt-6 pb-2.5 md:pb-4">  
+                <div className="text-sm md:text-base text-center font-semibold truncate transition-[width] duration-300" style={{width: (open ? "100%" : "0px")}}>
                     {project?.projectName}
                 </div>
                 <button className="absolute top-2 lg:top-4 -right-6 lg:right-0 translate-x-1/2 text-white bg-basic-blue hover:bg-light-blue p-2.5 rounded-full transition-colors" onClick={toggleSidebar}>

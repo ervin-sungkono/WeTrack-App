@@ -14,7 +14,7 @@ import { useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { pickTextColorBasedOnBgColor } from "@/app/lib/color";
 
-export default function CreateIssueForm({ onCancel }){
+export default function CreateTaskForm({ onCancel }){
     const [assignee, setAssignee] = useState()
     const [labels, setLabels] = useState([])
     const [labelModal, setLabelModal] = useState(false)
@@ -23,7 +23,7 @@ export default function CreateIssueForm({ onCancel }){
     const tagifySettings = {
         skipInvalid: true,
         maxTags: 6,
-        placeholder: "Enter label here..",
+        placeholder: "Masukkan label..",
         dropdown: {
             maxItems: 20,           // <- mixumum allowed rendered suggestions
             classname: "tags-look", // <- custom classname for this dropdown, so it could be targeted
@@ -81,8 +81,8 @@ export default function CreateIssueForm({ onCancel }){
     return(
         <>
             <PopUpForm
-                title={"Create Issue"}
-                message={"Add a new issue"}
+                title={"Buat Tugas"}
+                message={"Buat tugas baru"}
                 titleSize={"large"}
             >
                 <FormikWrapper
@@ -95,28 +95,28 @@ export default function CreateIssueForm({ onCancel }){
                             <div className="custom-scrollbar w-full pb-4 max-h-[65vh] pr-2 flex flex-col gap-2.5 md:gap-4 overflow-y-auto">
                                 <div className="flex flex-col md:flex-row gap-2.5 md:gap-4">
                                     <FormikSelectField 
-                                        label="Project" 
+                                        label="Proyek" 
                                         required 
                                         name="projectId" 
-                                        placeholder={"-- Select Project --"}
+                                        placeholder={"-- Pilih Proyek --"}
                                         options={[]}
                                     />
                                     <FormikSelectField 
-                                        label="Issue Type" 
+                                        label="Jenis Tugas" 
                                         required 
                                         name="typeId" 
-                                        placeholder={"-- Select Issue Type --"}
+                                        placeholder={"-- Pilih Jenis Tugas --"}
                                         options={[]}
                                     />
                                 </div>
                                 <div className="flex flex-col md:flex-row gap-2.5 md:gap-4">
                                     <FormikField 
-                                        label="Start Date" 
+                                        label="Tanggal Mulai" 
                                         name="startDate" 
                                         type="date" 
                                     />
                                     <FormikField 
-                                        label="Due Date" 
+                                        label="Tanggal Selesai" 
                                         name="dueDate" 
                                         type="date" 
                                     />
@@ -126,29 +126,29 @@ export default function CreateIssueForm({ onCancel }){
                                         label="Status" 
                                         required 
                                         name="statusId"  
-                                        placeholder={"-- Select Status --"}
+                                        placeholder={"-- Pilih Status --"}
                                         options={[]}
                                     />
-                                    <p className="text-xs text-dark-blue">This is the issue&#x2019;s initial status after creation.</p>
+                                    <p className="text-xs text-dark-blue">Ini adalah status awal tugas setelah dibuat.</p>
                                 </div>
                                 <FormikField 
-                                    label="Title" 
+                                    label="Judul" 
                                     required
-                                    name="issueName" 
+                                    name="taskName" 
                                     type="text" 
-                                    placeholder={"Enter issue title.."}
+                                    placeholder={"Masukkan judul tugas.."}
                                 />
                                 <FormikTextarea
-                                    label="Description"
+                                    label="Deskripsi"
                                     required
                                     name={"description"}
-                                    placeholder={"Enter issue description.."}
+                                    placeholder={"Masukkan deskripsi tugas.."}
                                     rows={5}
                                 />
                                 <div className="flex flex-col md:flex-row gap-2.5 md:gap-4">
                                     <div className="w-full flex flex-col gap-2">
                                         <label htmlFor="assignedTo" className="block font-semibold text-xs md:text-sm text-dark-blue">
-                                            Assignee
+                                            Penerima
                                         </label>
                                         <UserSelectButton
                                             name="assignedTo"
@@ -159,7 +159,7 @@ export default function CreateIssueForm({ onCancel }){
                                     </div>
                                     <div className="w-full flex flex-col gap-2">
                                         <label htmlFor="assignedTo" className="block font-semibold text-xs md:text-sm text-dark-blue">
-                                            Reporter
+                                            Pelapor
                                         </label>
                                         <UserSelectButton
                                             name="createdBy"
@@ -186,21 +186,21 @@ export default function CreateIssueForm({ onCancel }){
                                         onChange={handleTagifyChange}
                                     />
                                     <Button variant="primary" size="sm" outline onClick={() => setLabelModal(true)}>
-                                        Manage Label
+                                        Atur Label
                                     </Button>
                                 </div>   
                             </div>
                                 <FormikSelectField 
-                                    label="Parent" 
+                                    label="Induk" 
                                     required 
                                     name="parentId" 
-                                    placeholder={"-- Select Parent --"}
+                                    placeholder={"-- Pilih Induk --"}
                                     options={[]}
                                 />
                             </div>
                             <div className="flex justify-end gap-2 md:gap-4">
-                                <Button variant="secondary" onClick={onCancel}>Cancel</Button>
-                                <Button type={"submit"} className="w-24 md:w-32">Create</Button>
+                                <Button variant="secondary" onClick={onCancel}>Batal</Button>
+                                <Button type={"submit"} className="w-24 md:w-32">Buat</Button>
                             </div>
                         </div>
                     )}
