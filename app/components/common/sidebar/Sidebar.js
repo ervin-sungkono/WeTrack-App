@@ -63,7 +63,7 @@ export default function Sidebar({ project }){
 
     const settingLinks = [
         { 
-            label: 'Pengaturan Proyek',
+            label: 'Pengaturan',
             url: '/setting', 
             icon: <SettingIcon size={16}/>
         },

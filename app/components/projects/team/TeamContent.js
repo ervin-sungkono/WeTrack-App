@@ -1,14 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { FaUserPlus } from "react-icons/fa6";
-
+import { FaUserPlus } from "react-icons/fa6"
 import SearchBar from "../../common/SearchBar"
 import Button from "../../common/button/Button"
-import TeamList from "./TeamList";
-import InviteForm from "../../common/form/InviteForm";
-import PopUpLoad from "../../common/alert/PopUpLoad";
-import { ProjectProvider } from "@/app/lib/context/project";
+import TeamList from "./TeamList"
+import InviteForm from "../../common/form/InviteForm"
+import PopUpLoad from "../../common/alert/PopUpLoad"
+import { ProjectProvider } from "@/app/lib/context/project"
 
 export default function TeamContent(){
     const [query, setQuery] = useState("")
