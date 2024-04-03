@@ -1,9 +1,20 @@
 import { updateDoc, doc, getDoc, arrayUnion, serverTimestamp, addDoc, collection } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
+import { getUserSession } from '@/app/lib/session';
+import { nextAuthOptions } from '@/app/lib/auth';
 
-export async function GET(request) {
+export async function GET(request, response) {
     try {
+        const session = await getUserSession(request, response, nextAuthOptions)
+        const loggedIn = session.user.uid
+
+        if(!loggedIn){
+            return NextResponse.json({
+                message: "Unauthorized, user id not found"
+            }, { status: 401 })
+        }
+
         const projectId = request.nextUrl.searchParams.get("projectId")
 
         const projectsRef = doc(db, 'projects', projectId);
@@ -39,7 +50,6 @@ export async function POST(request) {
             projectId, 
             assignedTo,
             typeId,
-            createdBy,
             taskName,
             label,
             statusId,
@@ -48,8 +58,18 @@ export async function POST(request) {
             dueDate
 
         } = await request.json();
+
+        const session = await getUserSession(request, response, nextAuthOptions)
+        const createdBy = session.user.uid
+
+        if(!createdBy){
+            return NextResponse.json({
+                data: null,
+                message: "Unauthorized, user id not found"
+            }, { status: 401 })
+        }
         
-        if (!projectId ||!typeId ||!createdBy ||!taskName ||!statusId) {
+        if (!projectId ||!typeId ||!taskName ||!statusId) {
             return NextResponse.json({
                 data: null,
                 message: "Missing mandatory fields"
@@ -70,7 +90,11 @@ export async function POST(request) {
 
             const userSnap = await getDoc(userDocRef);
             if (userSnap.exists()) {
-                assignedToDetails = userSnap.data();
+                const { fullName, profileImage } = userSnap.data();
+                assignedToDetails = { 
+                    fullName: fullName,
+                    profileImage: profileImage
+                }
                 console.log("assigned to detail", assignedToDetails)
 
             } else {
@@ -86,7 +110,11 @@ export async function POST(request) {
 
             const userSnap = await getDoc(userDocRef);
             if (userSnap.exists()) {
-                createdByDetails = userSnap.data();
+                const { fullName, profileImage } = userSnap.data();
+                createdByDetails = { 
+                    fullName: fullName,
+                    profileImage: profileImage
+                }
 
             } else {
                 return NextResponse.json({
@@ -101,7 +129,10 @@ export async function POST(request) {
             const taskTypeSnap = await getDoc(userDocRef);
 
             if (taskTypeSnap.exists()) {
-                taskTypeDetails = taskTypeSnap.data();
+                const { type } = taskTypeSnap.data()
+                taskTypeDetails = {
+                    taskType: type
+                }
 
             } else {
                 return NextResponse.json({
@@ -116,7 +147,10 @@ export async function POST(request) {
            
             const taskStatusSnap = await getDoc(userDocRef);
             if (taskStatusSnap.exists()) {
-                taskStatusDetails = taskStatusSnap.data();
+                const { status } = taskStatusSnap.data()
+                taskStatusDetails = {
+                    status: status
+                }
 
             } else {
                 return NextResponse.json({
@@ -127,12 +161,12 @@ export async function POST(request) {
 
         const newTask = {
             projectId: projectId, 
-            assignedTo: assignedTo? { userId: assignedTo, assignedToDetails } : null,
-            type: typeId? { typeId, taskTypeDetails } : null,
-            createdBy: createdBy? { userId: createdBy, createdByDetails } : null,
+            assignedTo: assignedTo ? { id: assignedTo, ...assignedToDetails } : null,
+            type: typeId ? { id: typeId, ...taskTypeDetails } : null,
+            createdBy: createdBy ? { id: createdBy, ...createdByDetails } : null,
             taskName: taskName,
-            label: label? label : null,
-            status: statusId? { statusId, taskStatusDetails } : null,
+            label: label ? label : null,
+            status: statusId ? { id: statusId, ...taskStatusDetails } : null,
             description: description ?? null,
             startDate: startDate ?? null,
             dueDate: dueDate ?? null,
