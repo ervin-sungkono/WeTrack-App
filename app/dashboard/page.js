@@ -4,7 +4,7 @@ import DashboardLayout from "../components/layout/DashboardLayout";
 export default function DashboardPage(){
     const links = [
         {label: "Beranda", url: "/"},
-        {label: "Hubungi Kami", url: "/contact"},
+        {label: "Dasbor", url: "/dashboard"},
     ]
 
     return(

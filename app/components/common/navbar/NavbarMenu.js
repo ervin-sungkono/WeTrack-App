@@ -78,7 +78,7 @@ export default function NavbarMenu({ showForm, hideMenu }){
                                     }
                                 </div>
                             </NavDropdown>
-                            <NavLink label={"Histori"} href={"/history"}/>
+                            <NavLink label={"Riwayat"} href={"/history"}/>
                             <Button variant="primary" size="md" className={"w-full mt-2 lg:mt-0 lg:ml-4"} onClick={showForm}>Buat</Button>
                         </div> 
                         : 
@@ -92,9 +92,9 @@ export default function NavbarMenu({ showForm, hideMenu }){
                                     <Link href={"/notifications"} className="p-2 text-dark-blue hover:text-basic-blue transition-colors">
                                         <NotificationIcon size={24}/>
                                     </Link>
-                                    <Link href={"/help"} className="p-2 text-dark-blue hover:text-basic-blue transition-colors">
+                                    {/* <Link href={"/help"} className="p-2 text-dark-blue hover:text-basic-blue transition-colors">
                                         <HelpIcon size={24}/>
-                                    </Link>
+                                    </Link> */}
                                 </div>
                                 <UserDropdown {...session.user}/>
                             </div>
