@@ -13,7 +13,7 @@ import UpdateProfileForm from "../common/form/profile/UpdateProfileForm"
 
 export default function ProfileLayout(){
     const { data: session, status } = useSession()
-    
+
     const initialValues = {
         email: session?.user.email,
         description: "",
@@ -70,8 +70,8 @@ export default function ProfileLayout(){
         return (
             <div className="h-full">
                 <div className="h-[200px] md:h-[260px]"> 
-                    <div className="fixed h-[100px] md:h-[140px] bg-basic-blue w-full">
-                        <div className="flex items-center justify-center mt-12 md:mt-16">
+                    <div className="h-[100px] md:h-[140px] bg-gradient-to-r from-basic-blue to-light-blue w-full">
+                        <div className="flex items-center justify-center pt-12 md:pt-16">
                             <UserIcon
                                 fullName={session.user.fullName}
                                 src={session.user.profileImage}
