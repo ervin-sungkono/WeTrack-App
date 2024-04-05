@@ -1,9 +1,20 @@
 import { db } from "@/app/firebase/config";
+import { nextAuthOptions } from "@/app/lib/auth";
+import { getUserSession } from "@/app/lib/session";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { NextResponse } from 'next/server'
 
-export async function GET(request, context) {
+export async function GET(request, response, context) {
     try {
+        const session = await getUserSession(request, response, nextAuthOptions)
+        const loggedIn = session.user.uid
+
+        if(!loggedIn){
+            return NextResponse.json({
+                message: "Unauthorized, user id not found"
+            }, { status: 401 })
+        }
+
         const projectId = request.nextUrl.searchParams.get("projectId")
 
         if(!projectId) {
