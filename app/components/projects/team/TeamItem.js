@@ -3,7 +3,7 @@ import UserIcon from "../../common/UserIcon";
 import SelectButton from "../../common/SelectButton";
 import { IoIosCloseCircle as CloseCircle } from "react-icons/io";
 
-export default function TeamItem({editMode=false, image=null, name, role, status="active"}){
+export default function TeamItem({editMode=false, image=null, id, name, role, status="active"}){
 
     const roleOptions = [
         {label: "Member", value: "Member"},
@@ -30,7 +30,7 @@ export default function TeamItem({editMode=false, image=null, name, role, status
     }
 
     return (
-        <div className="relative mt-4 mb-8">
+        <div className="relative mt-4 mb-12">
             {editMode && (
                 <CloseCircle onClick={handleDelete} className="absolute -top-4 -right-4 text-3xl text-danger-red cursor-pointer"/>
             )}
@@ -47,9 +47,9 @@ export default function TeamItem({editMode=false, image=null, name, role, status
                 </div>
                 {status !== "pending" && (
                     editMode ? (
-                        <div className="mt-4">
+                        <div className="mt-4 mb-6">
                             <SelectButton
-                                name={"role-button"}
+                                name={`${id}`}
                                 placeholder={role}
                                 options={roleOptions}
                                 onChange={handleRoleChange}
