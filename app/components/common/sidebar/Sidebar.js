@@ -35,12 +35,12 @@ export default function Sidebar({ project }){
 
     const mainLinks = [
         { 
-            label: 'Ikhtisar',
+            label: 'Ringkasan',
             url: '/',
             icon: <OverviewIcon size={16}/>
         },
         { 
-            label: 'Linimasa',
+            label: 'Timeline',
             url: '/timeline', 
             icon: <TimelineIcon size={16}/>
         },
@@ -63,7 +63,7 @@ export default function Sidebar({ project }){
 
     const settingLinks = [
         { 
-            label: 'Pengaturan Proyek',
+            label: 'Pengaturan',
             url: '/setting', 
             icon: <SettingIcon size={16}/>
         },

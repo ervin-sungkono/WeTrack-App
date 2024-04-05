@@ -68,7 +68,7 @@ export default function ProjectContent(){
         },
         {
             accessorKey: 'createdBy',
-            header: 'Pemilik',
+            header: 'Owner',
             cell: ({ row }) => {
                 const { fullName, profileImage } = row.getValue('createdBy') ?? {}
                 return(
