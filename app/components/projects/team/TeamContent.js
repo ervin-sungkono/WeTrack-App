@@ -38,7 +38,7 @@ export default function TeamContent(){
                     <div className="w-full flex justify-center xs:justify-start items-center">
                         <SearchBar placeholder={"Cari anggota.."} handleSearch={handleSearch}/>
                     </div>
-                    <div className="flex gap-3 md:gap-6">
+                    <div className="flex flex-col md:flex-row gap-3 md:gap-6">
                         {editMode && (
                             <Button variant="danger" onClick={() => setEditMode(false)} outline>
                                 Batalkan Perubahan

@@ -34,7 +34,7 @@ export default function TeamItem({editMode=false, image=null, name, role, status
             {editMode && (
                 <CloseCircle onClick={handleDelete} className="absolute -top-4 -right-4 text-3xl text-danger-red cursor-pointer"/>
             )}
-            <div className={`flex flex-col justify-between items-center px-6 md:px-10 py-4 md:py-6 rounded-xl shadow-md bg-white w-64`}>
+            <div className={`flex flex-col justify-between items-center px-6 md:px-10 py-4 md:py-6 rounded-xl shadow-md bg-white w-32 md:w-64`}>
                 <div>
                     {image === null ? (
                         <UserIcon fullName={name} size="team"/>

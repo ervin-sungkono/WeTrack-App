@@ -22,7 +22,7 @@ export async function POST(request) {
             jobPosition: null,
             profileImage: null,
             location: null,
-            isVerified: null,
+            isVerified: false,
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
             deletedAt: null

@@ -50,7 +50,7 @@ export default function SettingForm(){
                 handleSubmit={handleSubmit}
                 validationSchema={updateProjectSchema}
                 children={(formik) => (
-                    <div className="w-1/2">
+                    <div className="w-full md:w-3/4">
                         <div className="mb-4">
                             <FormikField
                                 name="projectName"
@@ -93,7 +93,7 @@ export default function SettingForm(){
                             <div>
                                 <Button onClick={handleDeleteProject} variant="danger">Hapus Proyek</Button>
                             </div>
-                            <div className="flex gap-4">
+                            <div className="flex gap-2 md:gap-4">
                                 <Button variant="secondary">Batal</Button>
                                 <Button onClick={handleSubmit} variant="primary">Perbarui</Button>
                             </div>

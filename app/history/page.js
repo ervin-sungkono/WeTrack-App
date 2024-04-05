@@ -4,6 +4,7 @@ import Header from "../components/common/Header"
 import SelectButton from "../components/common/SelectButton"
 import HistoryLayout from "../components/layout/HistoryLayout"
 import SortButton from "../components/common/SortButton"
+import HistoryList from "../components/history/HistoryList"
 
 export default function HistoryPage(){
     const links = [
@@ -14,6 +15,7 @@ export default function HistoryPage(){
     const [project, setProject] = useState("Proyek 1")
     const [type, setType] = useState("Semua")
     const [pageSize, setPageSize] = useState(10)
+    const [historyData, setHistoryData] = useState(null)
 
     const projectOptions = [
         {label: "Proyek 1", value: 1},
@@ -85,6 +87,12 @@ export default function HistoryPage(){
                         </div>
                         <SortButton />
                     </div>
+                </div>
+                <div>
+                    <HistoryList
+                        data={historyData}
+                        pageSize={pageSize}
+                    />
                 </div>
             </div>
         </HistoryLayout>
