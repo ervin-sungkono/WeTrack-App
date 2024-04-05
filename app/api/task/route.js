@@ -69,7 +69,7 @@ export async function POST(request) {
             }, { status: 401 })
         }
         
-        if (!projectId ||!typeId ||!taskName ||!statusId) {
+        if (!projectId ||!taskName ||!statusId) {
             return NextResponse.json({
                 data: null,
                 message: "Missing mandatory fields"

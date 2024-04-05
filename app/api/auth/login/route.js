@@ -10,10 +10,16 @@ export async function POST(request) {
 
     const user = userCredential.user;
 
+    if(user.emailVerified != true){
+      return NextResponse.json({
+        message: "Please verify your email first"
+      }, { status: 401 })
+    }
+
     if(user){
       const data = await getDoc(doc(db, 'users', user.uid))
 
-      const { email, fullName, jobPosition, location, profileImage, isVerified } = data.data()
+      const { email, fullName, profileImage, isVerified } = data.data()
 
       if(data.exists()){
         return NextResponse.json({
@@ -21,8 +27,6 @@ export async function POST(request) {
             uid: data.id,
             email: email,
             fullName: fullName,
-            jobPosition: jobPosition,
-            location: location,
             profileImage: profileImage,
             isVerified: isVerified,
           },
