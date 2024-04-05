@@ -1,4 +1,4 @@
-import { updateDoc, doc, getDoc, arrayUnion, serverTimestamp, addDoc, collection } from 'firebase/firestore';
+import { doc, getDoc, arrayUnion, serverTimestamp, addDoc, collection, updateDoc } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
@@ -44,7 +44,7 @@ export async function GET(request, response) {
     }
 }
 
-export async function POST(request) {
+export async function POST(request, response) {
     try {
         const { 
             projectId, 
@@ -61,6 +61,8 @@ export async function POST(request) {
         } = await request.json();
 
         const session = await getUserSession(request, response, nextAuthOptions)
+
+        console.log("session",session)
         const createdBy = session.user.uid
 
         if(!createdBy){
@@ -166,9 +168,9 @@ export async function POST(request) {
             type: typeId ? { id: typeId, ...taskTypeDetails } : null,
             createdBy: createdBy ? { id: createdBy, ...createdByDetails } : null,
             taskName: taskName,
-            label: label ? label : null,
+            label: label ? label : [],
             status: statusId ? { id: statusId, ...taskStatusDetails } : null,
-            priority: priority ?? null,
+            priority: priority ?? 0,
             description: description ?? null,
             startDate: startDate ?? null,
             dueDate: dueDate ?? null,
@@ -190,16 +192,27 @@ export async function POST(request) {
             }, { status: 404 })
         }
 
-        await updateDoc(projectDocRef, {
-            taskList: arrayUnion({
+        const taskStatusRef = doc(db, 'taskStatuses', statusId)
+
+        const updateDocument = await updateDoc(taskStatusRef, {
+            tasks: arrayUnion({
                 id: taskDocRef.id,
                 taskName: newTask.taskName,
+                createdBy: newTask.createdBy,
                 assignedTo: newTask.assignedTo,
                 type: newTask.type,
                 status: newTask.status,
-                label: newTask.label
+                labels: newTask.label
             })
         });
+
+        console.log("update document", updateDocument)
+
+        if(!updateDocument){
+            return NextResponse.json({
+                message: "Something went wrong"
+            }, { status: 500 });
+        }
         
         return NextResponse.json({
             data: {
