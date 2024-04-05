@@ -33,10 +33,25 @@ export function createNewProject({ projectName, key, teams }){
     const payload = {
         projectName,
         key,
-        teams: teams ? JSON.parse(teams).map(user => user.value) : null
+        teams: teams ? JSON.parse(teams).map(user => user.value) : null,
     }
 
     const response = fetch('/api/project',{
+        method: 'POST',
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
+
+    return response
+}
+
+export function generateTask({ projectDescription }){
+    const payload = {
+        projectDescription: projectDescription.trim()
+    }
+
+    const response = fetch('/api/project/generate-task',{
         method: 'POST',
         body: JSON.stringify(payload)
     })

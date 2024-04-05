@@ -57,7 +57,6 @@ export async function POST(request) {
             description,
             startDate,
             dueDate
-
         } = await request.json();
 
         const session = await getUserSession(request, response, nextAuthOptions)
