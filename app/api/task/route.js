@@ -53,6 +53,7 @@ export async function POST(request) {
             taskName,
             label,
             statusId,
+            priority,
             description,
             startDate,
             dueDate
@@ -167,6 +168,7 @@ export async function POST(request) {
             taskName: taskName,
             label: label ? label : null,
             status: statusId ? { id: statusId, ...taskStatusDetails } : null,
+            priority: priority ?? null,
             description: description ?? null,
             startDate: startDate ?? null,
             dueDate: dueDate ?? null,
