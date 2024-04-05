@@ -1,4 +1,4 @@
-import { doc, getDoc, arrayUnion, serverTimestamp, addDoc, collection, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, arrayUnion, serverTimestamp, addDoc, collection, updateDoc, FieldValue } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
@@ -195,7 +195,7 @@ export async function POST(request, response) {
         const taskStatusRef = doc(db, 'taskStatuses', statusId)
 
         const updateDocument = await updateDoc(taskStatusRef, {
-            tasks: arrayUnion({
+            tasks: FieldValue.arrayUnion({
                 id: taskDocRef.id,
                 taskName: newTask.taskName,
                 createdBy: newTask.createdBy,

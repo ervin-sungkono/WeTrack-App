@@ -88,6 +88,7 @@ export async function POST(request, response) {
             const statusDocRef = await addDoc(collection(db, 'taskStatuses'), {
                 status: status,
                 projectId: docRef.id,
+                tasks: [],
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
                 deletedAt: null
