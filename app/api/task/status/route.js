@@ -36,12 +36,6 @@ export async function GET(request, response, context) {
             return taskStatuses
         })
             
-        if(!taskStatuses) {
-            return NextResponse.json({
-                message: "Can't get task status docs"
-            }, { status: 404 })
-        }
-
         return NextResponse.json({
             data: taskStatuses, 
             message: "Succesfully get all available task statuses"
