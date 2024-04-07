@@ -1,4 +1,4 @@
-import { doc, getDoc, arrayUnion, serverTimestamp, addDoc, collection, updateDoc, FieldValue } from 'firebase/firestore';
+import { doc, getDoc, arrayUnion, addDoc, collection, updateDoc, getDocs, query, where } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
@@ -17,21 +17,40 @@ export async function GET(request, response) {
 
         const projectId = request.nextUrl.searchParams.get("projectId")
 
-        const projectsRef = doc(db, 'projects', projectId);
-        const projectSnap = await getDoc(projectsRef);
+        const taskRef = collection(db, 'tasks');
 
-        if (!projectSnap.exists()) {
+        if (!taskRef) {
+            return NextResponse.json({
+                data: null,
+                message: "Task collection not found"
+            }, { status: 404 });
+        }
+
+        const q = query(taskRef, where('projectId', '==', projectId))
+        if (!q) {
             return NextResponse.json({
                 data: null,
                 message: "No such project found"
             }, { status: 404 });
         }
+        
+        const querySnapshot = await getDocs(q)
 
-        const taskData = projectSnap.data()
-        const taskList = taskData.taskList
+        let taskLists = []
+        querySnapshot.forEach((doc) => {
+            taskLists.push({
+                id: doc.id,
+                taskName: doc.data().taskName,
+                labels: doc.data().labels,
+                assignedTo: doc.data().assignedTo,
+                priority: doc.data().priority,
+                status: doc.data().status
+            })
+            return taskLists
+        })
 
         return NextResponse.json({
-            data: taskList ?? [],
+            data: taskLists,
             message: "Projects retrieved successfully"
         }, { status: 200 });
         
@@ -167,7 +186,7 @@ export async function POST(request, response) {
             type: typeId ? { id: typeId, ...taskTypeDetails } : null,
             createdBy: createdBy ? { id: createdBy, ...createdByDetails } : null,
             taskName: taskName,
-            label: label ? label : [],
+            labels: label ? label : [],
             status: statusId ? { id: statusId, ...taskStatusDetails } : null,
             priority: priority ?? 0,
             description: description ?? null,
@@ -185,16 +204,24 @@ export async function POST(request, response) {
         const tasksCollectionRef = collection(db, 'tasks');
         const taskDocRef = await addDoc(tasksCollectionRef, newTask);
 
+        
         if (!taskDocRef) {
             return NextResponse.json({
                 message: 'Failed to create new task doc'
             }, { status: 404 })
         }
-
+        
         const taskStatusRef = doc(db, 'taskStatuses', statusId)
 
+        if(!taskStatusRef){
+            return NextResponse.json
+        }
+        
+        console.log("task doc ref", taskDocRef)
+        console.log("new task", newTask)
+
         const updateDocument = await updateDoc(taskStatusRef, {
-            tasks: FieldValue.arrayUnion({
+            tasks: arrayUnion({
                 id: taskDocRef.id,
                 taskName: newTask.taskName,
                 createdBy: newTask.createdBy,
@@ -205,7 +232,7 @@ export async function POST(request, response) {
             })
         });
 
-        console.log("update document", updateDocument)
+        console.log("Update document successful");
 
         if(!updateDocument){
             return NextResponse.json({
