@@ -13,16 +13,14 @@ export default function SettingForm(){
     
     const [project, _] = useSessionStorage("project")
 
-    console.log(project)
-
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false)
 
     const initialValues = {
         projectName: project?.projectName ?? "",
-        key: "",
-        startStatus: "",
-        endStatus: "",
+        key: project?.key ?? "",
+        startStatus: project?.startStatus ?? "",
+        endStatus: project?.endStatus ?? "",
     }
 
     const statusOptions = [
