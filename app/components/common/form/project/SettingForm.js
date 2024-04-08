@@ -7,13 +7,19 @@ import { useState } from "react";
 import FormikSelectField from "../formik/FormikSelectField";
 import Button from "../../button/Button";
 import PopUpLoad from "../../alert/PopUpLoad";
+import useSessionStorage from "@/app/lib/hooks/useSessionStorage";
 
 export default function SettingForm(){
+    
+    const [project, _] = useSessionStorage("project")
+
+    console.log(project)
+
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false)
 
     const initialValues = {
-        projectName: "",
+        projectName: project?.projectName ?? "",
         key: "",
         startStatus: "",
         endStatus: "",
