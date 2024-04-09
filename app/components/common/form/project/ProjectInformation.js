@@ -75,7 +75,7 @@ export default function ProjectInformation({prevFormStep}){
                 <p className="text-dark-blue/80 text-sm md:text-base text-center font-semibold">
                     Proyek berhasil dibuat!{' '}
                     <span>
-                        <Link href={projectId ? `/projects/${projectId}` : "#"} className="text-basic-blue hover:underline">Klik disini</Link>
+                        <Link href={projectId ? `/projects/${projectId}` : "#"} className="text-basic-blue hover:underline">Klik di sini</Link>
                     </span> untuk melihat proyek tersebut.
                 </p>
             </div>
