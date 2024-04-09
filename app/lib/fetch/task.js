@@ -8,7 +8,7 @@ export function getAllTask(projectId){
     return response
 }
 
-export function createNewTask({ taskName, priority, description = null, projectId, statusId }){
+export function createNewTask({ taskName, priority, description = "", projectId, statusId }){
     const payload = {
         taskName,
         priority,
