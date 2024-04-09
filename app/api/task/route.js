@@ -76,7 +76,6 @@ export async function POST(request, response) {
             description,
             startDate,
             dueDate
-
         } = await request.json();
 
         const session = await getUserSession(request, response, nextAuthOptions)
@@ -164,21 +163,19 @@ export async function POST(request, response) {
         }
 
         let taskStatusDetails = null;
-        if (statusId) {
-            const userDocRef = doc(db, 'taskStatuses', statusId);
-           
-            const taskStatusSnap = await getDoc(userDocRef);
-            if (taskStatusSnap.exists()) {
-                const { status } = taskStatusSnap.data()
-                taskStatusDetails = {
-                    status: status
-                }
-
-            } else {
-                return NextResponse.json({
-                    message: "The task status not found"
-                }, { status: 404 })
+        const taskStatusDocRef = doc(db, 'taskStatuses', statusId);
+        
+        const taskStatusSnap = await getDoc(taskStatusDocRef);
+        if (taskStatusSnap.exists()) {
+            const { status } = taskStatusSnap.data()
+            taskStatusDetails = {
+                status: status
             }
+
+        } else {
+            return NextResponse.json({
+                message: "The task status not found"
+            }, { status: 404 })
         }
 
         const newTask = {
@@ -200,55 +197,33 @@ export async function POST(request, response) {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             deletedAt: null
-        };
+        }
 
         const tasksCollectionRef = collection(db, 'tasks');
-        const taskDocRef = await addDoc(tasksCollectionRef, newTask);
+        const newTaskDocRef = await addDoc(tasksCollectionRef, newTask);
 
-        
-        if (!taskDocRef) {
-            return NextResponse.json({
-                message: 'Failed to create new task doc'
-            }, { status: 404 })
-        }
-        
-        const taskStatusRef = doc(db, 'taskStatuses', statusId)
-
-        if(!taskStatusRef){
-            return NextResponse.json
-        }
-        
-        console.log("task doc ref", taskDocRef)
-        console.log("new task", newTask)
-
-        const updateDocument = await updateDoc(taskStatusRef, {
+        await updateDoc(taskStatusDocRef, {
             tasks: arrayUnion({
-                id: taskDocRef.id,
+                id: newTaskDocRef.id,
                 taskName: newTask.taskName,
                 createdBy: newTask.createdBy,
                 assignedTo: newTask.assignedTo,
                 type: newTask.type,
                 status: newTask.status,
-                labels: newTask.label
+                labels: newTask.labels
             })
         });
 
-        console.log("Update document successful");
+        // console.log("task doc ref", newTaskDocRef)
+        // console.log("new task", newTask)
 
-        if(!updateDocument){
-            return NextResponse.json({
-                message: "Something went wrong"
-            }, { status: 500 });
-        }
-        
         return NextResponse.json({
             data: {
-                id: taskDocRef.id,
+                id: newTaskDocRef.id,
                 ...newTask
             },
             message: "Successfully added new task to project and task collection"
         }, { status: 200 });
-
     } catch (error) {
         console.error("Can't create task", error);
         return NextResponse.json({

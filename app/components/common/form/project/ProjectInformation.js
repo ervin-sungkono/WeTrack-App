@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useProjectData } from "@/app/lib/context/project"
 import { projectInformationSchema } from "@/app/lib/schema"
+import { generateTask } from "@/app/lib/fetch/project"
 
 import FormikField from "../formik/FormikField"
 import FormikTextarea from "../formik/FormikTextarea"
@@ -13,6 +14,7 @@ import SkeletonInputField from "@/app/components/skeleton/SkeletonInputField"
 import SkeletonButton from "@/app/components/skeleton/SkeletonButton"
 import KeyFormikField from "./KeyFormikField"
 import SkeletonTextarea from "@/app/components/skeleton/SkeletonTextarea"
+import { createNewTask } from "@/app/lib/fetch/task"
 
 export default function ProjectInformation({prevFormStep}){
     const [isLoading, setLoading] = useState(true)
@@ -28,15 +30,31 @@ export default function ProjectInformation({prevFormStep}){
         projectDescription: ""
     }
 
-    const onSubmit = (values) => {
-        // console.log("step 2: ",values)
+    const onSubmit = async(values, { setSubmitting }) => {
+        if(projectData.templateType === 'ai-generated' && values.projectDescription.length < 30){
+            alert("Deskripsi Proyek harus terdiri dari minimal 30 karakter.")
+            setSubmitting(false)
+            return
+        }
+        
+        const taskList = await generateTask(values)
+        if(!taskList.success){
+            alert(taskList.message)
+            return
+        }
+
         submitProjectData(values)
-            .then(res => {
+            .then(async(res) => {
                 if(res.data){
                     setCompleted(true)
                     setProjectId(res.data.id)
-                    // TODO: Tambah logic untuk generate task apabila template nya AI Generate
-                    // TODO-2: Tambah logic untuk integrasi dengan API chatGPT
+                    await Promise.all(taskList.data.map((task) => {
+                        return createNewTask({ 
+                            ...task, 
+                            projectId: res.data.id, 
+                            statusId: res.data.startStatus 
+                        })
+                    }))
                 }else{
                     console.log(res)
                     alert("Gagal mengirim data formulir")
@@ -87,11 +105,11 @@ export default function ProjectInformation({prevFormStep}){
                         <div className="flex flex-col gap-4">
                             <FormikField label="Nama Proyek" required name="projectName" type="text" placeholder={"Masukkan nama proyek.."}/>
                             <KeyFormikField/>
-                            {projectData.templateType === 'ai-generated' && <FormikTextarea label="Deskripsi Project" name="projectDescription" placeholder={"Masukkan deskripsi proyek.."} rows={4}/>}
+                            {projectData.templateType === 'ai-generated' && <FormikTextarea label="Deskripsi Proyek" name="projectDescription" placeholder={"Masukkan deskripsi proyek.."} rows={4}/>}
                         </div>
                         <div className="flex justify-end gap-2 md:gap-4">
                             <Button variant="secondary" onClick={prevFormStep} className="w-24 md:w-32">Kembali</Button>
-                            <Button type={"submit"} className="w-24 md:w-32">Kirim</Button>
+                            <Button type={"submit"} disabled={formik.isSubmitting} className="w-24 md:w-32">Kirim</Button>
                         </div>
                     </div>
                 ) 

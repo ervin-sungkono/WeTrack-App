@@ -30,12 +30,14 @@ export default function NavbarMenu({ showForm, hideMenu }){
     ]
 
     useEffect(() => {
-        getRecentProjects()
+        if(session){
+            getRecentProjects()
             .then(projects => {
                 if(projects.data) setRecentProjects(projects.data)
                 else alert("Gagal memperoleh data proyek")
             })
-    }, [])
+        }
+    }, [session])
 
     if(status == 'loading'){
         return (

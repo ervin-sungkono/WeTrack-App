@@ -2,10 +2,17 @@
 import Link from "next/link"
 import useSessionStorage from "@/app/lib/hooks/useSessionStorage"
 import { IoIosArrowForward as ArrowIcon } from "react-icons/io"
+import { useEffect, useState } from "react"
 
 export default function Breadcrumb({ links }){
     const [project, _] = useSessionStorage("project")
+    const [mounted, setMounted] = useState(false)
 
+    useEffect(() => {
+      if(project) setMounted(true)
+    }, [project])
+
+    if(!mounted) return null
     return (
       <p className="text-dark-blue/80 text-xs md:text-sm flex items-center gap-1.5">
         {links.map(({url, label}, index) =>
@@ -18,7 +25,7 @@ export default function Breadcrumb({ links }){
             </span>
           ) : (
             <span className="cursor-default text-basic-blue font-medium" key={label}>
-              {label === "Nama Proyek" ? project?.projectName : label}
+              {label === "Nama Proyek" ? project.projectName : label}
             </span>
           )
         )}

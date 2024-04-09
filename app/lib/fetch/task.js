@@ -8,9 +8,11 @@ export function getAllTask(projectId){
     return response
 }
 
-export function createNewTask({ taskName, projectId, statusId }){
+export function createNewTask({ taskName, priority, description = "", projectId, statusId }){
     const payload = {
         taskName,
+        priority,
+        description,
         projectId,
         statusId
     }

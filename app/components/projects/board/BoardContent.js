@@ -4,6 +4,7 @@ import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import BoardList from "./BoardList"
 import SearchBar from "../../common/SearchBar"
 import SelectButton from "../../common/SelectButton"
+import SimpleInputForm from "../../common/SimpleInputField"
 import Button from "../../common/button/Button"
 import { RevolvingDot } from "react-loader-spinner"
 
@@ -38,36 +39,52 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 export default function BoardContent() {
   const [loading, setLoading] = useState(true)
   const [isCreatingTask, setCreatingTask] = useState(false)
+  const [isCreatingList, setCreatingList] = useState(false)
   const [state, setState] = useState();
   const [query, setQuery] = useState("")
   const [filterDropdown, setFilterDropdown] = useState(false)
   const [project, _] = useSessionStorage("project")
   const [activeStatusId, setActiveStatusId] = useState()
-  const taskFormRef = useRef()
 
   const showTaskCard = (statusId) => {
     setActiveStatusId(statusId)
   }
 
-  const createTask = async(e, statusId) => {
+  const createTask = async(e) => {
     e.preventDefault()
     setCreatingTask(true)
 
-    const formData = new FormData(taskFormRef.current)
+    const formData = new FormData(document.querySelector(`#taskName-form`))
     const taskName = formData.get("taskName")
     
-    await createNewTask({
+    createNewTask({
       taskName, 
       projectId: project.id, 
-      statusId
+      statusId: activeStatusId
     }).then(res => {
       if(res.data){
         console.log(res.data)
+        setState(state.map(el => {
+          if(el.id === activeStatusId){
+            return({
+              ...el,
+              content: [...el.content, res.data]
+            })
+          }
+          return el
+        }))
+      }
+      else{
+        alert("Gagal membuat tugas baru")
       }
     })
 
     setCreatingTask(false)
     setActiveStatusId(null)
+  }
+
+  const createTaskStatus = (e) => {
+    
   }
 
   useEffect(() => {
@@ -78,7 +95,7 @@ export default function BoardContent() {
           setState(project.taskStatusList
             .map(taskStatus => ({
               ...taskStatus,
-              content: res.data?.filter(task => task.statusId === taskStatus.id) ?? []
+              content: res.data?.filter(task => task.status.id === taskStatus.id) ?? []
             })
           ))
         }
@@ -190,27 +207,12 @@ export default function BoardContent() {
                           {el.id === activeStatusId && (
                             isCreatingTask ? 
                             <div>Loading..</div> :
-                            <form 
-                              action={"#"}
-                              ref={taskFormRef}
-                              onSubmit={(e) => createTask(e, activeStatusId)} 
-                              className="py-2.5 px-3 flex flex-col gap-2 items-end border border-basic-blue/60 rounded-md bg-white"
-                            >
-                              <input 
-                                id="taskName"
-                                name="taskName" 
-                                type="text" 
-                                onBlur={() => setActiveStatusId(null)} 
-                                onKeyDown={(e) => {
-                                  if(e.key === 'Enter'){
-                                    taskFormRef.current.submit()
-                                  }
-                                }}
-                                autoFocus
-                                placeholder="Apa yang ingin dikerjakan?" 
-                                className="w-full text-xs md:text-sm border-none bg-slate-100 rounded-sm focus:ring-0"
-                              />
-                            </form>
+                            <SimpleInputForm
+                             name={"taskName"}
+                             onSubmit={(e) => createTask(e)}
+                             onBlur={() => setActiveStatusId(null)}
+                             placeholder="Apa yang ingin dikerjakan?"
+                            />
                           )}
                         </BoardList>
                         <Button variant="gray" outline onClick={() => showTaskCard(el.id)} className={`${el.id === activeStatusId ? "hidden" : ""}`}>
@@ -228,12 +230,25 @@ export default function BoardContent() {
             )}
           </Droppable>
         </DragDropContext>
-        <Button variant="primary" className={"w-[270px] flex-shrink-0"} onClick={() => setState([...state, {status: "New Status", content: []}])}>
+        {!isCreatingList && <Button 
+          variant="primary" 
+          className={"w-[278px] flex-shrink-0"} 
+          onClick={() => setCreatingList(true)}
+        >
           <div className="flex items-center gap-2">
             <PlusIcon size={16}/>
             <p>Add List</p>
           </div>
-        </Button>
+        </Button>}
+        {isCreatingList && 
+        (<div className="w-[278px] flex-shrink-0">
+          <SimpleInputForm
+            name={"taskStatusName"}
+            placeholder=""
+            onSubmit={(e) => createTaskStatus(e)}
+            onBlur={() => setCreatingList(false)}
+          />
+        </div>)}
       </div>}
     </div>
   );
