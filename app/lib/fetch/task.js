@@ -8,13 +8,29 @@ export function getAllTask(projectId){
     return response
 }
 
-export function createNewTask({ taskName, priority, description = "", projectId, statusId }){
+export function createNewTask({ 
+    taskName, 
+    startDate,
+    dueDate,
+    priority, 
+    description = "", 
+    projectId, 
+    statusId,
+    assignedTo,
+    labels,
+    parentId
+}){
     const payload = {
         taskName,
+        startDate,
+        dueDate,
         priority,
         description,
         projectId,
-        statusId
+        statusId,
+        assignedTo,
+        labels: labels ? JSON.parse(labels).map(label => label.value) : null,
+        parentId
     }
 
     const response = fetch('/api/task', {

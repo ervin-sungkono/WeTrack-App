@@ -13,6 +13,7 @@ import { FiPlus as PlusIcon } from "react-icons/fi";
 import { useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { pickTextColorBasedOnBgColor } from "@/app/lib/color";
+import { createNewTask } from "@/app/lib/fetch/task";
 
 export default function CreateTaskForm({ onCancel }){
     const [assignee, setAssignee] = useState()
@@ -42,7 +43,12 @@ export default function CreateTaskForm({ onCancel }){
     }, [])
 
     const initialValues = {
-        projectName: "",
+        projectId: "",
+        startDate: "",
+        dueDate: "",
+        statusId: "",
+        taskName: "",
+        parentId: ""
     }
     const { data: session } = useSession()
 
@@ -70,12 +76,25 @@ export default function CreateTaskForm({ onCancel }){
         }
     ]
 
+    const priorityOptions = [
+        { label: "Tidak ada", value: 0 },
+        { label: "Rendah", value: 1 },
+        { label: "Sedang", value: 2 },
+        { label: "Tinggi", value: 3 }
+    ]
+
     const handleTagifyChange = (e) => {
         setLabels(e.detail.value)
     }
 
     const handleSubmit = (values) => {
         console.log(values)
+
+        createNewTask({
+            ...values,
+            assignedTo: assignee,
+            labels,
+        })
     }
 
     return(
@@ -93,22 +112,13 @@ export default function CreateTaskForm({ onCancel }){
                     {(formik) => (
                         <div className="flex flex-col gap-4 md:gap-6">
                             <div className="custom-scrollbar w-full pb-4 max-h-[65vh] pr-2 flex flex-col gap-2.5 md:gap-4 overflow-y-auto">
-                                <div className="flex flex-col md:flex-row gap-2.5 md:gap-4">
-                                    <FormikSelectField 
-                                        label="Proyek" 
-                                        required 
-                                        name="projectId" 
-                                        placeholder={"-- Pilih Proyek --"}
-                                        options={[]}
-                                    />
-                                    <FormikSelectField 
-                                        label="Jenis Tugas" 
-                                        required 
-                                        name="typeId" 
-                                        placeholder={"-- Pilih Jenis Tugas --"}
-                                        options={[]}
-                                    />
-                                </div>
+                                <FormikSelectField 
+                                    label="Proyek" 
+                                    required 
+                                    name="projectId" 
+                                    placeholder={"-- Pilih Proyek --"}
+                                    options={[]}
+                                />
                                 <div className="flex flex-col md:flex-row gap-2.5 md:gap-4">
                                     <FormikField 
                                         label="Tanggal Mulai" 
@@ -131,6 +141,14 @@ export default function CreateTaskForm({ onCancel }){
                                     />
                                     <p className="text-xs text-dark-blue">Ini adalah status awal tugas setelah dibuat.</p>
                                 </div>
+                                <FormikSelectField 
+                                    label="Prioritas" 
+                                    required 
+                                    name="priority" 
+                                    placeholder={"-- Pilih Prioritas --"}
+                                    options={priorityOptions}
+                                    defaultValue={priorityOptions[0]}
+                                />
                                 <FormikField 
                                     label="Judul" 
                                     required
@@ -191,10 +209,10 @@ export default function CreateTaskForm({ onCancel }){
                                 </div>   
                             </div>
                                 <FormikSelectField 
-                                    label="Induk" 
+                                    label="Induk Tugas" 
                                     required 
                                     name="parentId" 
-                                    placeholder={"-- Pilih Induk --"}
+                                    placeholder={"-- Pilih Induk Tugas --"}
                                     options={[]}
                                 />
                             </div>
