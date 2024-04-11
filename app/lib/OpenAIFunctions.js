@@ -29,3 +29,24 @@ export async function generateTaskByPrompt(projectDescription){
 
     return response.choices[0]
 }
+
+export async function generateChatResponse({ taskDescription, content}){
+    const response = await openai.chat.completions.create({
+        ...defaultPayload,
+        response_format: {
+            type: 'text'
+        },
+        messages: [
+            (taskDescription && {
+                role: "system", 
+                content: `From the given task description: ${taskDescription}, your job is to analyze it and answer anything related from the user's question. If the task description is vague or unclear, u may skip analyzing the task description and just answer what the user asks`
+            }),
+            {
+                role: "user", 
+                content: content
+            }
+        ]
+    })
+
+    return response.choices[0]
+}
