@@ -1,3 +1,4 @@
+"use client"
 import { memo } from "react"
 import { Droppable } from "@hello-pangea/dnd"
 import BoardItem from "./BoardItem"

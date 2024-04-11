@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import BoardList from "./BoardList"
 import SearchBar from "../../common/SearchBar"
@@ -208,10 +208,10 @@ export default function BoardContent() {
                             isCreatingTask ? 
                             <div>Loading..</div> :
                             <SimpleInputForm
-                             name={"taskName"}
-                             onSubmit={(e) => createTask(e)}
-                             onBlur={() => setActiveStatusId(null)}
-                             placeholder="Apa yang ingin dikerjakan?"
+                            name={"taskName"}
+                            onSubmit={(e) => createTask(e)}
+                            onBlur={() => setActiveStatusId(null)}
+                            placeholder="Apa yang ingin dikerjakan?"
                             />
                           )}
                         </BoardList>

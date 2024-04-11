@@ -1,3 +1,13 @@
+export function getTaskById(taskId){
+    const response = fetch(`/api/task/${taskId}`,{
+        method: 'GET',
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
+
+    return response
+}
+
 export function getAllTask(projectId){
     const response = fetch(`/api/task?projectId=${projectId}`,{
         method: 'GET',
