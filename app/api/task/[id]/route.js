@@ -5,38 +5,23 @@ import { db } from '@/app/firebase/config';
 export async function GET(request, context) {
     try {
         const { id } = context.params
-        const projectId = request.nextUrl.searchParams.get("projectId")
 
-        const projectRef = doc(db, "projects", projectId)
+        const taskRef = doc(db, "tasks", id)
 
-        if (!projectRef) {
+        if (!taskRef) {
             return NextResponse.json({
-                message: "Project not found"
+                message: "Task not found"
             }, { status: 404 });
         }
 
-        const projectSnap = await getDoc(projectRef);
-        const projectData = projectSnap.data()
-
-        if (!projectData) {
-            return NextResponse.json({
-                message: "Project detail not found"
-            }, { status: 404 });
-        }
-
-        console.log("task list", projectData.taskList)
-        const taskDetail = projectData.taskList.find((task) => task.id === id)
-
-        console.log("task detail", taskDetail)
-
-        if (!taskDetail) {
-            return NextResponse.json({
-                message: "No task found"
-            }, { status: 404 })
-        }
+        const taskSnap = await getDoc(taskRef);
+        const taskData = taskSnap.data()
 
         return NextResponse.json({
-            data: taskDetail,
+            data: {
+                id: taskSnap.id,
+                ...taskData
+            },
             message: "Successfully get Task detail"
         }, { status: 200 })
 

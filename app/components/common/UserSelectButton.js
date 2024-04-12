@@ -6,7 +6,7 @@ import { IoIosArrowDown as DropdownIcon } from 'react-icons/io'
 import UserIcon from "./UserIcon"
 
 export default function UserSelectButton({ name, userId, placeholder, options = [], onChange = null, disabled }){ 
-    const [selected, setSelected] = useState(options[0]?.user ?? {})
+    const [selected, setSelected] = useState({})
     const [loaded, setLoaded] = useState(false)
     const buttonRef = useRef()
 
