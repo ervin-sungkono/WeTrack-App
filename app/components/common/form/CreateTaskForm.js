@@ -14,6 +14,7 @@ import { useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { pickTextColorBasedOnBgColor } from "@/app/lib/color";
 import { createNewTask } from "@/app/lib/fetch/task";
+import { priorityList } from "@/app/lib/string";
 
 export default function CreateTaskForm({ onCancel }){
     const [assignee, setAssignee] = useState()
@@ -74,13 +75,6 @@ export default function CreateTaskForm({ onCancel }){
                 profileImage: null
             }
         }
-    ]
-
-    const priorityOptions = [
-        { label: "Tidak ada", value: 0 },
-        { label: "Rendah", value: 1 },
-        { label: "Sedang", value: 2 },
-        { label: "Tinggi", value: 3 }
     ]
 
     const handleTagifyChange = (e) => {
@@ -146,8 +140,8 @@ export default function CreateTaskForm({ onCancel }){
                                     required 
                                     name="priority" 
                                     placeholder={"-- Pilih Prioritas --"}
-                                    options={priorityOptions}
-                                    defaultValue={priorityOptions[0]}
+                                    options={priorityList}
+                                    defaultValue={priorityList[0]}
                                 />
                                 <FormikField 
                                     label="Judul" 
