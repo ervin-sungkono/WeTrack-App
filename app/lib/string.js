@@ -14,3 +14,14 @@ export const generateProjectKey = (projectName) => {
         tempList[0].slice(0,2).toUpperCase()
     return generatedKey
 }
+
+export const priorityList = [
+    { label: "Tidak ada", value: 0 },
+    { label: "Rendah", value: 1 },
+    { label: "Sedang", value: 2 },
+    { label: "Tinggi", value: 3 }
+]
+
+export const getPriority = (priority) => {
+    return priorityList[priority].label
+}

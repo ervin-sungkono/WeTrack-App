@@ -18,7 +18,18 @@ export default function TeamItem({editMode=false, image=null, id, name, role, st
         console.log("")
     }
 
-    const getRole = () => {
+    const getSelectRoleClass = () => {
+        switch(role){
+            case "Owner":
+                return "border-[#E1B829] text-[#E1B829]"
+            case "Member":
+                return "border-basic-blue text-basic-blue"
+            case "Viewer":
+                return "border-success-green text-success-green"
+        }
+    }
+
+    const getRoleClass = () => {
         switch(role){
             case "Owner":
                 return "bg-warning-yellow"
@@ -31,10 +42,10 @@ export default function TeamItem({editMode=false, image=null, id, name, role, st
 
     return (
         <div className="relative mt-4 mb-12">
-            {editMode && (
+            {(editMode && role != 'Owner') && (
                 <CloseCircle onClick={handleDelete} className="absolute -top-4 -right-4 text-3xl text-danger-red cursor-pointer"/>
             )}
-            <div className={`flex flex-col justify-between items-center px-6 md:px-10 py-4 md:py-6 rounded-xl shadow-md bg-white w-32 md:w-64`}>
+            <div className={`h-full flex flex-col justify-between items-center px-3 md:px-6 py-2.5 md:py-4 rounded-xl shadow-md bg-white w-48 md:w-64`}>
                 <div>
                     {image === null ? (
                         <UserIcon fullName={name} size="team"/>
@@ -42,21 +53,22 @@ export default function TeamItem({editMode=false, image=null, id, name, role, st
                         <Image src={image} alt={name} width={100} height={100}/>
                     )}
                 </div>
-                <div className={`mt-4 font-bold text-dark-blue text-center text-sm md:text-base leading-4 md:leading-5`}>
+                <div className={`mt-4 font-semibold text-dark-blue text-center text-sm md:text-base leading-4 md:leading-5`}>
                     {name}
                 </div>
                 {status !== "pending" && (
-                    editMode ? (
+                    (editMode && role != 'Owner') ? (
                         <div className="mt-4 mb-6">
                             <SelectButton
                                 name={`${id}`}
                                 placeholder={role}
                                 options={roleOptions}
                                 onChange={handleRoleChange}
+                                buttonClass={getSelectRoleClass()}
                             />
                         </div>
                     ) : (
-                        <button className={`mt-4 text-xs md:text-sm px-2 md:px-3 py-0.5 md:py-1 rounded-full text-white font-medium ${getRole()}`}>
+                        <button className={`mt-4 text-xs md:text-sm px-3 md:px-4 py-2 md:py-1.5 rounded-full text-white font-medium ${getRoleClass()}`}>
                             {role}
                         </button>
                     )
