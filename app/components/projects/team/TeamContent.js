@@ -35,19 +35,20 @@ export default function TeamContent(){
         <ProjectProvider>
             <div className="flex flex-col gap-4">
                 <div className="flex flex-col xs:flex-row justify-between gap-4 items-center">
-                    <div className="w-full flex justify-center xs:justify-start items-center">
+                    <div className="flex justify-center xs:justify-start items-center">
                         <SearchBar placeholder={"Cari anggota.."} handleSearch={handleSearch}/>
                     </div>
-                    <div className="flex flex-col md:flex-row gap-3 md:gap-6">
-                        {editMode && (
-                            <Button variant="danger" onClick={() => setEditMode(false)} outline>
-                                Batalkan Perubahan
-                            </Button>
-                        )}
+                    <div className="flex flex-wrap justify-center gap-2 md:gap-4">
                         {editMode ? (
-                            <Button onClick={() => setEditMode(handleEditMember)} outline>
-                                Simpan Perubahan
-                            </Button>
+                            <div className="flex gap-2 md:gap-4">
+                                <Button variant="danger" onClick={() => setEditMode(false)} outline>
+                                    Batalkan Perubahan
+                                </Button>
+                                <Button onClick={() => setEditMode(handleEditMember)} outline>
+                                    Simpan Perubahan
+                                </Button>
+                            </div>
+                            
                         ) : (
                             <Button onClick={() => setEditMode(true)} outline>
                                 Kelola Anggota
@@ -62,27 +63,27 @@ export default function TeamContent(){
                 <div>
                     <div>
                         <div className="flex items-baseline mb-2">
-                            <div className="font-bold text-lg">
+                            <div className="font-semibold text-lg">
                                 Anggota
                             </div>
                             <div className="ml-2">
                                 (0)
                             </div>
                         </div>
-                        <div className="overflow-auto">
+                        <div className="overflow-x-auto">
                             <TeamList list="active" edit={editMode} />
                         </div>
                     </div>
                     <div className="mt-6">
                         <div className="flex items-baseline mb-2">
-                            <div className="font-bold text-lg">
+                            <div className="font-semibold text-lg">
                                 Menunggu Persetujuan
                             </div>
                             <div className="ml-2">
                                 (0)
                             </div>
                         </div>
-                        <div className="overflow-auto">
+                        <div className="h-full overflow-x-auto">
                             <TeamList list="pending" edit={editMode} />
                         </div>
                     </div>
