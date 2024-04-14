@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 
 import SearchBar from "../common/SearchBar"
-import SelectButton from "../common/SelectButton"
+import SelectButton from "../common/button/SelectButton"
 import Table from "../common/table/Table"
 import TableActionButton from "../common/table/TableActionButton"
 import UserIcon from "../common/UserIcon"

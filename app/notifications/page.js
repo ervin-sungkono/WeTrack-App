@@ -1,8 +1,8 @@
 "use client"
 import { useState } from "react"
 import Header from "../components/common/Header"
-import SelectButton from "../components/common/SelectButton"
-import SortButton from "../components/common/SortButton"
+import SelectButton from "../components/common/button/SelectButton"
+import SortButton from "../components/common/button/SortButton"
 import NotificationsLayout from "../components/layout/NotificationsLayout"
 import NotificationsList from "../components/notifications/NotificationList"
 
