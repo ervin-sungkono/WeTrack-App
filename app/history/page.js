@@ -1,9 +1,9 @@
 "use client"
 import { useState } from "react"
 import Header from "../components/common/Header"
-import SelectButton from "../components/common/SelectButton"
+import SelectButton from "../components/common/button/SelectButton"
 import HistoryLayout from "../components/layout/HistoryLayout"
-import SortButton from "../components/common/SortButton"
+import SortButton from "../components/common/button/SortButton"
 import HistoryList from "../components/history/HistoryList"
 
 export default function HistoryPage(){

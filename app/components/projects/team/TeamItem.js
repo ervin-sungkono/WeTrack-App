@@ -1,6 +1,6 @@
 import Image from "next/image";
 import UserIcon from "../../common/UserIcon";
-import SelectButton from "../../common/SelectButton";
+import SelectButton from "../../common/button/SelectButton";
 import { IoIosCloseCircle as CloseCircle } from "react-icons/io";
 
 export default function TeamItem({editMode=false, image=null, id, name, role, status="active"}){
