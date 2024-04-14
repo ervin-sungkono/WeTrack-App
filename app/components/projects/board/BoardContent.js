@@ -8,11 +8,11 @@ import SimpleInputForm from "../../common/SimpleInputField"
 import Button from "../../common/button/Button"
 import { RevolvingDot } from "react-loader-spinner"
 
-import { BsThreeDots as DotIcon } from "react-icons/bs"
 import { IoFilter as FilterIcon } from "react-icons/io5"
 import { FiPlus as PlusIcon } from "react-icons/fi"
 import useSessionStorage from "@/app/lib/hooks/useSessionStorage"
 import { createNewTask, getAllTask } from "@/app/lib/fetch/task"
+import DotButton from "../../common/button/DotButton"
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -196,9 +196,11 @@ export default function BoardContent() {
                       >
                         <div className="flex items-center gap-2 px-1 text-dark-blue/80">
                           <div className="uppercase flex-grow text-xs md:text-sm font-semibold">{el.status} <span className="text-[10.8px] md:text-xs">({el.content.filter(task => task.taskName.toLowerCase().includes(query)).length})</span></div>
-                          <button className="p-1.5 hover:bg-gray-300 duration-200 transition-colors rounded-sm">
-                            <DotIcon size={20}/>
-                          </button>
+                          <DotButton 
+                            name={`taskStatus-${el.id}`} 
+                            actions={[]}
+                            hoverClass={"hover:bg-gray-300"}
+                          />
                         </div>
                         <BoardList 
                           items={el.content.filter(task => task.taskName.toLowerCase().includes(query))} 

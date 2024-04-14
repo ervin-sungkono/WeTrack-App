@@ -1,9 +1,10 @@
 "use client"
 import { Draggable } from "@hello-pangea/dnd"
-import UserIcon from "../../common/UserIcon";
+import { useEffect, useState } from "react";
 import { FaCheckSquare as CheckIcon } from "react-icons/fa";
-import { BsThreeDots as DotIcon } from "react-icons/bs";
 import { useTaskData } from "@/app/lib/context/task";
+import DotButton from "../../common/button/DotButton";
+import UserSelectButton from "../../common/UserSelectButton";
 
 const getItemStyle = (isDragging, draggableStyle) => ({
     // some basic styles to make the items look a bit nicer
@@ -26,6 +27,38 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 
 export default function BoardItem({ item, index }){
     const { viewTask } = useTaskData()
+    const [assignee, setAssignee] = useState(item.assignedTo)
+
+    useEffect(() => {
+      if(assignee){
+        console.log(assignee)
+        // Logic untuk update assignee
+      }
+    }, [assignee])
+
+    const userList = [
+      {
+          user: {
+              id: "WeEzNxSREEdyDpSXkIYCAyA4E8y1",
+              fullName: "Ervin Cahyadinata Sungkono",
+              profileImage: null
+          }
+      },
+      {
+          user: {
+              id: "02",
+              fullName: "Kenneth Nathanael",
+              profileImage: null
+          }
+      },
+      {
+          user: {
+              id: "03",
+              fullName: "Christopher Vinantius",
+              profileImage: null
+          }
+      }
+    ]
 
     return (
       <Draggable draggableId={item.id} index={index}>
@@ -43,9 +76,7 @@ export default function BoardItem({ item, index }){
             <div className="flex flex-col gap-1">
               <div className="flex items-center">
                 <p className="flex-grow text-xs md:text-sm font-semibold">{item.taskName}</p>
-                <button className="p-1.5 hover:bg-gray-200 duration-200 transition-colors rounded-sm">
-                  <DotIcon size={20}/>
-                </button>
+                <DotButton name={`task-${item.id}`}/>
               </div>
               {(item.label?.length > 0) && (
                 <div className="flex flex-wrap">
@@ -60,7 +91,13 @@ export default function BoardItem({ item, index }){
                   <CheckIcon size={16}/>
                   <p className="text-[10px] md:text-xs">TASK-1</p>
                 </div>
-                <UserIcon src={item.assignedTo ? item.assignedTo.profileImage : "/user-placeholder.png"} size='sm'/>
+                <UserSelectButton 
+                  name={`assignedTo-${item.id}`}
+                  type="icon"
+                  placeholder={item.assignedTo}
+                  options={userList}
+                  onChange={(value) => setAssignee(value)}
+                />
             </div>
           </div>
         )}
