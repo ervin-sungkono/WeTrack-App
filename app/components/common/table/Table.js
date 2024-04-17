@@ -16,6 +16,7 @@ export default function Table({
     data, 
     columns, 
     pageSize = 10,
+    usePagination = true
 }){
     const memoizedData = useMemo(() => data, [data])
     const memoizedColumns = useMemo(() => columns, [columns])
@@ -120,7 +121,7 @@ export default function Table({
                     </tbody>
                 </table>
             </div>
-            <TablePagination 
+            {usePagination && <TablePagination 
                 {...getState().pagination}
                 hasPrevPage={getCanPreviousPage()}
                 hasNextPage={getCanNextPage()}
@@ -129,7 +130,7 @@ export default function Table({
                 firstPage={() => setPageIndex(0)}
                 lastPage={() => setPageIndex(getPageCount() - 1)}
                 totalCount={data.length}
-            />
+            />}
         </div>
     )
 }
