@@ -15,7 +15,13 @@ export default function HistoryPage(){
     const [project, setProject] = useState("Proyek 1")
     const [type, setType] = useState("Semua")
     const [pageSize, setPageSize] = useState(10)
-    const [historyData, setHistoryData] = useState(null)
+    const [historyData, setHistoryData] = useState({
+        data: [
+            {type: "taskCreation", task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 14:20:20")},
+            {type: "commentCreation", task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-17 11:15:00")},
+            {type: "taskStatusUpdate", task: "Design Creation", project: "WeTrack Beta", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
+        ]
+    })
 
     const projectOptions = [
         {label: "Proyek 1", value: 1},
@@ -85,12 +91,12 @@ export default function HistoryPage(){
                                 />
                             </div>
                         </div>
-                        <SortButton />
+                        <SortButton data={historyData} setData={setHistoryData}/>
                     </div>
                 </div>
                 <div>
                     <HistoryList
-                        data={historyData}
+                        historyData={historyData}
                         pageSize={pageSize}
                     />
                 </div>

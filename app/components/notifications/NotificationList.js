@@ -7,11 +7,9 @@ import {
     getSortedRowModel,
 } from '@tanstack/react-table'
 import NotificationPagination from "./NotificationPagination"
-import { useEffect, useMemo } from "react"
+import { useEffect } from "react"
 
 export default function NotificationsList({notificationsData, pageSize=10}){
-
-    const memoizedData = useMemo(() => notificationsData, [notificationsData])
 
     const { 
         getState,
@@ -23,7 +21,6 @@ export default function NotificationsList({notificationsData, pageSize=10}){
         setPageSize,
         setPageIndex
     } = useReactTable({
-        data: memoizedData,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
@@ -37,10 +34,9 @@ export default function NotificationsList({notificationsData, pageSize=10}){
 
     return (
         <div className="flex flex-col gap-2 md:gap-4">
-            <NotificationsItem type={"taskAssignment"} task={"Design Creation"} project={"WeTrack Beta"} timestamp={"15 menit yang lalu"}/>
-            <NotificationsItem type={"newComment"} task={"Design Creation"} user={"QA Tester"} project={"WeTrack Beta"} timestamp={"2 jam yang lalu"}/>
-            <NotificationsItem type={"commentMention"} task={"Design Creation"} user={"QA Tester"} project={"WeTrack Beta"} timestamp={"2 jam yang lalu"}/>
-            <NotificationsItem type={"projectRoleChange"} project={"WeTrack Beta"} oldRole={"Member"} newRole={"Viewer"} timestamp={"1 hari yang lalu"}/>
+            {notificationsData.data.map((item, index) => (
+                <NotificationsItem key={index} {...item}/>
+            ))}
             {/* <NotificationPagination
                 {...getState().pagination}
                 hasPrevPage={getCanPreviousPage()}

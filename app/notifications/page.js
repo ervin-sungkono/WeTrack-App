@@ -14,7 +14,14 @@ export default function NotificationsPage(){
 
     const [type, setType] = useState("Semua")
     const [pageSize, setPageSize] = useState(10)
-    const [notificationsData, setNotificationsData] = useState(null)
+    const [notificationsData, setNotificationsData] = useState({
+        data: [
+            {type: "taskAssignment", task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 07:20:12")},
+            {type: "newComment", task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-04-17 08:10:00")},
+            {type: "commentMention", task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-01-25 22:55:15")},
+            {type: "projectRoleChange", project: "WeTrack Beta", oldRole: "Member", newRole: "Viewer", timestamp: new Date("2023-12-31 14:14:14")},
+        ]
+    })
 
     const typeOptions = [
         {label: "Semua", value: 0},
@@ -65,12 +72,12 @@ export default function NotificationsPage(){
                                 />
                             </div>
                         </div>
-                        <SortButton />
+                        <SortButton data={notificationsData} setData={setNotificationsData}/>
                     </div>
                 </div>
                 <div>
                     <NotificationsList
-                        data={notificationsData}
+                        notificationsData={notificationsData}
                         pageSize={pageSize}
                     />
                 </div>
