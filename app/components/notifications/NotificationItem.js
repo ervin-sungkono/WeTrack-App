@@ -1,5 +1,6 @@
 import Link from "next/link"
 import UserIcon from "../common/UserIcon"
+import { listDateFormat } from "@/app/lib/date"
 
 export default function NotificationsItem({type, task, user, project, oldRole, newRole, timestamp}){
     return (
@@ -47,7 +48,7 @@ export default function NotificationsItem({type, task, user, project, oldRole, n
                 )}
             </div>
             <div className="text-sm">
-                {timestamp}
+                {listDateFormat(timestamp)}
             </div>
         </div>
     )

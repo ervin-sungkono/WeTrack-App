@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { dateFormat, listDateFormat } from "@/app/lib/date"
 
 export default function HistoryItem({type, task, project, oldStatus, newStatus, timestamp}){
     return (
@@ -26,7 +27,7 @@ export default function HistoryItem({type, task, project, oldStatus, newStatus, 
                 )}
             </div>
             <div className="text-sm">
-                {timestamp}
+                {listDateFormat(timestamp)}
             </div>
         </div>
     )
