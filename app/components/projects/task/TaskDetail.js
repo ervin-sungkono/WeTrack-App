@@ -7,12 +7,12 @@ import PopUpLoad from "../../common/alert/PopUpLoad"
 import Label from "../../common/Label"
 import UserSelectButton from "../../common/UserSelectButton"
 
-import { BsThreeDots as DotIcon } from "react-icons/bs"
 import { IoIosCloseCircle as CloseIcon } from "react-icons/io";
 
 import { getTaskById } from "@/app/lib/fetch/task"
 import { getPriority } from "@/app/lib/string"
 import { dateFormat } from "@/app/lib/date"
+import DotButton from "../../common/button/DotButton"
 
 const AttachmentSection = dynamic(() => import("./AttachmentSection"))
 
@@ -45,6 +45,21 @@ function TaskDetail({ taskId, open, closeFn }){
         }
     ]
 
+    const attachmentList = [
+        { 
+            id: 'A1023',
+            attachmentName: "AIPoweredAssistance.png",
+            attachmentLocation: "http://localhost:3000/AIPoweredAssistance.png",
+            createdAt: new Date().toISOString(),
+        },
+        { 
+            id: 'A1024',
+            attachmentName: "CompletedState.png",
+            attachmentLocation: "http://localhost:3000/CompletedState.png",
+            createdAt: new Date("04-16-2024").toISOString(),
+        }
+    ]
+
     useEffect(() => {
         if(taskId && open && (!task || task.id !== taskId)){
             getTaskById(taskId)
@@ -70,9 +85,7 @@ function TaskDetail({ taskId, open, closeFn }){
                             {task.taskName}
                         </div>
                         <div className="flex items-center gap-2.5">
-                            <button className="p-1.5 hover:bg-gray-200 duration-200 transition-colors rounded-sm">
-                                <DotIcon size={20}/>
-                            </button>
+                            <DotButton name={`task-detail-${taskId}`}/>
                             <button onClick={closeFn}><CloseIcon size={32} className="text-basic-blue"/></button>
                         </div>
                     </div>
@@ -113,9 +126,11 @@ function TaskDetail({ taskId, open, closeFn }){
                         <div className="flex flex-col gap-4">
                             <div className="flex flex-col gap-2">
                                 <p className="font-semibold text-xs md:text-sm">Deskripsi Tugas</p>
-                                <p className="text-xs md:text-sm">Lorem ipsum dolor sit amet consectetur. Vitae ac mattis maecenas dui lorem in condimentum. In ultrices vestibulum amet faucibus varius feugiat magna. Dolor viverra id mi mattis nunc euismod magnis. Pellentesque non molestie purus enim tellus ut neque consequat.</p>
+                                {task.description ? 
+                                <p className="text-xs md:text-sm">{task.description}</p> :
+                                <p>Tambahkan deskripsi tugas..</p>}
                             </div>
-                            <AttachmentSection/>
+                            <AttachmentSection attachments={attachmentList}/>
                         </div>
                     </div>
                     
