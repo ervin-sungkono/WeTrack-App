@@ -1,21 +1,21 @@
 import Link from "next/link"
-import { dateFormat, listDateFormat } from "@/app/lib/date"
+import { listDateFormat } from "@/app/lib/date"
 
 export default function HistoryItem({type, task, project, oldStatus, newStatus, timestamp}){
     return (
         <div className="w-full bg-white flex justify-between items-center px-4 py-2 rounded-sm shadow-sm">
             <div className="text-md">
-                {type === "taskCreation" && (
+                {type === 1 && (
                     <>
                         Anda membuat tugas <Link href={`#`} className="font-bold text-basic-blue">{task}</Link> dalam proyek <Link href={`#`} className="font-bold text-basic-blue">{project}</Link>
                     </>   
                 )}
-                {type === "commentCreation" && (
+                {type === 2 && (
                     <>
                         Anda membuat komentar pada tugas <Link href={`#`} className="font-bold text-basic-blue">{task}</Link> dalam proyek <Link href={`#`} className="font-bold text-basic-blue">{project}</Link>
                     </>
                 )}
-                {type === "taskStatusUpdate" && (
+                {type === 3 && (
                     <div>
                         <div>
                             Anda mengubah status pada tugas <Link href={`#`} className="font-bold text-basic-blue">{task}</Link> dalam proyek <Link href={`#`} className="font-bold text-basic-blue">{project}</Link>
