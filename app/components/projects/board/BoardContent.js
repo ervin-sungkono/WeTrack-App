@@ -10,7 +10,7 @@ import { RevolvingDot } from "react-loader-spinner"
 
 import { IoFilter as FilterIcon } from "react-icons/io5"
 import { FiPlus as PlusIcon } from "react-icons/fi"
-import useSessionStorage from "@/app/lib/hooks/useSessionStorage"
+import { useSessionStorage } from "@uidotdev/usehooks"
 import { createNewTask, getAllTask } from "@/app/lib/fetch/task"
 import DotButton from "../../common/button/DotButton"
 
@@ -40,10 +40,11 @@ export default function BoardContent() {
   const [loading, setLoading] = useState(true)
   const [isCreatingTask, setCreatingTask] = useState(false)
   const [isCreatingList, setCreatingList] = useState(false)
-  const [state, setState] = useState();
+  const [state, setState] = useState(null);
   const [query, setQuery] = useState("")
   const [filterDropdown, setFilterDropdown] = useState(false)
   const [project, _] = useSessionStorage("project")
+  const [projectId, setProjectId] = useState()
   const [activeStatusId, setActiveStatusId] = useState()
 
   const showTaskCard = (statusId) => {
@@ -88,8 +89,8 @@ export default function BoardContent() {
   }
 
   useEffect(() => {
-    setLoading(true)
-    if(project){
+    if(project && project.id !== projectId){
+      setLoading(true)
       getAllTask(project.id).then(res => {
         if(res.data) {
           setState(project.taskStatusList
@@ -98,13 +99,14 @@ export default function BoardContent() {
               content: res.data?.filter(task => task.status.id === taskStatus.id) ?? []
             })
           ))
+          setProjectId(project.id)
         }
         else alert("Gagal memperoleh data tugas")
 
         setLoading(false)
       })
     }
-  }, [project])
+  }, [project, projectId])
 
   const handleSearch = (query) => {
     setQuery(query.toLowerCase())
