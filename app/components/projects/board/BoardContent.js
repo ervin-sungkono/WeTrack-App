@@ -44,6 +44,7 @@ export default function BoardContent() {
   const [query, setQuery] = useState("")
   const [filterDropdown, setFilterDropdown] = useState(false)
   const [project, _] = useSessionStorage("project")
+  const [projectId, setProjectId] = useState()
   const [activeStatusId, setActiveStatusId] = useState()
 
   const showTaskCard = (statusId) => {
@@ -88,7 +89,7 @@ export default function BoardContent() {
   }
 
   useEffect(() => {
-    if(project && !state){
+    if(project && project.id !== projectId){
       setLoading(true)
       getAllTask(project.id).then(res => {
         if(res.data) {
@@ -98,13 +99,14 @@ export default function BoardContent() {
               content: res.data?.filter(task => task.status.id === taskStatus.id) ?? []
             })
           ))
+          setProjectId(project.id)
         }
         else alert("Gagal memperoleh data tugas")
 
         setLoading(false)
       })
     }
-  }, [project, state])
+  }, [project, projectId])
 
   const handleSearch = (query) => {
     setQuery(query.toLowerCase())
