@@ -8,8 +8,8 @@ export default function PopUp({size = 'default', children}) {
         }
     }
     return (
-        <div className="fixed top-0 left-0 w-full h-full z-[10000] bg-black/50">
-            <div className={`w-full ${getSizeClass()} max-h-[85vh] px-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}>
+        <div className="fixed flex justify-center items-center top-0 left-0 w-full h-full z-[10000] bg-black/50">
+            <div className={`w-full ${getSizeClass()} h-full max-h-[80vh] px-6 overflow-y-auto`}>
                 {children}
             </div>
         </div>

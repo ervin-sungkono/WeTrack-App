@@ -20,6 +20,7 @@ function BoardList({ items, droppableId, children }){
                     ref={provided.innerRef} 
                     style={getListStyle(snapshot.isDraggingOver)}
                     {...provided.droppableProps}
+                    className="custom-scrollbar"
                 >
                     {items.map((item, index) => (
                         <BoardItem item={item} index={index} key={item.id} />

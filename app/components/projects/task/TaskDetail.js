@@ -15,6 +15,7 @@ import { dateFormat } from "@/app/lib/date"
 import DotButton from "../../common/button/DotButton"
 
 const AttachmentSection = dynamic(() => import("./AttachmentSection"))
+const SubtaskSection = dynamic(() => import("./SubtaskSection"))
 
 function TaskDetail({ taskId, open, closeFn }){
     const [task, setTask] = useState()
@@ -60,6 +61,22 @@ function TaskDetail({ taskId, open, closeFn }){
         }
     ]
 
+    const subtasks = [
+        { 
+            id: 'ST1023',
+            taskName: 'Develop Initial UI',
+            priority: 3,
+            statusId: "SI232",
+        },
+        { 
+            id: 'ST1024',
+            taskName: 'Add Animation',
+            priority: 2,
+            statusId: "SI233",
+        }
+    ]
+
+
     useEffect(() => {
         if(taskId && open && (!task || task.id !== taskId)){
             getTaskById(taskId)
@@ -79,7 +96,7 @@ function TaskDetail({ taskId, open, closeFn }){
     if(open){
         return(
             <PopUp>
-                <div className={`flex flex-col gap-4 md:gap-6 px-6 py-4 md:px-8 md:py-6 bg-white text-dark-blue rounded-lg shadow-lg`}>
+                <div className={`h-full flex flex-col gap-4 md:gap-6 px-6 py-4 md:px-8 md:py-6 bg-white text-dark-blue rounded-lg shadow-lg overflow-y-auto`}>
                     <div className="flex items-start gap-4">
                         <div className={`text-lg md:text-2xl font-semibold text-dark-blue flex-grow`}>
                             {task.taskName}
@@ -89,7 +106,7 @@ function TaskDetail({ taskId, open, closeFn }){
                             <button onClick={closeFn}><CloseIcon size={32} className="text-basic-blue"/></button>
                         </div>
                     </div>
-                    <div className="flex flex-col overflow-auto gap-4 md:gap-6">
+                    <div className="h-full flex flex-col overflow-y-auto gap-4 md:gap-6 pr-2 -mr-2 custom-scrollbar">
                         <div className="flex flex-col gap-3">
                             <div className="grid grid-cols-3 gap-2">
                                 <p className="font-semibold text-xs md:text-sm">Penerima</p>
@@ -131,6 +148,7 @@ function TaskDetail({ taskId, open, closeFn }){
                                 <p>Tambahkan deskripsi tugas..</p>}
                             </div>
                             <AttachmentSection attachments={attachmentList}/>
+                            <SubtaskSection subtasks={subtasks}/>
                         </div>
                     </div>
                     

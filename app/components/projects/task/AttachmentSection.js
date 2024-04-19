@@ -1,13 +1,15 @@
 "use client"
+import dynamic from "next/dynamic"
 import { useRef } from "react"
 import { dateFormat } from "@/app/lib/date"
 import DotButton from "../../common/button/DotButton"
 import CustomTooltip from "../../common/CustomTooltip"
-import Table from "../../common/table/Table"
-import TableActionButton from "../../common/table/TableActionButton"
+
+const Table = dynamic(() => import("../../common/table/Table"))
 
 import { FiPlus as PlusIcon } from "react-icons/fi"
 import { MdFileDownload as DownloadIcon, MdDelete as DeleteIcon } from "react-icons/md"
+
 
 export default function AttachmentSection({ attachments = [] }){
     const attachmentUploaderRef = useRef()
@@ -79,7 +81,7 @@ export default function AttachmentSection({ attachments = [] }){
     }
 
     return(
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1 md:gap-2">
             <div className="flex items-center">
                 <p className="font-semibold text-xs md:text-sm flex-grow">Lampiran <span>({attachments.length})</span></p>
                 <div className="flex gap-1">

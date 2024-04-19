@@ -5,6 +5,7 @@ import { FaCheckSquare as CheckIcon } from "react-icons/fa";
 import { useTaskData } from "@/app/lib/context/task";
 import DotButton from "../../common/button/DotButton";
 import UserSelectButton from "../../common/UserSelectButton";
+import CustomTooltip from "../../common/CustomTooltip";
 
 const getItemStyle = (isDragging, draggableStyle) => ({
     // some basic styles to make the items look a bit nicer
@@ -91,13 +92,15 @@ export default function BoardItem({ item, index }){
                   <CheckIcon size={16}/>
                   <p className="text-[10px] md:text-xs">TASK-1</p>
                 </div>
-                <UserSelectButton 
-                  name={`assignedTo-${item.id}`}
-                  type="icon"
-                  placeholder={item.assignedTo}
-                  options={userList}
-                  onChange={(value) => setAssignee(value)}
-                />
+                <CustomTooltip id={`task-${item.id}-tooltip`} content={assignee?.fullName ?? "Belum ditugaskan"}>
+                  <UserSelectButton 
+                    name={`assignedTo-${item.id}`}
+                    type="icon"
+                    placeholder={item.assignedTo}
+                    options={userList}
+                    onChange={(value) => setAssignee(value)}
+                  />
+                </CustomTooltip>
             </div>
           </div>
         )}
