@@ -133,10 +133,22 @@ export async function POST(request, response) {
                 })
             }))
         }
+
+        const startStatusDetail = await getDoc(doc(db, "taskStatuses", startStatusId))
+        const { startStatus } = startStatusDetail.data()
+
+        const endStatusDetail = await getDoc(doc(db, "taskStatuses", endStatusId))
+        const { endStatus } = endStatusDetail.data()
         
         await updateDoc(docRef, {
-            startStatus: startStatusId,
-            endStatus: endStatusId,
+            startStatus: { 
+                id: startStatusId, 
+                status: startStatus
+            },
+            endStatus: { 
+                id: endStatusId,
+                status: endStatus
+            },
             taskStatusList: taskStatusList,
             team: teamList,
             updatedAt: serverTimestamp()
