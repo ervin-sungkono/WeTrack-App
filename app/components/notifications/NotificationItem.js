@@ -4,7 +4,7 @@ import { listDateFormat } from "@/app/lib/date"
 
 export default function NotificationsItem({type, task, user, project, oldRole, newRole, timestamp}){
     return (
-        <div className="w-full bg-white flex justify-between items-center px-4 py-2 rounded-sm shadow-sm">
+        <div className="w-full bg-white flex justify-between items-center px-4 py-2 rounded shadow-sm">
             <div className="text-md">
                 {type === 1 && (
                     <>

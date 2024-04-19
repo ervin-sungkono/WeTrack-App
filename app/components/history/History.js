@@ -37,43 +37,41 @@ export default function History(){
         }
     }, [session])
 
-    const dummyData = {
-        data: [
-            {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 14:20:20")},
-            {type: 2, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-17 11:15:00")},
-            {type: 3, task: "Design Creation", project: "WeTrack Beta", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
-            {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 14:20:20")},
-            {type: 2, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-17 11:15:00")},
-            {type: 3, task: "Design Creation", project: "WeTrack Beta", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
-            {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 14:20:20")},
-            {type: 2, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-17 11:15:00")},
-            {type: 3, task: "Design Creation", project: "WeTrack Beta", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
-            {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 14:20:20")},
-            {type: 2, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-17 11:15:00")},
-            {type: 3, task: "Design Creation", project: "WeTrack Beta", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
-            {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 14:20:20")},
-            {type: 2, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-17 11:15:00")},
-            {type: 3, task: "Design Creation", project: "WeTrack Beta", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
-            {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 14:20:20")},
-            {type: 2, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-17 11:15:00")},
-            {type: 3, task: "Design Creation", project: "Test Project", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
-            {type: 1, task: "Design Creation", project: "Test Project", timestamp: new Date("2024-04-18 14:20:20")},
-            {type: 2, task: "Design Creation", project: "Test Project", timestamp: new Date("2024-04-17 11:15:00")},
-            {type: 3, task: "Design Creation", project: "Test Project", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
-            {type: 1, task: "Design Creation", project: "Test Project", timestamp: new Date("2024-04-18 14:20:20")},
-            {type: 2, task: "Design Creation", project: "Test Project", timestamp: new Date("2024-04-17 11:15:00")},
-            {type: 3, task: "Design Creation", project: "Test Project", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
-            {type: 1, task: "Design Creation", project: "Test Project", timestamp: new Date("2024-04-18 14:20:20")},
-            {type: 2, task: "Design Creation", project: "Test Project", timestamp: new Date("2024-04-17 11:15:00")},
-            {type: 3, task: "Design Creation", project: "Test Project", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
-            {type: 1, task: "Design Creation", project: "Test Project", timestamp: new Date("2024-04-18 14:20:20")},
-            {type: 2, task: "Design Creation", project: "Test Project", timestamp: new Date("2024-04-17 11:15:00")},
-            {type: 3, task: "Design Creation", project: "Test Project", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
-            {type: 1, task: "Design Creation", project: "Test Project", timestamp: new Date("2024-04-18 14:20:20")},
-            {type: 2, task: "Design Creation", project: "Test Project", timestamp: new Date("2024-04-17 11:15:00")},
-            {type: 3, task: "Design Creation", project: "Test Project", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")}
-        ]
-    }
+    const dummyData = [
+        {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 14:20:20")},
+        {type: 2, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-17 11:15:00")},
+        {type: 3, task: "Design Creation", project: "WeTrack Beta", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
+        {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 14:20:20")},
+        {type: 2, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-17 11:15:00")},
+        {type: 3, task: "Design Creation", project: "WeTrack Beta", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
+        {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 14:20:20")},
+        {type: 2, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-17 11:15:00")},
+        {type: 3, task: "Design Creation", project: "WeTrack Beta", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
+        {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 14:20:20")},
+        {type: 2, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-17 11:15:00")},
+        {type: 3, task: "Design Creation", project: "WeTrack Beta", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
+        {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 14:20:20")},
+        {type: 2, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-17 11:15:00")},
+        {type: 3, task: "Design Creation", project: "WeTrack Beta", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
+        {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 14:20:20")},
+        {type: 2, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-17 11:15:00")},
+        {type: 3, task: "Design Creation", project: "Test Project", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
+        {type: 1, task: "Design Creation", project: "Test Project", timestamp: new Date("2024-04-18 14:20:20")},
+        {type: 2, task: "Design Creation", project: "Test Project", timestamp: new Date("2024-04-17 11:15:00")},
+        {type: 3, task: "Design Creation", project: "Test Project", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
+        {type: 1, task: "Design Creation", project: "Test Project", timestamp: new Date("2024-04-18 14:20:20")},
+        {type: 2, task: "Design Creation", project: "Test Project", timestamp: new Date("2024-04-17 11:15:00")},
+        {type: 3, task: "Design Creation", project: "Test Project", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
+        {type: 1, task: "Design Creation", project: "Test Project", timestamp: new Date("2024-04-18 14:20:20")},
+        {type: 2, task: "Design Creation", project: "Test Project", timestamp: new Date("2024-04-17 11:15:00")},
+        {type: 3, task: "Design Creation", project: "Test Project", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
+        {type: 1, task: "Design Creation", project: "Test Project", timestamp: new Date("2024-04-18 14:20:20")},
+        {type: 2, task: "Design Creation", project: "Test Project", timestamp: new Date("2024-04-17 11:15:00")},
+        {type: 3, task: "Design Creation", project: "Test Project", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")},
+        {type: 1, task: "Design Creation", project: "Test Project", timestamp: new Date("2024-04-18 14:20:20")},
+        {type: 2, task: "Design Creation", project: "Test Project", timestamp: new Date("2024-04-17 11:15:00")},
+        {type: 3, task: "Design Creation", project: "Test Project", oldStatus: "TO DO", newStatus: "IN PROGRESS", timestamp: new Date("2024-02-11 19:59:20")}
+    ]
 
     const [project, setProject] = useState("Semua")
     const [type, setType] = useState("Semua")

@@ -15,7 +15,7 @@ export default function DotButton({ name, actions = [], hoverClass }){
                 data-dropdown-placement="bottom-start"
                 data-dropdown-delay="0"
                 data-dropdown-offset-distance="4"
-                className={`p-1.5 ${hoverClass ?? "hover:bg-gray-200"} duration-200 transition-colors rounded-sm`}
+                className={`p-1.5 ${hoverClass ?? "hover:bg-gray-200"} duration-200 transition-colors rounded`}
                 onClick={(e) => e.stopPropagation()}
             >
                 <DotIcon size={20}/>
