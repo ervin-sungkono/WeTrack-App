@@ -16,34 +16,32 @@ export default function Notifications(){
 
     const { data: session, status } = useSession()
 
-    const dummyData = {
-        data: [
-            {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 07:20:12")},
-            {type: 2, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-04-17 08:10:00")},
-            {type: 3, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-01-25 22:55:15")},
-            {type: 4, project: "WeTrack Beta", oldRole: "Member", newRole: "Viewer", timestamp: new Date("2023-12-31 14:14:14")},
-            {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 07:20:12")},
-            {type: 2, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-04-17 08:10:00")},
-            {type: 3, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-01-25 22:55:15")},
-            {type: 4, project: "WeTrack Beta", oldRole: "Member", newRole: "Viewer", timestamp: new Date("2023-12-31 14:14:14")},
-            {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 07:20:12")},
-            {type: 2, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-04-17 08:10:00")},
-            {type: 3, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-01-25 22:55:15")},
-            {type: 4, project: "WeTrack Beta", oldRole: "Member", newRole: "Viewer", timestamp: new Date("2023-12-31 14:14:14")},
-            {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 07:20:12")},
-            {type: 2, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-04-17 08:10:00")},
-            {type: 3, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-01-25 22:55:15")},
-            {type: 4, project: "WeTrack Beta", oldRole: "Member", newRole: "Viewer", timestamp: new Date("2023-12-31 14:14:14")},
-            {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 07:20:12")},
-            {type: 2, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-04-17 08:10:00")},
-            {type: 3, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-01-25 22:55:15")},
-            {type: 4, project: "WeTrack Beta", oldRole: "Member", newRole: "Viewer", timestamp: new Date("2023-12-31 14:14:14")},
-            {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 07:20:12")},
-            {type: 2, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-04-17 08:10:00")},
-            {type: 3, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-01-25 22:55:15")},
-            {type: 4, project: "WeTrack Beta", oldRole: "Member", newRole: "Viewer", timestamp: new Date("2023-12-31 14:14:14")}
-        ]
-    }
+    const dummyData = [
+        {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 07:20:12")},
+        {type: 2, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-04-17 08:10:00")},
+        {type: 3, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-01-25 22:55:15")},
+        {type: 4, project: "WeTrack Beta", oldRole: "Member", newRole: "Viewer", timestamp: new Date("2023-12-31 14:14:14")},
+        {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 07:20:12")},
+        {type: 2, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-04-17 08:10:00")},
+        {type: 3, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-01-25 22:55:15")},
+        {type: 4, project: "WeTrack Beta", oldRole: "Member", newRole: "Viewer", timestamp: new Date("2023-12-31 14:14:14")},
+        {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 07:20:12")},
+        {type: 2, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-04-17 08:10:00")},
+        {type: 3, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-01-25 22:55:15")},
+        {type: 4, project: "WeTrack Beta", oldRole: "Member", newRole: "Viewer", timestamp: new Date("2023-12-31 14:14:14")},
+        {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 07:20:12")},
+        {type: 2, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-04-17 08:10:00")},
+        {type: 3, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-01-25 22:55:15")},
+        {type: 4, project: "WeTrack Beta", oldRole: "Member", newRole: "Viewer", timestamp: new Date("2023-12-31 14:14:14")},
+        {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 07:20:12")},
+        {type: 2, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-04-17 08:10:00")},
+        {type: 3, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-01-25 22:55:15")},
+        {type: 4, project: "WeTrack Beta", oldRole: "Member", newRole: "Viewer", timestamp: new Date("2023-12-31 14:14:14")},
+        {type: 1, task: "Design Creation", project: "WeTrack Beta", timestamp: new Date("2024-04-18 07:20:12")},
+        {type: 2, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-04-17 08:10:00")},
+        {type: 3, task: "Design Creation", user: "QA Tester", project: "WeTrack Beta", timestamp: new Date("2024-01-25 22:55:15")},
+        {type: 4, project: "WeTrack Beta", oldRole: "Member", newRole: "Viewer", timestamp: new Date("2023-12-31 14:14:14")}
+    ]
 
     const [type, setType] = useState("Semua")
     const [pageIndex, setPageIndex] = useState(0)
