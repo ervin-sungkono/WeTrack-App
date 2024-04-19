@@ -14,10 +14,11 @@ export default function NotificationPagination({
     nextPage,
     firstPage,
     lastPage,
-    totalCount 
+    pageCount,
+    dataCount 
 }){
     const startIndex = (pageIndex * pageSize) + 1
-    const endIndex = Math.min((pageIndex + 1) * pageSize, totalCount)
+    const endIndex = Math.min((pageIndex + 1) * pageSize, dataCount)
 
     return(
         <div className="flex justify-center items-center mt-auto">
@@ -37,7 +38,7 @@ export default function NotificationPagination({
                     <ArrowLeft className="text-xl md:text-2xl"/>
                 </button>
             </div>
-            <p className="text-xs md:text-sm px-4">{startIndex} to {endIndex} of {totalCount}</p>
+            <p className="text-xs md:text-sm px-4">{startIndex} to {endIndex} of {dataCount}</p>
             <div className="flex items-center">
                 <button 
                     className="hover:text-basic-blue p-1 disabled:text-dark-blue/60" 

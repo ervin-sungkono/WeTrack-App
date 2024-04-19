@@ -1,7 +1,7 @@
 "use client"
 import Navbar from "../common/navbar/Navbar"
 import Sidebar from "../common/sidebar/Sidebar"
-import useSessionStorage from "@/app/lib/hooks/useSessionStorage"
+import { useSessionStorage } from "@uidotdev/usehooks"
 import { useEffect } from "react"
 import { getProjectByID } from "@/app/lib/fetch/project"
 

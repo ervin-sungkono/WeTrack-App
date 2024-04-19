@@ -3,16 +3,16 @@ import { useEffect, useState } from "react"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import BoardList from "./BoardList"
 import SearchBar from "../../common/SearchBar"
-import SelectButton from "../../common/SelectButton"
+import SelectButton from "../../common/button/SelectButton"
 import SimpleInputForm from "../../common/SimpleInputField"
 import Button from "../../common/button/Button"
 import { RevolvingDot } from "react-loader-spinner"
 
-import { BsThreeDots as DotIcon } from "react-icons/bs"
 import { IoFilter as FilterIcon } from "react-icons/io5"
 import { FiPlus as PlusIcon } from "react-icons/fi"
-import useSessionStorage from "@/app/lib/hooks/useSessionStorage"
+import { useSessionStorage } from "@uidotdev/usehooks"
 import { createNewTask, getAllTask } from "@/app/lib/fetch/task"
+import DotButton from "../../common/button/DotButton"
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -40,10 +40,11 @@ export default function BoardContent() {
   const [loading, setLoading] = useState(true)
   const [isCreatingTask, setCreatingTask] = useState(false)
   const [isCreatingList, setCreatingList] = useState(false)
-  const [state, setState] = useState();
+  const [state, setState] = useState(null);
   const [query, setQuery] = useState("")
   const [filterDropdown, setFilterDropdown] = useState(false)
   const [project, _] = useSessionStorage("project")
+  const [projectId, setProjectId] = useState()
   const [activeStatusId, setActiveStatusId] = useState()
 
   const showTaskCard = (statusId) => {
@@ -88,8 +89,8 @@ export default function BoardContent() {
   }
 
   useEffect(() => {
-    setLoading(true)
-    if(project){
+    if(project && project.id !== projectId){
+      setLoading(true)
       getAllTask(project.id).then(res => {
         if(res.data) {
           setState(project.taskStatusList
@@ -98,13 +99,14 @@ export default function BoardContent() {
               content: res.data?.filter(task => task.status.id === taskStatus.id) ?? []
             })
           ))
+          setProjectId(project.id)
         }
         else alert("Gagal memperoleh data tugas")
 
         setLoading(false)
       })
     }
-  }, [project])
+  }, [project, projectId])
 
   const handleSearch = (query) => {
     setQuery(query.toLowerCase())
@@ -196,9 +198,11 @@ export default function BoardContent() {
                       >
                         <div className="flex items-center gap-2 px-1 text-dark-blue/80">
                           <div className="uppercase flex-grow text-xs md:text-sm font-semibold">{el.status} <span className="text-[10.8px] md:text-xs">({el.content.filter(task => task.taskName.toLowerCase().includes(query)).length})</span></div>
-                          <button className="p-1.5 hover:bg-gray-300 duration-200 transition-colors rounded-sm">
-                            <DotIcon size={20}/>
-                          </button>
+                          <DotButton 
+                            name={`taskStatus-${el.id}`} 
+                            actions={[]}
+                            hoverClass={"hover:bg-gray-300"}
+                          />
                         </div>
                         <BoardList 
                           items={el.content.filter(task => task.taskName.toLowerCase().includes(query))} 

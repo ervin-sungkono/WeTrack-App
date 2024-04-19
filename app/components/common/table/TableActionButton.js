@@ -21,9 +21,9 @@ export default function TableActionButton({ actions, id }){
                 className="w-full max-w-[120px] hidden z-fixed divide-y divide-gray-100 bg-white rounded-md shadow-md border border-dark/30"
             >
                 <ul className="py-1.5 text-sm text-dark" aria-labelledby={`actionsDropdownButton-${id}`}>
-                    {actions.map(action => (
-                        <li key={`${action}-${id}`}>
-                            <a href="#" className="block px-4 py-2 hover:bg-gray-100 transition-colors duration-300">{action}</a>
+                    {actions.map(({link, label, onClick}) => (
+                        <li key={`${label}-${id}`} onClick={onClick}>
+                            <a href={link ?? "#"} className="block px-4 py-2 hover:bg-gray-100 transition-colors duration-300">{label}</a>
                         </li>
                     ))}
                 </ul>

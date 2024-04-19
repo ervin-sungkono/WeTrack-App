@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 
 import SearchBar from "../common/SearchBar"
-import SelectButton from "../common/SelectButton"
+import SelectButton from "../common/button/SelectButton"
 import Table from "../common/table/Table"
 import TableActionButton from "../common/table/TableActionButton"
 import UserIcon from "../common/UserIcon"
@@ -35,7 +35,12 @@ export default function ProjectContent(){
                 if(projects.data) setProjectData(
                     projects.data.map(project => ({
                         ...project,
-                        action: ['Sunting', 'Perbarui']
+                        action: [
+                            {
+                                link: `/projects/${project.id}/setting`,
+                                label: "Pengaturan"
+                            },
+                        ]
                     }))
                 )
                 else alert("Gagal memperoleh data proyek")
@@ -116,7 +121,6 @@ export default function ProjectContent(){
             <Table
                 data={projectData?.filter(project => project.projectName.toLowerCase().includes(query))}
                 columns={columns}
-                pageSize={pageSize}
             />
         </div>
     )

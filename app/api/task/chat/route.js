@@ -8,8 +8,6 @@ export async function POST(request){
         taskDescription,
         content
     })
-    // TODO: Get task by id
-    // TODO-2: return response from generate chat function
     
     return NextResponse.json({
         data: chatResponse.message.content,

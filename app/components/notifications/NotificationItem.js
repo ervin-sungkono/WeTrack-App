@@ -1,16 +1,17 @@
 import Link from "next/link"
 import UserIcon from "../common/UserIcon"
+import { listDateFormat } from "@/app/lib/date"
 
 export default function NotificationsItem({type, task, user, project, oldRole, newRole, timestamp}){
     return (
         <div className="w-full bg-white flex justify-between items-center px-4 py-2 rounded-sm shadow-sm">
             <div className="text-md">
-                {type === "taskAssignment" && (
+                {type === 1 && (
                     <>
                         Anda diberikan tugas <Link href={`#`} className="font-bold text-basic-blue">{task}</Link> dalam proyek <Link href={`#`} className="font-bold text-basic-blue">{project}</Link>
                     </>   
                 )}
-                {type === "newComment" && (
+                {type === 2 && (
                     <div className="flex items-center gap-2">
                         <div>
                             <UserIcon fullName={user} />
@@ -25,7 +26,7 @@ export default function NotificationsItem({type, task, user, project, oldRole, n
                         </div>
                     </div>
                 )}
-                {type === "commentMention" && (
+                {type === 3 && (
                     <div className="flex items-center gap-2">
                         <div>
                             <UserIcon fullName={user} />
@@ -40,14 +41,14 @@ export default function NotificationsItem({type, task, user, project, oldRole, n
                         </div>
                     </div>
                 )}
-                {type === "projectRoleChange" && (
+                {type === 4 && (
                     <>
                         Peran Anda dalam proyek <Link href={`#`} className="font-bold text-basic-blue">{project}</Link> telah diubah dari <span className="font-bold">{oldRole}</span> menjadi <span className="font-bold">{newRole}</span>
                     </>
                 )}
             </div>
             <div className="text-sm">
-                {timestamp}
+                {listDateFormat(timestamp)}
             </div>
         </div>
     )
