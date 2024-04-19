@@ -82,12 +82,18 @@ export default function SubtaskSection({ subtasks }){
                     <CustomTooltip id="subtask-tooltip" content={"Tambah Subtugas"}>
                         <button
                             onClick={null}
-                            className={`p-2 hover:bg-gray-200 duration-200 transition-colors rounded-sm`}
+                            className={`p-2 hover:bg-gray-200 duration-200 transition-colors rounded`}
                         >
                             <PlusIcon size={16}/>
                         </button>
                     </CustomTooltip>
                 </div>
+            </div>
+            <div className="w-full flex items-center gap-2">
+                <div className="flex-grow h-2 bg-gray-200 rounded-full">
+                    <div className="bg-basic-blue h-full rounded-full" style={{width: '50%'}}></div>
+                </div>
+                <p className="text-xs md:text-sm">50% Selesai</p>
             </div>
             {subtasks.length > 0 ? 
             <Table

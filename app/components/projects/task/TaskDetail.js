@@ -13,6 +13,7 @@ import { getTaskById } from "@/app/lib/fetch/task"
 import { getPriority } from "@/app/lib/string"
 import { dateFormat } from "@/app/lib/date"
 import DotButton from "../../common/button/DotButton"
+import ActivitySection from "./ActivitySection"
 
 const AttachmentSection = dynamic(() => import("./AttachmentSection"))
 const SubtaskSection = dynamic(() => import("./SubtaskSection"))
@@ -149,6 +150,7 @@ function TaskDetail({ taskId, open, closeFn }){
                             </div>
                             <AttachmentSection attachments={attachmentList}/>
                             <SubtaskSection subtasks={subtasks}/>
+                            <ActivitySection/>
                         </div>
                     </div>
                     

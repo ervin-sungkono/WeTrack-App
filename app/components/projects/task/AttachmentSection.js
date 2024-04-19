@@ -58,10 +58,10 @@ export default function AttachmentSection({ attachments = [] }){
                 const attachmentLocation = attachments.find(attachment => attachment.id === id).attachmentLocation
                 return (
                     <div className="flex gap-1">
-                        <a href={attachmentLocation} download className="hover:bg-gray-200 p-1.5 rounded-sm transition-colors duration-300">
+                        <a href={attachmentLocation} download className="hover:bg-gray-200 p-1.5 rounded transition-colors duration-300">
                             <DownloadIcon size={20}/>
                         </a>
-                        <button className="hover:bg-gray-200 p-1.5 rounded-sm transition-colors duration-300">
+                        <button className="hover:bg-gray-200 p-1.5 rounded transition-colors duration-300">
                             <DeleteIcon className="text-danger-red" size={20} onClick={() => console.log("deleting attachment-" + id)}/>
                         </button>
                     </div>
@@ -89,7 +89,7 @@ export default function AttachmentSection({ attachments = [] }){
                     <CustomTooltip id="attachment-tooltip" content={"Tambah Lampiran"}>
                         <button 
                             onClick={openAttachmentUpload}
-                            className={`p-2 hover:bg-gray-200 duration-200 transition-colors rounded-sm`}
+                            className={`p-2 hover:bg-gray-200 duration-200 transition-colors rounded`}
                         >
                             <PlusIcon size={16}/>
                         </button>
