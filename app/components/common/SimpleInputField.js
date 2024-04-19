@@ -22,7 +22,7 @@ export default function SimpleInputForm({ name, onSubmit, onBlur, placeholder })
                 }}
                 autoFocus
                 placeholder={placeholder} 
-                className="w-full text-xs md:text-sm border-none bg-slate-100 rounded-sm focus:ring-0"
+                className="w-full text-xs md:text-sm border-none bg-slate-100 rounded focus:ring-0"
             />
             <button ref={buttonRef} type="submit" hidden/>
         </form>

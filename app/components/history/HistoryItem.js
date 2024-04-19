@@ -4,7 +4,7 @@ import Label from "../common/Label"
 
 export default function HistoryItem({type, task, project, oldStatus, newStatus, timestamp}){
     return (
-        <div className="w-full bg-white flex justify-between items-center px-4 py-2 rounded-sm shadow-sm">
+        <div className="w-full bg-white flex justify-between items-center px-4 py-2 rounded shadow-sm">
             <div className="text-md">
                 {type === 1 && (
                     <>
