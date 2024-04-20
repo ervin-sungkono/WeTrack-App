@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useState } from "react"
+import { sortDateFn } from "@/app/lib/helper"
 import dynamic from "next/dynamic"
 import SortButton from "../../common/button/SortButton"
 
@@ -21,6 +22,7 @@ export default function ActivitySection(){
 
     const [commentData, setCommentData] = useState(null)
     const [historyData, setHistoryData] = useState(null)
+    const [sorting, setSorting] = useState('asc')
 
     useEffect(() => {
         if(category === "comment" && !commentData){
@@ -93,14 +95,9 @@ export default function ActivitySection(){
         }
     }, [category, commentData, historyData])
 
-    const getSortButtonComponent = () => {
-        if(category === "comment") return <SortButton data={commentData} setData={setCommentData}/>
-        if(category === "history") return <SortButton data={historyData} setData={setHistoryData}/>
-    }
-
     const getCategoryComponent = () => {
-        if(category === "comment") return <CommentSection comments={commentData}/>
-        if(category === "history") return <HistorySection histories={historyData}/>
+        if(category === "comment") return <CommentSection comments={commentData && sortDateFn({data: commentData, sortDirection: sorting})}/>
+        if(category === "history") return <HistorySection histories={historyData && sortDateFn({data: historyData, sortDirection: sorting})}/>
         return null
     }
 
@@ -123,7 +120,7 @@ export default function ActivitySection(){
                             ))}
                         </div>
                     </div>
-                    {getSortButtonComponent()}
+                    <SortButton sorting={sorting} setSorting={setSorting}/>
                 </div>
             </div>
             {getCategoryComponent()}

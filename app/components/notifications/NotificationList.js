@@ -4,7 +4,7 @@ import NotificationPagination from "./NotificationPagination"
 
 export default function NotificationsList({notificationsData, pageSize, pageIndex, setPageIndex, pageCount, dataCount}){
 
-    const shownData = notificationsData.data.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize)
+    const shownData = notificationsData.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize)
 
     return (
         <div className="flex flex-col gap-2 md:gap-4 mb-8">

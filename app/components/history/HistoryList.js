@@ -13,7 +13,7 @@ export default function HistoryList({historyData, pageSize, pageIndex, setPageIn
             </div>
         )
     }else{
-        shownData = historyData.data.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize)
+        shownData = historyData.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize)
         return (
             <div className="flex flex-col gap-2 md:gap-4 mb-8">
                 {shownData.map((item, index) => (
