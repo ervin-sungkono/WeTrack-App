@@ -4,8 +4,8 @@ import { initDropdowns } from "flowbite"
 
 import { IoIosArrowDown as DropdownIcon } from 'react-icons/io'
 
-export default function SelectButton({ name, placeholder, options = [], onChange = null, buttonClass }){ 
-    const [selected, setSelected] = useState(options[0]?.label)
+export default function SelectButton({ name, placeholder, defaultValue, options = [], onChange = null, buttonClass }){ 
+    const [selected, setSelected] = useState(defaultValue ?? options[0]?.label)
     const buttonRef = useRef(null)
 
     useEffect(() => {

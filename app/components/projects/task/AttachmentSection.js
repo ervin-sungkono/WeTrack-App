@@ -1,13 +1,15 @@
 "use client"
+import dynamic from "next/dynamic"
 import { useRef } from "react"
 import { dateFormat } from "@/app/lib/date"
 import DotButton from "../../common/button/DotButton"
 import CustomTooltip from "../../common/CustomTooltip"
-import Table from "../../common/table/Table"
-import TableActionButton from "../../common/table/TableActionButton"
+
+const Table = dynamic(() => import("../../common/table/Table"))
 
 import { FiPlus as PlusIcon } from "react-icons/fi"
 import { MdFileDownload as DownloadIcon, MdDelete as DeleteIcon } from "react-icons/md"
+
 
 export default function AttachmentSection({ attachments = [] }){
     const attachmentUploaderRef = useRef()
@@ -56,10 +58,10 @@ export default function AttachmentSection({ attachments = [] }){
                 const attachmentLocation = attachments.find(attachment => attachment.id === id).attachmentLocation
                 return (
                     <div className="flex gap-1">
-                        <a href={attachmentLocation} download className="hover:bg-gray-200 p-1.5 rounded-sm transition-colors duration-300">
+                        <a href={attachmentLocation} download className="hover:bg-gray-200 p-1.5 rounded transition-colors duration-300">
                             <DownloadIcon size={20}/>
                         </a>
-                        <button className="hover:bg-gray-200 p-1.5 rounded-sm transition-colors duration-300">
+                        <button className="hover:bg-gray-200 p-1.5 rounded transition-colors duration-300">
                             <DeleteIcon className="text-danger-red" size={20} onClick={() => console.log("deleting attachment-" + id)}/>
                         </button>
                     </div>
@@ -79,7 +81,7 @@ export default function AttachmentSection({ attachments = [] }){
     }
 
     return(
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1 md:gap-2">
             <div className="flex items-center">
                 <p className="font-semibold text-xs md:text-sm flex-grow">Lampiran <span>({attachments.length})</span></p>
                 <div className="flex gap-1">
@@ -87,7 +89,7 @@ export default function AttachmentSection({ attachments = [] }){
                     <CustomTooltip id="attachment-tooltip" content={"Tambah Lampiran"}>
                         <button 
                             onClick={openAttachmentUpload}
-                            className={`p-2 hover:bg-gray-200 duration-200 transition-colors rounded-sm`}
+                            className={`p-2 hover:bg-gray-200 duration-200 transition-colors rounded`}
                         >
                             <PlusIcon size={16}/>
                         </button>
