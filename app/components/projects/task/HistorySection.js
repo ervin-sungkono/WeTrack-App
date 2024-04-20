@@ -3,16 +3,17 @@ import Label from "../../common/Label"
 import { listDateFormat } from "@/app/lib/date"
 
 export default function HistorySection({ histories }){
-    if(histories == null){
-        return(
-            <div>Memuat data riwayat..</div>
-        )
-    }
     const actionTextList = {
         add: 'menambahkan',
         create: 'membuat',
         update: 'mengubah',
         delete: 'menghapus'
+    }
+
+    if(!histories){
+        return(
+            <div>Memuat data riwayat..</div>
+        )
     }
     return(
         <div className="flex flex-col gap-2 md:gap-3">

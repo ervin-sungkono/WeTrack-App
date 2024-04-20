@@ -1,5 +1,5 @@
 export default function CommentSection({ comments }){
-    if(comments == null){
+    if(!comments){
         return(
             <div>Memuat data komentar..</div>
         )
