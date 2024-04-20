@@ -6,7 +6,7 @@ import { useEffect } from "react"
 import { getProjectByID } from "@/app/lib/fetch/project"
 
 export default function ProjectLayout({ children, hideSidebar, projectId }){
-    const [project, setProject] = useSessionStorage('project', null)
+    const [project, setProject] = useSessionStorage('project')
     useEffect(() => {
         if(projectId && (!project || project.id != projectId)){
             getProjectByID(projectId)
