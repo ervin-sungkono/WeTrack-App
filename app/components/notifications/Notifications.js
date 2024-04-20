@@ -73,7 +73,7 @@ export default function Notifications(){
             setNotificationsData(dummyData)
         }else{
             setNotificationsData({
-                data: notificationsData.filter(item => item.type === value)
+                data: dummyData.filter(item => item.type === value)
             })
         }
         setPageIndex(0)

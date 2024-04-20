@@ -100,7 +100,7 @@ export default function History(){
                 setHistoryData(dummyData)
             }
         }else{
-            setHistoryData(historyData.filter(item => item.project === value))
+            setHistoryData(dummyData.filter(item => item.project === value))
         }
         setPageIndex(0)
     }
@@ -114,7 +114,7 @@ export default function History(){
                 setHistoryData(dummyData)
             }
         }else{
-            setHistoryData(historyData.filter(item => item.type === value))
+            setHistoryData(dummyData.filter(item => item.type === value))
         }
         setPageIndex(0)
     }
