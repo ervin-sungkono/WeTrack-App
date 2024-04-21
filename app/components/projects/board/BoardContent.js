@@ -10,7 +10,7 @@ import { RevolvingDot } from "react-loader-spinner"
 
 import { IoFilter as FilterIcon } from "react-icons/io5"
 import { FiPlus as PlusIcon } from "react-icons/fi"
-import { useSessionStorage } from "@uidotdev/usehooks"
+import { useSessionStorage } from "usehooks-ts"
 import { createNewTask, getAllTask } from "@/app/lib/fetch/task"
 import DotButton from "../../common/button/DotButton"
 

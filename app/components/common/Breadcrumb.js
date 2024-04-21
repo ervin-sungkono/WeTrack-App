@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link"
-import { useSessionStorage } from "@uidotdev/usehooks"
+import { useSessionStorage } from "usehooks-ts"
 import { IoIosArrowForward as ArrowIcon } from "react-icons/io"
 import { useEffect, useState } from "react"
 
