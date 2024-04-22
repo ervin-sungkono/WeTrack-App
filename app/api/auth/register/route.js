@@ -10,6 +10,7 @@ export async function POST(request) {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password)
 
         await updateProfile(auth.currentUser, { displayName: fullName })
+        console.log("auth", auth.currentUser)
 
         const user = userCredential.user
 
