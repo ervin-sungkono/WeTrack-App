@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @import "@yaireo/tagify/dist/tagify.css";
+@import "./mention.scss";
 
 $black: #2B2B2B;
 $dark-blue: #1A1B36;

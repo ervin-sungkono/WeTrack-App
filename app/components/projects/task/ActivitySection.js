@@ -31,14 +31,14 @@ export default function ActivitySection(){
                 {   
                     id: "CM001",
                     taskId: "TS001",
-                    userId: "AAOO1",
+                    userId: "WeEzNxSREEdyDpSXkIYCAyA4E8y1",
                     commentText: "Testing Comment 1",
                     createdAt: new Date("2024-01-17"),
                 },
                 {   
                     id: "CM002",
                     taskId: "TS001",
-                    userId: "AAOO1",
+                    userId: "AAOO2",
                     commentText: "Testing Comment 2",
                     createdAt: new Date("2024-01-18"),
                 }
@@ -102,7 +102,7 @@ export default function ActivitySection(){
     }
 
     return(
-        <div className="flex flex-col gap-2 md:gap-4">
+        <div className="flex flex-col gap-2 md:gap-4 min-h-[240px]">
             <div className="flex flex-col gap-2">
                 <p className="font-semibold text-xs md:text-sm flex-grow">Aktivitas</p>
                 <div className="flex justify-between">
