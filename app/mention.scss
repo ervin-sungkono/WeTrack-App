@@ -1,0 +1,50 @@
+.mentions {
+  width: 100%;
+}
+
+.mentions--multiLine {
+  .mentions__control{
+    font-size: 14px;
+  }
+  .mentions__highlighter {
+    border: 1px solid transparent;
+    padding: 10px 12px;
+    min-height: 63px;
+  }
+  .mentions__input {
+    border: 1px solid silver;
+    border-radius: 6px;
+    padding: 10px 12px;
+    outline: 0;
+  }
+  @media only screen and (max-width: 768px){
+    .mentions__control{
+      font-size: 12px;
+    }
+  }
+}
+
+.mentions__suggestions__list {
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  font-size: 10pt;
+}
+
+.mentions__suggestions__item {
+  padding: 6px 12px;
+}
+
+.mentions__suggestions__item--focused {
+  background-color: #bbb7d3;
+}
+
+.mentions__mention {
+  position: relative;
+  z-index: 1;
+  color: #47389F;
+  text-shadow: 1px 1px 1px white, 1px -1px 1px white, -1px 1px 1px white,
+    -1px -1px 1px white;
+  text-decoration: underline;
+  pointer-events: none;
+}

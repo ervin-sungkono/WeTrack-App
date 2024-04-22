@@ -7,7 +7,7 @@ import { useState } from "react";
 import FormikSelectField from "../formik/FormikSelectField";
 import Button from "../../button/Button";
 import PopUpLoad from "../../alert/PopUpLoad";
-import { useSessionStorage } from "@uidotdev/usehooks"
+import { useSessionStorage } from "usehooks-ts"
 
 export default function SettingForm(){
     

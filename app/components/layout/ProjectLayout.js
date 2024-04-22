@@ -1,12 +1,12 @@
 "use client"
 import Navbar from "../common/navbar/Navbar"
 import Sidebar from "../common/sidebar/Sidebar"
-import { useSessionStorage } from "@uidotdev/usehooks"
+import { useSessionStorage } from "usehooks-ts"
 import { useEffect } from "react"
 import { getProjectByID } from "@/app/lib/fetch/project"
 
 export default function ProjectLayout({ children, hideSidebar, projectId }){
-    const [project, setProject] = useSessionStorage('project', null)
+    const [project, setProject] = useSessionStorage('project')
     useEffect(() => {
         if(projectId && (!project || project.id != projectId)){
             getProjectByID(projectId)
