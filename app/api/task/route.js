@@ -1,4 +1,4 @@
-import { doc, getDoc, arrayUnion, addDoc, collection, updateDoc, getDocs, query, where } from 'firebase/firestore';
+import { doc, getDoc, arrayUnion, addDoc, collection, updateDoc, getDocs, query, where, runTransaction } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
@@ -209,13 +209,10 @@ export async function POST(request, response) {
                 createdBy: newTask.createdBy,
                 assignedTo: newTask.assignedTo,
                 type: newTask.type,
-                status: newTask.status,
+                // status: newTask.status,
                 labels: newTask.labels
             })
         });
-
-        // console.log("task doc ref", newTaskDocRef)
-        // console.log("new task", newTask)
 
         return NextResponse.json({
             data: {
@@ -224,6 +221,7 @@ export async function POST(request, response) {
             },
             message: "Successfully added new task to project and task collection"
         }, { status: 200 });
+
     } catch (error) {
         console.error("Can't create task", error);
         return NextResponse.json({
