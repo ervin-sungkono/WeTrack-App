@@ -60,7 +60,7 @@ export default function Button({
                 return({
                     bgColor: 'bg-gray-200',
                     textColor: 'text-dark-blue',
-                    outlineTextColor: 'text-gray-200',
+                    outlineTextColor: 'text-gray-700',
                     borderClass: 'border-gray-400',
                     hover: 'hover:bg-gray-300',
                     hoverOutline: 'hover:bg-gray-300 hover:text-dark-blue'
