@@ -31,3 +31,33 @@ export async function signUp(credentials) {
         throw new Error(await res.text())
     }
 }
+
+export async function getUserProfile(){
+    const res = await fetch(`/api/auth/user`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    if(res.ok){
+        return res.json()
+    }else{
+        throw new Error(await res.text())
+    }
+
+}
+
+export async function updateUserProfile(formData) {
+    const res = await fetch(`/api/auth/user`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+        body: formData
+    })
+    if(res.ok){
+        return res.json()
+    }else{
+        throw new Error(await res.text())
+    }
+}

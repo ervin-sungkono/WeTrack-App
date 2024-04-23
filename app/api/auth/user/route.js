@@ -32,16 +32,17 @@ export async function GET(request, response){
             }, { status: 404 })
         }
 
-        const { fullName, email, jobPosition , location, profileImage } = data.data()
+        const { fullName, email, jobPosition, location, profileImage, createdAt } = data.data()
 
         return NextResponse.json({
             data: {
                 uid: data.id,
                 email: email,
                 fullName: fullName,
-                jobPotition: jobPosition ?? null,
+                jobPosition: jobPosition ?? null,
                 location: location ?? null,
                 profileImage: profileImage,
+                createdAt: createdAt
             }, 
             message: "Successfully get user detail"
         }, { status: 200 })

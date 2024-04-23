@@ -1,5 +1,5 @@
 /* eslint-disable react/no-children-prop */
-import { IoIosInformationCircle, IoMdPin } from "react-icons/io";
+import { IoIosInformationCircle, IoMdPin, IoMdPerson } from "react-icons/io";
 import FormikWrapper from "../formik/FormikWrapper";
 import FormikFieldIcon from "../formik/FormikFieldIcon";
 import { MdEmail } from "react-icons/md";
@@ -8,7 +8,6 @@ import Button from "../../button/Button";
 import { updateProfileSchema } from "@/app/lib/schema";
 
 export default function UpdateProfileForm({initialValues, setUpdateProfile, handleUpdateProfile}) {
-
     return (
         <FormikWrapper
             initialValues={initialValues}
