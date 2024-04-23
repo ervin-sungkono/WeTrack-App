@@ -50,9 +50,6 @@ export async function getUserProfile(){
 export async function updateUserProfile(formData) {
     const res = await fetch(`/api/auth/user`, {
         method: "PUT",
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
         body: formData
     })
     if(res.ok){

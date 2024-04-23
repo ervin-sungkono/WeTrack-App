@@ -2,16 +2,19 @@ import Image from "next/image";
 import UserIcon from "../../common/UserIcon";
 import SelectButton from "../../common/button/SelectButton";
 import { IoIosCloseCircle as CloseCircle } from "react-icons/io";
+import { useState } from "react";
 
-export default function TeamItem({editMode=false, image=null, id, name, role, status="active"}){
+export default function TeamItem({editMode=false, image=null, id, name, role, status}){
 
     const roleOptions = [
         {label: "Member", value: "Member"},
         {label: "Viewer", value: "Viewer"},
     ]
 
+    const [roleSelected, setRoleSelected] = useState(role)
+
     const handleRoleChange = (value) => {
-        console.log(value)
+        setRoleSelected(value)
     }
 
     const handleDelete = () => {
@@ -19,7 +22,7 @@ export default function TeamItem({editMode=false, image=null, id, name, role, st
     }
 
     const getSelectRoleClass = () => {
-        switch(role){
+        switch(roleSelected){
             case "Owner":
                 return "border-[#E1B829] text-[#E1B829]"
             case "Member":
@@ -30,7 +33,7 @@ export default function TeamItem({editMode=false, image=null, id, name, role, st
     }
 
     const getRoleClass = () => {
-        switch(role){
+        switch(roleSelected){
             case "Owner":
                 return "bg-warning-yellow"
             case "Member":
@@ -42,10 +45,10 @@ export default function TeamItem({editMode=false, image=null, id, name, role, st
 
     return (
         <div className="relative mt-4 mb-12">
-            {(editMode && role != 'Owner') && (
+            {(editMode && roleSelected != 'Owner') && (
                 <CloseCircle onClick={handleDelete} className="absolute -top-4 -right-4 text-3xl text-danger-red cursor-pointer"/>
             )}
-            <div className={`h-full flex flex-col justify-between items-center px-3 md:px-6 py-2.5 md:py-4 rounded-xl shadow-md bg-white w-48 md:w-64`}>
+            <div className={`h-full flex flex-col justify-between items-center m-auto px-3 md:px-6 py-2.5 md:py-4 rounded-xl shadow-md bg-white w-48 md:w-64`}>
                 <div>
                     {image === null ? (
                         <UserIcon fullName={name} size="team"/>
@@ -57,19 +60,19 @@ export default function TeamItem({editMode=false, image=null, id, name, role, st
                     {name}
                 </div>
                 {status !== "pending" && (
-                    (editMode && role != 'Owner') ? (
+                    (editMode && roleSelected != 'Owner') ? (
                         <div className="mt-4 mb-6">
                             <SelectButton
                                 name={`${id}`}
-                                placeholder={role}
+                                placeholder={roleSelected}
                                 options={roleOptions}
                                 onChange={handleRoleChange}
                                 buttonClass={getSelectRoleClass()}
                             />
                         </div>
                     ) : (
-                        <button className={`mt-4 text-xs md:text-sm px-3 md:px-4 py-2 md:py-1.5 rounded-full text-white font-medium ${getRoleClass()}`}>
-                            {role}
+                        <button className={`mt-4 mb-6 text-xs md:text-sm px-3 md:px-4 py-2 md:py-1.5 rounded-full text-white font-medium ${getRoleClass()}`}>
+                            {roleSelected}
                         </button>
                     )
                 )}

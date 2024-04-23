@@ -1,13 +1,11 @@
 import TeamItem from "./TeamItem";
 
-export default function TeamList({list, edit=false}){
+export default function TeamList({list, listType, edit=false}){
     return (
         <div className="flex flex-row gap-2 md:gap-4">
-            <TeamItem editMode={edit} id={1} name={"Ervin Cahyadinata Sungkono"} role={"Owner"} status={list==="pending" ? "pending" : "active"} />
-            <TeamItem editMode={edit} id={2} name={"Kenneth Nathanael"} role={"Member"} status={list==="pending" ? "pending" : "active"} />
-            <TeamItem editMode={edit} id={3} name={"Christopher Vinantius"} role={"Member"} status={list==="pending" ? "pending" : "active"} />
-            <TeamItem editMode={edit} id={4} name={"No Name"} role={"Member"} status={list==="pending" ? "pending" : "active"} />
-            <TeamItem editMode={edit} id={5} name={"QA Tester"} role={"Viewer"} status={list==="pending" ? "pending" : "active"} />
+            {list.map((item, index) => (
+                <TeamItem key={index} editMode={edit} status={listType==="pending" ? "pending" : "active"}  {...item} />
+            ))}
         </div>
     )
 }

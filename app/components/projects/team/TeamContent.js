@@ -31,6 +31,67 @@ export default function TeamContent(){
         setLoading(true)
     }   
 
+    const activeTeamDummyData = [
+        {
+            id: 1,
+            name: "Ervin Cahyadinata Sungkono",
+            role: "Owner",
+            status: "active"
+        },
+        {
+            id: 2,
+            name: "Kenneth Nathanael",
+            role: "Member",
+            status: "active"
+        },
+        {
+            id: 3,
+            name: "Christopher Vinantius",
+            role: "Member",
+            status: "active"
+        },
+        {
+            id: 4,
+            name: "No Name",
+            role: "Member",
+            status: "active"
+        },
+        {
+            id: 5,
+            name: "QA Tester",
+            role: "Viewer",
+            status: "active"
+        }
+    ]
+
+    const pendingTeamDummyData = [
+        {
+            id: 1,
+            name: "Ervin Cahyadinata Sungkono",
+            status: "pending"
+        },
+        {
+            id: 2,
+            name: "Kenneth Nathanael",
+            status: "pending"
+        },
+        {
+            id: 3,
+            name: "Christopher Vinantius",
+            status: "pending"
+        },
+        {
+            id: 4,
+            name: "No Name",
+            status: "pending"
+        },
+        {
+            id: 5,
+            name: "QA Tester",
+            status: "pending"
+        }
+    ]
+
     return (
         <ProjectProvider>
             <div className="flex flex-col gap-4">
@@ -71,7 +132,7 @@ export default function TeamContent(){
                             </div>
                         </div>
                         <div className="overflow-x-auto">
-                            <TeamList list="active" edit={editMode} />
+                            <TeamList list={activeTeamDummyData} listType="active" edit={editMode} />
                         </div>
                     </div>
                     <div className="mt-6">
@@ -84,7 +145,7 @@ export default function TeamContent(){
                             </div>
                         </div>
                         <div className="h-full overflow-x-auto">
-                            <TeamList list="pending" edit={editMode} />
+                            <TeamList list={pendingTeamDummyData} listType="pending" edit={editMode} />
                         </div>
                     </div>
                 </div>
