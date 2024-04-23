@@ -73,9 +73,11 @@ export default function HomeLayout(){
                     <p className="mt-1 lg:mt-2 text-sm lg:text-md">
                         WeTrack menawarkan solusi terbaik dalam manajemen proyek dan pelacakan tugas.
                     </p>
-                    <Button variant="primary" size={`md`} className="mt-2 lg:mt-6 xl:mt-8 px-2 xl:px-8">
-                        Mulai Sekarang
-                    </Button>
+                    <a href="/login">
+                        <Button variant="primary" size={`md`} className="mt-2 lg:mt-6 xl:mt-8 px-2 xl:px-8">
+                            Mulai Sekarang
+                        </Button>
+                    </a>
                 </div>
                 <div>
                     <Image src={'/WelcomePicture.png'} alt="WeTrack" width={600} height={600} priority/>

@@ -112,9 +112,9 @@ export default function LoginForm(){
                 />
             </div>
             <div className="flex flex-col justify-center items-center mt-6">
-                <WeTrackLogo
-                    // color="#1A1B36" 
-                />
+                <a href="/" className="hover:brightness-75">
+                    <WeTrackLogo />
+                </a>
                 <p className="text-sm mt-2">
                     &copy; 2024 All Rights Reserved
                 </p>

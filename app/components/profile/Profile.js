@@ -13,8 +13,6 @@ import ChangePasswordForm from "../common/form/profile/ChangePasswordForm"
 import DeleteAccountForm from "../common/form/profile/DeleteAccountForm"
 import UpdateProfileForm from "../common/form/profile/UpdateProfileForm"
 import { getUserProfile, updateUserProfile } from "@/app/lib/fetch/user"
-import { useRouter } from "next/navigation"
-import Image from "next/image"
 import { dateFormat } from "@/app/lib/date"
 
 export default function ProfileLayout(){
@@ -30,10 +28,6 @@ export default function ProfileLayout(){
         createdAt: null
     })
 
-    useEffect(() => {
-        console.log(initialValues)
-    }, [initialValues])
-
     const userProfile = async () => {
         try {
             const res = await getUserProfile()
@@ -44,12 +38,13 @@ export default function ProfileLayout(){
                 setInitialValues({
                     fullName: res.data.fullName,
                     email: res.data.email,
-                    profileImage: res.data.profileImage,
-                    description: res.data.description,
-                    jobPosition: res.data.jobPosition,
-                    location: res.data.location,
+                    profileImage: res.data.profileImage || "",
+                    description: res.data.description || "",
+                    jobPosition: res.data.jobPosition || "",
+                    location: res.data.location || "",
                     createdAt: createdDate,
                 })
+                setProfileImageUploaded(res.data.profileImage?.attachmentStoragePath)
             }
         }catch(error){
             console.log(error)
@@ -65,8 +60,6 @@ export default function ProfileLayout(){
     const [changePassword, setChangePassword] = useState(false)
     const [updateProfile, setUpdateProfile] = useState(false)
     const [deleteAccount, setDeleteAccount] = useState(false)
-    const router = useRouter()
-
     const ProfileField = ({icon, label, value}) => {
         return (
             <div className="flex gap-2">
@@ -96,10 +89,18 @@ export default function ProfileLayout(){
 
     const deleteImageUpload = () => {
         setProfileImageUploaded(null)
+        setInitialValues({
+            ...initialValues,
+            profileImage: null
+        })
     }
 
     const handleImageUpload = (e) => {
-        setProfileImageUploaded(e.target.files[0])
+        setProfileImageUploaded(URL.createObjectURL(e.target.files[0]))
+        setInitialValues({
+            ...initialValues,
+            profileImage: e.target.files[0]
+        })
     }
 
     const ProfileImageField = () => {
@@ -113,7 +114,7 @@ export default function ProfileLayout(){
                         Foto Profil
                     </label>
                     <div className="relative flex items-center">
-                        <Button variant="danger" outline onClick={deleteImageUpload} disabled={!profileImageUploaded}>
+                        <Button variant="danger" outline onClick={deleteImageUpload} disabled={!initialValues.profileImage}>
                             Hapus Foto Profil
                         </Button>
                     </div>
@@ -131,9 +132,10 @@ export default function ProfileLayout(){
         setError(false);
         setLoading(true);
         const formData = new FormData()
+        formData.enctype = "multipart/form-data"
         formData.append("fullName", values.fullName)
         formData.append("email", values.email)
-        formData.append("profileImage", profileImageUploaded)
+        formData.append("profileImage", initialValues.profileImage)
         formData.append("description", values.description)
         formData.append("jobPosition", values.jobPosition)
         formData.append("location", values.location)
@@ -143,7 +145,7 @@ export default function ProfileLayout(){
                 setError(true);
                 console.log(JSON.parse(res.error).errors)
             }else{
-                router.refresh()
+                location.reload()
             }
         }catch(error){
             setError(true);
@@ -168,24 +170,15 @@ export default function ProfileLayout(){
                 <div className="h-[200px] md:h-[260px]"> 
                     <div className="h-[100px] md:h-[140px] bg-gradient-to-r from-basic-blue to-light-blue w-full">
                         <div className="flex items-center justify-center pt-12 md:pt-16">
-                            <div className="relative cursor-pointer" onClick={openImageUpload}>
-                                {profileImageUploaded !== null ? (
-                                    <Image
-                                        src={URL.createObjectURL(profileImageUploaded)}
-                                        alt={initialValues.fullName}
-                                        width={112}
-                                        height={112}
-                                        className="rounded-full border-4 border-white hover:opacity-75"
+                            <div className="group relative cursor-pointer" onClick={openImageUpload}>
+                                <div className="group-hover:brightness-50">
+                                    <UserIcon
+                                        fullName={initialValues.fullName}
+                                        src={profileImageUploaded}
+                                        size="profile"
                                     />
-                                ) : (
-                                    <div className="hover:opacity-75">
-                                        <UserIcon
-                                            fullName={initialValues.fullName}
-                                            src={initialValues.profileImage}
-                                            size="profile"
-                                        />
-                                    </div>
-                                )}
+                                </div>
+                                <div className="hidden group-hover:block absolute top-9 text-center text-white">Ganti Foto Profil</div>
                                 <input
                                     type="file"
                                     accept="image/png, image/jpeg, image/jpg"
@@ -206,7 +199,7 @@ export default function ProfileLayout(){
                 <div className="mt-8 container flex-grow flex flex-col justify-center"> 
                     <div className="overflow-auto">
                         {updateProfile && (
-                            <div className="flex flex-col gap-8 max-w-2xl m-auto">
+                            <div className="flex flex-col gap-4 max-w-2xl m-auto">
                                 <ProfileImageField />
                                 <UpdateProfileForm 
                                     initialValues={initialValues} 
@@ -221,22 +214,22 @@ export default function ProfileLayout(){
                                     <ProfileField
                                         icon={<IoIosInformationCircle className="text-lg md:text-xl"/>}
                                         label={"Deskripsi"}
-                                        value={"Belum ada deskripsi."}
+                                        value={initialValues.description}
                                     />
                                     <ProfileField
                                         icon={<MdEmail className="text-lg md:text-xl"/>}
                                         label={"Email"}
-                                        value={session.user.email}
+                                        value={initialValues.email}
                                     />
                                     <ProfileField
                                         icon={<TbBriefcaseFilled className="text-lg md:text-xl"/>}
                                         label={"Posisi Pekerjaan"}
-                                        value={"Belum ada posisi pekerjaan."}
+                                        value={initialValues.jobPosition}
                                     />
                                     <ProfileField
                                         icon={<IoMdPin className="text-lg md:text-xl"/>}
                                         label={"Lokasi"}
-                                        value={"Belum ada lokasi."}
+                                        value={initialValues.location}
                                     />
                                 </div>
                                 <div className="mt-4 md:mt-6 text-center xs:text-left">
