@@ -2,7 +2,8 @@
 "use client"
 
 import { useSession } from "next-auth/react"
-import { IoIosInformationCircle, IoMdPin, IoMdPerson } from "react-icons/io"
+import { IoIosInformationCircle, IoMdPin } from "react-icons/io"
+import { CgProfile } from "react-icons/cg";
 import { MdEmail } from "react-icons/md"
 import { TbBriefcaseFilled } from "react-icons/tb"
 import Button from "../common/button/Button"
@@ -21,7 +22,7 @@ export default function ProfileLayout(){
     const [initialValues, setInitialValues] = useState({
         fullName: "",
         email: "",
-        profileImage: null,
+        // profileImage: null,
         description: "",
         jobPosition: "",
         location: "",
@@ -38,13 +39,14 @@ export default function ProfileLayout(){
                 setInitialValues({
                     fullName: res.data.fullName,
                     email: res.data.email,
-                    profileImage: res.data.profileImage || "",
+                    // profileImage: res.data.profileImage || "",
                     description: res.data.description || "",
                     jobPosition: res.data.jobPosition || "",
                     location: res.data.location || "",
                     createdAt: createdDate,
                 })
-                setProfileImageUploaded(res.data.profileImage?.attachmentStoragePath)
+                setOriginalProfileImage(res.data.profileImage?.attachmentStoragePath)
+                setProfileImageUploadedURL(res.data.profileImage?.attachmentStoragePath)
             }
         }catch(error){
             console.log(error)
@@ -81,7 +83,9 @@ export default function ProfileLayout(){
     }
 
     const imageUploaderRef = useRef()
+    const [originalProfileImage, setOriginalProfileImage] = useState(null)
     const [profileImageUploaded, setProfileImageUploaded] = useState(null)
+    const [profileImageUploadedURL, setProfileImageUploadedURL] = useState(null)
 
     const openImageUpload = () => {
         imageUploaderRef.current.click()
@@ -89,32 +93,26 @@ export default function ProfileLayout(){
 
     const deleteImageUpload = () => {
         setProfileImageUploaded(null)
-        setInitialValues({
-            ...initialValues,
-            profileImage: null
-        })
+        setProfileImageUploadedURL(null)
     }
 
     const handleImageUpload = (e) => {
-        setProfileImageUploaded(URL.createObjectURL(e.target.files[0]))
-        setInitialValues({
-            ...initialValues,
-            profileImage: e.target.files[0]
-        })
+        setProfileImageUploaded(e.target.files[0])
+        setProfileImageUploadedURL(URL.createObjectURL(e.target.files[0]))
     }
 
     const ProfileImageField = () => {
         return (
             <div className="flex gap-3">
                 <div>
-                    <IoMdPerson className="text-xl md:text-2xl" />
+                    <CgProfile className="text-xl md:text-2xl" />
                 </div>
                 <div className="flex flex-col gap-1 w-full">
                     <label htmlFor="profileImage" className="block font-semibold text-xs md:text-sm text-dark-blue">
                         Foto Profil
                     </label>
                     <div className="relative flex items-center">
-                        <Button variant="danger" outline onClick={deleteImageUpload} disabled={!initialValues.profileImage}>
+                        <Button variant="danger" outline onClick={deleteImageUpload} disabled={profileImageUploadedURL === null}>
                             Hapus Foto Profil
                         </Button>
                     </div>
@@ -135,7 +133,9 @@ export default function ProfileLayout(){
         formData.enctype = "multipart/form-data"
         formData.append("fullName", values.fullName)
         formData.append("email", values.email)
-        formData.append("profileImage", initialValues.profileImage)
+        if(profileImageUploaded !== null){
+            formData.append("profileImage", profileImageUploaded)
+        }
         formData.append("description", values.description)
         formData.append("jobPosition", values.jobPosition)
         formData.append("location", values.location)
@@ -170,25 +170,35 @@ export default function ProfileLayout(){
                 <div className="h-[200px] md:h-[260px]"> 
                     <div className="h-[100px] md:h-[140px] bg-gradient-to-r from-basic-blue to-light-blue w-full">
                         <div className="flex items-center justify-center pt-12 md:pt-16">
-                            <div className="group relative cursor-pointer" onClick={openImageUpload}>
-                                <div className="group-hover:brightness-50">
+                            {updateProfile ? (
+                                <div className="group relative">
+                                    <div className="group-hover:brightness-50 cursor-pointer" onClick={openImageUpload}>
+                                        <UserIcon
+                                            fullName={initialValues.fullName}
+                                            src={profileImageUploadedURL}
+                                            size="profile"
+                                        />
+                                    </div>
+                                    <div className="hidden group-hover:block absolute top-9 text-center text-white cursor-pointer" onClick={openImageUpload}>Ganti Foto Profil</div>
+                                    <input
+                                        type="file"
+                                        accept="image/png, image/jpeg, image/jpg"
+                                        id="profileImage"
+                                        name="profileImage"
+                                        ref={imageUploaderRef}
+                                        onChange={handleImageUpload}
+                                        className="hidden"
+                                    />
+                                </div>
+                            ) : (
+                                <div>
                                     <UserIcon
                                         fullName={initialValues.fullName}
-                                        src={profileImageUploaded}
+                                        src={profileImageUploadedURL}
                                         size="profile"
                                     />
                                 </div>
-                                <div className="hidden group-hover:block absolute top-9 text-center text-white">Ganti Foto Profil</div>
-                                <input
-                                    type="file"
-                                    accept="image/png, image/jpeg, image/jpg"
-                                    id="profileImage"
-                                    name="profileImage"
-                                    ref={imageUploaderRef}
-                                    onChange={handleImageUpload}
-                                    className="hidden"
-                                />
-                            </div>
+                            )}
                         </div>
                         <div className="text-center my-4">
                             <p className="text-lg md:text-xl font-bold leading-5">{initialValues.fullName}</p>
@@ -203,7 +213,10 @@ export default function ProfileLayout(){
                                 <ProfileImageField />
                                 <UpdateProfileForm 
                                     initialValues={initialValues} 
-                                    setUpdateProfile={setUpdateProfile} 
+                                    setUpdateProfile={setUpdateProfile}
+                                    setProfileImageUploaded={setProfileImageUploaded}
+                                    setProfileImageUploadedURL={setProfileImageUploadedURL} 
+                                    originalProfileImage={originalProfileImage}
                                     handleUpdateProfile={handleUpdateProfile} 
                                 />
                             </div>

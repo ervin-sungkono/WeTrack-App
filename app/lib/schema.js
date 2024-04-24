@@ -57,6 +57,11 @@ export const changePasswordSchema = yup.object().shape({
 })
 
 export const updateProfileSchema = yup.object().shape({
+    fullName: yup
+        .string()
+        .required("Nama lengkap harus diisi!")
+        .min(3, "Nama lengkap harus memiliki paling sedikit 3 karakter!")
+        .max(50, "Nama lengkap harus memiliki paling banyak 50 karakter!"),
     description: yup
         .string()
         .max(256, "Deskripsi harus memiliki paling banyak 256 karakter!"),

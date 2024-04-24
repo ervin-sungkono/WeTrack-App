@@ -7,7 +7,7 @@ import { TbBriefcaseFilled } from "react-icons/tb";
 import Button from "../../button/Button";
 import { updateProfileSchema } from "@/app/lib/schema";
 
-export default function UpdateProfileForm({initialValues, setUpdateProfile, handleUpdateProfile}) {
+export default function UpdateProfileForm({initialValues, setUpdateProfile, setProfileImageUploaded, setProfileImageUploadedURL, originalProfileImage, handleUpdateProfile}) {
     return (
         <FormikWrapper
             initialValues={initialValues}
@@ -16,6 +16,14 @@ export default function UpdateProfileForm({initialValues, setUpdateProfile, hand
             children={(formik) => (
                 <div className="overflow-auto max-w-2xl mx-auto h-full">
                     <div className="overflow-auto flex flex-col gap-4 md:gap-6">
+                        <FormikFieldIcon
+                            icon={<IoMdPerson className="text-xl md:text-2xl" />}
+                            name="fullName"
+                            label={"Nama Lengkap"}
+                            type="text"
+                            disabled={false}
+                            placeholder="Masukkan nama lengkap..."
+                        />
                         <FormikFieldIcon
                             icon={<IoIosInformationCircle className="text-xl md:text-2xl" />}
                             name="description"
@@ -54,7 +62,11 @@ export default function UpdateProfileForm({initialValues, setUpdateProfile, hand
                         <Button variant="primary" type="submit">
                             Perbarui Profil
                         </Button>
-                        <Button variant="secondary" onClick={() => setUpdateProfile(false)}>
+                        <Button variant="secondary" onClick={() => {
+                            setUpdateProfile(false)
+                            setProfileImageUploaded(null)
+                            setProfileImageUploadedURL(originalProfileImage)
+                        }}>
                             Batalkan
                         </Button>
                     </div>
