@@ -108,8 +108,8 @@ export default function HomeLayout(){
                         />
                         <FeatureCard
                             image={'/images/TimelineManagement.png'}
-                            title="Manajemen Timeline"
-                            description="WeTrack memungkinkan pengguna untuk mengelola timeline proyek dengan mudah, menawarkan representasi visual dari kemajuan proyek dan tonggak kunci, sehingga memfasilitasi perencanaan dan koordinasi yang lebih baik di antara anggota tim."
+                            title="Pengaturan Jadwal"
+                            description="WeTrack memungkinkan pengguna untuk mengelola jadwal proyek dengan mudah, menawarkan representasi visual dari kemajuan proyek dan tonggak kunci, sehingga memfasilitasi perencanaan dan koordinasi yang lebih baik di antara anggota tim."
                         />
                         <FeatureCard
                             image={'/images/CollaborativeProjectManagement.png'}
