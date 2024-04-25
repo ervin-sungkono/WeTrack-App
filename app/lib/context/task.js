@@ -1,6 +1,7 @@
 import { createContext, useState, useContext } from "react"
 import { SessionProvider } from "next-auth/react"
 import TaskDetail from "@/app/components/projects/task/TaskDetail"
+import PopUp from "@/app/components/common/alert/PopUp"
 
 const TaskContext = createContext({})
 
@@ -16,11 +17,12 @@ export const TaskProvider = ({ children }) => {
     return(
         <SessionProvider>
             <TaskContext.Provider value={{viewTask}}>
-                {selectedTaskId && <TaskDetail 
-                    taskId={selectedTaskId}
-                    open={isOpen} 
-                    closeFn={() => setOpen(false)}
-                />}
+                <PopUp open={isOpen}>
+                    <TaskDetail 
+                        taskId={selectedTaskId}
+                        closeFn={() => setOpen(false)}
+                    />
+                </PopUp>
                 {children}
             </TaskContext.Provider>
         </SessionProvider>

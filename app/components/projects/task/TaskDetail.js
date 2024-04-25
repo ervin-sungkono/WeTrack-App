@@ -2,8 +2,6 @@
 import { useEffect, useState, memo } from "react"
 import { useSession } from "next-auth/react"
 import dynamic from "next/dynamic"
-import PopUp from "../../common/alert/PopUp"
-import PopUpLoad from "../../common/alert/PopUpLoad"
 import Label from "../../common/Label"
 import UserSelectButton from "../../common/UserSelectButton"
 
@@ -14,11 +12,12 @@ import { getPriority } from "@/app/lib/string"
 import { dateFormat } from "@/app/lib/date"
 import DotButton from "../../common/button/DotButton"
 import ActivitySection from "./ActivitySection"
+import { TailSpin } from "react-loader-spinner"
 
 const AttachmentSection = dynamic(() => import("./AttachmentSection"))
 const SubtaskSection = dynamic(() => import("./SubtaskSection"))
 
-function TaskDetail({ taskId, open, closeFn }){
+function TaskDetail({ taskId, closeFn }){
     const [task, setTask] = useState()
     const [assignee, setAssignee] = useState()
     const { data: session } = useSession()
@@ -79,7 +78,7 @@ function TaskDetail({ taskId, open, closeFn }){
 
 
     useEffect(() => {
-        if(taskId && open && (!task || task.id !== taskId)){
+        if(taskId && (!task || task.id !== taskId)){
             getTaskById(taskId)
             .then(res => {
                 if(res.data){
@@ -90,74 +89,78 @@ function TaskDetail({ taskId, open, closeFn }){
                 }
             })
         }
-    }, [taskId, open, task])
+    }, [taskId, task])
 
-    if(!task || task.id !== taskId) return(<PopUpLoad/>)
+    if(!task || task.id !== taskId) return(
+        <div className="w-full h-full flex justify-center items-center">
+            <TailSpin 
+                color="#47389F"
+                height={100}
+                width={100}
+            />
+        </div>
+        
+    )
 
-    if(open){
-        return(
-            <PopUp>
-                <div className={`h-full flex flex-col gap-4 md:gap-6 px-6 py-4 md:px-8 md:py-6 bg-white text-dark-blue rounded-lg shadow-lg overflow-y-auto`}>
-                    <div className="flex items-start gap-4">
-                        <div className={`text-lg md:text-2xl font-semibold text-dark-blue flex-grow`}>
-                            {task.taskName}
-                        </div>
-                        <div className="flex items-center gap-2.5">
-                            <DotButton name={`task-detail-${taskId}`}/>
-                            <button onClick={closeFn}><CloseIcon size={32} className="text-basic-blue"/></button>
-                        </div>
-                    </div>
-                    <div className="h-full flex flex-col overflow-y-auto gap-4 md:gap-6 pr-2 -mr-2 custom-scrollbar">
-                        <div className="flex flex-col gap-3">
-                            <div className="grid grid-cols-3 gap-2">
-                                <p className="font-semibold text-xs md:text-sm">Penerima</p>
-                                <div className="col-span-2">
-                                    <UserSelectButton 
-                                        name={"assignedTo"}
-                                        type="button"
-                                        userId={session.user.uid}
-                                        placeholder={task.assignedTo}
-                                        options={userList}
-                                        onChange={(value) => setAssignee(value)}
-                                    />
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
-                                <p className="font-semibold">Penanda</p>
-                                <div className="flex flex-wrap gap-2">
-                                    <Label text={"test-label"}/>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
-                                <p className="font-semibold">Tanggal Mulai</p>
-                                <p>{dateFormat(task.startDate) ?? "Belum diatur"}</p>
-                            </div>
-                            <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
-                                <p className="font-semibold">Tenggat Waktu</p>
-                                <p>{dateFormat(task.dueDate) ?? "Belum diatur"}</p>
-                            </div>
-                            <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
-                                <p className="font-semibold">Prioritas</p>
-                                <p>{getPriority(task.priority)}</p>
-                            </div>
-                        </div>
-                        <div className="flex flex-col gap-4">
-                            <div className="flex flex-col gap-2">
-                                <p className="font-semibold text-xs md:text-sm">Deskripsi Tugas</p>
-                                {task.description ? 
-                                <p className="text-xs md:text-sm">{task.description}</p> :
-                                <p>Tambahkan deskripsi tugas..</p>}
-                            </div>
-                            <AttachmentSection attachments={attachmentList}/>
-                            <SubtaskSection subtasks={subtasks}/>
-                            <ActivitySection/>
-                        </div>
-                    </div>
-                    
+    return(
+        <div className={`h-full flex flex-col gap-4 md:gap-6 px-6 py-4 md:px-8 md:py-6 bg-white text-dark-blue rounded-lg shadow-lg overflow-y-auto`}>
+            <div className="flex items-start gap-4">
+                <div className={`text-lg md:text-2xl font-semibold text-dark-blue flex-grow`}>
+                    {task.taskName}
                 </div>
-            </PopUp>
-        )
-    }
+                <div className="flex items-center gap-2.5">
+                    <DotButton name={`task-detail-${taskId}`}/>
+                    {closeFn && <button onClick={closeFn}><CloseIcon size={32} className="text-basic-blue"/></button>}
+                </div>
+            </div>
+            <div className="h-full flex flex-col overflow-y-auto gap-4 md:gap-6 pr-2 -mr-2 custom-scrollbar">
+                <div className="flex flex-col gap-3">
+                    <div className="grid grid-cols-3 gap-2">
+                        <p className="font-semibold text-xs md:text-sm">Penerima</p>
+                        <div className="col-span-2">
+                            <UserSelectButton 
+                                name={"assignedTo"}
+                                type="button"
+                                userId={session.user.uid}
+                                placeholder={task.assignedTo}
+                                options={userList}
+                                onChange={(value) => setAssignee(value)}
+                            />
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
+                        <p className="font-semibold">Penanda</p>
+                        <div className="flex flex-wrap gap-2">
+                            <Label text={"test-label"}/>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
+                        <p className="font-semibold">Tanggal Mulai</p>
+                        <p>{dateFormat(task.startDate) ?? "Belum diatur"}</p>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
+                        <p className="font-semibold">Tenggat Waktu</p>
+                        <p>{dateFormat(task.dueDate) ?? "Belum diatur"}</p>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
+                        <p className="font-semibold">Prioritas</p>
+                        <p>{getPriority(task.priority)}</p>
+                    </div>
+                </div>
+                <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-2">
+                        <p className="font-semibold text-xs md:text-sm">Deskripsi Tugas</p>
+                        {task.description ? 
+                        <p className="text-xs md:text-sm">{task.description}</p> :
+                        <p>Tambahkan deskripsi tugas..</p>}
+                    </div>
+                    <AttachmentSection attachments={attachmentList}/>
+                    <SubtaskSection subtasks={subtasks}/>
+                    <ActivitySection/>
+                </div>
+            </div>
+        </div>
+    )
 }
 
 export default memo(TaskDetail)
