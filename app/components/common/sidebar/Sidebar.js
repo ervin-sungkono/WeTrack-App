@@ -40,7 +40,7 @@ export default function Sidebar({ project }){
             icon: <OverviewIcon size={16}/>
         },
         { 
-            label: 'Timeline',
+            label: 'Linimasa',
             url: '/timeline', 
             icon: <TimelineIcon size={16}/>
         },

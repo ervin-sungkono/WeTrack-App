@@ -99,9 +99,9 @@ export default function TeamContent(){
                     <div className="flex justify-center xs:justify-start items-center">
                         <SearchBar placeholder={"Cari anggota.."} handleSearch={handleSearch}/>
                     </div>
-                    <div className="flex flex-wrap justify-center gap-2 md:gap-4">
+                    <div className="flex flex-col md:flex-row flex-wrap justify-center gap-2 md:gap-4">
                         {editMode ? (
-                            <div className="flex gap-2 md:gap-4">
+                            <div className="flex flex-col md:flex-row gap-2 md:gap-4">
                                 <Button variant="danger" onClick={() => setEditMode(false)} outline>
                                     Batalkan Perubahan
                                 </Button>
