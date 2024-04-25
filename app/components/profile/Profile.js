@@ -2,7 +2,8 @@
 "use client"
 
 import { useSession } from "next-auth/react"
-import { IoIosInformationCircle, IoMdPin, IoMdPerson } from "react-icons/io"
+import { IoIosInformationCircle, IoMdPin } from "react-icons/io"
+import { CgProfile } from "react-icons/cg";
 import { MdEmail } from "react-icons/md"
 import { TbBriefcaseFilled } from "react-icons/tb"
 import Button from "../common/button/Button"
@@ -13,8 +14,6 @@ import ChangePasswordForm from "../common/form/profile/ChangePasswordForm"
 import DeleteAccountForm from "../common/form/profile/DeleteAccountForm"
 import UpdateProfileForm from "../common/form/profile/UpdateProfileForm"
 import { getUserProfile, updateUserProfile } from "@/app/lib/fetch/user"
-import { useRouter } from "next/navigation"
-import Image from "next/image"
 import { dateFormat } from "@/app/lib/date"
 
 export default function ProfileLayout(){
@@ -23,16 +22,12 @@ export default function ProfileLayout(){
     const [initialValues, setInitialValues] = useState({
         fullName: "",
         email: "",
-        profileImage: null,
+        // profileImage: null,
         description: "",
         jobPosition: "",
         location: "",
         createdAt: null
     })
-
-    useEffect(() => {
-        console.log(initialValues)
-    }, [initialValues])
 
     const userProfile = async () => {
         try {
@@ -44,12 +39,14 @@ export default function ProfileLayout(){
                 setInitialValues({
                     fullName: res.data.fullName,
                     email: res.data.email,
-                    profileImage: res.data.profileImage,
-                    description: res.data.description,
-                    jobPosition: res.data.jobPosition,
-                    location: res.data.location,
+                    // profileImage: res.data.profileImage || "",
+                    description: res.data.description || "",
+                    jobPosition: res.data.jobPosition || "",
+                    location: res.data.location || "",
                     createdAt: createdDate,
                 })
+                setOriginalProfileImage(res.data.profileImage?.attachmentStoragePath)
+                setProfileImageUploadedURL(res.data.profileImage?.attachmentStoragePath)
             }
         }catch(error){
             console.log(error)
@@ -65,8 +62,6 @@ export default function ProfileLayout(){
     const [changePassword, setChangePassword] = useState(false)
     const [updateProfile, setUpdateProfile] = useState(false)
     const [deleteAccount, setDeleteAccount] = useState(false)
-    const router = useRouter()
-
     const ProfileField = ({icon, label, value}) => {
         return (
             <div className="flex gap-2">
@@ -88,7 +83,9 @@ export default function ProfileLayout(){
     }
 
     const imageUploaderRef = useRef()
+    const [originalProfileImage, setOriginalProfileImage] = useState(null)
     const [profileImageUploaded, setProfileImageUploaded] = useState(null)
+    const [profileImageUploadedURL, setProfileImageUploadedURL] = useState(null)
 
     const openImageUpload = () => {
         imageUploaderRef.current.click()
@@ -96,24 +93,26 @@ export default function ProfileLayout(){
 
     const deleteImageUpload = () => {
         setProfileImageUploaded(null)
+        setProfileImageUploadedURL(null)
     }
 
     const handleImageUpload = (e) => {
         setProfileImageUploaded(e.target.files[0])
+        setProfileImageUploadedURL(URL.createObjectURL(e.target.files[0]))
     }
 
     const ProfileImageField = () => {
         return (
             <div className="flex gap-3">
                 <div>
-                    <IoMdPerson className="text-xl md:text-2xl" />
+                    <CgProfile className="text-xl md:text-2xl" />
                 </div>
                 <div className="flex flex-col gap-1 w-full">
                     <label htmlFor="profileImage" className="block font-semibold text-xs md:text-sm text-dark-blue">
                         Foto Profil
                     </label>
                     <div className="relative flex items-center">
-                        <Button variant="danger" outline onClick={deleteImageUpload} disabled={!profileImageUploaded}>
+                        <Button variant="danger" outline onClick={deleteImageUpload} disabled={profileImageUploadedURL === null}>
                             Hapus Foto Profil
                         </Button>
                     </div>
@@ -131,9 +130,12 @@ export default function ProfileLayout(){
         setError(false);
         setLoading(true);
         const formData = new FormData()
+        formData.enctype = "multipart/form-data"
         formData.append("fullName", values.fullName)
         formData.append("email", values.email)
-        formData.append("profileImage", profileImageUploaded)
+        if(profileImageUploaded !== null){
+            formData.append("profileImage", profileImageUploaded)
+        }
         formData.append("description", values.description)
         formData.append("jobPosition", values.jobPosition)
         formData.append("location", values.location)
@@ -143,7 +145,7 @@ export default function ProfileLayout(){
                 setError(true);
                 console.log(JSON.parse(res.error).errors)
             }else{
-                router.refresh()
+                location.reload()
             }
         }catch(error){
             setError(true);
@@ -168,34 +170,35 @@ export default function ProfileLayout(){
                 <div className="h-[200px] md:h-[260px]"> 
                     <div className="h-[100px] md:h-[140px] bg-gradient-to-r from-basic-blue to-light-blue w-full">
                         <div className="flex items-center justify-center pt-12 md:pt-16">
-                            <div className="relative cursor-pointer" onClick={openImageUpload}>
-                                {profileImageUploaded !== null ? (
-                                    <Image
-                                        src={URL.createObjectURL(profileImageUploaded)}
-                                        alt={initialValues.fullName}
-                                        width={112}
-                                        height={112}
-                                        className="rounded-full border-4 border-white hover:opacity-75"
-                                    />
-                                ) : (
-                                    <div className="hover:opacity-75">
+                            {updateProfile ? (
+                                <div className="group relative">
+                                    <div className="group-hover:brightness-50 cursor-pointer" onClick={openImageUpload}>
                                         <UserIcon
                                             fullName={initialValues.fullName}
-                                            src={initialValues.profileImage}
+                                            src={profileImageUploadedURL}
                                             size="profile"
                                         />
                                     </div>
-                                )}
-                                <input
-                                    type="file"
-                                    accept="image/png, image/jpeg, image/jpg"
-                                    id="profileImage"
-                                    name="profileImage"
-                                    ref={imageUploaderRef}
-                                    onChange={handleImageUpload}
-                                    className="hidden"
-                                />
-                            </div>
+                                    <div className="hidden group-hover:block absolute top-9 text-center text-white cursor-pointer" onClick={openImageUpload}>Ganti Foto Profil</div>
+                                    <input
+                                        type="file"
+                                        accept="image/png, image/jpeg, image/jpg"
+                                        id="profileImage"
+                                        name="profileImage"
+                                        ref={imageUploaderRef}
+                                        onChange={handleImageUpload}
+                                        className="hidden"
+                                    />
+                                </div>
+                            ) : (
+                                <div>
+                                    <UserIcon
+                                        fullName={initialValues.fullName}
+                                        src={profileImageUploadedURL}
+                                        size="profile"
+                                    />
+                                </div>
+                            )}
                         </div>
                         <div className="text-center my-4">
                             <p className="text-lg md:text-xl font-bold leading-5">{initialValues.fullName}</p>
@@ -206,11 +209,14 @@ export default function ProfileLayout(){
                 <div className="mt-8 container flex-grow flex flex-col justify-center"> 
                     <div className="overflow-auto">
                         {updateProfile && (
-                            <div className="flex flex-col gap-8 max-w-2xl m-auto">
+                            <div className="flex flex-col gap-4 max-w-2xl m-auto">
                                 <ProfileImageField />
                                 <UpdateProfileForm 
                                     initialValues={initialValues} 
-                                    setUpdateProfile={setUpdateProfile} 
+                                    setUpdateProfile={setUpdateProfile}
+                                    setProfileImageUploaded={setProfileImageUploaded}
+                                    setProfileImageUploadedURL={setProfileImageUploadedURL} 
+                                    originalProfileImage={originalProfileImage}
                                     handleUpdateProfile={handleUpdateProfile} 
                                 />
                             </div>
@@ -221,22 +227,22 @@ export default function ProfileLayout(){
                                     <ProfileField
                                         icon={<IoIosInformationCircle className="text-lg md:text-xl"/>}
                                         label={"Deskripsi"}
-                                        value={"Belum ada deskripsi."}
+                                        value={initialValues.description}
                                     />
                                     <ProfileField
                                         icon={<MdEmail className="text-lg md:text-xl"/>}
                                         label={"Email"}
-                                        value={session.user.email}
+                                        value={initialValues.email}
                                     />
                                     <ProfileField
                                         icon={<TbBriefcaseFilled className="text-lg md:text-xl"/>}
                                         label={"Posisi Pekerjaan"}
-                                        value={"Belum ada posisi pekerjaan."}
+                                        value={initialValues.jobPosition}
                                     />
                                     <ProfileField
                                         icon={<IoMdPin className="text-lg md:text-xl"/>}
                                         label={"Lokasi"}
-                                        value={"Belum ada lokasi."}
+                                        value={initialValues.location}
                                     />
                                 </div>
                                 <div className="mt-4 md:mt-6 text-center xs:text-left">

@@ -5,10 +5,10 @@ import { listDateFormat } from "@/app/lib/date"
 export default function NotificationsItem({type, task, user, project, oldRole, newRole, createdAt}){
     return (
         <div className="w-full bg-white flex justify-between items-center px-4 py-2 rounded shadow-sm">
-            <div className="text-md">
+            <div className="w-7/10 md:w-3/4 text-xs md:text-md">
                 {type === 1 && (
                     <>
-                        Anda diberikan tugas <Link href={`#`} className="font-bold text-basic-blue">{task}</Link> dalam proyek <Link href={`#`} className="font-bold text-basic-blue">{project}</Link>
+                        Anda diberikan tugas <Link href={`#`} className="text-xs md:text-md font-bold text-basic-blue">{task}</Link> dalam proyek <Link href={`#`} className="font-bold text-basic-blue">{project}</Link>
                     </>   
                 )}
                 {type === 2 && (
@@ -18,10 +18,10 @@ export default function NotificationsItem({type, task, user, project, oldRole, n
                         </div>
                         <div>
                             <div>
-                                <Link href={`#`} className="font-bold text-basic-blue">{user}</Link> membuat komentar pada tugas Anda <Link href={`#`} className="font-bold text-basic-blue">{task}</Link> dalam proyek <Link href={`#`} className="font-bold text-basic-blue">{project}</Link>
+                                <Link href={`#`} className="text-xs md:text-md font-bold text-basic-blue">{user}</Link> membuat komentar pada tugas Anda <Link href={`#`} className="font-bold text-basic-blue">{task}</Link> dalam proyek <Link href={`#`} className="font-bold text-basic-blue">{project}</Link>
                             </div>
                             <div>
-                                <Link href={`#`} className="text-basic-blue">Lihat Komentar</Link>
+                                <Link href={`#`} className="text-xs md:text-md text-basic-blue">Lihat Komentar</Link>
                             </div>
                         </div>
                     </div>
@@ -33,21 +33,21 @@ export default function NotificationsItem({type, task, user, project, oldRole, n
                         </div>
                         <div>
                             <div>
-                                <Link href={`#`} className="font-bold text-basic-blue">{user}</Link> menyebut Anda dalam komentarnya pada tugas <span className="font-bold text-basic-blue">{task}</span> dalam proyek <span className="font-bold text-basic-blue">{project}</span>
+                                <Link href={`#`} className="text-xs md:text-md font-bold text-basic-blue">{user}</Link> menyebut Anda dalam komentarnya pada tugas <span className="text-xs md:text-md font-bold text-basic-blue">{task}</span> dalam proyek <span className="text-xs md:text-md font-bold text-basic-blue">{project}</span>
                             </div>
                             <div>
-                                <Link href={`#`} className="text-basic-blue">Lihat Balasan</Link>
+                                <Link href={`#`} className="text-xs md:text-md text-basic-blue">Lihat Balasan</Link>
                             </div>
                         </div>
                     </div>
                 )}
                 {type === 4 && (
                     <>
-                        Peran Anda dalam proyek <Link href={`#`} className="font-bold text-basic-blue">{project}</Link> telah diubah dari <span className="font-bold">{oldRole}</span> menjadi <span className="font-bold">{newRole}</span>
+                        Peran Anda dalam proyek <Link href={`#`} className="text-xs md:text-md font-bold text-basic-blue">{project}</Link> telah diubah dari <span className="text-xs md:text-md font-bold">{oldRole}</span> menjadi <span className="text-xs md:text-md font-bold">{newRole}</span>
                     </>
                 )}
             </div>
-            <div className="text-sm">
+            <div className="w-3/10 md:w-1/4 text-xs md:text-sm text-right">
                 {listDateFormat(createdAt)}
             </div>
         </div>

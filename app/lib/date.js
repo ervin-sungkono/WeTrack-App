@@ -5,7 +5,7 @@ export const dateFormat = (date, includeTime = false) => {
     if(date === null || date === undefined){
         return null
     }else{
-        if(typeof date === "string"){ //ISO String
+        if(typeof date === "string" || typeof date === "object"){ //ISO String
             return moment(date).format(formatString)
         }else if(typeof date === "number"){ //Timestamp
             return moment.unix(date).format(formatString)

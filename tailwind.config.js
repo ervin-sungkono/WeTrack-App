@@ -29,6 +29,7 @@ const config = {
         'danger-red': '#FF594E',
         'warning-yellow': '#E3D55B',
         'success-green': '#4CAF50',
+        'dark-gray': '#ECECEC'
       },
       zIndex:{
         'fixed': 9999

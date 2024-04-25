@@ -1,17 +1,9 @@
-import Header from "../components/common/Header";
-import DashboardLayout from "../components/layout/DashboardLayout";
+import Dashboard from "../components/dashboard/Dashboard";
 
 export default function DashboardPage(){
-    const links = [
-        {label: "Beranda", url: "/"},
-        {label: "Dasbor", url: "/dashboard"},
-    ]
-
     return(
-        <DashboardLayout hideMenu={false}>
-            <div className="flex flex-col gap-4">
-                <Header title={"Dasbor"} links={links}/>
-            </div>
-        </DashboardLayout>
+        <div>
+            <Dashboard />
+        </div>
     )
 }

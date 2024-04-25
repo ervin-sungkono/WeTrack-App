@@ -100,7 +100,7 @@ export async function PUT(request, response){
         
         let uploadedImageUrl = currentData.profileImage;
         if (profileImage) {
-            if(currentData.profileImage.attachmentStoragePath){
+            if(currentData?.profileImage?.attachmentStoragePath){
                 const deletedFile = await deleteExistingFile(`/profileImages/${userId}/${currentData.profileImage.originalFileName}`)
 
                 console.log("deletedFile", deletedFile)
