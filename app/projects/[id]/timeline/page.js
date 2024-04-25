@@ -11,7 +11,7 @@ export default function TimelinePage({ params: { id } }){
 
     return(
         <ProjectLayout projectId={id}>
-            <Header title={"Linimasa"} links={links}/>
+            <Header title={"Jadwal"} links={links}/>
             <TimelineContent />
         </ProjectLayout>
     )
