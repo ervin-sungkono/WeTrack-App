@@ -69,7 +69,7 @@ export default function ProjectInformation({prevFormStep}){
                 <Image
                     width={280}
                     height={280}
-                    src={"/CompletedState.svg"}
+                    src={"/images/CompletedState.svg"}
                     alt="completed"
                 />
                 <p className="text-dark-blue/80 text-sm md:text-base text-center font-semibold">

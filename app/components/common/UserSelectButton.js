@@ -44,7 +44,7 @@ export default function UserSelectButton({ name, type = "default", userId, place
                 onClick={(e) => e.stopPropagation()}
             >
                 {(loaded || placeholder) && <div className="flex flex-grow gap-2 items-center">
-                    <UserIcon size="sm" fullName={placeholder?.fullName ?? selected.fullName} src={placeholder ? placeholder?.profileImage : (selected.fullName ? selected.profileImage : '/user-placeholder.png')}/>
+                    <UserIcon size="sm" fullName={placeholder?.fullName ?? selected.fullName} src={placeholder ? placeholder?.profileImage : (selected.fullName ? selected.profileImage : '/images/user-placeholder.png')}/>
                 </div>}
             </button>
             <div id={name} className="z-50 hidden bg-white divide-y divide-gray-100 rounded-md border border-dark-blue/30 w- md:w-64">
@@ -56,7 +56,7 @@ export default function UserSelectButton({ name, type = "default", userId, place
                         >
                             <div className="flex flex-grow gap-2 items-center">
                                 <div className="flex-shrink-0">
-                                    <UserIcon size="sm" src={"/user-placeholder.png"}/>
+                                    <UserIcon size="sm" src={"/images/user-placeholder.png"}/>
                                 </div>
                                 <p className="text-start flex-grow truncate text-xs md:text-sm">Belum ditugaskan</p>
                             </div>
@@ -97,7 +97,7 @@ export default function UserSelectButton({ name, type = "default", userId, place
                 onClick={(e) => e.stopPropagation()}
             >
                 {(loaded || placeholder) && <div className="flex flex-grow gap-2 items-center">
-                    <UserIcon size="sm" fullName={placeholder?.fullName ?? selected.fullName} src={placeholder ? placeholder?.profileImage : (selected.fullName ? selected.profileImage : '/user-placeholder.png')}/>
+                    <UserIcon size="sm" fullName={placeholder?.fullName ?? selected.fullName} src={placeholder ? placeholder?.profileImage : (selected.fullName ? selected.profileImage : '/images/user-placeholder.png')}/>
                     <p className="text-start flex-grow truncate text-xs md:text-sm">{placeholder?.fullName ?? selected.fullName ?? "Belum ditugaskan"}</p>
                 </div>}
             </button>
@@ -110,7 +110,7 @@ export default function UserSelectButton({ name, type = "default", userId, place
                         >
                             <div className="flex flex-grow gap-2 items-center">
                                 <div className="flex-shrink-0">
-                                    <UserIcon size="sm" src={"/user-placeholder.png"}/>
+                                    <UserIcon size="sm" src={"/images/user-placeholder.png"}/>
                                 </div>
                                 <p className="text-start flex-grow truncate text-xs md:text-sm">Belum ditugaskan</p>
                             </div>
@@ -158,7 +158,7 @@ export default function UserSelectButton({ name, type = "default", userId, place
                 onClick={(e) => e.stopPropagation()}
             >
                 {(loaded || placeholder) && <div className="flex flex-grow gap-2 items-center">
-                    <UserIcon size="sm" fullName={placeholder?.fullName ?? selected.fullName} src={placeholder ? placeholder?.profileImage : (selected.fullName ? selected.profileImage : '/user-placeholder.png')}/>
+                    <UserIcon size="sm" fullName={placeholder?.fullName ?? selected.fullName} src={placeholder ? placeholder?.profileImage : (selected.fullName ? selected.profileImage : '/images/user-placeholder.png')}/>
                     <p className="text-start flex-grow truncate text-xs md:text-sm">{placeholder?.fullName ?? selected.fullName ?? "Belum ditugaskan"}</p>
                 </div>}
                 {!disabled && <DropdownIcon size={16}/>}
@@ -172,7 +172,7 @@ export default function UserSelectButton({ name, type = "default", userId, place
                         >
                             <div className="flex flex-grow gap-2 items-center">
                                 <div className="flex-shrink-0">
-                                    <UserIcon size="sm" src={"/user-placeholder.png"}/>
+                                    <UserIcon size="sm" src={"/images/user-placeholder.png"}/>
                                 </div>
                                 <p className="text-start flex-grow truncate text-xs md:text-sm">Belum ditugaskan</p>
                             </div>
