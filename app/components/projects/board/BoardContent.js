@@ -10,8 +10,8 @@ import { RevolvingDot } from "react-loader-spinner"
 
 import { IoFilter as FilterIcon } from "react-icons/io5"
 import { FiPlus as PlusIcon } from "react-icons/fi"
-import { useSessionStorage } from "usehooks-ts"
 import { createNewTask, getAllTask } from "@/app/lib/fetch/task"
+import { getAllTaskStatus } from "@/app/lib/fetch/taskStatus"
 import DotButton from "../../common/button/DotButton"
 
 const reorder = (list, startIndex, endIndex) => {
@@ -36,15 +36,14 @@ const move = (source, destination, droppableSource, droppableDestination) => {
   return result;
 }
 
-export default function BoardContent() {
+export default function BoardContent({ projectId }){
   const [loading, setLoading] = useState(true)
   const [isCreatingTask, setCreatingTask] = useState(false)
   const [isCreatingList, setCreatingList] = useState(false)
   const [state, setState] = useState(null);
+  const [taskStatuses, setTaskStatus] = useState([])
   const [query, setQuery] = useState("")
   const [filterDropdown, setFilterDropdown] = useState(false)
-  const [project, _] = useSessionStorage("project")
-  const [projectId, setProjectId] = useState()
   const [activeStatusId, setActiveStatusId] = useState()
 
   const showTaskCard = (statusId) => {
@@ -60,7 +59,7 @@ export default function BoardContent() {
     
     createNewTask({
       taskName, 
-      projectId: project.id, 
+      projectId: projectId, 
       statusId: activeStatusId
     }).then(res => {
       if(res.data){
@@ -89,24 +88,29 @@ export default function BoardContent() {
   }
 
   useEffect(() => {
-    if(project && project.id !== projectId){
+    if(projectId){
       setLoading(true)
-      getAllTask(project.id).then(res => {
-        if(res.data) {
-          setState(project.taskStatusList
-            .map(taskStatus => ({
-              ...taskStatus,
-              content: res.data?.filter(task => task.status.id === taskStatus.id) ?? []
-            })
-          ))
-          setProjectId(project.id)
+      getAllTaskStatus(projectId).then(res => {
+        if(res.data){
+          setTaskStatus(res.data)
+          getAllTask(projectId).then(res2 => {
+            if(res2.data) {
+              setState(res.data.map(taskStatus => ({
+                  ...taskStatus,
+                  content: res2.data?.filter(task => task.status.id === taskStatus.id) ?? []
+                })
+              ))
+            }
+            else alert("Gagal memperoleh data tugas")
+          })
         }
-        else alert("Gagal memperoleh data tugas")
-
+        else{
+          alert("Gagal memperoleh data status tugas")
+        }
         setLoading(false)
       })
     }
-  }, [project, projectId])
+  }, [projectId])
 
   const handleSearch = (query) => {
     setQuery(query.toLowerCase())
@@ -155,10 +159,6 @@ export default function BoardContent() {
               <SelectButton 
                   name={"assignee-button"}
                   placeholder={"Penerima"}
-              />
-              <SelectButton 
-                  name={"epic-button"}
-                  placeholder={"Epic"}
               />
               <SelectButton 
                   name={"label-button"}

@@ -14,9 +14,8 @@ export default function BoardPage({ params: { id } }){
     return(
         <ProjectLayout projectId={id}>
             <Header title={"Papan"} links={links}/>
-            {/* TODO: Develop Board untuk Board Page */}
             <TaskProvider>
-                <BoardContent/>
+                <BoardContent projectId={id}/>
             </TaskProvider>
         </ProjectLayout>
     )

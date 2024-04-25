@@ -1,4 +1,4 @@
-export default function PopUp({size = 'default', children}) {
+export default function PopUp({size = 'default', children, open = true}) {
     const getSizeClass = () => {
         switch(size){
             case 'small':
@@ -8,7 +8,7 @@ export default function PopUp({size = 'default', children}) {
         }
     }
     return (
-        <div className="fixed flex justify-center items-center top-0 left-0 w-full h-full z-[10000] bg-black/50">
+        <div className={`fixed ${open ? "flex" : "hidden"} justify-center items-center top-0 left-0 w-full h-full z-[10000] bg-black/50`}>
             <div className={`w-full ${getSizeClass()} h-full max-h-[80vh] px-6 overflow-y-auto`}>
                 {children}
             </div>

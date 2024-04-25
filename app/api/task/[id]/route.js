@@ -15,15 +15,22 @@ export async function GET(request, context) {
         }
 
         const taskSnap = await getDoc(taskRef);
-        const taskData = taskSnap.data()
+        
+        if(taskSnap.exists()){
+            const taskData = taskSnap.data()
+            return NextResponse.json({
+                data: {
+                    id: taskSnap.id,
+                    ...taskData
+                },
+                message: "Successfully get Task detail"
+            }, { status: 200 })
+        }
 
         return NextResponse.json({
-            data: {
-                id: taskSnap.id,
-                ...taskData
-            },
-            message: "Successfully get Task detail"
-        }, { status: 200 })
+            data: null,
+            message: "Fail to get task detail"
+        }, { status: 404 })
 
     } catch (error) {
         console.error("Cannot get tasks in project", error);
