@@ -31,7 +31,7 @@ export async function GET(request, response, context) {
         querySnapshot.forEach(doc => {
             taskStatuses.push({
                 id: doc.id,
-                taskStatus: doc.data().status
+                status: doc.data().status
             })
             return taskStatuses
         })
