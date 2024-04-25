@@ -1,6 +1,5 @@
 "use client"
 import { useEffect, useState, memo } from "react"
-import { useSession } from "next-auth/react"
 import dynamic from "next/dynamic"
 import Label from "../../common/Label"
 import UserSelectButton from "../../common/UserSelectButton"
@@ -17,10 +16,12 @@ import { TailSpin } from "react-loader-spinner"
 const AttachmentSection = dynamic(() => import("./AttachmentSection"))
 const SubtaskSection = dynamic(() => import("./SubtaskSection"))
 
-function TaskDetail({ taskId, closeFn }){
-    const [task, setTask] = useState()
+function TaskDetail({ taskId, taskData, closeFn }){
+    const [task, setTask] = useState(taskData)
+    const [loading, setLoading] = useState(false)
     const [assignee, setAssignee] = useState()
-    const { data: session } = useSession()
+
+    console.log(taskData)
 
     const userList = [
         {
@@ -78,29 +79,39 @@ function TaskDetail({ taskId, closeFn }){
 
 
     useEffect(() => {
-        if(taskId && (!task || task.id !== taskId)){
+        if(taskId && (!task || (task && task.id !== taskId))){
+            setLoading(true)
             getTaskById(taskId)
             .then(res => {
                 if(res.data){
                     setTask(res.data)
                 }
                 else{
-                    alert("Gagal mengambil data tugas")
+                    setTask(null)
                 }
+                setLoading(false)
             })
         }
     }, [taskId, task])
 
-    if(!task || task.id !== taskId) return(
-        <div className="w-full h-full flex justify-center items-center">
+    if(loading) return(
+        <div className="w-full h-full flex flex-col gap-4 justify-center items-center">
             <TailSpin 
                 color="#47389F"
                 height={100}
                 width={100}
             />
+            <p className="text-sm md:text-base">Memuat data tugas..</p>
         </div>
-        
     )
+
+    if(!task){
+        return (
+            <div className="w-full h-full flex justify-center items-center">
+                <p className="text-sm md:text-base text-dark-blue/80">Tugas tidak dapat ditemukan..</p>
+            </div>
+        )
+    }
 
     return(
         <div className={`h-full flex flex-col gap-4 md:gap-6 px-6 py-4 md:px-8 md:py-6 bg-white text-dark-blue rounded-lg shadow-lg overflow-y-auto`}>
@@ -121,7 +132,6 @@ function TaskDetail({ taskId, closeFn }){
                             <UserSelectButton 
                                 name={"assignedTo"}
                                 type="button"
-                                userId={session.user.uid}
                                 placeholder={task.assignedTo}
                                 options={userList}
                                 onChange={(value) => setAssignee(value)}

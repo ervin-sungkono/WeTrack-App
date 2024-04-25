@@ -161,10 +161,6 @@ export default function BoardContent({ projectId }){
                   placeholder={"Penerima"}
               />
               <SelectButton 
-                  name={"epic-button"}
-                  placeholder={"Epic"}
-              />
-              <SelectButton 
                   name={"label-button"}
                   placeholder={"Label"}
               />
