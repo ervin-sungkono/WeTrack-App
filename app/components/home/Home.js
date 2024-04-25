@@ -80,7 +80,7 @@ export default function HomeLayout(){
                     </a>
                 </div>
                 <div>
-                    <Image src={'/WelcomePicture.png'} alt="WeTrack" width={600} height={600} priority/>
+                    <Image src={'/images/WelcomePicture.png'} alt="WeTrack" width={600} height={600} priority/>
                 </div>
             </div>
             <div className="bg-light-blue py-4 md:py-6 lg:py-8 container text-center lg:text-left">
@@ -102,17 +102,17 @@ export default function HomeLayout(){
                     </div> 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 xl:gap-8 mt-4 lg:mt-8 w-full md:w-3/5 xl:w-5/6 lg:w-full">
                         <FeatureCard 
-                            image={'/AIPoweredAssistance.png'}
+                            image={'/images/AIPoweredAssistance.png'}
                             title="Bantuan AI"
                             description="WeTrack menggunakan bantuan kecerdasan buatan untuk membantu pengguna dalam membuat tugas dengan efisien, memanfaatkan algoritma cerdas untuk mempercepat proses manajemen tugas dan meningkatkan produktivitas."
                         />
                         <FeatureCard
-                            image={'/TimelineManagement.png'}
-                            title="Manajemen Linimasa"
-                            description="WeTrack memungkinkan pengguna untuk mengelola linimasa proyek dengan mudah, menawarkan representasi visual dari kemajuan proyek dan tonggak kunci, sehingga memfasilitasi perencanaan dan koordinasi yang lebih baik di antara anggota tim."
+                            image={'/images/TimelineManagement.png'}
+                            title="Manajemen Timeline"
+                            description="WeTrack memungkinkan pengguna untuk mengelola timeline proyek dengan mudah, menawarkan representasi visual dari kemajuan proyek dan tonggak kunci, sehingga memfasilitasi perencanaan dan koordinasi yang lebih baik di antara anggota tim."
                         />
                         <FeatureCard
-                            image={'/CollaborativeProjectManagement.png'}
+                            image={'/images/CollaborativeProjectManagement.png'}
                             title="Manajemen Proyek Kolaboratif"
                             description="WeTrack menawarkan kolaborasi di antara anggota tim dengan menyediakan platform terpusat untuk manajemen proyek, memungkinkan pengguna untuk berkolaborasi  dalam waktu nyata, membagikan pembaruan, dan menangani masalah dengan cepat."
                         />

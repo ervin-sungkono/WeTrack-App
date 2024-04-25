@@ -50,14 +50,14 @@ function TaskDetail({ taskId, open, closeFn }){
     const attachmentList = [
         { 
             id: 'A1023',
-            attachmentName: "AIPoweredAssistance.png",
-            attachmentLocation: "http://localhost:3000/AIPoweredAssistance.png",
+            attachmentName: "images/AIPoweredAssistance.png",
+            attachmentLocation: "http://localhost:3000/images/AIPoweredAssistance.png",
             createdAt: new Date().toISOString(),
         },
         { 
             id: 'A1024',
-            attachmentName: "CompletedState.png",
-            attachmentLocation: "http://localhost:3000/CompletedState.png",
+            attachmentName: "images/CompletedState.png",
+            attachmentLocation: "http://localhost:3000/images/CompletedState.png",
             createdAt: new Date("04-16-2024").toISOString(),
         }
     ]
