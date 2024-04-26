@@ -17,11 +17,9 @@ const AttachmentSection = dynamic(() => import("./AttachmentSection"))
 const SubtaskSection = dynamic(() => import("./SubtaskSection"))
 
 function TaskDetail({ taskId, taskData, closeFn }){
-    const [task, setTask] = useState(taskData)
+    const [task, setTask] = useState()
     const [loading, setLoading] = useState(false)
     const [assignee, setAssignee] = useState()
-
-    console.log(taskData)
 
     const userList = [
         {
@@ -79,6 +77,7 @@ function TaskDetail({ taskId, taskData, closeFn }){
 
 
     useEffect(() => {
+        if(taskData) setTask(taskData)
         if(taskId && (!task || (task && task.id !== taskId))){
             setLoading(true)
             getTaskById(taskId)
@@ -92,7 +91,7 @@ function TaskDetail({ taskId, taskData, closeFn }){
                 setLoading(false)
             })
         }
-    }, [taskId, task])
+    }, [taskId, task, taskData])
 
     if(loading) return(
         <div className="w-full h-full flex flex-col gap-4 justify-center items-center">

@@ -10,6 +10,8 @@ export default function TasksPage({ params: { id }, searchParams: { taskId } }){
         { url: `/projects/${id}`, label: "Nama Proyek" }
     ]
 
+    console.log(taskId)
+    
     return(
         <ProjectLayout projectId={id}>
             <Header title={"Tugas"} links={links}/>

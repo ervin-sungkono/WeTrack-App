@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react"
 
 import TaskDetail from "../projects/task/TaskDetail"
+import TaskList from "./TaskList"
 import SearchBar from "../common/SearchBar"
 import SelectButton from "../common/button/SelectButton"
 
@@ -9,10 +10,10 @@ import { IoFilter as FilterIcon } from "react-icons/io5"
 import { getAllTask } from "@/app/lib/fetch/task"
 
 export default function TaskContent({ projectId, taskId }){
-    const [selectedTaskId, setSelectedTaskId] = useState(taskId)
     const [query, setQuery] = useState("")
     const [filterDropdown, setFilterDropdown] = useState(false)
     const [tasks, setTasks] = useState([])
+    const [taskData, setTaskData] = useState()
 
     const handleSearch = (query) => {
         setQuery(query.toLowerCase())
@@ -24,8 +25,8 @@ export default function TaskContent({ projectId, taskId }){
                 .then(res => {
                     if(res.data){
                         setTasks(res.data)
-                        if(!selectedTaskId){
-                            setSelectedTaskId(res.data)
+                        if(!taskId){
+                            setTaskData(res.data[0])
                         }
                     }
                     else{
@@ -33,7 +34,7 @@ export default function TaskContent({ projectId, taskId }){
                     }
                 })
         }
-    }, [projectId, selectedTaskId])
+    }, [projectId, taskId])
 
     return(
         <div className="w-full h-full flex flex-col gap-4 overflow-y-auto">
@@ -62,8 +63,8 @@ export default function TaskContent({ projectId, taskId }){
                 </div>
             </div>
             <div className="h-full flex gap-4 overflow-y-auto">
-                <div className="w-[298px] bg-gray-200">Test</div>
-                <TaskDetail taskId={selectedTaskId} taskData={tasks.find(task => task.id === selectedTaskId)}/>
+                <TaskList tasks={tasks}/>
+                <TaskDetail taskId={taskId} taskData={taskData}/>
             </div>
         </div>
     )
