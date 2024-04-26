@@ -1,14 +1,10 @@
-export const stringToColour = function(str) {
-    var hash = 0;
-    for (var i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    var colour = '#';
-    for (var i = 0; i < 3; i++) {
-        var value = (hash >> (i * 8)) & 0xFF;
-        colour += ('00' + value.toString(16)).slice(-2);
-    }
-    return colour;
+export const stringToColour = (string, saturation = 100, lightness = 30) => {
+  let hash = 0;
+  for (let i = 0; i < string.length; i++) {
+      hash = string.charCodeAt(i) + ((hash << 5) - hash);
+      hash = hash & hash;
+  }
+  return `hsl(${(hash % 360)}, ${saturation}%, ${lightness}%)`;
 }
 
 export function pickTextColorBasedOnBgColor(bgColor, lightColor = '#FFFFFF', darkColor = '#2B2B2B') {
