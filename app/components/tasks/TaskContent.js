@@ -63,7 +63,7 @@ export default function TaskContent({ projectId, taskId }){
                 </div>
             </div>
             <div className="h-full flex gap-4 overflow-y-auto">
-                <TaskList tasks={tasks}/>
+                <TaskList tasks={tasks} taskId={taskId}/>
                 <TaskDetail taskId={taskId} taskData={taskData}/>
             </div>
         </div>
