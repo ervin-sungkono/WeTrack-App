@@ -25,3 +25,25 @@ export const priorityList = [
 export const getPriority = (priority) => {
     return priorityList[priority].label
 }
+
+export const extractUniqueMentionTags = (text) => {
+    const pattern = /@\[([^[\]]+)]\(([^)]+)\)/g
+    const dataArray = []
+
+    // Extract Mention tags
+    let match;
+    while ((match = pattern.exec(text)) !== null) {
+        const obj = {
+            name: match[1],
+            id: match[2]
+        };
+        dataArray.push(obj);
+    }
+    
+    // Get Unique Mention Tags
+    const seen = new Set();
+    return dataArray.filter(obj => {
+        const value = obj.id;
+        return seen.has(value) ? false : seen.add(value);
+    });
+}
