@@ -66,15 +66,9 @@ export async function POST(request, response) {
         const docRef = await addDoc(collection(db, 'projects'), {
             key: key,
             projectName: projectName,
-            createdBy: {
-                id: user.id,
-                fullName,
-                profileImage
-            },
+            createdBy: user.id,
             startStatus: null,
             endStatus: null,
-            taskList: [],
-            team: null,
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
             deletedAt: null
@@ -84,24 +78,39 @@ export async function POST(request, response) {
         let startStatusId, endStatusId;
         let taskStatusList = []; 
 
-        for (const status of statuses) {
+        for (let i = 0; i < statuses.length; i++){
             const statusDocRef = await addDoc(collection(db, 'taskStatuses'), {
-                status: status,
+                statusName: statuses[i],
                 projectId: docRef.id,
-                tasks: [],
+                order: i+1,
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
                 deletedAt: null
             });
 
-            taskStatusList.push({ id: statusDocRef.id, status: status });
-
-            if (status === 'To Do') {
+            if (statuses[i] === 'To Do') {
                 startStatusId = statusDocRef.id;
-            } else if (status === 'Done') {
+            } else if (statuses[i] === 'Done') {
                 endStatusId = statusDocRef.id;
             }
         }
+
+        // for (const status of statuses) {
+        //     const statusDocRef = await addDoc(collection(db, 'taskStatuses'), {
+        //         statusName: status,
+        //         projectId: docRef.id,
+        //         order: ,
+        //         createdAt: serverTimestamp(),
+        //         updatedAt: serverTimestamp(),
+        //         deletedAt: null
+        //     });
+
+        //     if (status === 'To Do') {
+        //         startStatusId = statusDocRef.id;
+        //     } else if (status === 'Done') {
+        //         endStatusId = statusDocRef.id;
+        //     }
+        // }
 
         const usersRef = collection(db, 'users')
         

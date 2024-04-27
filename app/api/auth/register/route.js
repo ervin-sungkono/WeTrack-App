@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth, db } from "@/app/firebase/config";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
+import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from "firebase/auth"
 import { setDoc, collection, doc, serverTimestamp } from "firebase/firestore";
 
 export async function POST(request) {
@@ -8,6 +8,13 @@ export async function POST(request) {
         const { fullName, email, password } = await request.json();
 
         const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+
+        await sendEmailVerification(auth.currentUser)
+            .then(() => {
+                console.log("Email sent")
+            }).catch((err) => {
+                console.log("Error when sending email")
+            })
 
         await updateProfile(auth.currentUser, { displayName: fullName })
         console.log("auth", auth.currentUser)

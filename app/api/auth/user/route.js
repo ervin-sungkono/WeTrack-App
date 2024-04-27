@@ -73,25 +73,26 @@ export async function PUT(request, response){
 
         const formData = await request.formData() 
         const fullName = formData.get('fullName')
-        const email = formData.get('email')
         const jobPosition = formData.get('jobPosition')
         const location = formData.get('location')
         const profileImage = formData.get('profileImage')
         const imageSize = 2 * 1024 * 1024 
         console.log(profileImage)
 
-        if(!(profileImage.type === 'image/png' || profileImage.type === 'image/jpeg' || profileImage.type === 'image/jpg')){
-            return NextResponse.json({
-                message: "Only allowed png/jpg/jpeg format"
-            }, { status: 400 })
+        if(profileImage){
+            if(!(profileImage.type === 'image/png' || profileImage.type === 'image/jpeg' || profileImage.type === 'image/jpg')){
+                return NextResponse.json({
+                    message: "Only allowed png/jpg/jpeg format"
+                }, { status: 400 })
+            }
+    
+            if(profileImage.size > imageSize){
+                return NextResponse.json({
+                    message: "Please compress your file, maximum 2mb"
+                }, { status: 400 })
+            }
         }
 
-        if(profileImage.size > imageSize){
-            return NextResponse.json({
-                message: "Please compress your file, max 2mb"
-            }, { status: 400 })
-        }
-        
         const userDocRef = doc(db, 'users', userId)
         const userDoc = await getDoc(userDocRef)
         const currentData = userDoc.data()
@@ -165,3 +166,28 @@ export async function PUT(request, response){
     }
 }
 
+export async function DELETE(request, response){
+    try {
+        const session = await getUserSession(request, response, nextAuthOptions);
+        if (!session.user) {
+            return NextResponse.json({ 
+                message: "Unauthorized, must login first" 
+            }, { status: 401 });
+        }
+
+        const userId = session.user.uid;
+        if (!userId) {
+            return NextResponse.json({ 
+                message: "User not found" 
+            }, { status: 404 });
+        }
+
+
+
+    } catch (error) {
+        return NextResponse.json({
+            data: null,
+            message: error.message
+        }, { status: 500 });
+    }
+}
