@@ -18,6 +18,8 @@ export default function UserIcon({ src, alt = "", fullName, size = 'md' }){
 
     const getTextSize = () => {
         switch(size){
+            case 'xs':
+                return "text-[10px]"
             case 'sm':
                 return "text-xs"
             case 'md':
@@ -35,6 +37,8 @@ export default function UserIcon({ src, alt = "", fullName, size = 'md' }){
 
     const getIconSize = () => {
         switch(size){
+            case 'xs':
+                return "w-6 h-6"
             case 'sm':
                 return "w-8 h-8"
             case 'md':

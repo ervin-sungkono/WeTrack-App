@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react"
 
 import TaskDetail from "../projects/task/TaskDetail"
+import TaskList from "./TaskList"
 import SearchBar from "../common/SearchBar"
 import SelectButton from "../common/button/SelectButton"
 
@@ -9,10 +10,10 @@ import { IoFilter as FilterIcon } from "react-icons/io5"
 import { getAllTask } from "@/app/lib/fetch/task"
 
 export default function TaskContent({ projectId, taskId }){
-    const [selectedTaskId, setSelectedTaskId] = useState(taskId)
     const [query, setQuery] = useState("")
     const [filterDropdown, setFilterDropdown] = useState(false)
     const [tasks, setTasks] = useState([])
+    const [taskData, setTaskData] = useState()
 
     const handleSearch = (query) => {
         setQuery(query.toLowerCase())
@@ -24,8 +25,8 @@ export default function TaskContent({ projectId, taskId }){
                 .then(res => {
                     if(res.data){
                         setTasks(res.data)
-                        if(!selectedTaskId){
-                            setSelectedTaskId(res.data)
+                        if(!taskId){
+                            setTaskData(res.data[0])
                         }
                     }
                     else{
@@ -33,12 +34,12 @@ export default function TaskContent({ projectId, taskId }){
                     }
                 })
         }
-    }, [projectId, selectedTaskId])
+    }, [projectId, taskId])
 
     return(
         <div className="w-full h-full flex flex-col gap-4 overflow-y-auto">
             <div className="flex flex-col xs:flex-row justify-between gap-4 items-center">
-                <div className="w-full flex justify-center xs:justify-start items-center gap-3 md:gap-6"> 
+                <div className="w-full flex justify-center md:justify-start items-center gap-3 md:gap-6"> 
                     <SearchBar placeholder={"Cari tugas.."} handleSearch={handleSearch}/>
                     <div className="relative">
                         <button className="block md:hidden text-white bg-basic-blue hover:bg-basic-blue/80 rounded-md p-1.5" onClick={() => setFilterDropdown(!filterDropdown)}>
@@ -61,9 +62,9 @@ export default function TaskContent({ projectId, taskId }){
                     </div>
                 </div>
             </div>
-            <div className="h-full flex gap-4 overflow-y-auto">
-                <div className="w-[298px] bg-gray-200">Test</div>
-                <TaskDetail taskId={selectedTaskId} taskData={tasks.find(task => task.id === selectedTaskId)}/>
+            <div className="h-full flex flex-col sm:flex-row gap-4 overflow-y-auto">
+                <TaskList tasks={tasks} taskId={taskId}/>
+                <TaskDetail taskId={taskId} taskData={taskData}/>
             </div>
         </div>
     )
