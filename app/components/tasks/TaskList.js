@@ -17,7 +17,7 @@ export default function TaskList({ tasks, taskId }){
     const endIndex = Math.min((pageIndex + 1) * PAGE_SIZE, tasks.length)
 
     return(
-        <div className="w-[260px] h-full bg-gray-200 rounded-md flex flex-shrink-0 flex-col gap-2 p-2.5 overflow-y-auto">
+        <div className="w-full sm:w-[228px] md:w-[260px] h-52 sm:h-full bg-gray-200 rounded-md flex flex-shrink-0 flex-col gap-2 p-2.5 overflow-y-auto">
             <div className="flex items-center">
                 <div className="flex flex-grow items-center gap-2">
                     <p className="text-xs md:text-sm font-semibold">Sort By</p>
