@@ -1,8 +1,10 @@
 import { db } from "@/app/firebase/config";
 import { deleteDoc, getDoc, doc } from "firebase/firestore";
 import { NextResponse } from "next/server";
+import { getUserSession } from "@/app/lib/session";
+import { nextAuthOptions } from "@/app/lib/auth";
 
-export async function DELETE(request, context) {
+export async function DELETE(request, response) {
     try {
         const session = await getUserSession(request, response, nextAuthOptions)
         const userId = session.user.uid
@@ -13,9 +15,9 @@ export async function DELETE(request, context) {
             }, { status: 401 })
         }
 
-        const { id } = context.params;
+        const { commentId } = response.params;
        
-        const commentDocRef = doc(db, 'comments', id);
+        const commentDocRef = doc(db, 'comments', commentId);
         const commentSnap = await getDoc(commentDocRef)
 
         if (!commentSnap.exists()) {

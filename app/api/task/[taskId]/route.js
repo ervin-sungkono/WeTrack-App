@@ -4,9 +4,9 @@ import { db } from '@/app/firebase/config';
 
 export async function GET(request, context) {
     try {
-        const { id } = context.params
+        const { taskId } = context.params
 
-        const taskRef = doc(db, "tasks", id)
+        const taskRef = doc(db, "tasks", taskId)
 
         if (!taskRef) {
             return NextResponse.json({
@@ -43,7 +43,7 @@ export async function GET(request, context) {
 
 export async function PUT(request, context) {
     try {
-        const { id } = context.params;
+        const { taskId } = context.params;
         const {
             projectId,
             assignedTo,
@@ -70,7 +70,7 @@ export async function PUT(request, context) {
         const projectData = projectSnap.data();
         const taskList = projectData.taskList || [];
 
-        const taskIndex = taskList.findIndex(task => task.id === id);
+        const taskIndex = taskList.findIndex(task => task.id === taskId);
 
         const taskToUpdate = taskList[taskIndex];
 
@@ -190,7 +190,7 @@ export async function PUT(request, context) {
 
 export async function DELETE(request, context) {
     try {
-        const { id } = context.params;
+        const { taskId } = context.params;
         const projectId = request.nextUrl.searchParams.get("projectId")
 
         const projectDocRef = doc(db, 'projects', projectId);
@@ -205,7 +205,7 @@ export async function DELETE(request, context) {
 
         const projectData = projectSnap.data();
         let taskList = projectData.taskList || [];
-        const taskIndex = taskList.findIndex(task => task.id === id);
+        const taskIndex = taskList.findIndex(task => task.id === taskId);
 
         if (taskIndex === -1) {
             return NextResponse.json({
