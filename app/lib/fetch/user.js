@@ -58,3 +58,25 @@ export async function updateUserProfile(formData) {
         throw new Error(await res.text())
     }
 }
+
+export async function deleteUserImageProfile(){
+    const res = await fetch(`/api/auth/user/profile-picture`, {
+        method: "DELETE"
+    })
+    if(res.ok){
+        return res.json()
+    }else{
+        throw new Error(await res.text())
+    }
+}
+
+export async function deleteUserProfile() {
+    const res = await fetch(`/api/auth/user`, {
+        method: "DELETE"
+    })
+    if(res.ok){
+        return res.json()
+    }else{
+        throw new Error(await res.text())
+    }
+}
