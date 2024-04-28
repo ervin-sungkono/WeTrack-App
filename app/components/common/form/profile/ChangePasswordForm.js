@@ -55,8 +55,8 @@ export default function ChangePasswordForm({onConfirm, onClose}){
                             </div>
                         </div>
                         <div className="flex gap-2 md:gap-4 items-center justify-end mt-4 md:mt-8">
-                            <Button variant="primary" type="submit">Simpan Perubahan</Button>
                             <Button variant="secondary" onClick={onClose}>Batal</Button>
+                            <Button variant="primary" type="submit">Simpan Perubahan</Button>
                         </div>
                     </>
                 )}

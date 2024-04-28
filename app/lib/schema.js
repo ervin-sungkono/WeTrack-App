@@ -73,6 +73,13 @@ export const updateProfileSchema = yup.object().shape({
         .max(50, "Lokasi harus memiliki paling banyak 50 karakter!")
 })
 
+export const deleteProfileSchema = yup.object().shape({
+    email: yup
+        .string()
+        .required("Email harus diisi!")
+        .email("Email tidak valid!")
+})
+
 export const projectTemplateSchema = yup.object().shape({
     templateType: yup
         .string()

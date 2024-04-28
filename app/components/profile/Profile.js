@@ -13,11 +13,13 @@ import { useEffect, useState, useRef } from "react"
 import ChangePasswordForm from "../common/form/profile/ChangePasswordForm"
 import DeleteAccountForm from "../common/form/profile/DeleteAccountForm"
 import UpdateProfileForm from "../common/form/profile/UpdateProfileForm"
-import { getUserProfile, updateUserProfile } from "@/app/lib/fetch/user"
+import { getUserProfile, updateUserProfile, deleteUserImageProfile, deleteUserProfile } from "@/app/lib/fetch/user"
 import { dateFormat } from "@/app/lib/date"
+import { useRouter } from "next/navigation";
 
 export default function ProfileLayout(){
     const { data: session, status } = useSession()
+    const router = useRouter()
 
     const [initialValues, setInitialValues] = useState({
         fullName: "",
@@ -45,8 +47,11 @@ export default function ProfileLayout(){
                     location: res.data.location || "",
                     createdAt: createdDate,
                 })
-                setOriginalProfileImage(res.data.profileImage?.attachmentStoragePath)
-                setProfileImageUploadedURL(res.data.profileImage?.attachmentStoragePath)
+                if(res.data.profileImage){
+                    setOriginalProfileImageFile(res.data.profileImage)
+                    setOriginalProfileImage(res.data.profileImage.attachmentStoragePath)
+                    setProfileImageUploadedURL(res.data.profileImage.attachmentStoragePath)
+                }  
             }
         }catch(error){
             console.log(error)
@@ -59,6 +64,7 @@ export default function ProfileLayout(){
 
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("")
     const [changePassword, setChangePassword] = useState(false)
     const [updateProfile, setUpdateProfile] = useState(false)
     const [deleteAccount, setDeleteAccount] = useState(false)
@@ -83,9 +89,11 @@ export default function ProfileLayout(){
     }
 
     const imageUploaderRef = useRef()
+    const [originalProfileImageFile, setOriginalProfileImageFile] = useState(null)
     const [originalProfileImage, setOriginalProfileImage] = useState(null)
     const [profileImageUploaded, setProfileImageUploaded] = useState(null)
     const [profileImageUploadedURL, setProfileImageUploadedURL] = useState(null)
+    const [profileImageDeleted, setProfileImageDeleted] = useState(false)
 
     const openImageUpload = () => {
         imageUploaderRef.current.click()
@@ -94,6 +102,7 @@ export default function ProfileLayout(){
     const deleteImageUpload = () => {
         setProfileImageUploaded(null)
         setProfileImageUploadedURL(null)
+        setProfileImageDeleted(true)
     }
 
     const handleImageUpload = (e) => {
@@ -112,7 +121,7 @@ export default function ProfileLayout(){
                         Foto Profil
                     </label>
                     <div className="relative flex items-center">
-                        <Button variant="danger" outline onClick={deleteImageUpload} disabled={profileImageUploadedURL === null}>
+                        <Button variant="danger" outline onClick={deleteImageUpload} disabled={profileImageUploadedURL === null || originalProfileImageFile !== null}>
                             Hapus Foto Profil
                         </Button>
                     </div>
@@ -145,7 +154,21 @@ export default function ProfileLayout(){
                 setError(true);
                 console.log(JSON.parse(res.error).errors)
             }else{
-                location.reload()
+                if(profileImageDeleted){
+                    try {
+                        const imageDeleteRes = await deleteUserImageProfile()
+                        if(imageDeleteRes.error){
+                            setError(true);
+                            console.log(imageDeleteRes.error)
+                        }else{
+                            location.reload()
+                        }
+                    }catch(error){
+                        console.log(error)
+                    }
+                }else{
+                    location.reload()
+                }
             }
         }catch(error){
             setError(true);
@@ -155,9 +178,29 @@ export default function ProfileLayout(){
         }
     }
 
-    const handleDeleteAccount = async () => {
+    const handleDeleteAccount = async (values) => {
         setError(false);
         setLoading(true);
+        if(values.email !== session.user.email){
+            setError(true);
+            setErrorMessage("Email yang dimasukkan tidak sesuai dengan email akun Anda!")
+            setLoading(false);
+            return;
+        }
+        try {
+            const res = await deleteUserProfile()
+            if(res.error){
+                setError(true);
+                console.log(res.error)
+            }else{
+                router.push("/")
+            }
+        }catch (error){
+            setError(true);
+            console.log(error)
+        }finally{
+            setLoading(false);
+        }
     }
     
     if(!session){
@@ -267,6 +310,8 @@ export default function ProfileLayout(){
                     <DeleteAccountForm
                         onConfirm={handleDeleteAccount}
                         onClose={() => setDeleteAccount(false)}
+                        error={error}
+                        errorMessage={errorMessage}
                     />
                 )}
                 {loading && (

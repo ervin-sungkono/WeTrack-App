@@ -1,17 +1,29 @@
 import PopUpForm from "../../alert/PopUpForm"
+import PopUpMultiStepForm from "../../alert/PopUpMultiStepForm"
 import Button from "../../button/Button"
+import DeleteAccountConfirmationForm from "./DeleteAccountConfirmationForm"
+import DeleteAccountValidationForm from "./DeleteAccountValidationForm"
 
-export default function DeleteAccountForm({onConfirm, onClose}){
+export default function DeleteAccountForm({onConfirm, onClose, error, errorMessage}){
+    const steps = [
+        {
+            label: "Konfirmasi Hapus Akun",
+            Form: (props) => 
+                <DeleteAccountConfirmationForm {...props}/>
+        },
+        {
+            label: "Validasi Hapus Akun",
+            Form: (props) => 
+                <DeleteAccountValidationForm {...props}/>
+        }
+    ]
     return (
-        <PopUpForm
-            title={"Hapus Akun"}
-            titleSize={"large"}
-            message={"Apakah Anda yakin menghapus akun Anda?"}
-        >
-            <div className="flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
-                <Button variant="danger" onClick={onConfirm}>Hapus</Button>
-                <Button variant="secondary" onClick={onClose}>Batal</Button>
-            </div>
-        </PopUpForm>
+        <PopUpMultiStepForm
+            steps={steps}
+            onConfirm={onConfirm}
+            onClose={onClose}
+            error={error}
+            errorMessage={errorMessage}
+        />
     )
 }
