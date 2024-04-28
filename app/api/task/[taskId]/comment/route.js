@@ -1,7 +1,9 @@
 import { db } from "@/app/firebase/config";
+import { addDoc, collection, query, where, getDocs, getDoc } from "firebase/firestore";
 import { NextResponse } from "next/server";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { extractUniqueMentionTags } from "@/app/lib/string";
+import { getUserSession } from "@/app/lib/session";
 
 export async function GET(request, response){
     try{
@@ -14,7 +16,7 @@ export async function GET(request, response){
             }, { status: 401 })
         }
 
-        const taskId = request.nextUrl.searchParams.get("taskId")
+        const { taskId } = response.params
 
         if(!taskId) {
             return NextResponse.json({
@@ -55,13 +57,22 @@ export async function POST(request, response){
             }, { status: 401 })
         }
 
-        const taskId = request.nextUrl.searchParams.get("taskId")
+        const { taskId } = response.params
+
+        const taskDocRef = doc(db, "tasks", taskId)
+        const taskSnap = await getDoc(taskDocRef)
+
+        if(!taskSnap.exists()){
+            return NextResponse.json({
+                message: "Task id is invalid or not found"
+            }, { status: 404 })
+        }
 
         const { 
             commentText
         } = await request.json()
 
-        if(!taskId || !commentText){
+        if(!commentText){
             return NextResponse.json({
                 message: "Missing parameter"
             }, { status: 400 })
