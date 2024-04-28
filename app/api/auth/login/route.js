@@ -7,14 +7,17 @@ export async function POST(request) {
   try {
     const { email, password } = await request.json();
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    console.log("userCredential", userCredential)
 
     const user = userCredential.user;
 
-    // if(user.emailVerified != true){
-    //   return NextResponse.json({
-    //     message: "Please verify your email first"
-    //   }, { status: 401 })
-    // }
+    console.log("user", user)
+
+    if(user.emailVerified != true){
+      return NextResponse.json({
+        message: "Tolong verifikasi akun Anda terlebih dahulu"
+      }, { status: 401 })
+    }
 
     if(user){
       const data = await getDoc(doc(db, 'users', user.uid))
@@ -30,17 +33,17 @@ export async function POST(request) {
             profileImage: profileImage,
             isVerified: isVerified,
           },
-          message: 'Successfully logged in'
+          message: 'Login berhasil'
         }, { status: 200 })
       }
       
       return NextResponse.json({
-        message: "User not found"
+        message: "Akun tidak ditemukan"
       }, { status: 404 }) 
     }
 
     return NextResponse.json({
-      message: 'Failed to logged in'
+      message: 'Login gagal'
     }, { status: 500 })
 
   } catch (error) {
