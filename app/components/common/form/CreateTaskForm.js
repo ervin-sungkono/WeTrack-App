@@ -104,8 +104,8 @@ export default function CreateTaskForm({ onCancel }){
                     onSubmit={handleSubmit}
                 >
                     {(formik) => (
-                        <div className="flex flex-col gap-4 md:gap-6">
-                            <div className="custom-scrollbar w-full pb-4 max-h-[65vh] pr-2 flex flex-col gap-2.5 md:gap-4 overflow-y-auto">
+                        <div className="flex flex-col gap-4 md:gap-6 h-full overflow-y-auto">
+                            <div className="custom-scrollbar w-full pb-2 md:pb-4 h-full pr-2 flex flex-col gap-2.5 md:gap-4 overflow-y-auto">
                                 <FormikSelectField 
                                     label="Proyek" 
                                     required 
@@ -210,7 +210,7 @@ export default function CreateTaskForm({ onCancel }){
                                     options={[]}
                                 />
                             </div>
-                            <div className="flex justify-end gap-2 md:gap-4">
+                            <div className="flex justify-end gap-2 md:gap-4 pr-2 -ml-2">
                                 <Button variant="secondary" onClick={onCancel}>Batal</Button>
                                 <Button type={"submit"} className="w-24 md:w-32">Buat</Button>
                             </div>

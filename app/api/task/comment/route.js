@@ -1,48 +1,42 @@
 import { db } from "@/app/firebase/config";
+import { NextResponse } from "next/server";
 import { nextAuthOptions } from "@/app/lib/auth";
-import { getUserSession } from "@/app/lib/session";
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
-import { NextResponse } from 'next/server'
+import { extractUniqueMentionTags } from "@/app/lib/string";
 
-export async function GET(request, response, context) {
-    try {
+export async function GET(request, response){
+    try{
         const session = await getUserSession(request, response, nextAuthOptions)
-        const loggedIn = session.user.uid
+        const userId = session.user.uid
 
-        if(!loggedIn){
+        if(!userId){
             return NextResponse.json({
                 message: "Unauthorized, user id not found"
             }, { status: 401 })
         }
 
-        const projectId = request.nextUrl.searchParams.get("projectId")
+        const taskId = request.nextUrl.searchParams.get("taskId")
 
-        if(!projectId) {
+        if(!taskId) {
             return NextResponse.json({
                 message: "Missing paramater"
             }, { status: 404 })
         }
 
-        const taskStatusColRef = collection(db, 'taskStatuses')
-        const q = query(taskStatusColRef, where('projectId', '==', projectId))
+        const commentsColRef = collection(db, 'comments')
+        const q = query(commentsColRef, where('taskId', '==', taskId))
         const querySnapshot = await getDocs(q)
 
-        let taskStatuses = [];
-        querySnapshot.forEach(doc => {
-            taskStatuses.push({
+        const comments = querySnapshot.map(doc => ({
                 id: doc.id,
-                status: doc.data().status
-            })
-            return taskStatuses
-        })
-            
-        return NextResponse.json({
-            data: taskStatuses, 
-            message: "Succesfully get all available task statuses"
-        }, { status: 200 })
+                ...doc.data()
+        }))
 
-    } catch (error) {
-        console.error("Cannot get task statuses", error);
+        return NextResponse.json({
+            data: comments, 
+            message: "Succesfully get all available comments"
+        }, { status: 200 })
+    }catch(error){
+        console.error("Cannot get comments", error);
         return NextResponse.json({
             data: null,
             message: error.message
@@ -61,40 +55,46 @@ export async function POST(request, response){
             }, { status: 401 })
         }
 
-        const projectId = request.nextUrl.searchParams.get("projectId")
-        const { taskStatus } = await request.json()
+        const taskId = request.nextUrl.searchParams.get("taskId")
 
-        if(!projectId){
+        const { 
+            commentText
+        } = await request.json()
+
+        if(!taskId || !commentText){
             return NextResponse.json({
                 message: "Missing parameter"
             }, { status: 400 })
         }
 
-        const newTaskStatus = await addDoc(collection(db, 'taskStatuses'), {
-            status: taskStatus,
-            projectId: projectId,
-            tasks: [],
+        const newComment = await addDoc(collection(db, 'comments'), {
+            taskId: taskId,
+            userId: userId,
+            commentText: commentText,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             deletedAt: null
         });
 
-        if(!newTaskStatus){
+        if(!newComment){
             return NextResponse.json({
-                message: "Fail to create new task status"
+                message: "Fail to create new comment"
             }, { status: 500 })
         }
 
+        const mentions = extractUniqueMentionTags(commentText)
+        // TODO: add to notifications regarding mentions
+
         return NextResponse.json({
             data: {
-                id: newTaskStatus.id,
-                ...newTaskStatus
+                id: newComment.id,
+                ...newComment
             },
-            message: "Successfully create new task status"
+            message: "Successfully create new comment"
         }, {  status: 200 })
 
     } catch (error) {
-        console.error("Cannot get task statuses", error);
+        console.error("Cannot get comment", error);
         return NextResponse.json({
             data: null,
             message: error.message
