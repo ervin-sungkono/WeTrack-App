@@ -1,3 +1,4 @@
+import { db } from "@/app/firebase/config";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { deleteExistingFile } from "@/app/lib/file";
 import { getUserSession } from "@/app/lib/session";
