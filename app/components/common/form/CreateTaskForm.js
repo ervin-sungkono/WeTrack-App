@@ -102,9 +102,10 @@ export default function CreateTaskForm({ onCancel }){
                     initialValues={initialValues}
                     validationSchema={null}
                     onSubmit={handleSubmit}
+                    className={"flex flex-col gap-4 md:gap-6 h-full overflow-y-auto"}
                 >
                     {(formik) => (
-                        <div className="flex flex-col gap-4 md:gap-6 h-full overflow-y-auto">
+                        <>
                             <div className="custom-scrollbar w-full pb-2 md:pb-4 h-full pr-2 flex flex-col gap-2.5 md:gap-4 overflow-y-auto">
                                 <FormikSelectField 
                                     label="Proyek" 
@@ -180,28 +181,28 @@ export default function CreateTaskForm({ onCancel }){
                                         />
                                     </div>
                                 </div>
-                            <div className="w-full flex flex-col gap-2">
-                                <label htmlFor="label" className="block font-semibold text-xs md:text-sm text-dark-blue">
-                                    Label
-                                </label>
-                                <div className="w-full flex flex-col md:flex-row gap-2 md:gap-4">
-                                    <Tags
-                                        name="label"
-                                        whitelist={[  
-                                            { value:'apple', tagColor: 'red', style: 'background-color: red;' },
-                                            { value:'apple2', tagColor: 'blue', style: 'background-color: blue;' },
-                                            { value:'apple3', tagColor: 'yellow', style: 'background-color: yellow;' }
-                                        ]}
-                                        tagifyRef={tagifyRef}
-                                        settings={tagifySettings}
-                                        defaultValue={""}
-                                        onChange={handleTagifyChange}
-                                    />
-                                    <Button variant="primary" size="sm" outline onClick={() => setLabelModal(true)}>
-                                        Kelola Label
-                                    </Button>
-                                </div>   
-                            </div>
+                                <div className="w-full flex flex-col gap-2">
+                                    <label htmlFor="label" className="block font-semibold text-xs md:text-sm text-dark-blue">
+                                        Label
+                                    </label>
+                                    <div className="w-full flex flex-col md:flex-row gap-2 md:gap-4">
+                                        <Tags
+                                            name="label"
+                                            whitelist={[  
+                                                { value:'apple', tagColor: 'red', style: 'background-color: red;' },
+                                                { value:'apple2', tagColor: 'blue', style: 'background-color: blue;' },
+                                                { value:'apple3', tagColor: 'yellow', style: 'background-color: yellow;' }
+                                            ]}
+                                            tagifyRef={tagifyRef}
+                                            settings={tagifySettings}
+                                            defaultValue={""}
+                                            onChange={handleTagifyChange}
+                                        />
+                                        <Button variant="primary" size="sm" outline onClick={() => setLabelModal(true)}>
+                                            Kelola Label
+                                        </Button>
+                                    </div>   
+                                </div>
                                 <FormikSelectField 
                                     label="Induk Tugas" 
                                     required 
@@ -210,11 +211,11 @@ export default function CreateTaskForm({ onCancel }){
                                     options={[]}
                                 />
                             </div>
-                            <div className="flex justify-end gap-2 md:gap-4 pr-2 -ml-2">
+                            <div className="flex justify-end gap-2 md:gap-4">
                                 <Button variant="secondary" onClick={onCancel}>Batal</Button>
                                 <Button type={"submit"} className="w-24 md:w-32">Buat</Button>
                             </div>
-                        </div>
+                        </>
                     )}
                 </FormikWrapper>
             </PopUpForm>

@@ -1,6 +1,6 @@
 import { Formik, Form } from "formik"
 
-export default function FormikWrapper({ initialValues, onSubmit, validationSchema, children }){
+export default function FormikWrapper({ initialValues, onSubmit, validationSchema, children, className }){
     return(
         <Formik
             initialValues={initialValues}
@@ -9,7 +9,7 @@ export default function FormikWrapper({ initialValues, onSubmit, validationSchem
         >
             {(formik) => {
                 return(
-                    <Form>
+                    <Form className={className}>
                         {children(formik)}
                     </Form>
                 )
