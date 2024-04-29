@@ -1,5 +1,5 @@
 import { db } from "@/app/firebase/config";
-import { addDoc, collection, query, where, getDocs, getDoc } from "firebase/firestore";
+import { addDoc, collection, query, where, getDocs, getDoc, doc } from "firebase/firestore";
 import { NextResponse } from "next/server";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { extractUniqueMentionTags } from "@/app/lib/string";
@@ -28,7 +28,7 @@ export async function GET(request, response){
         const q = query(commentsColRef, where('taskId', '==', taskId))
         const querySnapshot = await getDocs(q)
 
-        const comments = querySnapshot.map(doc => ({
+        const comments = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
         }))
@@ -93,13 +93,15 @@ export async function POST(request, response){
             }, { status: 500 })
         }
 
+        const newCommentSnap = await getDoc(newComment)
+
         const mentions = extractUniqueMentionTags(commentText)
         // TODO: add to notifications regarding mentions
 
         return NextResponse.json({
             data: {
                 id: newComment.id,
-                ...newComment
+                ...newCommentSnap.data()
             },
             message: "Successfully create new comment"
         }, {  status: 200 })

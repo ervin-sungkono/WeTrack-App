@@ -165,7 +165,7 @@ function TaskDetail({ taskId, taskData, closeFn }){
                     </div>
                     <AttachmentSection attachments={attachmentList}/>
                     <SubtaskSection subtasks={subtasks}/>
-                    <ActivitySection/>
+                    <ActivitySection taskId={taskId}/>
                 </div>
             </div>
         </div>

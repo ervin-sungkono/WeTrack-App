@@ -6,7 +6,7 @@ import UserIcon from "@/app/components/common/UserIcon"
 
 import { RiChatDeleteFill as DeleteComment } from 'react-icons/ri'
 
-export default function CommentCard({ comment }){
+export default function CommentCard({ comment, deleteComment }){
     const [user, setUser] = useState()
     const { data: session, status } = useSession()
 
@@ -38,7 +38,11 @@ export default function CommentCard({ comment }){
                         {comment.commentText}
                     </p>
                 </div>
-                {comment.userId === session.user.uid && <button className="flex items-center gap-2 text-danger-red hover:underline">
+                {comment.userId === session.user.uid && 
+                <button 
+                    className="flex items-center gap-2 text-danger-red hover:underline" 
+                    onClick={() => deleteComment(comment)}
+                >
                     <DeleteComment size={16}/>
                     <p className="text-xs md:text-sm font-semibold">Hapus</p>
                 </button>}

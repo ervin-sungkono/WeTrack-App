@@ -28,7 +28,7 @@ export async function GET(request, response){
         const q = query(chatsColRef, where('taskId', '==', taskId))
         const querySnapshot = await getDocs(q)
 
-        const chats = querySnapshot.map(doc => ({
+        const chats = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
         }))
@@ -109,10 +109,12 @@ export async function POST(request, response){
             }, { status: 500 })
         }
 
+        const newChatSnap = await getDoc(newChat)
+
         return NextResponse.json({
             data: newChat.map(chat => ({
                 id: chat.id,
-                ...chat
+                ...newChatSnap.data()
             })),
             message: "Successfully create new chat"
         }, {  status: 200 })

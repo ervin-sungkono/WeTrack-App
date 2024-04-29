@@ -29,7 +29,7 @@ export async function DELETE(request, response) {
         if(commentSnap.data().userId === userId){
             await deleteDoc(commentDocRef)
             return NextResponse.json({
-                message: "Task successfully deleted"
+                message: "Comment successfully deleted"
             }, { status: 200 });
         }
         else{
