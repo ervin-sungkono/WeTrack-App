@@ -3,11 +3,12 @@ import { useEffect, useState } from "react"
 import { sortDateFn } from "@/app/lib/helper"
 import dynamic from "next/dynamic"
 import SortButton from "../../common/button/SortButton"
+import { getAllComments } from "@/app/lib/fetch/comment"
 
 const CommentSection = dynamic(() => import("./CommentSection"))
 const HistorySection = dynamic(() => import("./HistorySection"))
 
-export default function ActivitySection(){
+export default function ActivitySection({taskId}){
     const [category, setCategory] = useState("comment")
     const categoryList = [
         {
@@ -26,23 +27,15 @@ export default function ActivitySection(){
 
     useEffect(() => {
         if(category === "comment" && !commentData){
-            // get comment data
-            setCommentData([
-                {   
-                    id: "CM001",
-                    taskId: "TS001",
-                    userId: "WeEzNxSREEdyDpSXkIYCAyA4E8y1",
-                    commentText: "Testing Comment 1",
-                    createdAt: new Date("2024-01-17"),
-                },
-                {   
-                    id: "CM002",
-                    taskId: "TS001",
-                    userId: "AAOO2",
-                    commentText: "Testing Comment 2",
-                    createdAt: new Date("2024-01-18"),
-                }
-            ])
+            getAllComments(taskId)
+                .then(res => {
+                    if(res.data){
+                        setCommentData(res.data)
+                    }else{
+                        alert("Gagal mengambil data komentar")
+                    }
+                })
+                .catch(err => console.log(err))
         }
         if(category === "history" && !historyData){
             // get comment data
@@ -93,10 +86,10 @@ export default function ActivitySection(){
                 },
             ])
         }
-    }, [category, commentData, historyData])
+    }, [taskId, category, commentData, historyData])
 
     const getCategoryComponent = () => {
-        if(category === "comment") return <CommentSection comments={commentData && sortDateFn({data: commentData, sortDirection: sorting})}/>
+        if(category === "comment") return <CommentSection taskId={taskId} comments={commentData && sortDateFn({data: commentData, sortDirection: sorting})} setCommentData={(comments) => setCommentData(comments)}/>
         if(category === "history") return <HistorySection histories={historyData && sortDateFn({data: historyData, sortDirection: sorting})}/>
         return null
     }

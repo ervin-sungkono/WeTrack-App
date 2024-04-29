@@ -14,8 +14,8 @@ export const dateFormat = (date, includeTime = false) => {
 }
 
 export const listDateFormat = (date) => {
-    const currentDate = new Date()
-    const dateDifference = currentDate.getDate() - date.getDate()
+    const currentDate = moment(new Date())
+    const dateDifference = currentDate.diff(moment(date), 'days')
     let formatString = ""
     switch(dateDifference){
         case 0:

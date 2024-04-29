@@ -5,7 +5,7 @@ import { Mention, MentionsInput } from "react-mentions"
 import UserIcon from "@/app/components/common/UserIcon"
 import Button from "@/app/components/common/button/Button"
 
-export default function CommentInput(){
+export default function CommentInput({ onSubmit }){
     const { data: session, status } = useSession()
     const [comment, setComment] = useState()
     const [focused, setFocus] = useState(false)
@@ -19,10 +19,6 @@ export default function CommentInput(){
     const resetComment = () => {
         setComment("")
         setFocus(false)
-    }
-
-    const sendComment = () => {
-        console.log("comment:" + comment)
     }
 
     if(status === 'loading') return null
@@ -50,7 +46,11 @@ export default function CommentInput(){
                 {focused && (
                     <div className="flex gap-1">
                         <Button onClick={resetComment} variant="danger" size="sm">Batal</Button>
-                        <Button onClick={sendComment} size="sm">Kirim</Button>
+                        <Button onClick={() => {
+                            onSubmit(comment)
+                            setComment("")
+                            setFocus(false)
+                        }} size="sm">Kirim</Button>
                     </div>
                 )}
             </div>
