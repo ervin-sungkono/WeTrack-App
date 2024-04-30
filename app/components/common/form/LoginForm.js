@@ -3,7 +3,8 @@
 
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState, useEffect } from "react"
-import { signIn, useSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
+import { signIn } from "@/app/lib/fetch/user"
 import { loginSchema } from "@/app/lib/schema"
 
 import Link from "next/link"
@@ -20,7 +21,7 @@ export default function LoginForm(){
     }
     
     const [error, setError] = useState(false)
-    const [errorMessage, setErrorMessage] = useState("Kredensial yang dimasukkan salah!")
+    const [errorMessage, setErrorMessage] = useState(null)
     const [loading, setLoading] = useState(false)
     const router = useRouter()
     const searchParams = useSearchParams()
@@ -37,9 +38,8 @@ export default function LoginForm(){
         setError(false);
         setLoading(true);
         try {
-            const res = await signIn("credentials", {
-                ...values,
-                redirect: false
+            const res = await signIn({
+                ...values
             })
             if (res.error) {
                 setError(true);
@@ -50,7 +50,12 @@ export default function LoginForm(){
             }
         } catch (error) {
             setError(true);
-            console.log(error)
+            let errorMessage = JSON.parse(error.message).message;
+            if(errorMessage === "Firebase: Error (auth/invalid-credential)."){
+                errorMessage = "Kredensial yang Anda masukkan salah!"
+            }
+            setErrorMessage(errorMessage);
+            console.log(error);
         } finally {
             setLoading(false);
         }
