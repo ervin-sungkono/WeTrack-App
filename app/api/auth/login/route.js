@@ -15,7 +15,7 @@ export async function POST(request) {
 
     if(user.emailVerified != true){
       return NextResponse.json({
-        message: "Tolong verifikasi akun Anda terlebih dahulu"
+        message: "Verifikasi akun Anda terlebih dahulu!"
       }, { status: 401 })
     }
 
