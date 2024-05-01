@@ -20,7 +20,7 @@ export default function UserDropdown({ fullName, email, profileImage }){
                 data-dropdown-delay="0"
                 data-dropdown-offset-distance="-10"
             >
-                <UserIcon fullName={fullName} src={profileImage}/>
+                <UserIcon fullName={fullName} src={profileImage?.attachmentStoragePath}/>
                 <DropdownIcon size={20}/>
             </button>
             <div
