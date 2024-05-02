@@ -44,7 +44,7 @@ export default function UserSelectButton({ name, type = "default", userId, place
                 onClick={(e) => e.stopPropagation()}
             >
                 {(loaded || placeholder) && <div className="flex flex-grow gap-2 items-center">
-                    <UserIcon size="sm" fullName={placeholder?.fullName ?? selected.fullName} src={placeholder ? placeholder?.profileImage : (selected.fullName ? selected.profileImage : '/images/user-placeholder.png')}/>
+                    <UserIcon size="sm" fullName={placeholder?.fullName ?? selected.fullName} src={placeholder ? placeholder?.profileImage?.attachmentStoragePath : (selected.fullName ? selected.profileImage?.attachmentStoragePath : '/images/user-placeholder.png')}/>
                 </div>}
             </button>
             <div id={name} className="z-50 hidden bg-white divide-y divide-gray-100 rounded-md border border-dark-blue/30 w- md:w-64">
@@ -70,7 +70,7 @@ export default function UserSelectButton({ name, type = "default", userId, place
                             >
                                 <div className="flex flex-grow gap-2 items-center">
                                     <div className="flex-shrink-0">
-                                        <UserIcon size="sm" fullName={fullName} src={profileImage}/>
+                                        <UserIcon size="sm" fullName={fullName} src={profileImage?.attachmentStoragePath}/>
                                     </div>
                                     <p className="text-start flex-grow truncate text-xs md:text-sm">{fullName}</p>
                                 </div>
@@ -124,7 +124,7 @@ export default function UserSelectButton({ name, type = "default", userId, place
                             >
                                 <div className="flex flex-grow gap-2 items-center">
                                     <div className="flex-shrink-0">
-                                        <UserIcon size="sm" fullName={fullName} src={profileImage}/>
+                                        <UserIcon size="sm" fullName={fullName} src={profileImage?.attachmentStoragePath}/>
                                     </div>
                                     <p className="text-start flex-grow truncate text-xs md:text-sm">{fullName}</p>
                                 </div>
@@ -186,7 +186,7 @@ export default function UserSelectButton({ name, type = "default", userId, place
                             >
                                 <div className="flex flex-grow gap-2 items-center">
                                     <div className="flex-shrink-0">
-                                        <UserIcon size="sm" fullName={fullName} src={profileImage}/>
+                                        <UserIcon size="sm" fullName={fullName} src={profileImage?.attachmentStoragePath}/>
                                     </div>
                                     <p className="text-start flex-grow truncate text-xs md:text-sm">{fullName}</p>
                                 </div>

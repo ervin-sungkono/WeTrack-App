@@ -31,36 +31,50 @@ export default function ProjectInformation({prevFormStep}){
     }
 
     const onSubmit = async(values, { setSubmitting }) => {
-        if(projectData.templateType === 'ai-generated' && values.projectDescription.length < 30){
-            alert("Deskripsi Proyek harus terdiri dari minimal 30 karakter.")
-            setSubmitting(false)
-            return
-        }
-        
-        const taskList = await generateTask(values)
-        if(!taskList.success){
-            alert(taskList.message)
-            return
-        }
+        if(projectData.templateType === 'ai-generated'){
+            if(values.projectDescription.length < 30){
+                alert("Deskripsi Proyek harus terdiri dari minimal 30 karakter.")
+                setSubmitting(false)
+                return
+            }
+            const taskList = await generateTask(values)
+            if(!taskList.success){
+                alert(taskList.message)
+                return
+            }
 
-        submitProjectData(values)
+            submitProjectData(values)
+                .then(async(res) => {
+                    if(res.data){
+                        setCompleted(true)
+                        setProjectId(res.data.id)
+                        await Promise.all(taskList.data.map((task) => {
+                            return createNewTask({ 
+                                ...task, 
+                                projectId: res.data.id, 
+                                statusId: res.data.startStatus 
+                            })
+                        }))
+                    }else{
+                        console.log(res)
+                        alert("Gagal mengirim data formulir")
+                    }
+                })
+                .catch(err => console.log(err))
+        }
+        if(projectData.templateType === 'default'){
+            submitProjectData(values)
             .then(async(res) => {
                 if(res.data){
                     setCompleted(true)
                     setProjectId(res.data.id)
-                    await Promise.all(taskList.data.map((task) => {
-                        return createNewTask({ 
-                            ...task, 
-                            projectId: res.data.id, 
-                            statusId: res.data.startStatus 
-                        })
-                    }))
                 }else{
                     console.log(res)
                     alert("Gagal mengirim data formulir")
                 }
             })
             .catch(err => console.log(err))
+        }
     }
 
     if(completed){
