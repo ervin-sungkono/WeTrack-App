@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@hello-pangea/dnd": "^16.5.0",
+    "@syncfusion/ej2-react-gantt": "^25.1.42",
     "@tanstack/react-table": "^8.9.3",
     "@yaireo/tagify": "^4.21.1",
     "chart.js": "^4.4.2",
