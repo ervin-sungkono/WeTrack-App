@@ -9,10 +9,25 @@ import { getPriority } from "@/app/lib/string"
 
 const Table = dynamic(() => import("../../common/table/Table"))
 
-export default function SubtaskSection({ subtasks }){
+export default function SubtaskSection({ taskId }){
     const updateAssignee = (value) => {
         console.log(value)
     }
+
+    const subtasks = [
+        { 
+            id: 'ST1023',
+            taskName: 'Develop Initial UI',
+            priority: 3,
+            statusId: "SI232",
+        },
+        { 
+            id: 'ST1024',
+            taskName: 'Add Animation',
+            priority: 2,
+            statusId: "SI233",
+        }
+    ]
 
     const columns = [
         {
