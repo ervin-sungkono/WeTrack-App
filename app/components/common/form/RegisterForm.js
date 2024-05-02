@@ -14,6 +14,7 @@ import FormikField from "./formik/FormikField"
 import Link from "next/link"
 import Button from "../button/Button"
 import PopUpLoad from "../alert/PopUpLoad"
+import PopUpInfo from "../alert/PopUpInfo"
 
 export default function RegisterForm(){
     const initialValues = {
@@ -25,6 +26,7 @@ export default function RegisterForm(){
 
     const [error, setError] = useState("")
     const [errorMessage, setErrorMessage] = useState("Ada kesalahan, silakan coba lagi nanti.")
+    const [success, setSuccess] = useState(false)
     const [loading, setLoading] = useState(false)
     const router = useRouter()
     const searchParams = useSearchParams()
@@ -54,8 +56,9 @@ export default function RegisterForm(){
                 setError(true);
                 console.log(JSON.parse(res.error).errors)
             } else {
+                setSuccess(true);
                 // router.replace(callbackUrl ?? "/dashboard");
-                router.push("/login")
+                // router.push("/login")
             }
         } catch (error) {
             setError(true);
@@ -145,6 +148,20 @@ export default function RegisterForm(){
                 </p>
             </div>
             {loading && <PopUpLoad />}
+            {success &&
+                <PopUpInfo
+                    title={"Pendaftaran Berhasil"}
+                    titleSize={"large"}
+                    message={"Silakan cek email Anda untuk verifikasi email terlebih dahulu."}
+                >
+                    <div className="flex justify-end gap-2 md:gap-4">
+                        <Button onClick={() => {
+                            setSuccess(false)
+                            router.push("/login")
+                        }} className="w-24 md:w-32">OK</Button>
+                    </div>
+                </PopUpInfo>
+            }
         </div>
     )
 }
