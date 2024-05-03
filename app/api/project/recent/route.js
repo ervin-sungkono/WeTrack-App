@@ -16,9 +16,9 @@ export async function GET(request, response) {
         }
 
         const projectsRef = collection(db, 'projects')
-        const fieldRef = new FieldPath('createdBy', 'id')
+        // const fieldRef = new FieldPath('createdBy', 'id')
 
-        const q = query(projectsRef, where(fieldRef, "==", userId), orderBy("createdAt", "desc"), limit(3));
+        const q = query(projectsRef, where('createdBy', "==", userId), orderBy("createdAt", "desc"), limit(3));
         const querySnapshot = await getDocs(q);
 
         const projects = querySnapshot.docs.map(doc => ({

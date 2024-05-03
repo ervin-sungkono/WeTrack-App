@@ -22,7 +22,7 @@ export async function POST(request) {
     if(user){
       const data = await getDoc(doc(db, 'users', user.uid))
 
-      const { email, fullName, profileImage, isVerified } = data.data()
+      const { email, fullName, profileImage } = data.data()
 
       if(data.exists()){
         return NextResponse.json({
@@ -31,7 +31,7 @@ export async function POST(request) {
             email: email,
             fullName: fullName,
             profileImage: profileImage,
-            isVerified: isVerified,
+            isVerified: user.emailVerified,
           },
           message: 'Login berhasil'
         }, { status: 200 })

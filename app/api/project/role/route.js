@@ -7,7 +7,7 @@ export async function GET(request) {
         const projectRoleColRef = collection(db, 'projectRoles')
         const projectRoleDocsRef = await getDocs(projectRoleColRef)
 
-        if(!projectRoleDocsRef) {
+        if(projectRoleDocsRef.empty()) {
             return NextResponse.json({
                 message: "Can't get project role docs"
             }, { status: 404 })
