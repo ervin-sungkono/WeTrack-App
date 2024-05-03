@@ -16,7 +16,7 @@ export default function TaskItem({ task, active }){
                   <p className="text-[10px] md:text-xs">TASK-1</p>
                 </div>
                 <CustomTooltip id={`task-${task.id}-tooltip`} content={"Belum ditugaskan"}>
-                  <UserIcon fullName={task.assignedTo} src={task.assignedTo ?? '/user-placeholder.png'} size="xs"/>
+                  <UserIcon fullName={task.assignedTo} src={task.assignedTo ?? '/images/user-placeholder.png'} size="xs"/>
                 </CustomTooltip>
             </div>
         </Link>

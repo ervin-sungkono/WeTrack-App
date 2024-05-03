@@ -68,7 +68,7 @@ export async function POST(request, response){
             }, { status: 404 })
         }
 
-        const { taskDescription, content } = await request.json()
+        const { content } = await request.json()
 
         if(!content){
             return NextResponse.json({
@@ -76,46 +76,41 @@ export async function POST(request, response){
             }, { status: 400 })
         }
 
-        const chatResponse = await generateChatResponse({
-            taskDescription,
-            content
-        })
-
-        const newChatData = [
-            {
+        // add chat from user
+        const newUserChat = await addDoc(collection(db, 'chats'), {
+                taskId: taskId,
                 role: "user",
                 content: content,
-                senderId: userId
-            },{
-                role: "assistant",
-                content: chatResponse.message.content,
-                senderId: null
-            }
-        ]
-
-        const newChat = newChatData.map(async(newChat) => {
-            return await addDoc(collection(db, 'chats'), {
-                taskId: taskId,
-                ...newChat,
+                senderId: userId,
                 createdAt: new Date().toISOString(),
-            });
-        })
+        });
 
-        console.log(newChat)
-
-        if(!newChat){
+        if(!newUserChat){
             return NextResponse.json({
                 message: "Fail to create new chat"
             }, { status: 500 })
         }
 
-        const newChatSnap = await getDoc(newChat)
+        const chatResponse = await generateChatResponse({
+            taskDescription: taskSnap.data().description,
+            content
+        })
+
+        const newAssistantChat = await addDoc(collection(db, 'chats'), {
+            taskId: taskId,
+            role: "assistant",
+            content: chatResponse.message.content,
+            senderId: null,
+            createdAt: new Date().toISOString(),
+        });
+
+        if(!newAssistantChat){
+            return NextResponse.json({
+                message: "Fail to create new chat"
+            }, { status: 500 })
+        }
 
         return NextResponse.json({
-            data: newChat.map(chat => ({
-                id: chat.id,
-                ...newChatSnap.data()
-            })),
             message: "Successfully create new chat"
         }, {  status: 200 })
 

@@ -3,10 +3,11 @@ import PopUp from "@/app/components/common/alert/PopUp";
 import { IoIosCloseCircle as CloseIcon } from "react-icons/io";
 import ChatInput from "./ChatInput";
 import ChatBox from "./ChatBox";
+import { sendChat } from "@/app/lib/fetch/chat";
 
 export default function ChatModal({ title, taskId, chats, onClose }){
-    const addChat = (content) => {
-        console.log(content)
+    const addChat = async(content) => {
+        await sendChat({ taskId, content })
     }
 
     return(
@@ -20,7 +21,7 @@ export default function ChatModal({ title, taskId, chats, onClose }){
                 </div>
                 <div className="relative w-full h-full flex flex-col gap-4 overflow-y-auto">
                     <div className="w-full h-full flex flex-col gap-3 overflow-y-auto mb-12 pb-4 custom-scrollbar pr-2">
-                        {chats.map(chat => (
+                        {chats?.map(chat => (
                             <ChatBox
                                 key={chat.id}
                                 {...chat}

@@ -37,10 +37,10 @@ export async function generateChatResponse({ taskDescription, content}){
             type: 'text'
         },
         messages: [
-            (taskDescription && {
+            {
                 role: "system", 
-                content: `From the given task description: ${taskDescription}, your job is to analyze it and answer anything related from the user's question. If the task description is vague or unclear, u may skip analyzing the task description and just answer what the user asks. DO NOT USE MARKDOWN FORMAT IN THE RESPONSE`
-            }),
+                content: taskDescription ?? `From the given task description: ${taskDescription}, your job is to analyze it and answer anything related from the user's question. If the task description is vague or unclear, u may skip analyzing the task description and just answer what the user asks. DO NOT USE MARKDOWN FORMAT IN THE RESPONSE`
+            },
             {
                 role: "user", 
                 content: content
