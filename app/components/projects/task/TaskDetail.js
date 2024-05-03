@@ -12,6 +12,7 @@ import { dateFormat } from "@/app/lib/date"
 import DotButton from "../../common/button/DotButton"
 import ActivitySection from "./ActivitySection"
 import { TailSpin } from "react-loader-spinner"
+import ChatSection from "./ChatSection"
 
 const AttachmentSection = dynamic(() => import("./AttachmentSection"))
 const SubtaskSection = dynamic(() => import("./SubtaskSection"))
@@ -44,37 +45,6 @@ function TaskDetail({ taskId, taskData, closeFn }){
             }
         }
     ]
-
-    const attachmentList = [
-        { 
-            id: 'A1023',
-            attachmentName: "images/AIPoweredAssistance.png",
-            attachmentLocation: "http://localhost:3000/images/AIPoweredAssistance.png",
-            createdAt: new Date().toISOString(),
-        },
-        { 
-            id: 'A1024',
-            attachmentName: "images/CompletedState.png",
-            attachmentLocation: "http://localhost:3000/images/CompletedState.png",
-            createdAt: new Date("04-16-2024").toISOString(),
-        }
-    ]
-
-    const subtasks = [
-        { 
-            id: 'ST1023',
-            taskName: 'Develop Initial UI',
-            priority: 3,
-            statusId: "SI232",
-        },
-        { 
-            id: 'ST1024',
-            taskName: 'Add Animation',
-            priority: 2,
-            statusId: "SI233",
-        }
-    ]
-
 
     useEffect(() => {
         if(taskData) setTask(taskData)
@@ -163,9 +133,10 @@ function TaskDetail({ taskId, taskData, closeFn }){
                         <p className="text-xs md:text-sm">{task.description}</p> :
                         <p>Tambahkan deskripsi tugas..</p>}
                     </div>
-                    <AttachmentSection attachments={attachmentList}/>
-                    <SubtaskSection subtasks={subtasks}/>
-                    <ActivitySection taskId={taskId}/>
+                    <ChatSection taskId={taskId ?? taskData.id} title={task.taskName}/>
+                    <AttachmentSection taskId={taskId ?? taskData.id}/>
+                    <SubtaskSection taskId={taskId ?? taskData.id}/>
+                    <ActivitySection taskId={taskId ?? taskData.id}/>
                 </div>
             </div>
         </div>
