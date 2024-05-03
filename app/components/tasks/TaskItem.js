@@ -8,7 +8,7 @@ import { FaCheckSquare as CheckIcon } from "react-icons/fa";
 export default function TaskItem({ task, active }){
 
     return(
-        <Link href={`?taskId=${task.id}`} className={`bg-white rounded px-2.5 py-4 flex flex-col gap-1 ${active ? "border border-basic-blue" : ""}`}>
+        <Link href={`?taskId=${task.id}`} className={`bg-white rounded px-2.5 py-4 flex flex-col gap-1 ${active ? "border border-basic-blue pointer-events-none" : ""}`}>
             <p className="text-xs md:text-sm">{task.taskName}</p>
             <div className="flex items-center gap-2">
                 <div className="flex flex-grow items-center gap-1 text-dark-blue">

@@ -37,7 +37,7 @@ export default function TaskContent({ projectId, taskId }){
     }, [projectId, taskId])
 
     return(
-        <div className="w-full h-full flex flex-col gap-4 overflow-y-auto">
+        <div className="w-full h-full flex flex-col gap-2.5 sm:gap-4 overflow-y-auto">
             <div className="flex flex-col xs:flex-row justify-between gap-4 items-center">
                 <div className="w-full flex justify-center md:justify-start items-center gap-3 md:gap-6"> 
                     <SearchBar placeholder={"Cari tugas.."} handleSearch={handleSearch}/>
@@ -62,7 +62,7 @@ export default function TaskContent({ projectId, taskId }){
                     </div>
                 </div>
             </div>
-            <div className="h-full flex flex-col sm:flex-row gap-4 overflow-y-auto">
+            <div className="h-full flex flex-col sm:flex-row gap-2 sm:gap-4 overflow-hidden sm:overflow-y-auto">
                 <TaskList tasks={tasks} taskId={taskId}/>
                 <TaskDetail taskId={taskId} taskData={taskData}/>
             </div>

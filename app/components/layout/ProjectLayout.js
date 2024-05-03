@@ -22,7 +22,7 @@ export default function ProjectLayout({ children, hideSidebar, projectId }){
             <Navbar/>
             {!hideSidebar && <Sidebar project={project}/>}
             <div className="max-w-7xl max-h-full flex flex-col flex-grow gap-6 pt-6 pb-6 md:pb-8 pl-10 xs:pl-12 lg:pl-14 pr-6 lg:pr-12 mx-auto overflow-y-auto">
-                <main className="flex-grow flex flex-col gap-4 overflow-y-auto">
+                <main className="flex-grow flex flex-col gap-2.5 md:gap-4 overflow-y-auto">
                     {children}
                 </main>
             </div>

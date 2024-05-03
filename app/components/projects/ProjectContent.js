@@ -78,7 +78,7 @@ export default function ProjectContent(){
                 const { fullName, profileImage } = row.getValue('createdBy') ?? {}
                 return(
                     <div className="flex gap-2 items-center">
-                        <UserIcon size="sm" fullName={fullName} src={profileImage} alt=""/>
+                        <UserIcon size="sm" fullName={fullName} src={profileImage?.attachmentStoragePath} alt=""/>
                         <p>{fullName?.split(' ')[0]}</p>
                     </div>
                 )
