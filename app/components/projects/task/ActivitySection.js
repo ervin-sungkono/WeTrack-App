@@ -26,17 +26,17 @@ export default function ActivitySection({taskId}){
     const [sorting, setSorting] = useState('asc')
 
     useEffect(() => {
-        if(category === "comment" && !commentData){
-            getAllComments(taskId)
-                .then(res => {
-                    if(res.data){
-                        setCommentData(res.data)
-                    }else{
-                        alert("Gagal mengambil data komentar")
-                    }
-                })
-                .catch(err => console.log(err))
-        }
+        // if(category === "comment" && !commentData){
+        //     getAllComments(taskId)
+        //         .then(res => {
+        //             if(res.data){
+        //                 setCommentData(res.data)
+        //             }else{
+        //                 alert("Gagal mengambil data komentar")
+        //             }
+        //         })
+        //         .catch(err => console.log(err))
+        // }
         if(category === "history" && !historyData){
             // get comment data
             setHistoryData([

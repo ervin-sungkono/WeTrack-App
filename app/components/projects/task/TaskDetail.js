@@ -17,7 +17,7 @@ import ChatSection from "./ChatSection"
 const AttachmentSection = dynamic(() => import("./AttachmentSection"))
 const SubtaskSection = dynamic(() => import("./SubtaskSection"))
 
-function TaskDetail({ taskId, taskData, closeFn }){
+function TaskDetail({ taskId, closeFn }){
     const [task, setTask] = useState()
     const [loading, setLoading] = useState(false)
     const [assignee, setAssignee] = useState()
@@ -47,7 +47,6 @@ function TaskDetail({ taskId, taskData, closeFn }){
     ]
 
     useEffect(() => {
-        if(taskData) setTask(taskData)
         if(taskId && (!task || (task && task.id !== taskId))){
             setLoading(true)
             getTaskById(taskId)
@@ -55,13 +54,10 @@ function TaskDetail({ taskId, taskData, closeFn }){
                 if(res.data){
                     setTask(res.data)
                 }
-                else{
-                    setTask(null)
-                }
                 setLoading(false)
             })
         }
-    }, [taskId, task, taskData])
+    }, [taskId, task])
 
     if(loading) return(
         <div className="w-full h-full flex flex-col gap-4 justify-center items-center">
@@ -83,7 +79,7 @@ function TaskDetail({ taskId, taskData, closeFn }){
     }
 
     return(
-        <div className={`h-full flex flex-col gap-3 md:gap-6 px-4 py-4 md:px-8 md:py-6 bg-white text-dark-blue rounded-lg shadow-lg overflow-y-auto`}>
+        <div className={`w-full h-full flex flex-col gap-3 md:gap-6 px-4 py-4 md:px-8 md:py-6 bg-white text-dark-blue rounded-lg shadow-lg overflow-y-auto`}>
             <div className="flex items-start gap-4">
                 <div className={`text-lg md:text-2xl font-semibold text-dark-blue flex-grow`}>
                     {task.taskName}
@@ -133,10 +129,10 @@ function TaskDetail({ taskId, taskData, closeFn }){
                         <p className="text-xs md:text-sm">{task.description}</p> :
                         <p>Tambahkan deskripsi tugas..</p>}
                     </div>
-                    <ChatSection taskId={taskId ?? taskData.id} title={task.taskName}/>
-                    <AttachmentSection taskId={taskId ?? taskData.id}/>
-                    <SubtaskSection taskId={taskId ?? taskData.id}/>
-                    <ActivitySection taskId={taskId ?? taskData.id}/>
+                    <ChatSection taskId={taskId} title={task.taskName}/>
+                    <AttachmentSection taskId={taskId}/>
+                    <SubtaskSection taskId={taskId}/>
+                    <ActivitySection taskId={taskId}/>
                 </div>
             </div>
         </div>

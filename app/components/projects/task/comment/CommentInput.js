@@ -38,7 +38,7 @@ export default function CommentInput({ onSubmit }){
                 >
                     <Mention 
                         trigger={"@"}
-                        data={users}
+                        data={users.filter(user => user.id != session?.user.uid)}
                         displayTransform={(id, display) => "@" + (display)}
                         className="mentions__mention"
                     />

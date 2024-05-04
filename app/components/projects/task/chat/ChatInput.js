@@ -12,7 +12,11 @@ export default function ChatInput({ name, onSubmit, placeholder, disabled = fals
     return(
         <div className="absolute bottom-0 left-0 w-full flex gap-4 items-center">
             <form 
-                onSubmit={() => onSubmit(text)}
+                onSubmit={(e) => {
+                    e.preventDefault()
+                    onSubmit(text)
+                    setText("")
+                }}
                 className="w-full flex gap-1"
             >
                 <div className="relative w-full flex items-end py-3 md:py-4 pl-4 pr-12 bg-white rounded-md shadow-md border border-dark-blue/30 focus-within:border-basic-blue/60">
