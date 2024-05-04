@@ -5,19 +5,38 @@ import dynamic from "next/dynamic"
 
 import { addComment } from "@/app/lib/fetch/comment"
 import { deleteComment } from "@/app/lib/fetch/comment"
-import { getQueryReference } from "@/app/firebase/util"
-import { onSnapshot } from "firebase/firestore"
+import { getQueryReference, getDocumentReference } from "@/app/firebase/util"
+import { onSnapshot, getDoc } from "firebase/firestore"
 
 const CommentInput  = dynamic(() => import("./comment/CommentInput"))
 const CommentCard = dynamic(() => import("./comment/CommentCard"))
 
 export default function CommentSection({ comments, setCommentData, taskId }){
     useEffect(() => {
+        if(!taskId) return
         const reference = getQueryReference({ collectionName: "comments", field: "taskId", id: taskId })
-        const unsubscribe = onSnapshot(reference, (snapshot) => {
-            const updatedComments = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
+        const unsubscribe = onSnapshot(reference, async(snapshot) => {
+            const updatedComments = await Promise.all(snapshot.docs.map(async(document) => {
+                const userId = document.data().userId
+                if(userId){
+                    const userRef = getDocumentReference({ collectionName: "users", id: userId })
+                    const userSnap = await getDoc(userRef)
+                    const { fullName, profileImage } = userSnap.data()
+
+                    return({
+                        id: document.id,
+                        user: {
+                            fullName,
+                            profileImage
+                        },
+                        ...document.data()
+                    })
+                }
+                return({
+                    id: document.id,
+                    user: null,
+                    ...document.data()
+                })
             }))
             setCommentData(updatedComments)
         })

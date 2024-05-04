@@ -28,9 +28,27 @@ export async function GET(request, response){
         const q = query(chatsColRef, where('taskId', '==', taskId))
         const querySnapshot = await getDocs(q)
 
-        const chats = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
+        const chats = await Promise.all(querySnapshot.docs.map(async(document) => {
+            const senderId = document.data().senderId
+            if(senderId){
+                const userRef = doc(db, "users", senderId)
+                const userSnap = await getDoc(userRef)
+                const { fullName, profileImage } = userSnap.data()
+
+                return({
+                    id: document.id,
+                    sender: {
+                        fullName,
+                        profileImage
+                    },
+                    ...document.data()
+                })
+            }
+            return({
+                id: document.id,
+                sender: null,
+                ...document.data()
+            })
         }))
 
         return NextResponse.json({
@@ -90,6 +108,7 @@ export async function POST(request, response){
                 message: "Fail to create new chat"
             }, { status: 500 })
         }
+        
 
         const chatResponse = await generateChatResponse({
             taskDescription: taskSnap.data().description,

@@ -15,6 +15,7 @@ export default function ChatInput({ name, onSubmit, placeholder, disabled = fals
                 onSubmit={(e) => {
                     e.preventDefault()
                     onSubmit(text)
+                    setText("")
                 }}
                 className="w-full flex gap-1"
             >
