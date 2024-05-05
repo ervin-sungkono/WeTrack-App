@@ -1,7 +1,8 @@
 "use client"
+import Link from "next/link"
 import { useSession } from "next-auth/react"
-import { useEffect, useState } from "react"
 import { listDateFormat } from "@/app/lib/date"
+import { extractSingleMentionTag } from "@/app/lib/string"
 
 import UserIcon from "@/app/components/common/UserIcon"
 
@@ -9,6 +10,29 @@ import { RiChatDeleteFill as DeleteComment } from 'react-icons/ri'
 
 export default function CommentCard({ comment, deleteComment }){
     const { data: session, status } = useSession()
+
+    const renderComment = (comment) => {
+        const splitPattern = /(?<=.)(@\[[^\]]+\]\([^)]+\))(?=.)/g;
+        const segments = comment.split(splitPattern)
+
+        return segments.map((segment, index) => {
+            const data = extractSingleMentionTag(segment)
+            if(data.mention){
+                return (
+                    <Link 
+                        key={`${segment}-${index}`} 
+                        href={`/profile/${data.id}`} 
+                        className="text-basic-blue font-semibold hover:underline"
+                    >
+                        @{data.name}
+                    </Link>
+                )
+            }
+            else{
+                return <span key={`${segment}-${index}`}>{data.content}</span>
+            }
+        })
+    }
 
     if(!session || status === 'loading') return null // nanti jadi skeleton loader
     if(!comment) return null
@@ -23,8 +47,8 @@ export default function CommentCard({ comment, deleteComment }){
                         </p>
                         <p className="text-xs md:text-sm text-dark-blue/80">{listDateFormat(comment.createdAt)}</p>
                     </div>
-                    <p className="markdown text-xs md:text-sm text-dark-blue/80">
-                        {comment.commentText}
+                    <p className="text-xs md:text-sm text-dark-blue/80">
+                        {renderComment(comment.commentText)}
                     </p>
                 </div>
                 {comment.userId === session.user.uid && 

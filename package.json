@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@fullcalendar/core": "^6.1.11",
+    "@fullcalendar/daygrid": "^6.1.11",
+    "@fullcalendar/react": "^6.1.11",
     "@hello-pangea/dnd": "^16.5.0",
     "@syncfusion/ej2-react-gantt": "^25.1.42",
     "@tanstack/react-table": "^8.9.3",

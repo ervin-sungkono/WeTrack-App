@@ -25,12 +25,12 @@ $light-blue: #BBB7D3;
 $white: #FFFFFF;
 
 @layer components{
-    .markdown p, li, th, td{
+    .markdown p, .markdown li, .markdown th, .markdown td{
         @apply text-xs md:text-sm
     }
 }
 
-.markdown  th, td{
+.markdown th, .markdown td{
     padding-inline: 4px;
     border: 1px solid $dark-blue;
 }
