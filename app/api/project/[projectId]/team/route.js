@@ -5,7 +5,7 @@ import { getUserSession } from "@/app/lib/session";
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
-export async function GET(request, context){
+export async function GET(request, response){
     try {
         const session = await getUserSession(request, response, nextAuthOptions);
         if (!session.user) {
@@ -21,14 +21,38 @@ export async function GET(request, context){
             }, { status: 404 });
         }
 
-        const { projectId } = context.params
+        const { projectId } = response.params
 
         const teamCollection = collection(db, 'teams')
-        const teamDocs = await getDocs()
+        const q = query(teamCollection, where("projectId", '==', projectId))
+        const teamSnapshots = await getDocs(q)
 
-        if(teamDocs){
-            teamDocs.docs.map(())
-        }
+        // if(teamSnapshots.empty()){
+        //     return NextResponse.json({
+        //         message: "There are no personel yet in this project"
+        //     }, { status: 404 })
+        // }
+
+        const teams = await Promise.all(teamSnapshots.docs.map(async (item) => {
+            const teamData = item.data()
+            const userDocRef = await getDoc(doc(db, "users", teamData.userId))
+            const userData = userDocRef.exists ? userDocRef.data() : null
+
+            return {
+                id: item.id,
+                ...teamData,
+                user: {
+                    id: userData.id,
+                    fullName: userData.fullName,
+                    profileImage: userData.profileImage
+                }
+            }
+        }))
+
+        return NextResponse.json({
+            data: teams,
+            message: "Successfully get all team members"
+        }, { status: 200 })
 
     } catch (error) {
         return NextResponse.json({
@@ -38,7 +62,7 @@ export async function GET(request, context){
     }
 }
 
-export async function POST(request, context){
+export async function POST(request, response){
     try {       
         const session = await getUserSession(request, response, nextAuthOptions);
         if (!session.user) {
@@ -55,7 +79,7 @@ export async function POST(request, context){
         }
 
         const { teams } = await request.json()
-        const { projectId } = context.params
+        const { projectId } = response.params
         
         console.log("teams", teams)
         console.log("projectId", projectId)
@@ -73,6 +97,7 @@ export async function POST(request, context){
 
         const usersRef = collection(db, 'users')
         const docRef = await getDoc(doc(db, 'projects', projectId))
+        const { projectName } = docRef.data()
 
         if(!docRef.exists()){
             return NextResponse.json({

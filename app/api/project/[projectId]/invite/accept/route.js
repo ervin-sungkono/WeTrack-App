@@ -4,7 +4,7 @@ import { getUserSession } from "@/app/lib/session";
 import { doc, FieldPath, query, updateDoc, where } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
-export async function GET(request, context) {
+export async function GET(request, response) {
     try {
         const session = await getUserSession(request, response, nextAuthOptions);
         if (!session.user) {
@@ -20,7 +20,7 @@ export async function GET(request, context) {
             }, { status: 404 });
         }
 
-        const { projectId } = context.params 
+        const { projectId } = response.params 
 
         if(!projectId){
             return NextResponse.json({

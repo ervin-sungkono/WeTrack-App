@@ -2,7 +2,7 @@ import { updateDoc, serverTimestamp, getDoc, deleteDoc, doc } from 'firebase/fir
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 
-export async function GET(request, context) {
+export async function GET(request, response) {
     try {
         const session = await getUserSession(request, response, nextAuthOptions)
         const userId = session.user.uid
@@ -13,7 +13,7 @@ export async function GET(request, context) {
             }, { status: 401 })
         }
         
-        const { projectId }  = context.params;
+        const { projectId }  = response.params;
 
         const projectDocRef = doc(db, 'projects', projectId);
 
@@ -49,7 +49,7 @@ export async function GET(request, context) {
     }
 }
 
-export async function PUT(request, context) {
+export async function PUT(request, response) {
     try {
         const session = await getUserSession(request, response, nextAuthOptions)
         const userId = session.user.uid
@@ -60,8 +60,8 @@ export async function PUT(request, context) {
             }, { status: 401 })
         }
 
-        const { projectId }  = context.params;
-        const { key, projectName } = await request.json();
+        const { projectId }  = response.params;
+        const { key, projectName, startStatusId, endStatusId } = await request.json();
 
         const projectDocRef = doc(db, 'projects', projectId);
         const projectSnap = await getDoc(projectDocRef);
@@ -70,6 +70,7 @@ export async function PUT(request, context) {
         await updateDoc(projectDocRef, {
             key: key ?? projectData.key,
             projectName: projectName ?? projectData.projectName,
+            startStatus: endStatusId ?? projectData.startStatus,
             updatedAt: serverTimestamp()
         });
 

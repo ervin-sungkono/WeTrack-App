@@ -3,7 +3,7 @@ import { getUserSession } from "@/app/lib/session";
 import { deleteDoc } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
-export async function GET(request, response, context) {
+export async function GET(request, response) {
     try {
         const session = await getUserSession(request, response, nextAuthOptions);
         if (!session.user) {
@@ -19,7 +19,7 @@ export async function GET(request, response, context) {
             }, { status: 404 });
         }
 
-        const { projectId } = context.params 
+        const { projectId } = response.params 
 
         if(!projectId){
             return NextResponse.json({

@@ -107,7 +107,7 @@ export async function POST(request, response) {
             const statusDocRef = await addDoc(collection(db, 'taskStatuses'), {
                 statusName: statuses[i],
                 projectId: docRef.id,
-                order: i+1,
+                order: i,
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
                 deletedAt: null
@@ -146,6 +146,22 @@ export async function POST(request, response) {
             id: user.id,
             fullName: user.data().fullName,
             profileImage: user.data().profileImage
+        }
+
+        const team = await addDoc(collection(db, "teams"), {
+            projectId: docRef.id,
+            userId: user.id,
+            role: "Owner",
+            status: "accepted",
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+            deletedAt: null
+        })
+
+        if(!team){
+            return NextResponse.json({
+                message: "Failed to add user to team"
+            }, { status: 204 })
         }
 
         if (updatedProjectSnap.exists()) {
