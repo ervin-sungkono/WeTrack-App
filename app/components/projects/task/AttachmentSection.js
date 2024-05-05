@@ -11,7 +11,7 @@ import { FiPlus as PlusIcon } from "react-icons/fi"
 import { MdFileDownload as DownloadIcon, MdDelete as DeleteIcon } from "react-icons/md"
 
 
-export default function AttachmentSection({ attachments = [] }){
+export default function AttachmentSection({ taskId }){
     const attachmentUploaderRef = useRef()
     const attachmentsAction = [
         {
@@ -25,6 +25,21 @@ export default function AttachmentSection({ attachments = [] }){
             fnCall: () => {
                 console.log("delete all")
             }
+        }
+    ]
+
+    const attachments = [
+        { 
+            id: 'A1023',
+            attachmentName: "images/AIPoweredAssistance.png",
+            attachmentLocation: "http://localhost:3000/images/AIPoweredAssistance.png",
+            createdAt: new Date().toISOString(),
+        },
+        { 
+            id: 'A1024',
+            attachmentName: "images/CompletedState.png",
+            attachmentLocation: "http://localhost:3000/images/CompletedState.png",
+            createdAt: new Date("04-16-2024").toISOString(),
         }
     ]
 

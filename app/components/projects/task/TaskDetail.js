@@ -12,11 +12,12 @@ import { dateFormat } from "@/app/lib/date"
 import DotButton from "../../common/button/DotButton"
 import ActivitySection from "./ActivitySection"
 import { TailSpin } from "react-loader-spinner"
+import ChatSection from "./ChatSection"
 
 const AttachmentSection = dynamic(() => import("./AttachmentSection"))
 const SubtaskSection = dynamic(() => import("./SubtaskSection"))
 
-function TaskDetail({ taskId, taskData, closeFn }){
+function TaskDetail({ taskId, closeFn }){
     const [task, setTask] = useState()
     const [loading, setLoading] = useState(false)
     const [assignee, setAssignee] = useState()
@@ -45,39 +46,7 @@ function TaskDetail({ taskId, taskData, closeFn }){
         }
     ]
 
-    const attachmentList = [
-        { 
-            id: 'A1023',
-            attachmentName: "images/AIPoweredAssistance.png",
-            attachmentLocation: "http://localhost:3000/images/AIPoweredAssistance.png",
-            createdAt: new Date().toISOString(),
-        },
-        { 
-            id: 'A1024',
-            attachmentName: "images/CompletedState.png",
-            attachmentLocation: "http://localhost:3000/images/CompletedState.png",
-            createdAt: new Date("04-16-2024").toISOString(),
-        }
-    ]
-
-    const subtasks = [
-        { 
-            id: 'ST1023',
-            taskName: 'Develop Initial UI',
-            priority: 3,
-            statusId: "SI232",
-        },
-        { 
-            id: 'ST1024',
-            taskName: 'Add Animation',
-            priority: 2,
-            statusId: "SI233",
-        }
-    ]
-
-
     useEffect(() => {
-        if(taskData) setTask(taskData)
         if(taskId && (!task || (task && task.id !== taskId))){
             setLoading(true)
             getTaskById(taskId)
@@ -85,13 +54,10 @@ function TaskDetail({ taskId, taskData, closeFn }){
                 if(res.data){
                     setTask(res.data)
                 }
-                else{
-                    setTask(null)
-                }
                 setLoading(false)
             })
         }
-    }, [taskId, task, taskData])
+    }, [taskId, task])
 
     if(loading) return(
         <div className="w-full h-full flex flex-col gap-4 justify-center items-center">
@@ -113,7 +79,7 @@ function TaskDetail({ taskId, taskData, closeFn }){
     }
 
     return(
-        <div className={`h-full flex flex-col gap-3 md:gap-6 px-4 py-4 md:px-8 md:py-6 bg-white text-dark-blue rounded-lg shadow-lg overflow-y-auto`}>
+        <div className={`w-full h-full flex flex-col gap-3 md:gap-6 px-4 py-4 md:px-8 md:py-6 bg-white text-dark-blue rounded-lg shadow-lg overflow-y-auto`}>
             <div className="flex items-start gap-4">
                 <div className={`text-lg md:text-2xl font-semibold text-dark-blue flex-grow`}>
                     {task.taskName}
@@ -163,8 +129,9 @@ function TaskDetail({ taskId, taskData, closeFn }){
                         <p className="text-xs md:text-sm">{task.description}</p> :
                         <p>Tambahkan deskripsi tugas..</p>}
                     </div>
-                    <AttachmentSection attachments={attachmentList}/>
-                    <SubtaskSection subtasks={subtasks}/>
+                    <ChatSection taskId={taskId} title={task.taskName}/>
+                    <AttachmentSection taskId={taskId}/>
+                    <SubtaskSection taskId={taskId}/>
                     <ActivitySection taskId={taskId}/>
                 </div>
             </div>

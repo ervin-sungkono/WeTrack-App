@@ -24,6 +24,24 @@ $basic-blue: #47389F;
 $light-blue: #BBB7D3;
 $white: #FFFFFF;
 
+@layer components{
+    .markdown p, li, th, td{
+        @apply text-xs md:text-sm
+    }
+}
+
+.markdown  th, td{
+    padding-inline: 4px;
+    border: 1px solid $dark-blue;
+}
+
+.markdown ol,
+.markdown ul,
+.markdown menu{
+    list-style: initial;
+    padding-left: 12px;
+}
+
 body{
     background-color: #F5F5F5;
 }

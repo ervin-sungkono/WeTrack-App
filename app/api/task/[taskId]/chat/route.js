@@ -28,9 +28,27 @@ export async function GET(request, response){
         const q = query(chatsColRef, where('taskId', '==', taskId))
         const querySnapshot = await getDocs(q)
 
-        const chats = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
+        const chats = await Promise.all(querySnapshot.docs.map(async(document) => {
+            const senderId = document.data().senderId
+            if(senderId){
+                const userRef = doc(db, "users", senderId)
+                const userSnap = await getDoc(userRef)
+                const { fullName, profileImage } = userSnap.data()
+
+                return({
+                    id: document.id,
+                    sender: {
+                        fullName,
+                        profileImage
+                    },
+                    ...document.data()
+                })
+            }
+            return({
+                id: document.id,
+                sender: null,
+                ...document.data()
+            })
         }))
 
         return NextResponse.json({
@@ -68,7 +86,7 @@ export async function POST(request, response){
             }, { status: 404 })
         }
 
-        const { taskDescription, content } = await request.json()
+        const { content } = await request.json()
 
         if(!content){
             return NextResponse.json({
@@ -76,46 +94,42 @@ export async function POST(request, response){
             }, { status: 400 })
         }
 
+        // add chat from user
+        const newUserChat = await addDoc(collection(db, 'chats'), {
+                taskId: taskId,
+                role: "user",
+                content: content,
+                senderId: userId,
+                createdAt: new Date().toISOString(),
+        });
+
+        if(!newUserChat){
+            return NextResponse.json({
+                message: "Fail to create new chat"
+            }, { status: 500 })
+        }
+        
+
         const chatResponse = await generateChatResponse({
-            taskDescription,
+            taskDescription: taskSnap.data().description,
             content
         })
 
-        const newChatData = [
-            {
-                role: "user",
-                content: content,
-                senderId: userId
-            },{
-                role: "assistant",
-                content: chatResponse.message.content,
-                senderId: null
-            }
-        ]
+        const newAssistantChat = await addDoc(collection(db, 'chats'), {
+            taskId: taskId,
+            role: "assistant",
+            content: chatResponse.message.content,
+            senderId: null,
+            createdAt: new Date().toISOString(),
+        });
 
-        const newChat = newChatData.map(async(newChat) => {
-            return await addDoc(collection(db, 'chats'), {
-                taskId: taskId,
-                ...newChat,
-                createdAt: new Date().toISOString(),
-            });
-        })
-
-        console.log(newChat)
-
-        if(!newChat){
+        if(!newAssistantChat){
             return NextResponse.json({
                 message: "Fail to create new chat"
             }, { status: 500 })
         }
 
-        const newChatSnap = await getDoc(newChat)
-
         return NextResponse.json({
-            data: newChat.map(chat => ({
-                id: chat.id,
-                ...newChatSnap.data()
-            })),
             message: "Successfully create new chat"
         }, {  status: 200 })
 
