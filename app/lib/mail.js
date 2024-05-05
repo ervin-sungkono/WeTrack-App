@@ -28,7 +28,7 @@ export const sendMail = async({ email, fullName, projectId, projectName }) => {
             to: receiver_email,
             ...generateEmailContent({
                 sender_name: fullName,
-                invitation_link: `${WEB_URL}/invite/${projectId}`,
+                invitation_link: `${WEB_URL}/invite/${projectId}?senderName=${fullName}&projectName=${projectName}`,
                 project_name: projectName
             }),
             subject: `Undangan dari ${fullName} untuk bergabung di WeTrack`

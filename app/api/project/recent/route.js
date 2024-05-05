@@ -1,4 +1,4 @@
-import { collection, query, where, orderBy, limit, getDocs, FieldPath } from 'firebase/firestore';
+import { collection, query, where, orderBy, limit, getDocs, FieldPath, getDoc } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
@@ -16,14 +16,24 @@ export async function GET(request, response) {
         }
 
         const projectsRef = collection(db, 'projects')
-        const fieldRef = new FieldPath('createdBy', 'id')
+        // const fieldRef = new FieldPath('createdBy', 'id')
 
-        const q = query(projectsRef, where(fieldRef, "==", userId), orderBy("createdAt", "desc"), limit(3));
+        const q = query(projectsRef, where('createdBy', "==", userId), orderBy("createdAt", "desc"), limit(3));
         const querySnapshot = await getDocs(q);
 
-        const projects = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
+        const projects = await Promise.all(querySnapshot.docs.map(async (item) => {
+            const userDoc = await getDoc(doc(db, "users", item.createdBy))
+            const userData = userDoc.exists ? userDoc.data() : null
+
+            return {
+                id: item.id,
+                ...doc.data(),
+                createdBy: {
+                    id: userDoc.id,
+                    fullName: userData.data().fullName,
+                    profileImage: userData.data().profileImage
+                }
+            }
         }));
 
         return NextResponse.json({

@@ -16,15 +16,42 @@ export async function GET(request, response) {
             }, { status: 401 })
         }
 
-        const projectsRef = collection(db, 'projects')
-        const fieldRef = new FieldPath('createdBy', 'id')
+        const directProjectsRef = collection(db, 'projects');
+        const directQuery = query(directProjectsRef, where('createdBy', "==", userId));
+        const directProjectSnapshots = await getDocs(directQuery);
 
-        const q = query(projectsRef, where(fieldRef, "==", userId));
-        const querySnapshot = await getDocs(q);
+        console.log("direct projek docs", directProjectSnapshots)
 
-        const projects = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
+        const teamsRef = collection(db, 'team');    
+        const teamQuery = query(teamsRef, where('userId', "==", userId), where('status', "==", 'accepted'));
+        const teamSnapshots = await getDocs(teamQuery);
+
+        console.log("team docs", teamSnapshots)
+
+        const teamProjectIds = teamSnapshots.docs.map(doc => doc.data().projectId);
+        const projectFetches = teamProjectIds.map(projectId => getDoc(doc(db, 'projects', projectId)));
+        const teamProjects = await Promise.all(projectFetches);
+
+        console.log("team projek", teamProjects)
+
+        const combinedProjectDocs = [...directProjectSnapshots.docs, ...teamProjects.filter(doc => doc.exists())];
+
+        console.log("combine projek docs", combinedProjectDocs)
+
+        const projects = await Promise.all(combinedProjectDocs.map(async (item) => {
+            const projectData = item.data();
+            const userDoc = await getDoc(doc(db, 'users', projectData.createdBy));
+            const userData = userDoc.exists() ? userDoc.data() : null;
+
+            return {
+                id: item.id,
+                ...projectData,
+                createdBy: userData ? {
+                    id: userDoc.id,
+                    fullName: userData.fullName,
+                    profileImage: userData.profileImage
+                } : null
+            };
         }));
 
         return NextResponse.json({
@@ -43,7 +70,7 @@ export async function GET(request, response) {
 
 export async function POST(request, response) {
     try {
-        const { key, projectName, teams } = await request.json();
+        const { key, projectName } = await request.json();
         const session = await getUserSession(request, response, nextAuthOptions)
         const createdBy = session.user.uid
 
@@ -61,20 +88,13 @@ export async function POST(request, response) {
         }
 
         const user = await getDoc(doc(db, 'users', createdBy))
-        const { fullName, profileImage } = user.data()
 
         const docRef = await addDoc(collection(db, 'projects'), {
             key: key,
             projectName: projectName,
-            createdBy: {
-                id: user.id,
-                fullName,
-                profileImage
-            },
+            createdBy: user.id,
             startStatus: null,
             endStatus: null,
-            taskList: [],
-            team: null,
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
             deletedAt: null
@@ -82,85 +102,76 @@ export async function POST(request, response) {
 
         const statuses = ['To Do', 'In Progress', 'Done'];
         let startStatusId, endStatusId;
-        let taskStatusList = []; 
 
-        for (const status of statuses) {
+        for (let i = 0; i < statuses.length; i++){
             const statusDocRef = await addDoc(collection(db, 'taskStatuses'), {
-                status: status,
+                statusName: statuses[i],
                 projectId: docRef.id,
-                tasks: [],
+                order: i,
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
                 deletedAt: null
             });
 
-            taskStatusList.push({ id: statusDocRef.id, status: status });
-
-            if (status === 'To Do') {
+            if (statuses[i] === 'To Do') {
                 startStatusId = statusDocRef.id;
-            } else if (status === 'Done') {
+            } else if (statuses[i] === 'Done') {
                 endStatusId = statusDocRef.id;
             }
         }
 
-        const usersRef = collection(db, 'users')
-        
-        let teamList = []
-        if(teams){
-            teamList = await Promise.all(teams.map(async(email) => {
-                const userDocRef = query(usersRef, where('email', '==', email))
-                const userSnap = await getDocs(userDocRef)
-                const userData = userSnap.docs?.[0]
-                if(userData){
-                    const { email, fullName, profileImage } = userData.data()
-                    return {
-                        id: userData.id,
-                        email,
-                        fullName,
-                        profileImage,
-                        status: "pending" // status = pending OR accepted
-                    }
-                }
-                return null
-            })).then(arr => arr.filter(user => user != null))
-    
-            await Promise.all(teamList.map(({ email, fullName }) => {
-                return sendMail({
-                    email,
-                    fullName,
-                    projectId: docRef.id,
-                    projectName
-                })
-            }))
+        console.log("startStatusId", startStatusId)
+        console.log("endStatusId", endStatusId)
+
+        const startStatusDocRef = await getDoc(doc(db, "taskStatuses", startStatusId))
+        const startStatusDetail = {
+            id: startStatusDocRef.id,
+            status: startStatusDocRef.data().statusName
         }
-
-        const startStatusDetail = await getDoc(doc(db, "taskStatuses", startStatusId))
-        const { startStatus } = startStatusDetail.data()
-
-        const endStatusDetail = await getDoc(doc(db, "taskStatuses", endStatusId))
-        const { endStatus } = endStatusDetail.data()
+        
+        const endStatusDocRef = await getDoc(doc(db, "taskStatuses", endStatusId))
+        const endStatusDetail = {
+            id: endStatusDocRef.id,
+            status: endStatusDocRef.data().statusName
+        }
         
         await updateDoc(docRef, {
-            startStatus: { 
-                id: startStatusId, 
-                status: startStatus
-            },
-            endStatus: { 
-                id: endStatusId,
-                status: endStatus
-            },
-            taskStatusList: taskStatusList,
-            team: teamList,
+            startStatus: startStatusId, 
+            endStatus: endStatusId,
             updatedAt: serverTimestamp()
         });
 
         const updatedProjectSnap = await getDoc(docRef);
+        const createdByDetail = {
+            id: user.id,
+            fullName: user.data().fullName,
+            profileImage: user.data().profileImage
+        }
+
+        const team = await addDoc(collection(db, "teams"), {
+            projectId: docRef.id,
+            userId: user.id,
+            role: "Owner",
+            status: "accepted",
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+            deletedAt: null
+        })
+
+        if(!team){
+            return NextResponse.json({
+                message: "Failed to add user to team"
+            }, { status: 204 })
+        }
 
         if (updatedProjectSnap.exists()) {
             return NextResponse.json({
                 data: {
                     id: updatedProjectSnap.id,
-                    ...updatedProjectSnap.data()
+                    ...updatedProjectSnap.data(),
+                    createdBy: createdByDetail,
+                    startStatus: startStatusDetail,
+                    endStatus: endStatusDetail
                 },
                 message: "Successfully created a new project with task statuses"
             }, { status: 200 });

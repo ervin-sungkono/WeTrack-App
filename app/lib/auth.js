@@ -4,7 +4,7 @@ import { signIn } from "./fetch/user";
 export const nextAuthOptions = {
   session: {
     strategy: "jwt",
-    maxAge: 7 * 24 * 60 * 60 // 7 days
+    maxAge: 7 * 24 * 60 * 60
   },
   providers: [
     CredentialsProvider({

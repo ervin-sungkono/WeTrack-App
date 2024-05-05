@@ -2,11 +2,20 @@ import { updateDoc, serverTimestamp, getDoc, deleteDoc, doc } from 'firebase/fir
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 
-export async function GET(request, context) {
+export async function GET(request, response) {
     try {
-        const { id }  = context.params;
+        const session = await getUserSession(request, response, nextAuthOptions)
+        const userId = session.user.uid
+        if(!userId){
+            return NextResponse.json({
+                data: null,
+                message: "Unauthorized, user id not found"
+            }, { status: 401 })
+        }
+        
+        const { projectId }  = response.params;
 
-        const projectDocRef = doc(db, 'projects', id);
+        const projectDocRef = doc(db, 'projects', projectId);
 
         if(!projectDocRef) {
             return  NextResponse.json({
@@ -40,18 +49,28 @@ export async function GET(request, context) {
     }
 }
 
-export async function PUT(request, context) {
+export async function PUT(request, response) {
     try {
-        const { id }  = context.params;
-        const { key, projectName } = await request.json();
+        const session = await getUserSession(request, response, nextAuthOptions)
+        const userId = session.user.uid
+        if(!userId){
+            return NextResponse.json({
+                data: null,
+                message: "Unauthorized, user id not found"
+            }, { status: 401 })
+        }
 
-        const projectDocRef = doc(db, 'projects', id);
+        const { projectId }  = response.params;
+        const { key, projectName, startStatusId, endStatusId } = await request.json();
+
+        const projectDocRef = doc(db, 'projects', projectId);
         const projectSnap = await getDoc(projectDocRef);
         const projectData = projectSnap.data()
 
         await updateDoc(projectDocRef, {
             key: key ?? projectData.key,
             projectName: projectName ?? projectData.projectName,
+            startStatus: endStatusId ?? projectData.startStatus,
             updatedAt: serverTimestamp()
         });
 
