@@ -1,6 +1,7 @@
+import { db } from "@/app/firebase/config";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { getUserSession } from "@/app/lib/session";
-import { deleteDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, query, where } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
 export async function GET(request, response) {
@@ -39,12 +40,6 @@ export async function GET(request, response) {
 
         const querySnapshot = await getDocs(q);
 
-        if(querySnapshot.empty()){
-            return NextResponse.json({
-                message: "User not found in the team"
-            }, { status: 404 })
-        }
-
         const team = querySnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data()
@@ -54,12 +49,18 @@ export async function GET(request, response) {
         console.log("----", team[0])
 
         const teamDocRef = doc(db, 'teams', team[0].id);
-        await deleteDoc(teamDocRef)
+        if(team[0].status == "pending"){
+            await deleteDoc(teamDocRef)
+    
+            return NextResponse.json({
+                data: team,
+                message: "Successfully reject new member invitation to team"
+            }, { status: 200 });
+        }
 
         return NextResponse.json({
-            data: team,
-            message: "Successfully reject new member invitation to team"
-        }, { status: 200 });
+            message: "You already join the team"
+        }, { status: 400 })
 
     } catch (error) {
         return NextResponse.json({

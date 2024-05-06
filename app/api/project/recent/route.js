@@ -28,11 +28,11 @@ export async function GET(request, response) {
             return {
                 id: item.id,
                 ...doc.data(),
-                createdBy: {
+                createdBy: userData ? {
                     id: userDoc.id,
                     fullName: userData.data().fullName,
                     profileImage: userData.data().profileImage
-                }
+                } : null
             }
         }));
 

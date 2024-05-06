@@ -23,7 +23,7 @@ export async function DELETE(request, response) {
             await deleteExistingFile(userData.profileImage.attachmentStoragePath);
 
             await updateDoc(userDocRef, {
-                "profileImage": null
+                profileImage: null
             });
 
             return NextResponse.json({
