@@ -4,19 +4,6 @@
 
 @import "@yaireo/tagify/dist/tagify.css";
 @import "./mention.scss";
-@import '../node_modules/@syncfusion/ej2-base/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-buttons/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-calendars/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-dropdowns/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-inputs/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-lists/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-layouts/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-navigations/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-popups/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-splitbuttons/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-grids/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-treegrid/styles/material.css';
-@import '../node_modules/@syncfusion/ej2-react-gantt/styles/material.css';
 
 $black: #2B2B2B;
 $dark-blue: #1A1B36;
@@ -25,12 +12,12 @@ $light-blue: #BBB7D3;
 $white: #FFFFFF;
 
 @layer components{
-    .markdown p, li, th, td{
+    .markdown p, .markdown li, .markdown th, .markdown td{
         @apply text-xs md:text-sm
     }
 }
 
-.markdown  th, td{
+.markdown th, .markdown td{
     padding-inline: 4px;
     border: 1px solid $dark-blue;
 }

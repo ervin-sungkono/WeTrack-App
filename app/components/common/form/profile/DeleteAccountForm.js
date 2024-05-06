@@ -1,6 +1,4 @@
-import PopUpForm from "../../alert/PopUpForm"
 import PopUpMultiStepForm from "../../alert/PopUpMultiStepForm"
-import Button from "../../button/Button"
 import DeleteAccountConfirmationForm from "./DeleteAccountConfirmationForm"
 import DeleteAccountValidationForm from "./DeleteAccountValidationForm"
 

@@ -5,8 +5,46 @@ import SearchBar from "../../common/SearchBar";
 import { useState } from "react";
 import SelectButton from "../../common/button/SelectButton";
 import { IoFilter as FilterIcon } from "react-icons/io5"
+import { Gantt, Task, EventOption, StylingOption, ViewMode, DisplayOption } from 'gantt-task-react';
+import "gantt-task-react/dist/index.css";
 
 export default function TimelineContent(){
+
+    const tasks = [
+        {
+            start: new Date(2023, 11, 19),
+            end: new Date(2024, 0, 2),
+            name: 'UI Design',
+            id: 'KAN-2',
+            type: 'task',
+            progress: 75,
+            isDisabled: true,
+            styles: { progressColor: '#0C66E4', backgroundColor: '#000000' },
+        },
+        {
+            start: new Date(2023, 11, 26),
+            end: new Date(2024, 0, 5),
+            name: 'Front End',
+            id: 'KAN-4',
+            type: 'task',
+            progress: 50,
+            isDisabled: false,
+            styles: { progressColor: '#0C66E4', backgroundColor: '#000000' },
+        },
+        {
+            start: new Date(2024, 0, 3),
+            end: new Date(2024, 0, 12),
+            name: 'Back End',
+            id: 'KAN-5',
+            type: 'task',
+            progress: 25,
+            isDisabled: false,
+            styles: { progressColor: '#0C66E4', backgroundColor: '#000000' },
+        }
+    ];
+
+    const tasksViewMode = ViewMode.Day;
+
     const [query, setQuery] = useState("")
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(false)
@@ -42,6 +80,17 @@ export default function TimelineContent(){
                             </div>
                         </div>
                     </div>
+                </div>
+                <div>
+                    <Gantt
+                        tasks={tasks}
+                        viewMode={tasksViewMode}
+                        // onDateChange={onTaskChange}
+                        // onTaskDelete={onTaskDelete}
+                        // onProgressChange={onProgressChange}
+                        // onDoubleClick={onDblClick}
+                        // onClick={onClick}
+                    />
                 </div>
             </div>
         </ProjectProvider>

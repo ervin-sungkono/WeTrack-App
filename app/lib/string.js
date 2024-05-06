@@ -47,3 +47,23 @@ export const extractUniqueMentionTags = (text) => {
         return seen.has(value) ? false : seen.add(value);
     });
 }
+
+export const extractSingleMentionTag = (text) => {
+    const pattern = /@\[([^[\]]+)]\(([^)]+)\)/g
+
+    let match = pattern.exec(text)
+    if(match !== null) {
+        const obj = {
+            name: match[1],
+            id: match[2],
+            mention: true,
+        }
+        return obj
+    }
+    else{
+        return({
+            content: text,
+            mention: false
+        })
+    }
+}

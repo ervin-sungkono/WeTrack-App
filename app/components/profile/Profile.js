@@ -18,7 +18,7 @@ import { dateFormat } from "@/app/lib/date"
 import { useRouter } from "next/navigation";
 
 export default function ProfileLayout(){
-    const { data: session, status } = useSession()
+    const { data: session } = useSession()
     const router = useRouter()
 
     const [initialValues, setInitialValues] = useState({
@@ -68,7 +68,8 @@ export default function ProfileLayout(){
     const [changePassword, setChangePassword] = useState(false)
     const [updateProfile, setUpdateProfile] = useState(false)
     const [deleteAccount, setDeleteAccount] = useState(false)
-    const ProfileField = ({icon, label, value}) => {
+
+    const ProfileField = ({icon, label, value, nullValue}) => {
         return (
             <div className="flex gap-2">
                 <div>
@@ -79,7 +80,7 @@ export default function ProfileLayout(){
                         {label}
                     </p>
                     <div className="relative flex items-center">
-                        <div className={`w-full rounded-md bg-transparent text-xs md:text-sm`}>
+                        <div className={`w-full rounded-md bg-transparent text-xs md:text-sm ${nullValue ? "italic" : ""}`}>
                             {value}
                         </div>
                     </div>
@@ -270,7 +271,8 @@ export default function ProfileLayout(){
                                     <ProfileField
                                         icon={<IoIosInformationCircle className="text-lg md:text-xl"/>}
                                         label={"Deskripsi"}
-                                        value={initialValues.description}
+                                        value={initialValues.description || "Deskripsi belum diatur oleh pengguna."}
+                                        nullValue={initialValues.description === ""}
                                     />
                                     <ProfileField
                                         icon={<MdEmail className="text-lg md:text-xl"/>}
@@ -280,12 +282,14 @@ export default function ProfileLayout(){
                                     <ProfileField
                                         icon={<TbBriefcaseFilled className="text-lg md:text-xl"/>}
                                         label={"Posisi Pekerjaan"}
-                                        value={initialValues.jobPosition}
+                                        value={initialValues.jobPosition || "Posisi pekerjaan belum diatur oleh pengguna."}
+                                        nullValue={initialValues.jobPosition === ""}
                                     />
                                     <ProfileField
                                         icon={<IoMdPin className="text-lg md:text-xl"/>}
                                         label={"Lokasi"}
-                                        value={initialValues.location}
+                                        value={initialValues.location || "Lokasi belum diatur oleh pengguna."}
+                                        nullValue={initialValues.location === ""}
                                     />
                                 </div>
                                 <div className="mt-4 md:mt-6 text-center xs:text-left">

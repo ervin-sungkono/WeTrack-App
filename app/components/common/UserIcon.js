@@ -74,6 +74,7 @@ export default function UserIcon({ src, alt = "", fullName, size = 'md' }){
                 alt={alt}
                 onError={setError}
                 src={src}
+                style={{objectFit: 'cover'}}
                 fill
             />
         </div>

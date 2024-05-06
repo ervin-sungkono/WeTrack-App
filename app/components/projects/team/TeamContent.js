@@ -8,6 +8,7 @@ import TeamList from "./TeamList"
 import InviteForm from "../../common/form/InviteForm"
 import PopUpLoad from "../../common/alert/PopUpLoad"
 import { ProjectProvider } from "@/app/lib/context/project"
+import PopUpForm from "../../common/alert/PopUpForm"
 
 export default function TeamContent(){
     const [query, setQuery] = useState("")
@@ -20,6 +21,7 @@ export default function TeamContent(){
 
     const [editMode, setEditMode] = useState(false)
     const [addMode, setAddMode] = useState(false)
+    const [deleteMode, setDeleteMode] = useState(false)
 
     const handleEditMember = () => {
         setError(false)
@@ -29,7 +31,12 @@ export default function TeamContent(){
     const handleAddMember = () => {
         setError(false)
         setLoading(true)
-    }   
+    }  
+
+    const handleDeleteMember = () => {
+        setError(false)
+        setLoading(true)
+    }
 
     const activeTeamDummyData = [
         {
@@ -132,7 +139,7 @@ export default function TeamContent(){
                             </div>
                         </div>
                         <div className="overflow-x-auto">
-                            <TeamList list={activeTeamDummyData} listType="active" edit={editMode} />
+                            <TeamList list={activeTeamDummyData} listType="active" edit={editMode} handleDelete={() => setDeleteMode(true)}/>
                         </div>
                     </div>
                     <div className="mt-6">
@@ -145,7 +152,7 @@ export default function TeamContent(){
                             </div>
                         </div>
                         <div className="h-full overflow-x-auto">
-                            <TeamList list={pendingTeamDummyData} listType="pending" edit={editMode} />
+                            <TeamList list={pendingTeamDummyData} listType="pending" edit={editMode} handleDelete={() => setDeleteMode(true)}/>
                         </div>
                     </div>
                 </div>
@@ -157,6 +164,18 @@ export default function TeamContent(){
                 )}
                 {loading && (
                     <PopUpLoad />
+                )}
+                {deleteMode && (
+                    <PopUpForm
+                        title="Hapus Anggota"
+                        titleSize="large"
+                        message={`Apakah Anda yakin ingin menghapus anggota ini?`}
+                    >
+                        <div className="flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
+                            <Button variant="secondary" onClick={() => setDeleteMode(false)}>Tidak</Button>
+                            <Button variant="danger" onClick={handleDeleteMember}>Ya</Button>
+                        </div>
+                    </PopUpForm>
                 )}
             </div>  
         </ProjectProvider>

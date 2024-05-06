@@ -4,7 +4,7 @@ import SelectButton from "../../common/button/SelectButton";
 import { IoIosCloseCircle as CloseCircle } from "react-icons/io";
 import { useState } from "react";
 
-export default function TeamItem({editMode=false, image=null, id, name, role, status}){
+export default function TeamItem({handleDelete, editMode=false, image=null, id, name, role, status}){
 
     const roleOptions = [
         {label: "Member", value: "Member"},
@@ -15,10 +15,6 @@ export default function TeamItem({editMode=false, image=null, id, name, role, st
 
     const handleRoleChange = (value) => {
         setRoleSelected(value)
-    }
-
-    const handleDelete = () => {
-        console.log("")
     }
 
     const getSelectRoleClass = () => {
