@@ -2,7 +2,7 @@ import { db } from "@/app/firebase/config";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { sendMail } from "@/app/lib/mail";
 import { getUserSession } from "@/app/lib/session";
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, query, serverTimestamp, where } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
 export async function GET(request, response){
@@ -26,12 +26,6 @@ export async function GET(request, response){
         const teamCollection = collection(db, 'teams')
         const q = query(teamCollection, where("projectId", '==', projectId))
         const teamSnapshots = await getDocs(q)
-
-        // if(teamSnapshots.empty()){
-        //     return NextResponse.json({
-        //         message: "There are no personel yet in this project"
-        //     }, { status: 404 })
-        // }
 
         const teams = await Promise.all(teamSnapshots.docs.map(async (item) => {
             const teamData = item.data()
@@ -118,12 +112,25 @@ export async function POST(request, response){
                         email,
                         fullName,
                         profileImage,
+                        role: "Member",
                         status: "pending" // status = pending OR accepted
                     }
                 }
                 return null
 
             })).then(arr => arr.filter(user => user != null))
+
+            teamList.map(async (team) => {
+                return await addDoc(collection(db, "teams"), {
+                    userId: team.id,
+                    projectId: projectId,
+                    role: team.role, 
+                    status: team.status,
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp(),
+                    deletedAt: null
+                })
+            })
     
             await Promise.all(teamList.map(({ email, fullName }) => {
                 return sendMail({

@@ -1,7 +1,7 @@
 import { db } from "@/app/firebase/config";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { getUserSession } from "@/app/lib/session";
-import { doc, FieldPath, query, updateDoc, where } from "firebase/firestore";
+import { collection, doc, FieldPath, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
 export async function GET(request, response) {
@@ -40,19 +40,10 @@ export async function GET(request, response) {
 
         const querySnapshot = await getDocs(q);
 
-        if(querySnapshot.empty()){
-            return NextResponse.json({
-                message: "User not found in the team"
-            }, { status: 404 })
-        }
-
         const team = querySnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data()
         }))
-
-        console.log("team", team)
-        console.log("----", team[0])
 
         const teamDocRef = doc(db, 'teams', team[0].id);
 
@@ -61,8 +52,13 @@ export async function GET(request, response) {
             updatedAt: new Date().toISOString()
         });
 
+        const updatedTeam = await getDoc(teamDocRef)
+
         return NextResponse.json({
-            data: team,
+            data: {
+                id: updatedTeam.id,
+                ...updatedTeam.data()
+            },
             message: "Successfully accept invitation of new member to team"
         }, { status: 200 });
 

@@ -73,7 +73,6 @@ export async function POST(request, response){
         const newTaskStatus = await addDoc(collection(db, 'taskStatuses'), {
             status: taskStatus,
             projectId: projectId,
-            tasks: [],
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             deletedAt: null

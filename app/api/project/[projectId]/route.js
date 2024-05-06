@@ -61,7 +61,7 @@ export async function PUT(request, response) {
         }
 
         const { projectId }  = response.params;
-        const { key, projectName, startStatusId, endStatusId } = await request.json();
+        const { key, projectName, startStatus, endStatus } = await request.json();
 
         const projectDocRef = doc(db, 'projects', projectId);
         const projectSnap = await getDoc(projectDocRef);
@@ -70,7 +70,8 @@ export async function PUT(request, response) {
         await updateDoc(projectDocRef, {
             key: key ?? projectData.key,
             projectName: projectName ?? projectData.projectName,
-            startStatus: endStatusId ?? projectData.startStatus,
+            startStatus: startStatus ?? projectData.startStatus,
+            endStatus: endStatus ?? projectData.endStatus,
             updatedAt: serverTimestamp()
         });
 
@@ -101,9 +102,18 @@ export async function PUT(request, response) {
     }
 }
 
-export async function DELETE(request, context) {
+export async function DELETE(request, response) {
     try {
-        const { id } = context.params;
+        const session = await getUserSession(request, response, nextAuthOptions)
+        const userId = session.user.uid
+        if(!userId){
+            return NextResponse.json({
+                data: null,
+                message: "Unauthorized, user id not found"
+            }, { status: 401 })
+        }
+        
+        const { id } = response.params;
         const projectDocRef = doc(db, 'projects', id);
 
         if (!projectDocRef) {
