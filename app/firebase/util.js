@@ -10,3 +10,12 @@ export const getDocumentReference = ({ collectionName, id }) => {
     const document = doc(db, collectionName, id);
     return document
 }
+
+export const getProjectRole = async({ userId }) => {
+    if(!userId) return null
+
+    const q = query(collection(db, "teams"), where("userId", '==', userId))
+    const querySnapshot = await getDocs(q)
+
+    return querySnapshot?.docs[0]?.data().role
+}
