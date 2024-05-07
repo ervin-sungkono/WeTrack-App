@@ -1,6 +1,7 @@
 import { updateDoc, serverTimestamp, getDoc, deleteDoc, doc } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
+import { getUserSession } from '@/app/lib/session';
 
 export async function GET(request, response) {
     try {
