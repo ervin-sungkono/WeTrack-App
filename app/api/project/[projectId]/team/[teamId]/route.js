@@ -39,7 +39,7 @@ export async function PUT(request, response){
         const teamDoc = await getDoc(teamDocRef)
         const teamData = teamDoc.data()
 
-        await updateDoc(doc(db, "teams", teamId), {
+        await updateDoc(teamDocRef, {
             role: role ?? teamData.role,
             updatedAt: new Date().toISOString()
         })

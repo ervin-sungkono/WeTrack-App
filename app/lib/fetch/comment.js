@@ -1,12 +1,12 @@
-export function getAllComments(taskId){
-    const response = fetch(`/api/task/${taskId}/comment`,{
-        method: 'GET',
-    })
-    .then(res => res.json())
-    .catch(err => console.log(err))
+// export function getAllComments(taskId){
+//     const response = fetch(`/api/task/${taskId}/comment`,{
+//         method: 'GET',
+//     })
+//     .then(res => res.json())
+//     .catch(err => console.log(err))
 
-    return response
-}
+//     return response
+// }
 
 export function addComment({text, taskId}){
     const response = fetch(`/api/task/${taskId}/comment`, {
