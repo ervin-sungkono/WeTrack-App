@@ -1,7 +1,7 @@
 "use client"
 
 import ProfileViewLayout from "@/app/components/profile/ProfileView";
-import MainLayout from "../components/layout/MainLayout";
+import MainLayout from "@/app/components/layout/MainLayout";
 
 export default function ProfilePage({ params: { id }}){
     return (
