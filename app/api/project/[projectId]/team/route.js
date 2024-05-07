@@ -15,6 +15,8 @@ export async function GET(request, response){
         }
 
         const userId = session.user.uid;
+        const senderName = session.user.fullName
+
         if (!userId) {
             return NextResponse.json({ 
                 message: "User not found" 
@@ -30,7 +32,7 @@ export async function GET(request, response){
         const teams = await Promise.all(teamSnapshots.docs.map(async (item) => {
             const teamData = item.data()
             const userDocRef = await getDoc(doc(db, "users", teamData.userId))
-            const userData = userDocRef.exists ? userDocRef.data() : null
+            const userData = userDocRef.exists() ? userDocRef.data() : null
 
             return {
                 id: item.id,
