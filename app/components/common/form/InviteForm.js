@@ -1,15 +1,12 @@
 "use client"
-import { useRef, useState } from "react"
-import { useProjectData } from "@/app/lib/context/project"
+import { useRef } from "react"
 import FormikWrapper from "./formik/FormikWrapper"
 import Button from "../button/Button"
 import Tags from "@/app/lib/tagify"
 import { useSession } from "next-auth/react"
 import PopUpForm from "../alert/PopUpForm"
 
-export default function InviteForm({ onConfirm, onClose }){
-    const { projectData, setProjectData } = useProjectData()
-    const [teams, setTeams] = useState(projectData.teams)
+export default function InviteForm({ onConfirm, onClose, setTeams }){
     const { data: session } = useSession()
 
     const tagifyRef = useRef()
@@ -52,7 +49,6 @@ export default function InviteForm({ onConfirm, onClose }){
                                         name="teams"
                                         tagifyRef={tagifyRef}
                                         settings={tagifySettings}
-                                        defaultValue={projectData.teams}
                                         autoFocus
                                         onChange={handleTagifyChange}
                                     />

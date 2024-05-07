@@ -2,7 +2,7 @@ import AssignedTaskItem from "./AssignedTaskItem";
 import OverviewCard from "./OverviewCard";
 import { GoPlus as PlusIcon } from "react-icons/go";
 
-export default function OverviewContent(){
+export default function OverviewContent({ projectId }){
 
     const assignedTasksDummyData = [
         {

@@ -12,7 +12,7 @@ export default function TimelinePage({ params: { id } }){
     return(
         <ProjectLayout projectId={id}>
             <Header title={"Jadwal"} links={links}/>
-            <TimelineContent />
+            <TimelineContent projectId={id}/>
         </ProjectLayout>
     )
 }

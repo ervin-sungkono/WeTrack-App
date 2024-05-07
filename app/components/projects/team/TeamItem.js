@@ -1,10 +1,9 @@
-import Image from "next/image";
 import UserIcon from "../../common/UserIcon";
 import SelectButton from "../../common/button/SelectButton";
 import { IoIosCloseCircle as CloseCircle } from "react-icons/io";
 import { useState } from "react";
 
-export default function TeamItem({handleDelete, editMode=false, image=null, id, name, role, status}){
+export default function TeamItem({handleDelete, editMode=false, user, role, status}){
 
     const roleOptions = [
         {label: "Member", value: "Member"},
@@ -46,14 +45,10 @@ export default function TeamItem({handleDelete, editMode=false, image=null, id, 
             )}
             <div className={`h-full flex flex-col justify-between items-center m-auto px-3 md:px-6 py-2.5 md:py-4 rounded-xl shadow-md bg-white w-48 md:w-64`}>
                 <div>
-                    {image === null ? (
-                        <UserIcon fullName={name} size="team"/>
-                    ) : (
-                        <Image src={image} alt={name} width={100} height={100}/>
-                    )}
+                    <UserIcon fullName={user.fullName} size="team" src={user.profileImage}/>
                 </div>
                 <div className={`mt-4 font-semibold text-dark-blue text-center text-sm md:text-base leading-4 md:leading-5`}>
-                    {name}
+                    {user.fullName}
                 </div>
                 {status !== "pending" && (
                     (editMode && roleSelected != 'Owner') ? (
