@@ -169,7 +169,7 @@ export default function DashboardInsight({project}){
                         options={doughnutChartOptions}
                     />
                 </div>
-                <div className="h-96 flex flex-col gap-8">
+                <div className="h-64 flex flex-col gap-8">
                     <div className="font-bold text-md md:text-lg">Prioritas Tugas</div>
                     <Bar
                         data={barChartData}

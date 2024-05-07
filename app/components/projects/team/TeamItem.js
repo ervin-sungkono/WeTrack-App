@@ -3,7 +3,7 @@ import SelectButton from "../../common/button/SelectButton";
 import { IoIosCloseCircle as CloseCircle } from "react-icons/io";
 import { useState } from "react";
 
-export default function TeamItem({handleDelete, editMode=false, user, role, status}){
+export default function TeamItem({setSelectDelete, handleDelete, editMode=false, id, user, role, status}){
 
     const roleOptions = [
         {label: "Member", value: "Member"},
@@ -41,7 +41,14 @@ export default function TeamItem({handleDelete, editMode=false, user, role, stat
     return (
         <div className="relative mt-4 mb-12">
             {(editMode && roleSelected != 'Owner') && (
-                <CloseCircle onClick={handleDelete} className="absolute -top-4 -right-4 text-3xl text-danger-red cursor-pointer"/>
+                <CloseCircle onClick={() => {
+                    const userDelete = {
+                        id: id,
+                        fullName: user.fullName
+                    }
+                    setSelectDelete(userDelete)
+                    handleDelete()
+                }} className="absolute -top-4 -right-4 text-3xl text-danger-red cursor-pointer"/>
             )}
             <div className={`h-full flex flex-col justify-between items-center m-auto px-3 md:px-6 py-2.5 md:py-4 rounded-xl shadow-md bg-white w-48 md:w-64`}>
                 <div>

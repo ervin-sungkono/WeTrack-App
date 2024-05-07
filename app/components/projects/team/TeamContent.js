@@ -8,7 +8,7 @@ import TeamList from "./TeamList"
 import InviteForm from "../../common/form/InviteForm"
 import PopUpLoad from "../../common/alert/PopUpLoad"
 import PopUpForm from "../../common/alert/PopUpForm"
-import { inviteMember, getProjectTeam } from "@/app/lib/fetch/project"
+import { inviteMember, deleteMember, getProjectTeam } from "@/app/lib/fetch/project"
 
 export default function TeamContent({ projectId }){
     const [query, setQuery] = useState("")
@@ -22,6 +22,7 @@ export default function TeamContent({ projectId }){
     const [editMode, setEditMode] = useState(false)
     const [addMode, setAddMode] = useState(false)
     const [deleteMode, setDeleteMode] = useState(false)
+    const [selectDelete, setSelectDelete] = useState(null)
     const [teams, setTeams] = useState(null)
     const [teamFetched, setTeamFetched] = useState([])
     const acceptedTeam = teamFetched.filter(team => team.status === "accepted")
@@ -67,6 +68,23 @@ export default function TeamContent({ projectId }){
     const handleDeleteMember = () => {
         setError(false)
         setLoading(true)
+        try{
+            const res = deleteMember({
+                projectId: projectId,
+                teamId: selectDelete.id
+            })
+            if(res.error){
+                setError(true)
+                console.log(JSON.parse(res.error).errors)
+                setLoading(false)
+            }else{
+                setLoading(false)
+                location.reload()
+            }
+        }catch(error){
+            console.log(error)
+            setLoading(false)
+        }
     }
 
     return (
@@ -108,7 +126,7 @@ export default function TeamContent({ projectId }){
                         </div>
                     </div>
                     <div className="overflow-x-auto">
-                        <TeamList list={acceptedTeam} listType="active" edit={editMode} handleDelete={() => setDeleteMode(true)}/>
+                        <TeamList list={acceptedTeam} listType="active" edit={editMode} setSelectDelete={setSelectDelete} handleDelete={() => setDeleteMode(true)}/>
                     </div>
                 </div>
                 <div className="mt-6">
@@ -121,7 +139,7 @@ export default function TeamContent({ projectId }){
                         </div>
                     </div>
                     <div className="h-full overflow-x-auto">
-                        <TeamList list={pendingTeam} listType="pending" edit={editMode} handleDelete={() => setDeleteMode(true)}/>
+                        <TeamList list={pendingTeam} listType="pending" edit={editMode} setSelectDelete={setSelectDelete} handleDelete={() => setDeleteMode(true)}/>
                     </div>
                 </div>
             </div>
@@ -129,6 +147,7 @@ export default function TeamContent({ projectId }){
                 <InviteForm
                     onConfirm={handleAddMember}
                     onClose={() => setAddMode(false)}
+                    team={teamFetched}
                     setTeams={setTeams}
                 />
             )}
@@ -139,7 +158,7 @@ export default function TeamContent({ projectId }){
                 <PopUpForm
                     title="Hapus Anggota"
                     titleSize="large"
-                    message={`Apakah Anda yakin ingin menghapus anggota ini?`}
+                    message={`Apakah Anda yakin ingin menghapus ${selectDelete?.fullName} dari proyek ini?`}
                     wrapContent
                 >
                     <div className="flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
