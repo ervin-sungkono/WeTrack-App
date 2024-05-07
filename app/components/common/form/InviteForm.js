@@ -6,8 +6,10 @@ import Tags from "@/app/lib/tagify"
 import { useSession } from "next-auth/react"
 import PopUpForm from "../alert/PopUpForm"
 
-export default function InviteForm({ onConfirm, onClose, setTeams }){
+export default function InviteForm({ onConfirm, onClose, team, setTeams }){
     const { data: session } = useSession()
+
+    console.log(team)
 
     const tagifyRef = useRef()
     const tagifySettings = {
