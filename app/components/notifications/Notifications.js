@@ -7,6 +7,7 @@ import SelectButton from "../common/button/SelectButton"
 import SortButton from "../common/button/SortButton"
 import NotificationsList from "../notifications/NotificationList"
 import DashboardLayout from "../layout/DashboardLayout"
+import EmptyState from "../common/EmptyState"
 
 export default function Notifications(){
     const links = [
@@ -115,7 +116,7 @@ export default function Notifications(){
                         <SortButton sorting={sorting} setSorting={setSorting}/>
                     </div>
                 </div>
-                <div>
+                {notificationsData.length > 0 ? 
                     <NotificationsList
                         notificationsData={sortDateFn({data: notificationsData, sortDirection: sorting})}
                         pageSize={pageSize}
@@ -123,8 +124,10 @@ export default function Notifications(){
                         setPageIndex={setPageIndex}
                         pageCount={pageCount}
                         dataCount={notificationsData.length}
-                    />
-                </div>
+                    /> :
+                    <EmptyState message={"Belum ada data notifikasi yang tersedia.."}/>
+                }
+                
             </div>
         </DashboardLayout>
     )

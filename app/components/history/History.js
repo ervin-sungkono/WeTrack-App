@@ -1,13 +1,16 @@
 "use client"
 import { useEffect, useState } from "react"
+import dynamic from "next/dynamic"
 import { getRecentProjects } from "@/app/lib/fetch/project"
 import { sortDateFn } from "@/app/lib/helper"
 
 import Header from "../common/Header"
 import SelectButton from "../common/button/SelectButton"
 import SortButton from "../common/button/SortButton"
-import HistoryList from "../history/HistoryList"
 import DashboardLayout from "../layout/DashboardLayout"
+import EmptyState from "../common/EmptyState"
+
+const HistoryList = dynamic(() => import("../history/HistoryList"))
 
 export default function History(){
     const links = [
@@ -171,16 +174,15 @@ export default function History(){
                         <SortButton sorting={sorting} setSorting={setSorting}/>
                     </div>
                 </div>
-                <div>
-                    <HistoryList
-                        historyData={sortDateFn({data: historyData, sortDirection: sorting})}
-                        pageSize={pageSize}
-                        pageIndex={pageIndex}
-                        setPageIndex={setPageIndex}
-                        pageCount={pageCount}
-                        dataCount={historyData.length}
-                    />
-                </div>
+                {historyData.length > 0 ? <HistoryList
+                    historyData={sortDateFn({data: historyData, sortDirection: sorting})}
+                    pageSize={pageSize}
+                    pageIndex={pageIndex}
+                    setPageIndex={setPageIndex}
+                    pageCount={pageCount}
+                    dataCount={historyData.length}
+                /> :
+                <EmptyState message="Belum ada data riwayat yang tersedia.."/>}
             </div>
         </DashboardLayout>
     )
