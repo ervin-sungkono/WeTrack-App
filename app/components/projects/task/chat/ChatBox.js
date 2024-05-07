@@ -24,7 +24,7 @@ function ChatBox({ role, content, sender, createdAt, fullWidth }){
                     {isUser ? sender.fullName : "Assisten WeTrack"}
                 </p>
                 {isUser ? 
-                <p className="text-xs md:text-sm text-dark-blue/80">{content}</p>:
+                <p className="text-xs md:text-sm text-dark-blue/80 mb-2">{content}</p>:
                 <Markdown 
                     remarkPlugins={[remarkGfm]} 
                     components={{
