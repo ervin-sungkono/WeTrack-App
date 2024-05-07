@@ -9,6 +9,7 @@ import InviteForm from "../../common/form/InviteForm"
 import PopUpLoad from "../../common/alert/PopUpLoad"
 import { ProjectProvider } from "@/app/lib/context/project"
 import PopUpForm from "../../common/alert/PopUpForm"
+import { inviteMember } from "@/app/lib/fetch/project"
 
 export default function TeamContent(){
     const [query, setQuery] = useState("")
@@ -26,11 +27,19 @@ export default function TeamContent(){
     const handleEditMember = () => {
         setError(false)
         setLoading(true)
+
     }
 
-    const handleAddMember = () => {
+    const handleAddMember = (values) => {
         setError(false)
-        setLoading(true)
+        console.log(values)
+        // setLoading(true)
+        // try{
+        //     const res = 
+        // }catch(error){
+        //     setError(true)
+        //     console.log(error)
+        // }
     }  
 
     const handleDeleteMember = () => {

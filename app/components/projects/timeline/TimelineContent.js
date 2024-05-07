@@ -10,16 +10,28 @@ import "gantt-task-react/dist/index.css";
 
 export default function TimelineContent(){
 
-    const tasks = [
+    const [tasks, setTasks] = useState([
+        {
+            start: new Date(2023, 11, 19),
+            end: new Date(2024, 0, 12),
+            name: 'Timeline Page',
+            id: 'TimelinePage',
+            type: 'project',
+            progress: 75,
+            hideChildren: false,
+            displayOrder: 1,
+            styles: { progressColor: '#4CAF50', backgroundColor: '#47389F' },
+        },
         {
             start: new Date(2023, 11, 19),
             end: new Date(2024, 0, 2),
             name: 'UI Design',
             id: 'KAN-2',
             type: 'task',
+            project: 'TimelinePage',
             progress: 75,
-            isDisabled: true,
-            styles: { progressColor: '#0C66E4', backgroundColor: '#000000' },
+            displayOrder: 2,
+            styles: { progressColor: '#47389F', backgroundColor: '#000000' },
         },
         {
             start: new Date(2023, 11, 26),
@@ -27,9 +39,10 @@ export default function TimelineContent(){
             name: 'Front End',
             id: 'KAN-4',
             type: 'task',
+            project: 'TimelinePage',
             progress: 50,
-            isDisabled: false,
-            styles: { progressColor: '#0C66E4', backgroundColor: '#000000' },
+            displayOrder: 3,
+            styles: { progressColor: '#47389F', backgroundColor: '#000000' },
         },
         {
             start: new Date(2024, 0, 3),
@@ -37,13 +50,48 @@ export default function TimelineContent(){
             name: 'Back End',
             id: 'KAN-5',
             type: 'task',
+            project: 'TimelinePage',
             progress: 25,
-            isDisabled: false,
-            styles: { progressColor: '#0C66E4', backgroundColor: '#000000' },
-        }
-    ];
+            displayOrder: 4,
+            styles: { progressColor: '#47389F', backgroundColor: '#000000' },
+        },
+    ]);
 
-    const tasksViewMode = ViewMode.Day;
+    const getStartEndDateForProject = (tasks, projectId) => {
+        const projectTasks = tasks.filter((t) => t.project === projectId)
+        let start = projectTasks[0].start
+        let end = projectTasks[0].end
+
+        for (let i = 0; i < projectTasks.length; i++) {
+            const task = projectTasks[i]
+            if (start.getTime() > task.start.getTime()) {
+                start = task.start
+            }
+            if (end.getTime() < task.end.getTime()) {
+                end = task.end
+            }
+        }
+        return [start, end]
+    }
+
+    const handleExpanderClick = (task) => {
+        setTasks(tasks.map((t) => (t.id === task.id ? task : t)));
+    };
+
+    const handleTaskDateChange = (task) => {
+        let newTasks = tasks.map((t) => (t.id === task.id ? task : t));
+        if (task.project) {
+            const [start, end] = getStartEndDateForProject(newTasks, task.project);
+            const project = newTasks[newTasks.findIndex((t) => t.id === task.project)];
+            if (project.start.getTime() !== start.getTime() || project.end.getTime() !== end.getTime()) {
+                const changedProject = { ...project, start, end };
+                newTasks = newTasks.map((t) =>
+                    t.id === task.project ? changedProject : t
+                );
+            }
+        }
+        setTasks(newTasks);
+    };
 
     const [query, setQuery] = useState("")
     const [loading, setLoading] = useState(false)
@@ -81,15 +129,13 @@ export default function TimelineContent(){
                         </div>
                     </div>
                 </div>
-                <div>
+                <div className="w-full">
                     <Gantt
                         tasks={tasks}
-                        viewMode={tasksViewMode}
-                        // onDateChange={onTaskChange}
-                        // onTaskDelete={onTaskDelete}
-                        // onProgressChange={onProgressChange}
-                        // onDoubleClick={onDblClick}
-                        // onClick={onClick}
+                        viewMode={ViewMode.Week}
+                        locale={'id-ID'}
+                        onDateChange={handleTaskDateChange}
+                        onExpanderClick={handleExpanderClick}
                     />
                 </div>
             </div>
