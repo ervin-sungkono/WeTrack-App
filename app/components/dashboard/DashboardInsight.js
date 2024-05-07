@@ -152,14 +152,14 @@ export const barChartOptions = {
     }
 };
 
-export default function DashboardInsight(){
+export default function DashboardInsight({project}){
     return (
         <div className="flex flex-col gap-1 md:gap-2 items-center md:items-start justify-center md:justify-start">
             <div className="text-lg md:text-xl font-bold">
                 Ringkasan Tugas Saya
             </div>
             <div className="text-sm md:text-md">
-                Nama Proyek
+                {project.projectName}
             </div>
             <div className="w-full flex flex-col gap-24 mb-12">
                 <div className="h-64 flex flex-col gap-8">

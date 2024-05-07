@@ -29,11 +29,10 @@ export function getAllProject(){
     return response
 }
 
-export function createNewProject({ projectName, key, teams }){
+export function createNewProject({ projectName, key }){
     const payload = {
         projectName,
-        key,
-        teams: teams ? JSON.parse(teams).map(user => user.value) : null,
+        key
     }
 
     const response = fetch('/api/project',{
@@ -58,5 +57,49 @@ export function generateTask({ projectDescription }){
     .then(res => res.json())
     .catch(err => console.log(err))
 
+    return response
+}
+
+export function getProjectTeam(id){
+    const response = fetch(`/api/project/${id}/team`,{
+        method: 'GET',
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
+    return response
+}
+
+export function inviteMember({email}){
+    const payload = {
+        email: email
+    }
+    const response = fetch(`/api/project/${id}/team`,{
+        method: 'POST',
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
+    return response
+}
+
+export function updateRole({role}){
+    const payload = {
+        role: role
+    }
+    const response = fetch(`/api/project/${projectId}/team/${teamId}`,{
+        method: 'PUT',
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
+    return response
+}
+
+export function deleteMember(){
+    const response = fetch(`/api/project/${projectId}/team/${teamId}`,{
+        method: 'DELETE',
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
     return response
 }

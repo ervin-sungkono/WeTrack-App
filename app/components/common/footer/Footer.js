@@ -1,6 +1,5 @@
 import WeTrackLogo from "../Logo"
 import { MdEmail } from "react-icons/md"
-import { FaMapMarkerAlt } from "react-icons/fa"
 
 export default function Footer(){
     return (
@@ -8,11 +7,7 @@ export default function Footer(){
             <WeTrackLogo color="#FFFFFF"/>
             <div className="flex items-center mt-4">
                 <MdEmail className="text-white text-xl mr-2"/>
-                support@wetrack.com
-            </div>
-            <div className="flex items-center mt-4">
-                <FaMapMarkerAlt className="text-white text-xl mr-2"/>
-                Jl. Sabang 101 Bandung
+                wetrack.info@gmail.com
             </div>
             <p className="mt-4">
                 &copy; 2024 WeTrack, All Rights Reserved

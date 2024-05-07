@@ -1,5 +1,6 @@
 import { createContext, useState, useContext } from "react"
 import { createNewProject } from "../fetch/project"
+import { addTeam } from "../fetch/team"
 import { SessionProvider } from "next-auth/react"
 
 const ProjectContext = createContext({})
@@ -13,12 +14,16 @@ export const ProjectProvider = ({ children }) => {
             ...values
         }
 
-        const response = await createNewProject(payload)
+        const project = await createNewProject(payload)
 
-        if(response.data){
+        if(project.data){
+            const team = await addTeam({ teams: projectData.teams, projectId: project.data.id })
+            if(!team.data){
+                console.log("Gagal mengundang anggota tim")
+            }
             setProjectData({})
         }
-        return response
+        return project
     }
 
     return(
