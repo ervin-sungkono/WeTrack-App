@@ -2,6 +2,7 @@ import { updateDoc, serverTimestamp, getDoc, deleteDoc, doc } from 'firebase/fir
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
+import { nextAuthOptions } from '@/app/lib/auth';
 
 export async function GET(request, response) {
     try {
