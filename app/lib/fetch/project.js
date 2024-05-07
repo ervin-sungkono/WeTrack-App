@@ -69,11 +69,11 @@ export function getProjectTeam(id){
     return response
 }
 
-export function inviteMember({email}){
+export function inviteMember({projectId, teams}){
     const payload = {
-        email: email
+        teams: teams ? JSON.parse(teams).map(user => user.value) : null,
     }
-    const response = fetch(`/api/project/${id}/team`,{
+    const response = fetch(`/api/project/${projectId}/team`,{
         method: 'POST',
         body: JSON.stringify(payload)
     })
@@ -82,7 +82,7 @@ export function inviteMember({email}){
     return response
 }
 
-export function updateRole({role}){
+export function updateRole({projectId, teamId, role}){
     const payload = {
         role: role
     }
@@ -95,7 +95,7 @@ export function updateRole({role}){
     return response
 }
 
-export function deleteMember(){
+export function deleteMember({projectId, teamId}){
     const response = fetch(`/api/project/${projectId}/team/${teamId}`,{
         method: 'DELETE',
     })

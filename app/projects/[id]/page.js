@@ -12,7 +12,7 @@ export default function OverviewPage({ params: { id } }){
     return(
         <ProjectLayout projectId={id}>
             <Header title={"Ringkasan"} links={links}/>
-            <OverviewContent />
+            <OverviewContent projectId={id}/>
         </ProjectLayout>
     )
 }

@@ -1,13 +1,10 @@
 "use client"
 
-import { ProjectProvider } from "@/app/lib/context/project"
 import SettingForm from "../../common/form/project/SettingForm"
 
-export default function SettingContent(){
+export default function SettingContent({ projectId }){
 
     return (
-        <ProjectProvider>
-            <SettingForm />  
-        </ProjectProvider>
+        <SettingForm />
     )
 }

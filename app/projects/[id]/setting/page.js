@@ -12,7 +12,7 @@ export default function SettingPage({ params: { id } }){
     return(
         <ProjectLayout projectId={id}>
             <Header title={"Pengaturan"} links={links}/>
-            <SettingContent />
+            <SettingContent projectId={id}/>
         </ProjectLayout>
     )
 }
