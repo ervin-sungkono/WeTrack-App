@@ -119,7 +119,7 @@ export default function ProjectContent(){
                     Buat Proyek
                 </LinkButton>
             </div>
-            {projectData.length > 0 ? 
+            {projectData?.length > 0 ? 
             <Table
                 data={projectData?.filter(project => project.projectName.toLowerCase().includes(query))}
                 columns={columns}
