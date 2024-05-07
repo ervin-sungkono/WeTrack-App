@@ -36,21 +36,21 @@ export async function GET(request, response) {
         
         const querySnapshot = await getDocs(q)
 
-        let taskLists = []
-        querySnapshot.forEach((doc) => {
-            taskLists.push({
-                id: doc.id,
-                taskName: doc.data().taskName,
-                labels: doc.data().labels,
-                assignedTo: doc.data().assignedTo,
-                priority: doc.data().priority,
-                status: doc.data().status
-            })
-            return taskLists
-        })
+        const tasks = await Promise.all(querySnapshot.docs.map(async (item) => {
+            const taskStatusRef = await getDoc(doc(db, "taskStatuses", item.id))
 
+            return {
+                id: item.id,
+                taskName: item.data().taskName,
+                labels: item.data().labels,
+                assignedTo: item.data().assignedTo,
+                priority: item.data().priority,
+                status: doc.data().status
+            }
+        })) 
+        
         return NextResponse.json({
-            data: taskLists,
+            data: tasks,
             message: "Projects retrieved successfully"
         }, { status: 200 });
         
@@ -70,7 +70,7 @@ export async function POST(request, response) {
             assignedTo,
             typeId,
             taskName,
-            label,
+            labels,
             statusId,
             priority,
             description,
@@ -113,6 +113,7 @@ export async function POST(request, response) {
             if (userSnap.exists()) {
                 const { fullName, profileImage } = userSnap.data();
                 assignedToDetails = { 
+                    id: userSnap.id,
                     fullName: fullName,
                     profileImage: profileImage
                 }
@@ -133,6 +134,7 @@ export async function POST(request, response) {
             if (userSnap.exists()) {
                 const { fullName, profileImage } = userSnap.data();
                 createdByDetails = { 
+                    id: userSnap.id,
                     fullName: fullName,
                     profileImage: profileImage
                 }
@@ -146,12 +148,13 @@ export async function POST(request, response) {
 
         let taskTypeDetails = null;
         if (typeId) {
-            const userDocRef = doc(db, 'taskTypes', typeId);
-            const taskTypeSnap = await getDoc(userDocRef);
+            const taskTypeDocRef = doc(db, 'taskTypes', typeId);
+            const taskTypeSnap = await getDoc(taskTypeDocRef);
 
             if (taskTypeSnap.exists()) {
                 const { type } = taskTypeSnap.data()
                 taskTypeDetails = {
+                    id: taskTypeSnap.id,
                     taskType: type
                 }
 
@@ -163,37 +166,56 @@ export async function POST(request, response) {
         }
 
         let taskStatusDetails = null;
-        const taskStatusDocRef = doc(db, 'taskStatuses', statusId);
+        let taskStatusSnap;
         
-        const taskStatusSnap = await getDoc(taskStatusDocRef);
-        if (taskStatusSnap.exists()) {
-            const { status } = taskStatusSnap.data()
-            taskStatusDetails = {
-                status: status
-            }
+        if (statusId) {
+            const taskStatusDocRef = doc(db, 'taskStatuses', statusId);
+            taskStatusSnap = await getDoc(taskStatusDocRef);
 
-        } else {
-            return NextResponse.json({
-                message: "The task status not found"
-            }, { status: 404 })
+            console.log(taskStatusDocRef)
+            console.log(taskStatusSnap)
+            if (taskStatusSnap.exists()){
+                const { statusName } = taskStatusSnap.data()
+                taskStatusDetails = {
+                    id: taskStatusSnap.id,
+                    status: statusName
+                }
+
+            } else {
+                return NextResponse.json({
+                    message: "The task status not found"
+                }, { status: 404 })
+            }
+        }
+
+        let labelDetails = []
+        if(labels && labels.length > 0){
+            labelDetails = await Promise.all(labels.map(async (label) =>{
+                const labelDoc = await getDoc(doc(db, "lables", label))
+
+                if(labelDoc.exists()){
+                    return {
+                        ...labelDoc.data()
+                    }
+                }
+
+                return null
+            }))
         }
 
         const newTask = {
             projectId: projectId, 
-            assignedTo: assignedTo ? { id: assignedTo, ...assignedToDetails } : null,
-            type: typeId ? { id: typeId, ...taskTypeDetails } : null,
-            createdBy: createdBy ? { id: createdBy, ...createdByDetails } : null,
+            assignedTo: assignedTo ?? null,
+            type: typeId ?? null,
+            createdBy: createdBy ?? null,
             taskName: taskName,
-            labels: label ? label : [],
-            status: statusId ? { id: statusId, ...taskStatusDetails } : null,
+            labels: labels ?? [],
+            status: statusId ?? null,
             priority: priority ?? 0,
             description: description ?? null,
             startDate: startDate ?? null,
             dueDate: dueDate ?? null,
-            finishedDate: null,
-            comments: [],
-            attachments: [],
-            AIResponse: [],
+            finishedDate: taskStatusSnap.data().statusName == 'Done' ? new Date().toISOString() : null,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             deletedAt: null
@@ -202,22 +224,14 @@ export async function POST(request, response) {
         const tasksCollectionRef = collection(db, 'tasks');
         const newTaskDocRef = await addDoc(tasksCollectionRef, newTask);
 
-        await updateDoc(taskStatusDocRef, {
-            tasks: arrayUnion({
-                id: newTaskDocRef.id,
-                taskName: newTask.taskName,
-                createdBy: newTask.createdBy,
-                assignedTo: newTask.assignedTo,
-                type: newTask.type,
-                // status: newTask.status,
-                labels: newTask.labels
-            })
-        });
-
         return NextResponse.json({
             data: {
                 id: newTaskDocRef.id,
-                ...newTask
+                ...newTask,
+                assignedTo: assignedToDetails,
+                createdBy: createdByDetails,
+                status: taskStatusDetails,
+                label: labelDetails
             },
             message: "Successfully added new task to project and task collection"
         }, { status: 200 });

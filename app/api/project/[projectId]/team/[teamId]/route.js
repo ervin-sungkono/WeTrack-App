@@ -40,7 +40,8 @@ export async function PUT(request, response){
         const teamData = teamDoc.data()
 
         await updateDoc(doc(db, "teams", teamId), {
-            role: role ?? teamData.role
+            role: role ?? teamData.role,
+            updatedAt: new Date().toISOString()
         })
         
         return NextResponse.json({
@@ -82,12 +83,13 @@ export async function DELETE(request, response){
         await deleteDoc(doc(db, "teams", teamId))
 
         return NextResponse.json({
+            success: true,
             message: "Successfully remove the user from the team"
         }, { status: 200 })
 
     } catch (error) {
         return NextResponse.json({
-            data: null,
+            success: false,
             message: error.message
         }, { status: 500 });
     }
