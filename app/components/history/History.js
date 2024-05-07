@@ -174,7 +174,7 @@ export default function History(){
                         <SortButton sorting={sorting} setSorting={setSorting}/>
                     </div>
                 </div>
-                {historyData.length > 0 ? <HistoryList
+                {historyData?.length > 0 ? <HistoryList
                     historyData={sortDateFn({data: historyData, sortDirection: sorting})}
                     pageSize={pageSize}
                     pageIndex={pageIndex}

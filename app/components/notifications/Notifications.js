@@ -116,7 +116,7 @@ export default function Notifications(){
                         <SortButton sorting={sorting} setSorting={setSorting}/>
                     </div>
                 </div>
-                {notificationsData.length > 0 ? 
+                {notificationsData?.length > 0 ? 
                     <NotificationsList
                         notificationsData={sortDateFn({data: notificationsData, sortDirection: sorting})}
                         pageSize={pageSize}
