@@ -9,6 +9,7 @@ import InviteForm from "../../common/form/InviteForm"
 import PopUpLoad from "../../common/alert/PopUpLoad"
 import PopUpForm from "../../common/alert/PopUpForm"
 import { inviteMember, deleteMember, getProjectTeam } from "@/app/lib/fetch/project"
+import PopUpInfo from "../../common/alert/PopUpInfo"
 
 export default function TeamContent({ projectId }){
     const [query, setQuery] = useState("")
@@ -25,6 +26,8 @@ export default function TeamContent({ projectId }){
     const [selectDelete, setSelectDelete] = useState(null)
     const [teams, setTeams] = useState(null)
     const [teamFetched, setTeamFetched] = useState([])
+    const [successAdd, setSuccessAdd] = useState(false)
+    const [successDelete, setSuccessDelete] = useState(false)
     const acceptedTeam = teamFetched.filter(team => team.status === "accepted")
     const pendingTeam = teamFetched.filter(team => team.status === "pending")
 
@@ -51,8 +54,8 @@ export default function TeamContent({ projectId }){
                 console.log(JSON.parse(res.error).errors)
                 setLoading(false)
             } else {
-                setLoading(false)
-                location.reload()
+                setAddMode(false)
+                setSuccessAdd(true)
             }
         }catch(error){
             console.log(error)
@@ -65,11 +68,11 @@ export default function TeamContent({ projectId }){
         setLoading(true)
     } 
 
-    const handleDeleteMember = () => {
+    const handleDeleteMember = async () => {
         setError(false)
         setLoading(true)
         try{
-            const res = deleteMember({
+            const res = await deleteMember({
                 projectId: projectId,
                 teamId: selectDelete.id
             })
@@ -78,8 +81,8 @@ export default function TeamContent({ projectId }){
                 console.log(JSON.parse(res.error).errors)
                 setLoading(false)
             }else{
-                setLoading(false)
-                location.reload()
+                setDeleteMode(false)
+                setSuccessDelete(true)
             }
         }catch(error){
             console.log(error)
@@ -167,6 +170,34 @@ export default function TeamContent({ projectId }){
                     </div>
                 </PopUpForm>
             )}
+            {successAdd &&
+                <PopUpInfo
+                    title={"Undangan Dikirim"}
+                    titleSize={"large"}
+                    message={"Email undangan telah dikirimkan kepada pengguna yang dituju."}
+                >
+                    <div className="flex justify-end gap-2 md:gap-4">
+                        <Button onClick={() => {
+                            setSuccessAdd(false)
+                            location.reload()
+                        }} className="w-24 md:w-32">OK</Button>
+                    </div>
+                </PopUpInfo>
+            }
+            {successDelete &&
+                <PopUpInfo
+                    title={"Anggota Dihapus"}
+                    titleSize={"large"}
+                    message={"Anggota yang dipilih telah dihapus dari proyek ini."}
+                >
+                    <div className="flex justify-end gap-2 md:gap-4">
+                        <Button onClick={() => {
+                            setSuccessDelete(false)
+                            location.reload()
+                        }} className="w-24 md:w-32">OK</Button>
+                    </div>
+                </PopUpInfo>
+            }
         </div>
     )
 }

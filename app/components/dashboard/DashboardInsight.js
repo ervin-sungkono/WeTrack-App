@@ -158,9 +158,11 @@ export default function DashboardInsight({project}){
             <div className="text-lg md:text-xl font-bold">
                 Ringkasan Tugas Saya
             </div>
-            <div className="text-sm md:text-md">
-                {project.projectName}
-            </div>
+            <a href={`/projects/${project?.id}`} className="cursor-pointer">
+                <div className="text-base md:text-lg text-basic-blue font-bold">
+                    {project?.projectName}
+                </div>
+            </a>
             <div className="w-full flex flex-col gap-24 mb-12">
                 <div className="h-64 flex flex-col gap-8">
                     <div className="font-bold text-md md:text-lg">Status Tugas</div>

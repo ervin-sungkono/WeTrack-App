@@ -6,7 +6,10 @@ import DashboardLayout from "../layout/DashboardLayout"
 import DashboardInsight from "./DashboardInsight"
 import DashboardTaskList from "./DashboardTaskList"
 import { getAllProject, getProjectByID } from "@/app/lib/fetch/project"
+import { getAllTask } from "@/app/lib/fetch/task"
 import PopUpLoad from "../common/alert/PopUpLoad"
+import EmptyState from "../common/EmptyState"
+import LinkButton from "../common/button/LinkButton"
 
 export default function Dashboard(){
     const links = [
@@ -15,24 +18,22 @@ export default function Dashboard(){
     ]
 
     const [loading, setLoading] = useState(true)
-    const [projectsData, setProjectsData] = useState(null)
-    const [selectedProject, setSelectedProject] = useState(null)
+    const [projectsData, setProjectsData] = useState([])
+    const [selectedProject, setSelectedProject] = useState([])
 
     useEffect(() => {
         getAllProject().then(projects => {
             if(projects.data){
-                setProjectsData(projects.data)
-                setSelectedProject(projects.data[0])
-                for(let i = 0; i < projects.data.length; i++){
-                    getProjectByID(projects.data[i].id).then(project => {
-                        if(project.data){
-                            console.log(project.data)
-                        }else{
-                            alert("Gagal memperoleh data proyek")
-                        }
+                const tasks = projects.data.map(project => {
+                    return getAllTask(project.id).then(tasks => {
+                        project.tasks = tasks.data || []
                     })
-                }
-                setLoading(false)
+                })
+                Promise.all(tasks).then(() => {
+                    setProjectsData(projects.data)
+                    setSelectedProject(projects.data[0])
+                    setLoading(false)
+                })
             }else{
                 alert("Gagal memperoleh data proyek")
             }
@@ -47,16 +48,25 @@ export default function Dashboard(){
         return (
             <DashboardLayout>
                 <div className="flex flex-col gap-4">
-                    <Header title={"Dasbor"} links={links}/>     
+                    <Header title={"Dasbor"} links={links}/>
                 </div>
-                <div className="flex flex-col md:flex-row gap-4 w-full mt-4">
-                    <div className="w-full md:w-1/2">
-                        <DashboardInsight project={selectedProject}/>
+                {projectsData?.length > 0 ? (
+                    <div className="flex flex-col md:flex-row gap-4 w-full mt-4">
+                        <div className="w-full md:w-1/2">
+                            <DashboardInsight project={selectedProject}/>
+                        </div>
+                        <div className="w-full md:w-1/2">
+                            <DashboardTaskList list={projectsData} setSelectedProject={setSelectedProject} />
+                        </div>
                     </div>
-                    <div className="w-full md:w-1/2">
-                        <DashboardTaskList list={projectsData} />
+                ) : (
+                    <div className="mt-12 flex flex-col justify-center items-center text-center">
+                        <EmptyState message={"Belum ada data proyek yang tersedia untuk ditampilkan dalam dasbor."}/>
+                        <LinkButton href={`/projects/create`} variant="primary" size={`md`} className="mt-2 md:mt-4 px-2 xl:px-4">
+                            Buat Proyek Sekarang
+                        </LinkButton>
                     </div>
-                </div>
+                )}    
             </DashboardLayout> 
         )
     }
