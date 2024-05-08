@@ -15,7 +15,6 @@ export async function GET(request, response){
         }
 
         const userId = session.user.uid;
-        const senderName = session.user.fullName
 
         if (!userId) {
             return NextResponse.json({ 
@@ -108,12 +107,10 @@ export async function POST(request, response){
                 const userSnap = await getDocs(userDocRef)
                 const userData = userSnap.docs?.[0]
                 if(userData){
-                    const { email, fullName, profileImage } = userData.data()
+                    const { email } = userData.data()
                     return {
                         id: userData.id,
                         email,
-                        fullName,
-                        profileImage,
                         role: "Member",
                         status: "pending" // status = pending OR accepted
                     }
@@ -122,7 +119,7 @@ export async function POST(request, response){
 
             })).then(arr => arr.filter(user => user != null))
 
-            teamList.map(async (team) => {
+            const teamDocList = await Promise.all(teamList.map(async (team) => {
                 return await addDoc(collection(db, "teams"), {
                     userId: team.id,
                     projectId: projectId,
@@ -132,13 +129,16 @@ export async function POST(request, response){
                     updatedAt: serverTimestamp(),
                     deletedAt: null
                 })
-            })
+            }))
     
-            await Promise.all(teamList.map(({ email }) => {
+            await Promise.all(teamDocList.map(async(docRef) => {
+                const doc = await getDoc(docRef)
+                const { email } = teamList.find(team => team.id === doc.data().userId)
+                
                 return sendMail({
                     email,
-                    fullName: senderName,
-                    projectId: docRef.id,
+                    senderName: senderName,
+                    teamId: doc.id,
                     projectName
                 })
             }))

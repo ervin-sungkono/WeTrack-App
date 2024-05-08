@@ -5,7 +5,7 @@ import AcceptInvitationForm from "@/app/components/invite/AcceptInvitationForm";
 export default function InvitePage({ params: { id } }){
     return(
         <SessionProvider>
-            <AcceptInvitationForm projectId={id}/>
+            <AcceptInvitationForm teamId={id}/>
         </SessionProvider>
     )
 }

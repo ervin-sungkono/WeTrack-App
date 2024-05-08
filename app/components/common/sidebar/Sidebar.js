@@ -17,17 +17,17 @@ import {
     MdSettings as SettingIcon
 } from "react-icons/md"
 
-export default function Sidebar({ project }){
+export default function Sidebar({ project, projectId }){
     const [open, setOpen] = useState(true)
     const [mounted, setMounted] = useState(false)
-    const [baseUrl, setBaseUrl] = useState("/")
+    const [baseUrl, setBaseUrl] = useState()
 
     useEffect(() => {
         setMounted(true)
-        if(project) {
-            setBaseUrl(`/projects/${project.id}`)
+        if(projectId) {
+            setBaseUrl(`/projects/${projectId}`)
         }
-    }, [project])
+    }, [projectId])
 
     const toggleSidebar = () => {
         setOpen(!open)
