@@ -9,8 +9,6 @@ import PopUpForm from "../alert/PopUpForm"
 export default function InviteForm({ onConfirm, onClose, team, setTeams }){
     const { data: session } = useSession()
 
-    console.log(team)
-
     const tagifyRef = useRef()
     const tagifySettings = {
         editTags: {
