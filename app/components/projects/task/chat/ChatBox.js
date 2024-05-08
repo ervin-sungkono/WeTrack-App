@@ -21,7 +21,7 @@ function ChatBox({ role, content, sender, createdAt, fullWidth }){
             </div>
             <div className={`relative py-2 px-3 rounded-md ${isUser ? "bg-purple-100 text-right" : "bg-gray-100 text-left"} before:absolute before:w-0 before:h-0 before:top-2.5 before:right-auto before:bottom-auto before:border-[12px] before:border-solid  before:border-transparent ${isUser ? "before:-right-3 before:border-t-purple-100" : "before:-left-3 before:border-t-gray-100"}`}>
                 <p className="text-sm font-semibold text-dark-blue mb-1">
-                    {isUser ? sender.fullName : "Assisten WeTrack"}
+                    {isUser ? sender.fullName : "Asisten WeTrack"}
                 </p>
                 {isUser ? 
                 <p className="text-xs md:text-sm text-dark-blue/80 mb-2">{content}</p>:

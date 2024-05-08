@@ -16,6 +16,7 @@ import UpdateProfileForm from "../common/form/profile/UpdateProfileForm"
 import { getUserProfile, updateUserProfile, deleteUserImageProfile, deleteUserProfile } from "@/app/lib/fetch/user"
 import { dateFormat } from "@/app/lib/date"
 import { useRouter } from "next/navigation";
+import PopUpInfo from "../common/alert/PopUpInfo";
 
 export default function ProfileLayout(){
     const { data: session } = useSession()
@@ -96,6 +97,8 @@ export default function ProfileLayout(){
     const [profileImageUploadedURL, setProfileImageUploadedURL] = useState(null)
     const [profileImageDeleted, setProfileImageDeleted] = useState(false)
 
+    const [successUpdateProfile, setSuccessUpdateProfile] = useState(false)
+
     const openImageUpload = () => {
         imageUploaderRef.current.click()
     }
@@ -162,13 +165,13 @@ export default function ProfileLayout(){
                             setError(true);
                             console.log(imageDeleteRes.error)
                         }else{
-                            location.reload()
+                            setSuccessUpdateProfile(true)
                         }
                     }catch(error){
                         console.log(error)
                     }
                 }else{
-                    location.reload()
+                    setSuccessUpdateProfile(true)
                 }
             }
         }catch(error){
@@ -321,6 +324,20 @@ export default function ProfileLayout(){
                 {loading && (
                     <PopUpLoad />
                 )}
+                {successUpdateProfile &&
+                    <PopUpInfo
+                        title={"Profil Diperbarui"}
+                        titleSize={"large"}
+                        message={"Profil Anda telah berhasil diperbarui."}
+                    >
+                        <div className="flex justify-end gap-2 md:gap-4">
+                            <Button onClick={() => {
+                                setSuccessUpdateProfile(false)
+                                location.reload()
+                            }} className="w-24 md:w-32">OK</Button>
+                        </div>
+                    </PopUpInfo>
+                }
             </div>
         )
     }
