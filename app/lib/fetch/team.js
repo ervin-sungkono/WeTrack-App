@@ -1,5 +1,15 @@
+export const validateTeamMember = ({ projectId, teamId }) => {
+    const response = fetch(`/api/project/${projectId}/team/${teamId}`,{
+        method: 'GET',
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
+    
+    return response
+}
+
 export const getAllTeamMember = ({ projectId }) => {
-    const response = fetch(`/api/task/${projectId}/team`,{
+    const response = fetch(`/api/project/${projectId}/team`,{
         method: 'GET',
     })
     .then(res => res.json())
