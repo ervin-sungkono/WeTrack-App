@@ -61,10 +61,11 @@ export default function Dashboard(){
                     </div>
                 ) : (
                     <div className="mt-12 flex flex-col justify-center items-center text-center">
-                        <EmptyState message={"Belum ada data proyek yang tersedia untuk ditampilkan dalam dasbor."}/>
-                        <LinkButton href={`/projects/create`} variant="primary" size={`md`} className="mt-2 md:mt-4 px-2 xl:px-4">
-                            Buat Proyek Sekarang
-                        </LinkButton>
+                        <EmptyState 
+                            message={"Belum ada data proyek yang tersedia untuk ditampilkan dalam dasbor."}
+                            action={"Buat Proyek Sekarang"}
+                            href={`/projects/create`}
+                        />
                     </div>
                 )}    
             </DashboardLayout> 
