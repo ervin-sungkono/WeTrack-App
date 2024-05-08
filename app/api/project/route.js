@@ -120,20 +120,8 @@ export async function POST(request, response) {
             }
         }
 
-        console.log("startStatusId", startStatusId)
-        console.log("endStatusId", endStatusId)
-
-        const startStatusDocRef = await getDoc(doc(db, "taskStatuses", startStatusId))
-        const startStatusDetail = {
-            id: startStatusDocRef.id,
-            status: startStatusDocRef.data().statusName
-        }
-        
-        const endStatusDocRef = await getDoc(doc(db, "taskStatuses", endStatusId))
-        const endStatusDetail = {
-            id: endStatusDocRef.id,
-            status: endStatusDocRef.data().statusName
-        }
+        // console.log("startStatusId", startStatusId)
+        // console.log("endStatusId", endStatusId)
         
         await updateDoc(docRef, {
             startStatus: startStatusId, 
@@ -170,8 +158,6 @@ export async function POST(request, response) {
                     id: updatedProjectSnap.id,
                     ...updatedProjectSnap.data(),
                     createdBy: createdByDetail,
-                    startStatus: startStatusDetail,
-                    endStatus: endStatusDetail
                 },
                 message: "Successfully created a new project with task statuses"
             }, { status: 200 });

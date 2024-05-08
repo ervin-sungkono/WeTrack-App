@@ -9,10 +9,13 @@ export const getAllTeamMember = ({ projectId }) => {
 }
 
 export const addTeam = ({ teams, projectId }) => {
+    const teamList = JSON.parse(teams).map(user => user.value)
+    if(!teamList) return
+
     const response = fetch(`/api/project/${projectId}/team`, {
         method: 'POST',
         body: JSON.stringify({
-            teams: teams ? JSON.parse(teams).map(user => user.value) : null
+            teams: teamList
         })
     })
     .then(res => res.json())
