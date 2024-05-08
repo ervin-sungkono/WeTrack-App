@@ -134,10 +134,10 @@ export async function POST(request, response){
                 })
             })
     
-            await Promise.all(teamList.map(({ email, fullName }) => {
+            await Promise.all(teamList.map(({ email }) => {
                 return sendMail({
                     email,
-                    fullName,
+                    fullName: senderName,
                     projectId: docRef.id,
                     projectName
                 })
