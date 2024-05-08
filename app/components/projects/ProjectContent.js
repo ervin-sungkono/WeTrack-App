@@ -8,6 +8,7 @@ import Table from "../common/table/Table"
 import TableActionButton from "../common/table/TableActionButton"
 import UserIcon from "../common/UserIcon"
 import LinkButton from "../common/button/LinkButton"
+import EmptyState from "../common/EmptyState"
 import { getAllProject } from "@/app/lib/fetch/project"
 
 export default function ProjectContent(){
@@ -118,10 +119,12 @@ export default function ProjectContent(){
                     Buat Proyek
                 </LinkButton>
             </div>
+            {projectData?.length > 0 ? 
             <Table
                 data={projectData?.filter(project => project.projectName.toLowerCase().includes(query))}
                 columns={columns}
-            />
+            /> :
+            <EmptyState/>}
         </div>
     )
 }

@@ -1,13 +1,15 @@
 "use client"
-import { useRef, useState } from "react"
+import { useRef } from "react"
 import FormikWrapper from "./formik/FormikWrapper"
 import Button from "../button/Button"
 import Tags from "@/app/lib/tagify"
 import { useSession } from "next-auth/react"
 import PopUpForm from "../alert/PopUpForm"
 
-export default function InviteForm({ onConfirm, onClose }){
+export default function InviteForm({ onConfirm, onClose, team, setTeams }){
     const { data: session } = useSession()
+
+    console.log(team)
 
     const tagifyRef = useRef()
     const tagifySettings = {
@@ -31,6 +33,7 @@ export default function InviteForm({ onConfirm, onClose }){
             variant="secondary"
             title={"Tambah Anggota"}
             titleSize={"large"}
+            wrapContent
         >
             <FormikWrapper
                 initialValues={{}}

@@ -1,7 +1,10 @@
 // Team Page
+"use client"
+
 import Header from "@/app/components/common/Header"
 import ProjectLayout from "@/app/components/layout/ProjectLayout"
 import TeamContent from "@/app/components/projects/team/TeamContent"
+import { SessionProvider } from "next-auth/react"
 
 export default function TeamPage({ params: { id } }){
     const links = [
@@ -10,9 +13,11 @@ export default function TeamPage({ params: { id } }){
     ]
 
     return(
-        <ProjectLayout projectId={id}>
-            <Header title={"Tim"} links={links}/>
-            <TeamContent/>
-        </ProjectLayout>
+        <SessionProvider>
+            <ProjectLayout projectId={id}>
+                <Header title={"Tim"} links={links}/>
+                <TeamContent projectId={id}/>
+            </ProjectLayout>
+        </SessionProvider>
     )
 }

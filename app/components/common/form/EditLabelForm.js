@@ -2,7 +2,6 @@
 import { useState } from "react"
 import CustomTooltip from "../CustomTooltip"
 import { pickTextColorBasedOnBgColor } from "@/app/lib/color"
-import { debounce } from "@/app/lib/helper"
 
 import { 
     IoMdCheckmark as CheckIcon,
@@ -19,7 +18,7 @@ export default function EditLabelForm({ defaultContent, defaultColor, onCancel, 
                 <input 
                     name="content" 
                     type="text" 
-                    className="text-sm w-full h-8 rounded-full" 
+                    className="text-sm w-full h-8 rounded-full border-none" 
                     style={{backgroundColor: backgroundColor, color: pickTextColorBasedOnBgColor(backgroundColor)}}
                     value={content}
                     onChange={(e) => setContent(e.target.value)}

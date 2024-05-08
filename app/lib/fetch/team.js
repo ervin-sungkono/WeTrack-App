@@ -1,5 +1,15 @@
+export const validateTeamMember = ({ projectId, teamId }) => {
+    const response = fetch(`/api/project/${projectId}/team/${teamId}`,{
+        method: 'GET',
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
+    
+    return response
+}
+
 export const getAllTeamMember = ({ projectId }) => {
-    const response = fetch(`/api/task/${projectId}/team`,{
+    const response = fetch(`/api/project/${projectId}/team`,{
         method: 'GET',
     })
     .then(res => res.json())
@@ -9,10 +19,13 @@ export const getAllTeamMember = ({ projectId }) => {
 }
 
 export const addTeam = ({ teams, projectId }) => {
+    const teamList = JSON.parse(teams).map(user => user.value)
+    if(!teamList) return
+
     const response = fetch(`/api/project/${projectId}/team`, {
         method: 'POST',
         body: JSON.stringify({
-            teams: teams ? JSON.parse(teams).map(user => user.value) : null
+            teams: teamList
         })
     })
     .then(res => res.json())

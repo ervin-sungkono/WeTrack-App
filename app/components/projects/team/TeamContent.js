@@ -1,16 +1,17 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { FaUserPlus } from "react-icons/fa6"
 import SearchBar from "../../common/SearchBar"
 import Button from "../../common/button/Button"
 import TeamList from "./TeamList"
 import InviteForm from "../../common/form/InviteForm"
 import PopUpLoad from "../../common/alert/PopUpLoad"
-import { ProjectProvider } from "@/app/lib/context/project"
 import PopUpForm from "../../common/alert/PopUpForm"
+import { inviteMember, deleteMember, getProjectTeam } from "@/app/lib/fetch/project"
+import PopUpInfo from "../../common/alert/PopUpInfo"
 
-export default function TeamContent(){
+export default function TeamContent({ projectId }){
     const [query, setQuery] = useState("")
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(false)
@@ -22,162 +23,181 @@ export default function TeamContent(){
     const [editMode, setEditMode] = useState(false)
     const [addMode, setAddMode] = useState(false)
     const [deleteMode, setDeleteMode] = useState(false)
+    const [selectDelete, setSelectDelete] = useState(null)
+    const [teams, setTeams] = useState(null)
+    const [teamFetched, setTeamFetched] = useState([])
+    const [successAdd, setSuccessAdd] = useState(false)
+    const [successDelete, setSuccessDelete] = useState(false)
+    const acceptedTeam = teamFetched.filter(team => team.status === "accepted")
+    const pendingTeam = teamFetched.filter(team => team.status === "pending")
+
+    useEffect(() => {
+        getProjectTeam(projectId).then(res => {
+            if(res.data){
+                setTeamFetched(res.data)
+            }else{
+                console.log(res)
+            }
+        })
+    }, [projectId])
+
+    const handleAddMember = async () => {
+        setError(false)
+        setLoading(true)
+        try{
+            const res = await inviteMember({
+                projectId: projectId,
+                teams: teams
+            })
+            if (res.error) {
+                setError(true);
+                console.log(JSON.parse(res.error).errors)
+                setLoading(false)
+            } else {
+                setAddMode(false)
+                setSuccessAdd(true)
+            }
+        }catch(error){
+            console.log(error)
+            setLoading(false)
+        }
+    }
 
     const handleEditMember = () => {
         setError(false)
         setLoading(true)
-    }
+    } 
 
-    const handleAddMember = () => {
+    const handleDeleteMember = async () => {
         setError(false)
         setLoading(true)
-    }  
-
-    const handleDeleteMember = () => {
-        setError(false)
-        setLoading(true)
+        try{
+            const res = await deleteMember({
+                projectId: projectId,
+                teamId: selectDelete.id
+            })
+            if(res.error){
+                setError(true)
+                console.log(JSON.parse(res.error).errors)
+                setLoading(false)
+            }else{
+                setDeleteMode(false)
+                setSuccessDelete(true)
+            }
+        }catch(error){
+            console.log(error)
+            setLoading(false)
+        }
     }
-
-    const activeTeamDummyData = [
-        {
-            id: 1,
-            name: "Ervin Cahyadinata Sungkono",
-            role: "Owner",
-            status: "active"
-        },
-        {
-            id: 2,
-            name: "Kenneth Nathanael",
-            role: "Member",
-            status: "active"
-        },
-        {
-            id: 3,
-            name: "Christopher Vinantius",
-            role: "Member",
-            status: "active"
-        },
-        {
-            id: 4,
-            name: "No Name",
-            role: "Member",
-            status: "active"
-        },
-        {
-            id: 5,
-            name: "QA Tester",
-            role: "Viewer",
-            status: "active"
-        }
-    ]
-
-    const pendingTeamDummyData = [
-        {
-            id: 1,
-            name: "Ervin Cahyadinata Sungkono",
-            status: "pending"
-        },
-        {
-            id: 2,
-            name: "Kenneth Nathanael",
-            status: "pending"
-        },
-        {
-            id: 3,
-            name: "Christopher Vinantius",
-            status: "pending"
-        },
-        {
-            id: 4,
-            name: "No Name",
-            status: "pending"
-        },
-        {
-            id: 5,
-            name: "QA Tester",
-            status: "pending"
-        }
-    ]
 
     return (
-        <ProjectProvider>
-            <div className="flex flex-col gap-4">
-                <div className="flex flex-col xs:flex-row justify-between gap-4 items-center">
-                    <div className="flex justify-center xs:justify-start items-center">
-                        <SearchBar placeholder={"Cari anggota.."} handleSearch={handleSearch}/>
-                    </div>
-                    <div className="flex flex-col md:flex-row flex-wrap justify-center gap-2 md:gap-4">
-                        {editMode ? (
-                            <div className="flex flex-col md:flex-row gap-2 md:gap-4">
-                                <Button variant="danger" onClick={() => setEditMode(false)} outline>
-                                    Batalkan Perubahan
-                                </Button>
-                                <Button onClick={() => setEditMode(handleEditMember)} outline>
-                                    Simpan Perubahan
-                                </Button>
-                            </div>
-                            
-                        ) : (
-                            <Button onClick={() => setEditMode(true)} outline>
-                                Kelola Anggota
+        <div className="flex flex-col gap-4">
+            <div className="flex flex-col xs:flex-row justify-between gap-4 items-center">
+                <div className="flex justify-center xs:justify-start items-center">
+                    <SearchBar placeholder={"Cari anggota.."} handleSearch={handleSearch}/>
+                </div>
+                <div className="flex flex-col md:flex-row flex-wrap justify-center gap-2 md:gap-4">
+                    {editMode ? (
+                        <div className="flex flex-col md:flex-row gap-2 md:gap-4">
+                            <Button variant="danger" onClick={() => setEditMode(false)} outline>
+                                Batalkan Perubahan
                             </Button>
-                        )}
-                        <Button onClick={() => setAddMode(true)} className="flex items-center">
-                            <FaUserPlus className="mr-2"/>
-                            Tambah Anggota
+                            <Button onClick={() => setEditMode(handleEditMember)} outline>
+                                Simpan Perubahan
+                            </Button>
+                        </div>
+                        
+                    ) : (
+                        <Button onClick={() => setEditMode(true)} outline>
+                            Kelola Anggota
                         </Button>
-                    </div>
+                    )}
+                    <Button onClick={() => setAddMode(true)} className="flex items-center">
+                        <FaUserPlus className="mr-2"/>
+                        Tambah Anggota
+                    </Button>
                 </div>
+            </div>
+            <div>
                 <div>
-                    <div>
-                        <div className="flex items-baseline mb-2">
-                            <div className="font-semibold text-lg">
-                                Anggota
-                            </div>
-                            <div className="ml-2">
-                                (0)
-                            </div>
+                    <div className="flex items-baseline mb-2">
+                        <div className="font-semibold text-lg">
+                            Anggota
                         </div>
-                        <div className="overflow-x-auto">
-                            <TeamList list={activeTeamDummyData} listType="active" edit={editMode} handleDelete={() => setDeleteMode(true)}/>
+                        <div className="ml-2">
+                            ({acceptedTeam.length})
                         </div>
                     </div>
-                    <div className="mt-6">
-                        <div className="flex items-baseline mb-2">
-                            <div className="font-semibold text-lg">
-                                Menunggu Persetujuan
-                            </div>
-                            <div className="ml-2">
-                                (0)
-                            </div>
-                        </div>
-                        <div className="h-full overflow-x-auto">
-                            <TeamList list={pendingTeamDummyData} listType="pending" edit={editMode} handleDelete={() => setDeleteMode(true)}/>
-                        </div>
+                    <div className="overflow-x-auto">
+                        <TeamList list={acceptedTeam} listType="active" edit={editMode} setSelectDelete={setSelectDelete} handleDelete={() => setDeleteMode(true)}/>
                     </div>
                 </div>
-                {addMode && (
-                    <InviteForm 
-                        onConfirm={handleAddMember}
-                        onClose={() => setAddMode(false)}
-                    />
-                )}
-                {loading && (
-                    <PopUpLoad />
-                )}
-                {deleteMode && (
-                    <PopUpForm
-                        title="Hapus Anggota"
-                        titleSize="large"
-                        message={`Apakah Anda yakin ingin menghapus anggota ini?`}
-                    >
-                        <div className="flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
-                            <Button variant="secondary" onClick={() => setDeleteMode(false)}>Tidak</Button>
-                            <Button variant="danger" onClick={handleDeleteMember}>Ya</Button>
+                <div className="mt-6">
+                    <div className="flex items-baseline mb-2">
+                        <div className="font-semibold text-lg">
+                            Menunggu Persetujuan
                         </div>
-                    </PopUpForm>
-                )}
-            </div>  
-        </ProjectProvider>
+                        <div className="ml-2">
+                            ({pendingTeam.length})
+                        </div>
+                    </div>
+                    <div className="h-full overflow-x-auto">
+                        <TeamList list={pendingTeam} listType="pending" edit={editMode} setSelectDelete={setSelectDelete} handleDelete={() => setDeleteMode(true)}/>
+                    </div>
+                </div>
+            </div>
+            {addMode && (
+                <InviteForm
+                    onConfirm={handleAddMember}
+                    onClose={() => setAddMode(false)}
+                    team={teamFetched}
+                    setTeams={setTeams}
+                />
+            )}
+            {loading && (
+                <PopUpLoad />
+            )}
+            {deleteMode && (
+                <PopUpForm
+                    title="Hapus Anggota"
+                    titleSize="large"
+                    message={`Apakah Anda yakin ingin menghapus ${selectDelete?.fullName} dari proyek ini?`}
+                    wrapContent
+                >
+                    <div className="flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
+                        <Button variant="secondary" onClick={() => setDeleteMode(false)}>Tidak</Button>
+                        <Button variant="danger" onClick={handleDeleteMember}>Ya</Button>
+                    </div>
+                </PopUpForm>
+            )}
+            {successAdd &&
+                <PopUpInfo
+                    title={"Undangan Dikirim"}
+                    titleSize={"large"}
+                    message={"Email undangan telah dikirimkan kepada pengguna yang dituju."}
+                >
+                    <div className="flex justify-end gap-2 md:gap-4">
+                        <Button onClick={() => {
+                            setSuccessAdd(false)
+                            location.reload()
+                        }} className="w-24 md:w-32">OK</Button>
+                    </div>
+                </PopUpInfo>
+            }
+            {successDelete &&
+                <PopUpInfo
+                    title={"Anggota Dihapus"}
+                    titleSize={"large"}
+                    message={"Anggota yang dipilih telah dihapus dari proyek ini."}
+                >
+                    <div className="flex justify-end gap-2 md:gap-4">
+                        <Button onClick={() => {
+                            setSuccessDelete(false)
+                            location.reload()
+                        }} className="w-24 md:w-32">OK</Button>
+                    </div>
+                </PopUpInfo>
+            }
+        </div>
     )
 }

@@ -37,7 +37,11 @@ export async function GET(request, response) {
         const querySnapshot = await getDocs(q)
 
         const tasks = await Promise.all(querySnapshot.docs.map(async (item) => {
-            const taskStatusRef = await getDoc(doc(db, "taskStatuses", item.id))
+            const taskStatusDoc = await getDoc(doc(db, "taskStatuses", item.data().status))
+            const taskStatusDetail = {
+                id: taskStatusDoc.id,
+                ...taskStatusDoc.data()
+            }
 
             return {
                 id: item.id,
@@ -45,7 +49,7 @@ export async function GET(request, response) {
                 labels: item.data().labels,
                 assignedTo: item.data().assignedTo,
                 priority: item.data().priority,
-                status: doc.data().status
+                status: taskStatusDetail
             }
         })) 
         

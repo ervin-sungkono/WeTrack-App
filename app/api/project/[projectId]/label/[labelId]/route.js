@@ -7,16 +7,11 @@ import { NextResponse } from "next/server";
 export async function PUT(request, response){
     try {       
         const session = await getUserSession(request, response, nextAuthOptions);
-        if (!session.user) {
-            return NextResponse.json({ 
-                message: "Unauthorized, must login first" 
-            }, { status: 401 });
-        }
-
         const userId = session.user.uid;
         if (!userId) {
             return NextResponse.json({ 
-                message: "User not found" 
+                message: "User not found" ,
+                success: false
             }, { status: 404 });
         }
 
@@ -25,15 +20,18 @@ export async function PUT(request, response){
         
         if(!backgroundColor){
             return NextResponse.json({
-                message: "Missing required parameters"
+                message: "Missing required parameters",
+                success: false
             }, { status: 400 })
         }
 
-        const docRef = await getDoc(doc(db, 'labels', labelId))
+        const docRef = doc(db, 'labels', labelId)
+        const docSnap = await getDoc(docRef)
         
-        if(!docRef.exists()){
+        if(!docSnap.exists()){
             return NextResponse.json({
-                message: "Label not found"
+                message: "Label not found",
+                success: false
             }, { status: 404 })
         }
         
@@ -61,14 +59,16 @@ export async function DELETE(request, response){
         const session = await getUserSession(request, response, nextAuthOptions);
         if (!session.user) {
             return NextResponse.json({ 
-                message: "Unauthorized, must login first" 
+                message: "Unauthorized, must login first",
+                success: false
             }, { status: 401 });
         }
 
         const userId = session.user.uid;
         if (!userId) {
             return NextResponse.json({ 
-                message: "User not found" 
+                message: "User not found",
+                success: false
             }, { status: 404 });
         }
 
@@ -76,20 +76,22 @@ export async function DELETE(request, response){
 
         if(!labelId){
             return NextResponse.json({
-                message: "Missing parameter"
+                message: "Missing parameter",
+                success: false
             }, { status: 404 })
         }
 
         await deleteDoc(doc(db, "labels", labelId))
 
         return NextResponse.json({
-            message: "Successfully removed the label"
+            message: "Successfully removed the label",
+            success: true
         }, { status: 200 })
 
     } catch (error) {
         return NextResponse.json({
-            data: null,
-            message: error.message
+            message: error.message,
+            success: false
         }, { status: 500 });
     }
 }

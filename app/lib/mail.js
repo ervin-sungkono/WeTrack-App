@@ -19,7 +19,7 @@ const generateEmailContent = ({ sender_name, invitation_link, project_name }) =>
     }
 }
 
-export const sendMail = async({ email, fullName, projectId, projectName }) => {
+export const sendMail = async({ email, senderName, projectId, teamId, projectName }) => {
     const receiver_email = email
 
     try{
@@ -27,11 +27,11 @@ export const sendMail = async({ email, fullName, projectId, projectName }) => {
             from: sender_email,
             to: receiver_email,
             ...generateEmailContent({
-                sender_name: fullName,
-                invitation_link: `${WEB_URL}/invite/${projectId}?senderName=${fullName}&projectName=${projectName}`,
+                sender_name: senderName,
+                invitation_link: `${WEB_URL}/invite/${teamId}?senderName=${senderName}&projectName=${projectName}&projectId=${projectId}`,
                 project_name: projectName
             }),
-            subject: `Undangan dari ${fullName} untuk bergabung di WeTrack`
+            subject: `Undangan dari ${senderName} untuk bergabung di WeTrack`
         })
     }catch(err){
         console.log("Fail to send mail", err.message)

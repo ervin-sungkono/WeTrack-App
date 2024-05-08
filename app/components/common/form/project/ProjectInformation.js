@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 import { useProjectData } from "@/app/lib/context/project"
 import { projectInformationSchema } from "@/app/lib/schema"
 import { generateTask } from "@/app/lib/fetch/project"
+import { createNewTask } from "@/app/lib/fetch/task"
 
 import FormikField from "../formik/FormikField"
 import FormikTextarea from "../formik/FormikTextarea"
@@ -14,7 +15,7 @@ import SkeletonInputField from "@/app/components/skeleton/SkeletonInputField"
 import SkeletonButton from "@/app/components/skeleton/SkeletonButton"
 import KeyFormikField from "./KeyFormikField"
 import SkeletonTextarea from "@/app/components/skeleton/SkeletonTextarea"
-import { createNewTask } from "@/app/lib/fetch/task"
+import PopUpLoad from "../../alert/PopUpLoad"
 
 export default function ProjectInformation({prevFormStep}){
     const [isLoading, setLoading] = useState(true)
@@ -125,6 +126,7 @@ export default function ProjectInformation({prevFormStep}){
                             <Button variant="secondary" onClick={prevFormStep} className="w-24 md:w-32">Kembali</Button>
                             <Button type={"submit"} disabled={formik.isSubmitting} className="w-24 md:w-32">Kirim</Button>
                         </div>
+                        {formik.isSubmitting && <PopUpLoad/>}
                     </div>
                 ) 
             }}
