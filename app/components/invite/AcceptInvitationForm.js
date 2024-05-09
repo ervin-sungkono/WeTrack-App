@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { validateTeamMember } from "@/app/lib/fetch/team"
 import { IoClose } from "react-icons/io5"
-import { acceptInvite } from "@/app/lib/fetch/invite"
+import { acceptInvite, rejectInvite } from "@/app/lib/fetch/invite"
 
 export default function AcceptInvitationForm({ teamId }){
     const searchParams = useSearchParams()
@@ -22,7 +22,7 @@ export default function AcceptInvitationForm({ teamId }){
 
     const rejectInvitation = async() => {
         setLoading(true)
-        const res = await acceptInvite({ projectId: searchParams.get('projectId') })
+        const res = await rejectInvite({ projectId: searchParams.get('projectId') })
 
         if(res.success){
             setRejected(true)
