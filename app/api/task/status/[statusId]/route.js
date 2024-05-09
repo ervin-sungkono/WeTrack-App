@@ -2,33 +2,55 @@ import { NextResponse } from "next/server";
 import { db } from "@/app/firebase/config";
 import { getUserSession } from "@/app/lib/session";
 import { nextAuthOptions } from "@/app/lib/auth";
-import { collection, deleteDoc, FieldPath, getDoc } from "firebase/firestore";
+import { collection, updateDoc, deleteDoc, getDoc, doc, serverTimestamp } from "firebase/firestore";
 
-export async function PUT(request, response, context){
+export async function PUT(request, response){
     try {
         const session = await getUserSession(request, response, nextAuthOptions)
         const userId = session.user.uid
 
         if(!userId){
             return NextResponse.json({
-                message: "You are not authorized"
+                message: "You are not authorized",
+                success: false
             }, { status: 401 })
         }
 
-        const { statusId } = context.params
+        const { statusId } = response.params
+        const { statusName } = await request.json()
 
-        if(!statusId){
+        const statusRef = doc(db, "taskStatuses", statusId)
+        const statusSnap = await getDoc(statusRef)
+
+        if(!statusSnap.exists()){
             return NextResponse.json({
-                message: "Missing parameter"
-            }, { status: 400 })
+                message: "Status not found",
+                success: false
+            }, { status: 404 })
         }
 
-        
+        const updatedTask = await updateDoc(statusRef, {
+            statusName: statusName,
+            updatedAt: serverTimestamp()
+        })
+
+        if(!updatedTask){
+            return NextResponse.json({
+                message: "Fail to update task status",
+                success: false
+            }, { status: 500 })
+        }
+
+        return NextResponse.json({
+            message: "Task status updated successfully",
+            success: true
+        }, { status: 200 })
+
     } catch (error) {
         console.error("Cannot get task statuses", error);
         return NextResponse.json({
-            data: null,
-            message: error.message
+            message: error.message,
+            success: false
         }, { status: 500 });
     }
 }
@@ -47,69 +69,7 @@ export async function DELETE(request, response, context){
         const { id } = context.params
         const projectId = request.nextUrl.searchParams.get("projectId")
 
-        if(!id){
-            return NextResponse.json({
-                message: "Missing parameter"
-            }, { status: 400 })
-        }
-
-        const projectDocRef = await getDoc(doc(db, "projects", projectId))
-        const { startStatus, endStatus, taskStatusList } = projectDocRef.data()
-        let newTaskStatus;
-
-        //kalo delete start task status
-        if(startStatus.id == id){
-            const taskStatusDocRef = await getDoc(doc(db, "taskStatuses", startStatus.id))
-            const { tasks } = taskStatusDocRef.data()
-
-            //kalo kosong task nya delete aja
-            if(tasks.length == 0){
-                
-            } 
-            
-            //kalo ada isi task nya, update ke task status setelahnya  
-            else if(tasks.length > 0){
-                if(taskStatusList.length == 1){
-
-                }
-                else if(taskStatusList.length > 1){
-
-                }
-            }
-        }
-
-        //kalo delete end task status
-        if(endStatus.id == id){
-            const taskStatusDocRef = await getDoc(doc(db, "taskStatuses", endStatus.id))
-            const { tasks } = taskStatusDocRef.data()
-
-            //kalo kosong task nya delete aja
-            if(tasks.length == 0){
-                await deleteDoc(doc(db, "taskStatuses", id))
-
-                const index = taskStatusList.findIndex((t) => t.id == id)
-                if(!index){
-                    return NextResponse.json({
-                        message: "Task status not found in project collection"
-                    })
-                }
-                taskStatusList.splice(index , 1)
-
-                return NextResponse.json({
-                    message: "Successfully delete task status"
-                }, { status: 204 })
-            } 
-            
-            //kalo ada isi task nya, update ke task status sebelumnya  
-            else if(tasks.length > 0){
-                if(taskStatusList.length == 1){
-
-                }
-                else if(taskStatusList.length > 1){
-                    
-                }
-            }
-        }
+        const taskStatusCol = collection(db, "status")
         
     } catch (error) {
         console.error("Cannot get task statuses", error);
