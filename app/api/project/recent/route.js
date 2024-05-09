@@ -21,25 +21,12 @@ export async function GET(request, response) {
         const q = query(projectsRef, where('createdBy', "==", userId), orderBy("createdAt", "desc"), limit(3));
         const querySnapshot = await getDocs(q);
 
-        console.log("query", querySnapshot)
-
-        const projects = await Promise.all(querySnapshot.docs.map(async (item) => {
-            const userRef = doc(db, "users", item.data().createdBy)
-            console.log("user ref", userRef)
-            const userDoc = await getDoc(userRef)
-            console.log("user doc", userDoc)
-            const userData = userDoc.exists() ? userDoc.data() : null
-
+        const projects = querySnapshot.docs.map(doc => {
             return {
-                id: item.id,
-                ...item.data(),
-                createdBy: userData ? {
-                    id: userDoc.id,
-                    fullName: userData.fullName,
-                    profileImage: userData.profileImage
-                } : null
+                id: doc.id,
+                ...doc.data(),
             }
-        }));
+        });
 
         return NextResponse.json({
             data: projects,
