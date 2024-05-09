@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import BoardList from "./BoardList"
 import SearchBar from "../../common/SearchBar"
@@ -74,14 +74,19 @@ export default function BoardContent({ projectId }){
     
   }
 
+  const updateState = useCallback(
+    debounce((taskData, taskStatusData) => 
+      setState(taskStatusData.map((status) => ({
+        ...status,
+        content: taskData.filter(task => task.status === status.id)
+      })))
+    , 300)
+  , [])
+
   useEffect(() => {
-    if(!taskData || !taskStatusData) return
-    debounce(() => setState(taskStatusData.map((status) => ({
-      ...status,
-      content: taskData.filter(task => task.status === status.id)
-    }))
-    ), 300)
-  }, [taskData, taskStatusData])
+    if(!taskData && !taskStatusData) return
+    updateState(taskData, taskStatusData)
+  }, [taskData, taskStatusData, updateState])
 
   useEffect(() => {
     if(!projectId) return
