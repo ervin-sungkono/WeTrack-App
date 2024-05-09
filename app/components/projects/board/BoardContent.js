@@ -6,13 +6,16 @@ import SearchBar from "../../common/SearchBar"
 import SelectButton from "../../common/button/SelectButton"
 import SimpleInputForm from "../../common/SimpleInputField"
 import Button from "../../common/button/Button"
-import { RevolvingDot } from "react-loader-spinner"
+import DotButton from "../../common/button/DotButton"
+import { TailSpin } from "react-loader-spinner"
 
 import { IoFilter as FilterIcon } from "react-icons/io5"
 import { FiPlus as PlusIcon } from "react-icons/fi"
-import { createNewTask, getAllTask } from "@/app/lib/fetch/task"
-import { getAllTaskStatus } from "@/app/lib/fetch/taskStatus"
-import DotButton from "../../common/button/DotButton"
+import { createNewTask } from "@/app/lib/fetch/task"
+import { reorderTaskStatus } from "@/app/lib/fetch/taskStatus"
+import { getQueryReference, getQueryReferenceOrderBy } from "@/app/firebase/util"
+import { onSnapshot } from "firebase/firestore"
+import { debounce } from "@/app/lib/helper"
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -37,14 +40,14 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 }
 
 export default function BoardContent({ projectId }){
-  const [loading, setLoading] = useState(true)
   const [isCreatingTask, setCreatingTask] = useState(false)
   const [isCreatingList, setCreatingList] = useState(false)
   const [state, setState] = useState(null);
-  const [taskStatuses, setTaskStatus] = useState([])
   const [query, setQuery] = useState("")
   const [filterDropdown, setFilterDropdown] = useState(false)
   const [activeStatusId, setActiveStatusId] = useState()
+  const [taskStatusData, setTaskStatusData] = useState()
+  const [taskData, setTaskData] = useState()
 
   const showTaskCard = (statusId) => {
     setActiveStatusId(statusId)
@@ -57,26 +60,10 @@ export default function BoardContent({ projectId }){
     const formData = new FormData(document.querySelector(`#taskName-form`))
     const taskName = formData.get("taskName")
     
-    createNewTask({
+    await createNewTask({
       taskName, 
       projectId: projectId, 
       statusId: activeStatusId
-    }).then(res => {
-      if(res.data){
-        console.log(res.data)
-        setState(state.map(el => {
-          if(el.id === activeStatusId){
-            return({
-              ...el,
-              content: [...el.content, res.data]
-            })
-          }
-          return el
-        }))
-      }
-      else{
-        alert("Gagal membuat tugas baru")
-      }
     })
 
     setCreatingTask(false)
@@ -88,27 +75,38 @@ export default function BoardContent({ projectId }){
   }
 
   useEffect(() => {
-    if(projectId){
-      setLoading(true)
-      getAllTaskStatus(projectId).then(res => {
-        if(res.data){
-          setTaskStatus(res.data)
-          getAllTask(projectId).then(res2 => {
-            if(res2.data) {
-              setState(res.data.map(taskStatus => ({
-                  ...taskStatus,
-                  content: res2.data?.filter(task => task.status.id === taskStatus.id) ?? []
-                })
-              ))
-            }
-            else alert("Gagal memperoleh data tugas")
-          })
-        }
-        else{
-          alert("Gagal memperoleh data status tugas")
-        }
-        setLoading(false)
-      })
+    if(!taskData || !taskStatusData) return
+    debounce(() => setState(taskStatusData.map((status) => ({
+      ...status,
+      content: taskData.filter(task => task.status === status.id)
+    }))
+    ), 300)
+  }, [taskData, taskStatusData])
+
+  useEffect(() => {
+    if(!projectId) return
+    const statusReference = getQueryReferenceOrderBy({ collectionName: "taskStatuses", field: "projectId", id: projectId, orderByKey: "order" })
+    const statusUnsubscribe = onSnapshot(statusReference, (async(snapshot) => {
+      const taskStatusData = snapshot.docs.map(taskStatusDoc => ({
+        id: taskStatusDoc.id,
+        status: taskStatusDoc.data().statusName,
+        order: taskStatusDoc.data().order
+      }))
+      setTaskStatusData(taskStatusData)
+    }))
+
+    const taskReference = getQueryReference({ collectionName: "tasks", field: "projectId", id: projectId })
+    const taskUnsubscribe = onSnapshot(taskReference, (taskSnapshot => {
+      const taskData = taskSnapshot.docs.map(taskDoc => ({
+        id: taskDoc.id,
+        ...taskDoc.data()
+      }))
+      setTaskData(taskData)
+    }))
+
+    return () => {
+      statusUnsubscribe()
+      taskUnsubscribe()
     }
   }, [projectId])
 
@@ -116,7 +114,7 @@ export default function BoardContent({ projectId }){
     setQuery(query.toLowerCase())
   }
 
-  function onDragEnd(result) {
+  async function onDragEnd(result) {
     const { source, destination } = result;
 
     // dropped outside the list
@@ -129,6 +127,13 @@ export default function BoardContent({ projectId }){
     if(source.droppableId === 'task_status'){
       const items = reorder(state, source.index, destination.index)
       setState(items)
+
+      await reorderTaskStatus({ 
+        projectId: projectId,
+        statusId: state[source.index].id, 
+        oldIndex: source.index, 
+        newIndex: destination.index 
+      })
       return
     }
 
@@ -167,17 +172,7 @@ export default function BoardContent({ projectId }){
             </div>
           </div>
         </div>
-      </div>
-      {loading ? 
-      <div className='w-full h-full flex flex-col gap-4 justify-center items-center'>
-        <RevolvingDot
-            height="100"
-            width="100"
-            radius="48"
-            color="#47389F"
-        />
-        <p className='text-sm md:text-base text-dark/80'>Memuat data tugas...</p>
-      </div> : 
+      </div> 
       <div className="h-full flex items-start overflow-y-auto pb-4">
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="task_status" direction="horizontal" type="ISSUE-STATUS">
@@ -210,7 +205,9 @@ export default function BoardContent({ projectId }){
                         >
                           {el.id === activeStatusId && (
                             isCreatingTask ? 
-                            <div>Loading..</div> :
+                            <div className="w-full flex justify-center">
+                              <TailSpin width={32} height={32} color="#47389F"/>
+                            </div> :
                             <SimpleInputForm
                             name={"taskName"}
                             onSubmit={(e) => createTask(e)}
@@ -253,7 +250,7 @@ export default function BoardContent({ projectId }){
             onBlur={() => setCreatingList(false)}
           />
         </div>)}
-      </div>}
+      </div>
     </div>
   );
 }

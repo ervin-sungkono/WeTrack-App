@@ -1,10 +1,10 @@
 import { db } from "@/app/firebase/config";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { getUserSession } from "@/app/lib/session";
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, getDocs, doc, getDoc, orderBy, query, where } from "firebase/firestore";
 import { NextResponse } from 'next/server'
 
-export async function GET(request, response, context) {
+export async function GET(request, response) {
     try {
         const session = await getUserSession(request, response, nextAuthOptions)
         const loggedIn = session.user.uid
@@ -23,18 +23,25 @@ export async function GET(request, response, context) {
             }, { status: 404 })
         }
 
+        const projectRef = doc(db, 'projects', projectId);
+        const projectSnap = await getDoc(projectRef);
+
+        if(!projectSnap.exists()){
+            return NextResponse.json({
+                message: "Project not found",
+                success: false
+            }, { status: 404 });
+        }
+
         const taskStatusColRef = collection(db, 'taskStatuses')
-        const q = query(taskStatusColRef, where('projectId', '==', projectId))
+        const q = query(taskStatusColRef, where('projectId', '==', projectId), orderBy('order'))
         const querySnapshot = await getDocs(q)
 
-        let taskStatuses = [];
-        querySnapshot.forEach(doc => {
-            taskStatuses.push({
-                id: doc.id,
-                status: doc.data().statusName
-            })
-            return taskStatuses
-        })
+        let taskStatuses = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            status: doc.data().statusName,
+            order: doc.data().order
+        }))
             
         return NextResponse.json({
             data: taskStatuses, 

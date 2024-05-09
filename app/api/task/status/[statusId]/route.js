@@ -15,9 +15,9 @@ export async function PUT(request, response, context){
             }, { status: 401 })
         }
 
-        const { id } = context.params
+        const { statusId } = context.params
 
-        if(!id){
+        if(!statusId){
             return NextResponse.json({
                 message: "Missing parameter"
             }, { status: 400 })
