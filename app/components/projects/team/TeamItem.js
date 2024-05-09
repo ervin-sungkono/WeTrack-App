@@ -8,7 +8,6 @@ export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, s
 
     const [roleSelected, setRoleSelected] = useState(role)
     const [deleteSelected, setDeleteSelected] = useState(false)
-    const [deleteOption, setDeleteOption] = useState(true)
 
     const roleOptions = [
         {label: "Member", value: "Member"},
@@ -20,10 +19,13 @@ export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, s
 
     const handleRoleChange = (value) => {
         setRoleSelected(value)
-        if(id === selectUpdate.find(item => item.id === id)?.id){
+        if(id === selectUpdate.find(item => item.id === id)?.id || value === role){
             setSelectUpdate(selectUpdate.filter(item => item.id !== id))
-            setDeleteOption(true)
             return
+        }
+        if(id === selectDelete.find(item => item.id === id)?.id){
+            setSelectDelete(selectDelete.filter(item => item.id !== id))
+            setDeleteSelected(false)
         }
         const userUpdate = {
             id: id,
@@ -35,7 +37,6 @@ export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, s
             ...selectUpdate,
             userUpdate
         ])
-        setDeleteOption(false)
     }
     
     const handleUserDelete = () => {
@@ -44,6 +45,10 @@ export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, s
             setSelectDelete(selectDelete.filter(item => item.id !== id))
             setDeleteSelected(false)
             return
+        }
+        if(id === selectUpdate.find(item => item.id === id)?.id){
+            setSelectUpdate(selectUpdate.filter(item => item.id !== id))
+            setRoleSelected(role)
         }
         const userDelete = {
             id: id,
@@ -79,26 +84,26 @@ export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, s
 
     return (
         <div className="relative mt-4 mb-12">
-            {(editMode && role != 'Owner' && deleteOption) && (
+            {(editMode && role != 'Owner') && (
                 <CloseCircle onClick={handleUserDelete} className="absolute -top-4 -right-4 text-3xl text-danger-red cursor-pointer"/>
             )}
-            <div className={`h-full flex flex-col justify-between items-center m-auto px-3 md:px-6 py-2.5 md:py-4 rounded-xl shadow-md ${pending ? 'bg-light-blue' : deleteSelected ? 'bg-danger-red' : 'bg-white'} w-48 md:w-64`}>
+            <div className={`h-full flex flex-col justify-between items-center m-auto px-3 md:px-6 py-2.5 md:py-4 rounded-xl shadow-md ${pending ? 'bg-light-blue' : (editMode && deleteSelected) ? 'bg-danger-red' : 'bg-white'} w-48 md:w-64`}>
                 {!pending ? (
                     <UserIcon fullName={user?.fullName} size="team" src={profileImage}/>
                 ) : (
                     <UserIcon size="team" src={profileImagePending}/>
                 )}
                 {!pending && (
-                    <div className={`mt-4 font-semibold ${pending || deleteSelected ? 'text-white' : 'text-dark-blue'} text-center text-sm md:text-base leading-4 md:leading-5`}>
+                    <div className={`mt-4 font-semibold ${pending || (editMode && deleteSelected) ? 'text-white' : 'text-dark-blue'} text-center text-sm md:text-base leading-4 md:leading-5`}>
                         {user?.fullName}
                     </div>
                 )}
                 {status !== "pending" && (
-                    (editMode && role != 'Owner' && !deleteSelected) ? (
+                    (editMode && role != 'Owner') ? (
                         <div className="mt-4 mb-6">
                             <SelectButton
                                 name={`${id}`}
-                                placeholder={roleSelected}
+                                placeholder={roleSelected || role}
                                 defaultValue={roleSelected || role}
                                 options={roleOptions}
                                 onChange={handleRoleChange}

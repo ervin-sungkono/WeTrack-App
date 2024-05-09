@@ -10,6 +10,8 @@ import PopUpLoad from "../../common/alert/PopUpLoad"
 import PopUpForm from "../../common/alert/PopUpForm"
 import { inviteMember, updateRole, deleteMember, getProjectTeam } from "@/app/lib/fetch/project"
 import PopUpInfo from "../../common/alert/PopUpInfo"
+import { getQueryReference, getDocumentReference } from "@/app/firebase/util"
+import { onSnapshot, getDoc } from "firebase/firestore"
 
 export default function TeamContent({ projectId }){
     const [query, setQuery] = useState("")
@@ -37,21 +39,61 @@ export default function TeamContent({ projectId }){
     const [pendingTeam, setPendingTeam] = useState([])
 
     useEffect(() => {
-        getProjectTeam(projectId).then(res => {
-            if (res.data) {
-                const filteredAcceptedTeam = res.data.filter(team => team.status === "accepted" && team.user.fullName.toLowerCase().includes(query))
-                const filteredPendingTeam = res.data.filter(team => team.status === "pending" && team.user.fullName.toLowerCase().includes(query))
-                setAcceptedTeam(filteredAcceptedTeam)
-                setPendingTeam(filteredPendingTeam)
-                const allTeam = [
-                    ...filteredAcceptedTeam,
-                    ...filteredPendingTeam
-                ]
-                setTeamFetched(allTeam)
-            } else {
-                console.log(res)
-            }
+        const reference = getQueryReference({ collectionName: "teams", field: "projectId", id: projectId})
+        const unsubscribe = onSnapshot(reference, async(snapshot) => {
+            const updatedTeams = await Promise.all(snapshot.docs.map(async(document) => {
+                const userId = document.data().userId
+                if(userId){
+                    const userRef = getDocumentReference({ collectionName: "users", id: userId })
+                    const userSnap = await getDoc(userRef)
+                    const { fullName, profileImage } = userSnap.data()
+                    return({
+                        id: document.id,
+                        user: {
+                            fullName,
+                            profileImage
+                        },
+                        ...document.data()
+                    })
+                }
+                return({
+                    id: document.id,
+                    user: null,
+                    ...document.data()
+                })
+            }))
+            updatedTeams.sort((a, b) => {
+                if(a.role === "Owner" && b.role !== "Owner") return -1
+                if(a.role !== "Owner" && b.role === "Owner") return 1
+                return 0
+            })
+            const filteredAcceptedTeam = updatedTeams.filter(team => team.status === "accepted" && team.user.fullName.toLowerCase().includes(query))
+            const filteredPendingTeam = updatedTeams.filter(team => team.status === "pending" && team.user.fullName.toLowerCase().includes(query))
+            setAcceptedTeam(filteredAcceptedTeam)
+            setPendingTeam(filteredPendingTeam)
+            const allTeam = [
+                ...filteredAcceptedTeam,
+                ...filteredPendingTeam
+            ]
+            setTeamFetched(allTeam)
         })
+        return unsubscribe
+        // getProjectTeam(projectId).then(res => {
+        //     if (res.data) {
+        //         console.log(res.data)
+        //         const filteredAcceptedTeam = res.data.filter(team => team.status === "accepted" && team.user.fullName.toLowerCase().includes(query))
+        //         const filteredPendingTeam = res.data.filter(team => team.status === "pending" && team.user.fullName.toLowerCase().includes(query))
+        //         setAcceptedTeam(filteredAcceptedTeam)
+        //         setPendingTeam(filteredPendingTeam)
+        //         const allTeam = [
+        //             ...filteredAcceptedTeam,
+        //             ...filteredPendingTeam
+        //         ]
+        //         setTeamFetched(allTeam)
+        //     } else {
+        //         console.log(res)
+        //     }
+        // })
     }, [projectId, query])
 
     const handleAddMember = async () => {
@@ -107,6 +149,8 @@ export default function TeamContent({ projectId }){
                                     setSuccessManage(true)
                                 }
                             }))
+                        }else{
+                            setSuccessManage(true)
                         }
                     }
                 }))
@@ -175,7 +219,7 @@ export default function TeamContent({ projectId }){
                     </div>
                     <div className="overflow-x-auto">
                         {acceptedTeam.length > 0 ? (
-                            <TeamList list={acceptedTeam} listType="accepted" edit={editMode} selectUpdate={selectUpdate} setSelectUpdate={setSelectUpdate} selectDelete={selectDelete} setSelectDelete={setSelectDelete} handleDelete={() => setDeleteMode(true)}/>
+                            <TeamList list={acceptedTeam} listType="accepted" edit={editMode} selectUpdate={selectUpdate} setSelectUpdate={setSelectUpdate} selectDelete={selectDelete} setSelectDelete={setSelectDelete}/>
                         ) : (
                             <div className="">
                                 Tidak ada data anggota yang ditemukan.
@@ -193,7 +237,7 @@ export default function TeamContent({ projectId }){
                         </div>
                     </div>
                     <div className="h-full overflow-x-auto">
-                        <TeamList list={pendingTeam} query={query} listType="pending" edit={editMode} setSelectDelete={setSelectDelete} handleDelete={() => setDeleteMode(true)} setAddMode={setAddMode}/>
+                        <TeamList list={pendingTeam} query={query} listType="pending" edit={editMode} selectUpdate={selectUpdate} setSelectUpdate={setSelectUpdate} selectDelete={selectDelete} setSelectDelete={setSelectDelete} setAddMode={setAddMode}/>
                     </div>
                 </div>
             </div>
@@ -252,7 +296,10 @@ export default function TeamContent({ projectId }){
                     <div className="flex justify-end gap-2 md:gap-4">
                         <Button onClick={() => {
                             setSuccessAdd(false)
-                            location.reload()
+                            setSelectUpdate([])
+                            setSelectDelete([])
+                            setLoading(false)
+                            setEditMode(false)
                         }} className="w-24 md:w-32">OK</Button>
                     </div>
                 </PopUpInfo>
@@ -266,7 +313,10 @@ export default function TeamContent({ projectId }){
                     <div className="flex justify-end gap-2 md:gap-4">
                         <Button onClick={() => {
                             setSuccessManage(false)
-                            location.reload()
+                            setSelectUpdate([])
+                            setSelectDelete([])
+                            setEditMode(false)
+                            setLoading(false)
                         }} className="w-24 md:w-32">OK</Button>
                     </div>
                 </PopUpInfo>
