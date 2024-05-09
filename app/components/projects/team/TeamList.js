@@ -1,11 +1,24 @@
 import TeamItem from "./TeamItem";
 
-export default function TeamList({list, listType, setSelectDelete, edit=false, handleDelete}){
+export default function TeamList({list, listType, setSelectUpdate, setSelectDelete, handleDelete, setAddMode, query, edit=false}){
     return (
-        <div className="flex flex-row gap-2 md:gap-4">
-            {list.map((item, index) => (
-                <TeamItem key={index} setSelectDelete={setSelectDelete} handleDelete={handleDelete} editMode={edit} status={listType==="pending" ? "pending" : "accepted"} {...item} />
-            ))}
-        </div>
+        <>
+            {listType === "pending" && list.length === 0 && edit === false && (
+                query === "" ? (
+                    <div className="flex justify-start">
+                        <TeamItem pending setAddMode={setAddMode}/>
+                    </div>
+                ) : (
+                    <div className="">
+                        Tidak ada data anggota yang ditemukan.
+                    </div>
+                )
+            )}
+            <div className="flex flex-row gap-2 md:gap-4">
+                {list.map((item, index) => (
+                    <TeamItem key={index} setSelectUpdate={setSelectUpdate} setSelectDelete={setSelectDelete} handleDelete={handleDelete} editMode={edit} status={listType==="pending" ? "pending" : "accepted"} {...item} />
+                ))}
+            </div>
+        </>
     )
 }

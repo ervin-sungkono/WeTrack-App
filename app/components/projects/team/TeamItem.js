@@ -1,19 +1,34 @@
+import { useState } from "react";
 import UserIcon from "../../common/UserIcon";
 import SelectButton from "../../common/button/SelectButton";
 import { IoIosCloseCircle as CloseCircle } from "react-icons/io";
-import { useState } from "react";
+import Button from "../../common/button/Button";
 
-export default function TeamItem({setSelectDelete, handleDelete, editMode=false, id, user, role, status}){
+export default function TeamItem({setSelectUpdate, setSelectDelete, handleDelete, editMode=false, id, user, role, status, pending=false, setAddMode}){
+
+    const [roleSelected, setRoleSelected] = useState(role) 
 
     const roleOptions = [
         {label: "Member", value: "Member"},
         {label: "Viewer", value: "Viewer"},
     ]
 
-    const [roleSelected, setRoleSelected] = useState(role)
+    const profileImage = user?.profileImage !== null ? user?.profileImage.attachmentStoragePath : null
+    const profileImagePending = `/images/user-placeholder.png`
 
     const handleRoleChange = (value) => {
         setRoleSelected(value)
+        if(value === role){
+            setSelectUpdate(null)
+        }else{
+            const userUpdate = {
+                id: id,
+                fullName: user?.fullName,
+                oldRole: role,
+                newRole: value
+            }
+            setSelectUpdate(userUpdate)
+        }
     }
 
     const getSelectRoleClass = () => {
@@ -28,7 +43,7 @@ export default function TeamItem({setSelectDelete, handleDelete, editMode=false,
     }
 
     const getRoleClass = () => {
-        switch(roleSelected){
+        switch(role){
             case "Owner":
                 return "bg-warning-yellow"
             case "Member":
@@ -40,7 +55,7 @@ export default function TeamItem({setSelectDelete, handleDelete, editMode=false,
 
     return (
         <div className="relative mt-4 mb-12">
-            {(editMode && roleSelected != 'Owner') && (
+            {(editMode && role != 'Owner') && (
                 <CloseCircle onClick={() => {
                     const userDelete = {
                         id: id,
@@ -50,19 +65,24 @@ export default function TeamItem({setSelectDelete, handleDelete, editMode=false,
                     handleDelete()
                 }} className="absolute -top-4 -right-4 text-3xl text-danger-red cursor-pointer"/>
             )}
-            <div className={`h-full flex flex-col justify-between items-center m-auto px-3 md:px-6 py-2.5 md:py-4 rounded-xl shadow-md bg-white w-48 md:w-64`}>
-                <div>
-                    <UserIcon fullName={user.fullName} size="team" src={user.profileImage}/>
-                </div>
-                <div className={`mt-4 font-semibold text-dark-blue text-center text-sm md:text-base leading-4 md:leading-5`}>
-                    {user.fullName}
-                </div>
+            <div className={`h-full flex flex-col justify-between items-center m-auto px-3 md:px-6 py-2.5 md:py-4 rounded-xl shadow-md ${pending ? 'bg-light-blue' : 'bg-white'} w-48 md:w-64`}>
+                {!pending ? (
+                    <UserIcon fullName={user?.fullName} size="team" src={profileImage}/>
+                ) : (
+                    <UserIcon size="team" src={profileImagePending}/>
+                )}
+                {!pending && (
+                    <div className={`mt-4 font-semibold ${pending ? 'text-white' : 'text-dark-blue'} text-center text-sm md:text-base leading-4 md:leading-5`}>
+                        {user?.fullName}
+                    </div>
+                )}
                 {status !== "pending" && (
-                    (editMode && roleSelected != 'Owner') ? (
+                    (editMode && role != 'Owner') ? (
                         <div className="mt-4 mb-6">
                             <SelectButton
                                 name={`${id}`}
                                 placeholder={roleSelected}
+                                defaultValue={roleSelected || role}
                                 options={roleOptions}
                                 onChange={handleRoleChange}
                                 buttonClass={getSelectRoleClass()}
@@ -70,9 +90,14 @@ export default function TeamItem({setSelectDelete, handleDelete, editMode=false,
                         </div>
                     ) : (
                         <button className={`mt-4 mb-6 text-xs md:text-sm px-3 md:px-4 py-2 md:py-1.5 rounded-full text-white font-medium ${getRoleClass()}`}>
-                            {roleSelected}
+                            {role}
                         </button>
                     )
+                )}
+                {pending && (
+                    <Button variant="primary" onClick={setAddMode}>
+                        Tambah Anggota
+                    </Button>
                 )}
             </div>
         </div>
