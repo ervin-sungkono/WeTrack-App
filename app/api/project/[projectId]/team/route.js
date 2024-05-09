@@ -131,6 +131,7 @@ export async function POST(request, response){
                 })
             }))
     
+            const senderName = session.user.fullName;
             await Promise.all(teamDocList.map(async(docRef) => {
                 const doc = await getDoc(docRef)
                 const { email } = teamList.find(team => team.id === doc.data().userId)
