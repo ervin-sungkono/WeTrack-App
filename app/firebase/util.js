@@ -1,5 +1,10 @@
 import { db } from "@/app/firebase/config"
-import { query, where, collection, doc } from "firebase/firestore"
+import { query, orderBy, where, collection, doc } from "firebase/firestore"
+
+export const getQueryReferenceOrderBy = ({ collectionName, field, id, orderByKey }) => {
+    const q = query(collection(db, collectionName), where(field, '==', id), orderBy(orderByKey))
+    return q
+}
 
 export const getQueryReference = ({ collectionName, field, id }) => {
     const q = query(collection(db, collectionName), where(field, '==', id))
