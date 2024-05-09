@@ -23,11 +23,14 @@ export async function uploadMultipleFiles(files, basePath) {
     try {
       await uploadBytesResumable(storageRef, file);
       const downloadURL = await getDownloadURL(storageRef);
-      return { name: file.name, url: downloadURL };
+      return { 
+        originalFileName: file.name, 
+        attachmentStoragePath: downloadURL 
+      };
       
     } catch (error) {
       console.error(`Error uploading ${file.name}:`, error);
-      return { name: file.name, error: error.message };
+      throw new Error(`${error.message}`)
     }
   });
 
