@@ -1,6 +1,6 @@
 import TeamItem from "./TeamItem";
 
-export default function TeamList({list, listType, setSelectUpdate, setSelectDelete, handleDelete, setAddMode, query, edit=false}){
+export default function TeamList({list, listType, selectUpdate, setSelectUpdate, selectDelete, setSelectDelete, handleDelete, setAddMode, query, edit=false}){
     return (
         <>
             {listType === "pending" && list.length === 0 && edit === false && (
@@ -16,7 +16,7 @@ export default function TeamList({list, listType, setSelectUpdate, setSelectDele
             )}
             <div className="flex flex-row gap-2 md:gap-4">
                 {list.map((item, index) => (
-                    <TeamItem key={index} setSelectUpdate={setSelectUpdate} setSelectDelete={setSelectDelete} handleDelete={handleDelete} editMode={edit} status={listType==="pending" ? "pending" : "accepted"} {...item} />
+                    <TeamItem key={index} selectUpdate={selectUpdate} setSelectUpdate={setSelectUpdate} selectDelete={selectDelete} setSelectDelete={setSelectDelete} handleDelete={handleDelete} editMode={edit} status={listType==="pending" ? "pending" : "accepted"} {...item} />
                 ))}
             </div>
         </>

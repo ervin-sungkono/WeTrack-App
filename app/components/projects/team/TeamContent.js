@@ -25,13 +25,11 @@ export default function TeamContent({ projectId }){
     const [addMode, setAddMode] = useState(false)
     const [successAdd, setSuccessAdd] = useState(false)
 
-    const [updateMode, setUpdateMode] = useState(false)
-    const [selectUpdate, setSelectUpdate] = useState(null)
-    const [successUpdate, setSuccessUpdate] = useState(false)
+    const [manageMode, setManageMode] = useState(false)
+    const [successManage, setSuccessManage] = useState(false)
 
-    const [deleteMode, setDeleteMode] = useState(false)
-    const [selectDelete, setSelectDelete] = useState(null)
-    const [successDelete, setSuccessDelete] = useState(false)
+    const [selectUpdate, setSelectUpdate] = useState([])
+    const [selectDelete, setSelectDelete] = useState([])
 
     const [teams, setTeams] = useState(null)
     const [teamFetched, setTeamFetched] = useState([])
@@ -45,6 +43,11 @@ export default function TeamContent({ projectId }){
                 const filteredPendingTeam = res.data.filter(team => team.status === "pending" && team.user.fullName.toLowerCase().includes(query))
                 setAcceptedTeam(filteredAcceptedTeam)
                 setPendingTeam(filteredPendingTeam)
+                const allTeam = [
+                    ...filteredAcceptedTeam,
+                    ...filteredPendingTeam
+                ]
+                setTeamFetched(allTeam)
             } else {
                 console.log(res)
             }
@@ -73,50 +76,60 @@ export default function TeamContent({ projectId }){
         }
     }
 
-    const handleUpdateMember = async () => {
-        setUpdateMode(false)
+    const handleManageMember = async () => {
+        setManageMode(false)
         setError(false)
         setLoading(true)
         try{
-            const res = await updateRole({
-                projectId: projectId,
-                teamId: selectUpdate.id,
-                role: selectUpdate.newRole
-            })
-            if (res.error) {
-                setError(true);
-                console.log(JSON.parse(res.error).errors)
-                setLoading(false)
-            } else {
-                setSuccessUpdate(true)
+            if(selectUpdate.length !== 0){
+                Promise.all(selectUpdate.map(async (item) => {
+                    const res = await updateRole({
+                        projectId: projectId,
+                        teamId: item.id,
+                        role: item.newRole
+                    })
+                    if (res.error) {
+                        setError(true);
+                        console.log(JSON.parse(res.error).errors)
+                        setLoading(false)
+                    } else {
+                        if(selectDelete.length !== 0){
+                            Promise.all(selectDelete.map(async (item) => {
+                                const res = await deleteMember({
+                                    projectId: projectId,
+                                    teamId: item.id
+                                })
+                                if (res.error) {
+                                    setError(true);
+                                    console.log(JSON.parse(res.error).errors)
+                                    setLoading(false)
+                                } else {
+                                    setSuccessManage(true)
+                                }
+                            }))
+                        }
+                    }
+                }))
+            }else{
+                Promise.all(selectDelete.map(async (item) => {
+                    const res = await deleteMember({
+                        projectId: projectId,
+                        teamId: item.id
+                    })
+                    if (res.error) {
+                        setError(true);
+                        console.log(JSON.parse(res.error).errors)
+                        setLoading(false)
+                    } else {
+                        setSuccessManage(true)
+                    }
+                }))
             }
         }catch(error){
             console.log(error)
             setLoading(false)
         }
     } 
-
-    const handleDeleteMember = async () => {
-        setDeleteMode(false)
-        setError(false)
-        setLoading(true)
-        try{
-            const res = await deleteMember({
-                projectId: projectId,
-                teamId: selectDelete.id
-            })
-            if(res.error){
-                setError(true)
-                console.log(JSON.parse(res.error).errors)
-                setLoading(false)
-            }else{
-                setSuccessDelete(true)
-            }
-        }catch(error){
-            console.log(error)
-            setLoading(false)
-        }
-    }
 
     return (
         <div className="flex flex-col gap-4">
@@ -130,8 +143,8 @@ export default function TeamContent({ projectId }){
                             <Button variant="danger" onClick={() => setEditMode(false)} outline>
                                 Batalkan Perubahan
                             </Button>
-                            {selectUpdate !== null && (
-                                <Button onClick={() => setUpdateMode(true)} outline>
+                            {(selectUpdate.length !== 0 || selectDelete.length !== 0) && (
+                                <Button onClick={() => setManageMode(true)} outline>
                                     Simpan Perubahan
                                 </Button>
                             )}
@@ -162,7 +175,7 @@ export default function TeamContent({ projectId }){
                     </div>
                     <div className="overflow-x-auto">
                         {acceptedTeam.length > 0 ? (
-                            <TeamList list={acceptedTeam} listType="accepted" edit={editMode} setSelectUpdate={setSelectUpdate} setSelectDelete={setSelectDelete} handleDelete={() => setDeleteMode(true)}/>
+                            <TeamList list={acceptedTeam} listType="accepted" edit={editMode} selectUpdate={selectUpdate} setSelectUpdate={setSelectUpdate} selectDelete={selectDelete} setSelectDelete={setSelectDelete} handleDelete={() => setDeleteMode(true)}/>
                         ) : (
                             <div className="">
                                 Tidak ada data anggota yang ditemukan.
@@ -195,33 +208,38 @@ export default function TeamContent({ projectId }){
                     setTeams={setTeams}
                 />
             )}
-            {updateMode && (
+            {manageMode && (
                 <PopUpForm
-                    title="Perbarui Peran Anggota"
+                    title="Kelola Anggota"
                     titleSize="large"
-                    message={`Apakah Anda yakin ingin memperbarui peran ${selectUpdate?.fullName} dari ${selectUpdate?.oldRole} menjadi ${selectUpdate?.newRole} dalam proyek ini?`}
+                    message={`Apakah Anda yakin ingin memperbarui data anggota-anggota berikut dalam proyek ini?`}
                     wrapContent
                 >
-                    <div className="flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
-                        <Button variant="secondary" onClick={() => {
-                            setUpdateMode(false)
-                        }}>
-                            Tidak
-                        </Button>
-                        <Button variant="warning" onClick={handleUpdateMember}>Ya</Button>
+                    <div className="flex flex-col gap-2 md:gap-4 font-normal text-xs md:text-sm text-dark-blue/80">
+                        {selectUpdate.length > 0 && (
+                            <div>
+                                Pembaruan Peran:
+                                {selectUpdate.map((item, index) => (
+                                    <div key={index}>
+                                        {index+1}. <b>{item.fullName}</b> - dari <b>{item.oldRole}</b> menjadi <b>{item.newRole}</b>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                        {selectDelete.length > 0 && (
+                            <div>
+                                Penghapusan Anggota:
+                                {selectDelete.map((item, index) => (
+                                    <div key={index}>
+                                        {index+1}. <b>{item.fullName}</b>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
-                </PopUpForm>
-            )}
-            {deleteMode && (
-                <PopUpForm
-                    title="Hapus Anggota"
-                    titleSize="large"
-                    message={`Apakah Anda yakin ingin menghapus ${selectDelete?.fullName} dari proyek ini?`}
-                    wrapContent
-                >
-                    <div className="flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
-                        <Button variant="secondary" onClick={() => setDeleteMode(false)}>Tidak</Button>
-                        <Button variant="danger" onClick={handleDeleteMember}>Ya</Button>
+                    <div className="mt-4 flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
+                        <Button variant="secondary" onClick={() => setManageMode(false)}>Tidak</Button>
+                        <Button onClick={handleManageMember}>Ya</Button>
                     </div>
                 </PopUpForm>
             )}
@@ -229,7 +247,7 @@ export default function TeamContent({ projectId }){
                 <PopUpInfo
                     title={"Undangan Dikirim"}
                     titleSize={"large"}
-                    message={"Email undangan telah dikirimkan kepada pengguna yang dituju."}
+                    message={"Email undangan telah dikirimkan kepada pengguna-pengguna yang dituju."}
                 >
                     <div className="flex justify-end gap-2 md:gap-4">
                         <Button onClick={() => {
@@ -239,29 +257,15 @@ export default function TeamContent({ projectId }){
                     </div>
                 </PopUpInfo>
             }
-            {successUpdate &&
+            {successManage &&
                 <PopUpInfo
-                    title={"Peran Anggota Diperbarui"}
+                    title={"Data Anggota Diperbarui"}
                     titleSize={"large"}
-                    message={"Anggota yang dipilih telah diperbarui perannya dalam proyek ini."}
+                    message={"Data anggota-anggota dalam proyek ini telah diperbarui."}
                 >
                     <div className="flex justify-end gap-2 md:gap-4">
                         <Button onClick={() => {
-                            setSuccessUpdate(false)
-                            location.reload()
-                        }} className="w-24 md:w-32">OK</Button>
-                    </div>
-                </PopUpInfo>
-            }
-            {successDelete &&
-                <PopUpInfo
-                    title={"Anggota Dihapus"}
-                    titleSize={"large"}
-                    message={"Anggota yang dipilih telah dihapus dari proyek ini."}
-                >
-                    <div className="flex justify-end gap-2 md:gap-4">
-                        <Button onClick={() => {
-                            setSuccessDelete(false)
+                            setSuccessManage(false)
                             location.reload()
                         }} className="w-24 md:w-32">OK</Button>
                     </div>
