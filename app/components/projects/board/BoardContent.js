@@ -1,21 +1,24 @@
 "use client"
 import { useCallback, useEffect, useState } from "react"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
+import { createNewTask } from "@/app/lib/fetch/task"
+import { createNewTaskStatus, deleteTaskStatus, reorderTaskStatus } from "@/app/lib/fetch/taskStatus"
+import { getQueryReference, getQueryReferenceOrderBy } from "@/app/firebase/util"
+import { onSnapshot } from "firebase/firestore"
+import { debounce } from "@/app/lib/helper"
+
 import BoardList from "./BoardList"
 import SearchBar from "../../common/SearchBar"
 import SelectButton from "../../common/button/SelectButton"
 import SimpleInputForm from "../../common/SimpleInputField"
 import Button from "../../common/button/Button"
 import DotButton from "../../common/button/DotButton"
+import DeleteStatusForm from "../../common/form/DeleteStatusForm"
 import { TailSpin } from "react-loader-spinner"
 
 import { IoFilter as FilterIcon } from "react-icons/io5"
 import { FiPlus as PlusIcon } from "react-icons/fi"
-import { createNewTask } from "@/app/lib/fetch/task"
-import { reorderTaskStatus } from "@/app/lib/fetch/taskStatus"
-import { getQueryReference, getQueryReferenceOrderBy } from "@/app/firebase/util"
-import { onSnapshot } from "firebase/firestore"
-import { debounce } from "@/app/lib/helper"
+
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -46,6 +49,9 @@ export default function BoardContent({ projectId }){
   const [query, setQuery] = useState("")
   const [filterDropdown, setFilterDropdown] = useState(false)
   const [activeStatusId, setActiveStatusId] = useState()
+  const [activeStatus, setActiveStatus] = useState()
+  const [newStatusId, setNewStatusId] = useState()
+  const [deleteConfirmation, setDeleteConfirmation] = useState(false)
   const [taskStatusData, setTaskStatusData] = useState()
   const [taskData, setTaskData] = useState()
   const [placeholderProps, setPlaceholderProps] = useState({});
@@ -75,7 +81,40 @@ export default function BoardContent({ projectId }){
   }
 
   const createTaskStatus = (e) => {
+    e.preventDefault()
+
+    const formData = new FormData(document.querySelector(`#taskStatusName-form`))
+    const statusName = formData.get("taskStatusName")
     
+    debounce(
+      createNewTaskStatus({
+        projectId: projectId, 
+        statusName, 
+      })
+    , 100)
+
+    setCreatingList(false)
+  }
+
+  const showDeleteForm = (status) => {
+    setActiveStatus(status)
+    setDeleteConfirmation(true)
+  }
+
+  const hideDeleteForm = () => {
+    setActiveStatus(null)
+    setDeleteConfirmation(false)
+  }
+
+  const handleDeleteStatus = async(values) => {
+    const res = await deleteTaskStatus({ statusId: activeStatus.id, projectId, newStatusId: values.newStatusId })
+
+    if(!res.success){
+      alert("Gagal menghapus status tugas")
+    }
+
+    setActiveStatus(null)
+    setDeleteConfirmation(false)
   }
 
   const updateState = useCallback(
@@ -278,7 +317,20 @@ export default function BoardContent({ projectId }){
             </div>
           </div>
         </div>
-      </div> 
+      </div>
+      {deleteConfirmation && activeStatus &&
+        <DeleteStatusForm 
+          {...activeStatus} 
+          statusOptions={state
+            .filter(status => status.id !== activeStatus.id)
+            .map(status => ({
+              label: status.status,
+              value: status.id
+            }))} 
+          onSubmit={handleDeleteStatus}
+          onClose={hideDeleteForm}
+        />
+      }
       <div className="h-full flex items-start overflow-y-auto pb-4">
         <DragDropContext 
           onDragStart={onDragStart}
@@ -305,7 +357,13 @@ export default function BoardContent({ projectId }){
                           <div className="uppercase flex-grow text-xs md:text-sm font-semibold">{el.status} <span className="text-[10.8px] md:text-xs">({el.content.filter(task => task.taskName.toLowerCase().includes(query)).length})</span></div>
                           <DotButton 
                             name={`taskStatus-${el.id}`} 
-                            actions={[]}
+                            actions={[
+                              {
+                                  label: "Hapus",
+                                  fnCall: () => showDeleteForm(el),
+                                  disableFn: state.length <= 1
+                              },
+                            ]}
                             hoverClass={"hover:bg-gray-300"}
                           />
                         </div>

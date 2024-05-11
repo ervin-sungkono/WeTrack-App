@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/app/firebase/config";
 import { getUserSession } from "@/app/lib/session";
 import { nextAuthOptions } from "@/app/lib/auth";
-import { collection, updateDoc, deleteDoc, getDoc, doc, serverTimestamp, where, getDocs } from "firebase/firestore";
+import { collection, updateDoc, deleteDoc, getDoc, doc, serverTimestamp, query, where, getDocs } from "firebase/firestore";
 
 export async function PUT(request, response){
     try {
@@ -106,6 +106,22 @@ export async function DELETE(request, response){
         }
 
         const { newStatusId } = await request.json()
+        if(!newStatusId){
+            return NextResponse.json({
+                message: "New Task Status id not found",
+                success: false
+            }, { status: 404 })
+        }
+
+        const newStatusRef = doc(db, "taskStatuses", newStatusId)
+        const newStatusSnap = await getDoc(newStatusRef)
+        if(!newStatusSnap.exists()){
+            return NextResponse.json({
+                message: "New Task status not found",
+                success: false
+            }, { status: 404 })
+        }
+
         const startStatusId = statusId === projectSnap.data().startStatus ? newStatusId : projectSnap.data().startStatus
         const endStatusId = statusId === projectSnap.data().endStatus ? newStatusId : projectSnap.data().endStatus
 
@@ -118,13 +134,11 @@ export async function DELETE(request, response){
         const taskQuery = query(taskColRef, where("status", '==', statusId))
         const taskSnapshot = await getDocs(taskQuery)
 
-        const updatedTasks = await Promise.all(taskSnapshot.docs.map(async(doc) => {
+        await Promise.all(taskSnapshot.docs.map(async(doc) => {
             return await updateDoc(doc.ref, {
                 status: newStatusId
             })
         }))
-
-        console.log(updatedTasks)
 
         await deleteDoc(statusRef)
         return NextResponse.json({

@@ -2,7 +2,7 @@ import PopUp from "./PopUp"
 
 export default function PopUpForm({
     title, 
-    titleSize,
+    titleSize = 'default',
     size,
     message,
     wrapContent = false,

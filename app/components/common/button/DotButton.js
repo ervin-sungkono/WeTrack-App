@@ -22,10 +22,12 @@ export default function DotButton({ name, actions = [], hoverClass }){
             </button>
             <div id={name} className={`z-50 hidden bg-white divide-y divide-gray-100 rounded-lg border border-dark-blue/30 min-w-40`}>
                 <ul className="py-2 text-xs md:text-sm text-gray-700">
-                    {actions.map(({label, fnCall}, index) => (
+                    {actions.map(({label, fnCall, disableFn = false}, index) => (
                         <li key={`${name}-${index}`}>
                             <button
-                                onClick={fnCall} className="block w-full text-start px-4 py-2 hover:bg-gray-100 hover:text-basic-blue transition-colors duration-300 ease-in-out"
+                                onClick={fnCall} 
+                                disabled={disableFn} 
+                                className="block w-full text-start px-4 py-2 hover:bg-gray-100 hover:text-basic-blue disabled:pointer-events-none disabled:text-dark-blue/60 text-dark-blue transition-colors duration-300 ease-in-out"
                             >
                                 {label}
                             </button>

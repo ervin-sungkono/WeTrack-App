@@ -1,7 +1,7 @@
 import { db } from "@/app/firebase/config";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { getUserSession } from "@/app/lib/session";
-import { addDoc, collection, getDocs, doc, getDoc, orderBy, query, where } from "firebase/firestore";
+import { addDoc, collection, getDocs, doc, getDoc, orderBy, query, where, serverTimestamp } from "firebase/firestore";
 import { NextResponse } from 'next/server'
 
 export async function GET(request, response) {
