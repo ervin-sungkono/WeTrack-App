@@ -1,7 +1,7 @@
 import { db } from "@/app/firebase/config";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { getUserSession } from "@/app/lib/session";
-import { addDoc, collection, getDocs, doc, getDoc, orderBy, query, where } from "firebase/firestore";
+import { addDoc, collection, getDocs, doc, getDoc, orderBy, query, where, serverTimestamp } from "firebase/firestore";
 import { NextResponse } from 'next/server'
 
 export async function GET(request, response) {
@@ -87,6 +87,13 @@ export async function POST(request, response){
         }
 
         const { statusName } = await request.json()
+
+        if(!statusName){
+            return NextResponse.json({
+                message: "Missing mandatory fields",
+                success: false
+            }, { status: 400 })
+        }
         
         const taskStatusColRef= collection(db, "taskStatuses")
         const q = query(taskStatusColRef, where("projectId", '==', projectId))
