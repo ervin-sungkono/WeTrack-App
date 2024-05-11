@@ -127,13 +127,26 @@ export async function DELETE(request, response){
         const taskQuery = query(taskColRef, where("status", '==', statusId))
         const taskSnapshot = await getDocs(taskQuery)
 
-        await Promise.all(taskSnapshot.docs.map(async(doc) => {
+        const statusCounterRef = doc(db, "taskOrderCounters", statusId)
+        const statusCounterSnap = await getDoc(statusCounterRef)
+        const newStatusCounterRef = doc(db, "taskOrderCounters", newStatusId)
+        const newStatusCounterSnap = await getDoc(newStatusCounterRef)
+
+        await Promise.all(taskSnapshot.docs.map(async(doc, index) => {
             return await updateDoc(doc.ref, {
-                status: newStatusId
+                status: newStatusId,
+                order: newStatusCounterSnap.data().lastOrder + index,
+                updatedAt: serverTimestamp(),
             })
         }))
 
+        await updateDoc(newStatusCounterRef, {
+            lastOrder: statusCounterSnap.data().lastOrder + newStatusCounterSnap.data().lastOrder,
+            updatedAt: serverTimestamp()
+        })
+
         await deleteDoc(statusRef)
+        await deleteDoc(statusCounterRef)
         return NextResponse.json({
             message: "Task status deleted successfully",
             success: true
