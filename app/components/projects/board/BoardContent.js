@@ -48,6 +48,10 @@ export default function BoardContent({ projectId }){
   const [activeStatusId, setActiveStatusId] = useState()
   const [taskStatusData, setTaskStatusData] = useState()
   const [taskData, setTaskData] = useState()
+  const [placeholderProps, setPlaceholderProps] = useState({});
+
+  const queryAttr = "data-rfd-draggable-id";
+  const destinationQuertAttr = "data-rfd-droppable-id";
 
   const showTaskCard = (statusId) => {
     setActiveStatusId(statusId)
@@ -120,6 +124,7 @@ export default function BoardContent({ projectId }){
   }
 
   async function onDragEnd(result) {
+    setPlaceholderProps({});
     const { source, destination } = result;
 
     // dropped outside the list
@@ -156,6 +161,102 @@ export default function BoardContent({ projectId }){
     }
   }
 
+  const onDragUpdate = (event) => {
+    if (!event.destination) {
+      return;
+    }
+
+    const draggedDOM = getDraggedDom(event.draggableId);
+
+    if (!draggedDOM) {
+      return;
+    }
+
+    const { clientHeight, clientWidth } = draggedDOM;
+    const destinationIndex = event.destination.index;
+    const sourceIndex = event.source.index;
+
+    const childrenArray = [...draggedDOM.parentNode.children];
+    const movedItem = childrenArray[sourceIndex];
+    childrenArray.splice(sourceIndex, 1);
+
+    const droppedDom = getDestinationDom(event.destination.droppableId);
+    const destinationChildrenArray = [...droppedDom.children];
+    let updatedArray;
+    if (draggedDOM.parentNode === droppedDom) {
+      updatedArray = [
+        ...childrenArray.slice(0, destinationIndex),
+        movedItem,
+        ...childrenArray.slice(destinationIndex + 1)
+      ];
+    } else {
+      updatedArray = [
+        ...destinationChildrenArray.slice(0, destinationIndex),
+        movedItem,
+        ...destinationChildrenArray.slice(destinationIndex + 1)
+      ];
+    }
+
+    var clientY =
+      parseFloat(window.getComputedStyle(draggedDOM.parentNode).paddingTop) +
+      updatedArray.slice(0, destinationIndex).reduce((total, curr) => {
+        const style = curr.currentStyle || window.getComputedStyle(curr);
+        const marginBottom = parseFloat(style.marginBottom);
+        return total + curr.clientHeight + marginBottom;
+      }, 0);
+
+    setPlaceholderProps({
+      clientHeight,
+      clientWidth,
+      clientY,
+      clientX: parseFloat(
+        window.getComputedStyle(draggedDOM.parentNode).paddingLeft
+      )
+    });
+  };
+
+  const onDragStart = (event) => {
+    const draggedDOM = getDraggedDom(event.draggableId);
+
+    if (!draggedDOM) {
+      return;
+    }
+
+    const { clientHeight, clientWidth } = draggedDOM;
+    const sourceIndex = event.source.index;
+    var clientY =
+      parseFloat(window.getComputedStyle(draggedDOM.parentNode).paddingTop) +
+      [...draggedDOM.parentNode.children]
+        .slice(0, sourceIndex)
+        .reduce((total, curr) => {
+          const style = curr.currentStyle || window.getComputedStyle(curr);
+          const marginBottom = parseFloat(style.marginBottom);
+          return total + curr.clientHeight + marginBottom;
+        }, 0);
+
+    setPlaceholderProps({
+      clientHeight,
+      clientWidth,
+      clientY,
+      clientX: parseFloat(
+        window.getComputedStyle(draggedDOM.parentNode).paddingLeft
+      )
+    });
+  };
+
+  const getDraggedDom = (draggableId) => {
+    const domQuery = `[${queryAttr}='${draggableId}']`;
+    const draggedDOM = document.querySelector(domQuery);
+
+    return draggedDOM;
+  };
+
+  const getDestinationDom = (dropabbleId) => {
+    const domQuery = `[${destinationQuertAttr}='${dropabbleId}']`;
+    const destinationDOm = document.querySelector(domQuery);
+    return destinationDOm;
+  };
+
   return (
     <div className="flex flex-col gap-4 h-full overflow-auto">
       <div className="flex flex-col xs:flex-row justify-between gap-4 items-center">
@@ -179,7 +280,11 @@ export default function BoardContent({ projectId }){
         </div>
       </div> 
       <div className="h-full flex items-start overflow-y-auto pb-4">
-        <DragDropContext onDragEnd={onDragEnd}>
+        <DragDropContext 
+          onDragStart={onDragStart}
+          onDragUpdate={onDragUpdate}
+          onDragEnd={onDragEnd}
+        >
           <Droppable droppableId="task_status" direction="horizontal" type="ISSUE-STATUS">
             {(provided, snapshot) => (
               <div
@@ -206,6 +311,7 @@ export default function BoardContent({ projectId }){
                         </div>
                         <BoardList 
                           items={el.content.filter(task => task.taskName.toLowerCase().includes(query))} 
+                          placeholderProps={placeholderProps}
                           droppableId={`${ind}`}
                         >
                           {el.id === activeStatusId && (
