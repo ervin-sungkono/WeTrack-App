@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from "react"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import { createNewTask } from "@/app/lib/fetch/task"
-import { createNewTaskStatus, deleteTaskStatus, reorderTaskStatus } from "@/app/lib/fetch/taskStatus"
+import { createNewTaskStatus, deleteTaskStatus, reorderTaskStatus, updateTaskStatus } from "@/app/lib/fetch/taskStatus"
 import { getQueryReference, getQueryReferenceOrderBy } from "@/app/firebase/util"
 import { onSnapshot } from "firebase/firestore"
 import { debounce } from "@/app/lib/helper"
@@ -13,6 +13,7 @@ import SelectButton from "../../common/button/SelectButton"
 import SimpleInputForm from "../../common/SimpleInputField"
 import Button from "../../common/button/Button"
 import DotButton from "../../common/button/DotButton"
+import UpdateStatusForm from "../../common/form/UpdateStatusForm"
 import DeleteStatusForm from "../../common/form/DeleteStatusForm"
 import { TailSpin } from "react-loader-spinner"
 
@@ -50,7 +51,7 @@ export default function BoardContent({ projectId }){
   const [filterDropdown, setFilterDropdown] = useState(false)
   const [activeStatusId, setActiveStatusId] = useState()
   const [activeStatus, setActiveStatus] = useState()
-  const [newStatusId, setNewStatusId] = useState()
+  const [updateConfirmation, setUpdateConfirmation] = useState(false)
   const [deleteConfirmation, setDeleteConfirmation] = useState(false)
   const [taskStatusData, setTaskStatusData] = useState()
   const [taskData, setTaskData] = useState()
@@ -101,9 +102,30 @@ export default function BoardContent({ projectId }){
     setDeleteConfirmation(true)
   }
 
+  const showUpdateForm = (status) => {
+    setActiveStatus(status)
+    setUpdateConfirmation(true)
+  }
+
   const hideDeleteForm = () => {
     setActiveStatus(null)
     setDeleteConfirmation(false)
+  }
+
+  const hideUpdateForm = () => {
+    setActiveStatus(null)
+    setUpdateConfirmation(false)
+  }
+
+  const handleUpdateStatus = async(values) => {
+    const res = await updateTaskStatus({ statusId: activeStatus.id, statusName: values.statusName })
+    
+    if(!res.success){
+      alert("Gagal mengubah status tugas")
+    }
+
+    setActiveStatus(null)
+    setUpdateConfirmation(false)
   }
 
   const handleDeleteStatus = async(values) => {
@@ -318,6 +340,13 @@ export default function BoardContent({ projectId }){
           </div>
         </div>
       </div>
+      {updateConfirmation && activeStatus &&
+        <UpdateStatusForm 
+          {...activeStatus} 
+          onSubmit={handleUpdateStatus}
+          onClose={hideUpdateForm}
+        />
+      }
       {deleteConfirmation && activeStatus &&
         <DeleteStatusForm 
           {...activeStatus} 
@@ -359,9 +388,13 @@ export default function BoardContent({ projectId }){
                             name={`taskStatus-${el.id}`} 
                             actions={[
                               {
-                                  label: "Hapus",
-                                  fnCall: () => showDeleteForm(el),
-                                  disableFn: state.length <= 1
+                                label: "Ubah Nama Status",
+                                fnCall: () => showUpdateForm(el),
+                              },
+                              {
+                                label: "Hapus",
+                                fnCall: () => showDeleteForm(el),
+                                disableFn: state.length <= 1
                               },
                             ]}
                             hoverClass={"hover:bg-gray-300"}

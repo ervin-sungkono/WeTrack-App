@@ -87,6 +87,13 @@ export async function POST(request, response){
         }
 
         const { statusName } = await request.json()
+
+        if(!statusName){
+            return NextResponse.json({
+                message: "Missing mandatory fields",
+                success: false
+            }, { status: 400 })
+        }
         
         const taskStatusColRef= collection(db, "taskStatuses")
         const q = query(taskStatusColRef, where("projectId", '==', projectId))

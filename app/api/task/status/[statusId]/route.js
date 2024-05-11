@@ -29,17 +29,10 @@ export async function PUT(request, response){
             }, { status: 404 })
         }
 
-        const updatedTask = await updateDoc(statusRef, {
+        await updateDoc(statusRef, {
             statusName: statusName,
             updatedAt: serverTimestamp()
         })
-
-        if(!updatedTask){
-            return NextResponse.json({
-                message: "Fail to update task status",
-                success: false
-            }, { status: 500 })
-        }
 
         return NextResponse.json({
             message: "Task status updated successfully",

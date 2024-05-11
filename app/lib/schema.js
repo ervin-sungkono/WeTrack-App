@@ -110,8 +110,14 @@ export const updateProjectSchema = yup.object().shape({
         .max(7)
 })
 
+export const updateStatusSchema = yup.object().shape({
+    statusName: yup
+        .string()
+        .required("Nama status tugas wajib diisi")
+})
+
 export const deleteStatusSchema = yup.object().shape({
     newStatusId: yup
         .string()
-        .required("Wajib memilih status baru")
+        .required("Wajib memilih status tugas baru")
 })
