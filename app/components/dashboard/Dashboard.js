@@ -5,11 +5,10 @@ import Header from "../common/Header"
 import DashboardLayout from "../layout/DashboardLayout"
 import DashboardInsight from "./DashboardInsight"
 import DashboardTaskList from "./DashboardTaskList"
-import { getAllProject, getProjectByID } from "@/app/lib/fetch/project"
+import { getAllProject } from "@/app/lib/fetch/project"
 import { getAllTask } from "@/app/lib/fetch/task"
 import PopUpLoad from "../common/alert/PopUpLoad"
 import EmptyState from "../common/EmptyState"
-import LinkButton from "../common/button/LinkButton"
 
 export default function Dashboard(){
     const links = [

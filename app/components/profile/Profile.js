@@ -32,9 +32,8 @@ export default function ProfileLayout(){
         createdAt: null
     })
 
-    const userProfile = async () => {
-        try {
-            const res = await getUserProfile()
+    useEffect(() => {
+        getUserProfile().then(res => {
             if(res.error){
                 console.log(res.error)
             }else{
@@ -54,13 +53,9 @@ export default function ProfileLayout(){
                     setProfileImageUploadedURL(res.data.profileImage.attachmentStoragePath)
                 }  
             }
-        }catch(error){
+        }).catch(error => {
             console.log(error)
-        }
-    }
-
-    useEffect(() => {
-        userProfile()
+        })
     }, [])
 
     const [loading, setLoading] = useState(false)
