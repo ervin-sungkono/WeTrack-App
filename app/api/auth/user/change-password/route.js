@@ -1,7 +1,7 @@
 import { auth } from "@/app/firebase/config";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { getUserSession } from "@/app/lib/session";
-import { EmailAuthProvider } from "firebase/auth";
+import { signInWithEmailAndPassword, updatePassword } from "firebase/auth";
 import { NextResponse } from "next/server";
 
 export async function POST(request, response) {
@@ -13,7 +13,6 @@ export async function POST(request, response) {
             }, { status: 401 });
         }
 
-        const userId = session.user.uid;
         const email = session.user.email;
         const { oldPassword, newPassword } = await request.json()
 
@@ -23,7 +22,19 @@ export async function POST(request, response) {
             })
         }
 
-        
+        const credential = await signInWithEmailAndPassword(auth, email, oldPassword)  
+        if(!credential) {
+            return NextResponse.json({
+                message: "Password lama tidak sesuai"
+            }, { status: 400 })
+        }      
+
+        await updatePassword(auth.currentUser, newPassword) 
+
+        return NextResponse.json({
+            success: true,
+            message: "Successfully change the password"
+        }, { status: 200 })
 
     } catch (error) {
         return NextResponse.json({
