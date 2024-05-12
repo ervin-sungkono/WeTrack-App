@@ -98,9 +98,9 @@ export default function ActivitySection({taskId}){
         <div className="flex flex-col gap-2 md:gap-4 min-h-[240px]">
             <div className="flex flex-col gap-2">
                 <p className="font-semibold text-xs md:text-sm flex-grow">Aktivitas</p>
-                <div className="flex justify-between">
+                <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                        <p className="text-xs md:text-sm">Tampilkan:</p>
+                        <p className="hidden xs:block text-xs md:text-sm">Tampilkan:</p>
                         <div className="flex gap-2">
                             {categoryList.map(({label, value}) => (
                                 <button 
