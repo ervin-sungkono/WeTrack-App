@@ -7,14 +7,15 @@ import FormikWrapper from "../formik/FormikWrapper"
 
 export default function DeleteAccountValidationForm({prevFormStep, onConfirm, error, errorMessage}){
     const initialValues = {
-        email: ""
+        password: ""
     }
     
     return (
         <PopUpForm
             title={"Validasi Penghapusan Akun"}
             titleSize={"large"}
-            message={"Masukkan email yang Anda gunakan untuk membuat akun ini."}
+            message={"Masukkan kata sandi yang Anda gunakan dalam akun ini."}
+            wrapContent
         >
             <FormikWrapper
                 initialValues={initialValues}
@@ -24,11 +25,11 @@ export default function DeleteAccountValidationForm({prevFormStep, onConfirm, er
                     <>
                         <div>
                             <FormikField
-                                name="email"
+                                name="password"
                                 required
-                                type="email"
-                                label="Email"
-                                placeholder="Masukkan email..."
+                                type="password"
+                                label="Kata Sandi"
+                                placeholder="Masukkan kata sandi..."
                             />
                         </div>
                         {error && (<p className="mt-1 mb-2 text-xs text-left text-[#FF0000]">{errorMessage}</p>)}

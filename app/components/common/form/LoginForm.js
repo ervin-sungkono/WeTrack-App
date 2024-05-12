@@ -44,7 +44,7 @@ export default function LoginForm(){
             if (res.error) {
                 setError(true);
                 if(res.error.includes("auth/invalid-credential")){
-                    setErrorMessage("Kredensial yang dimasukkan salah!")
+                    setErrorMessage("Kredensial yang Anda masukkan salah!")
                 }else if(res.error.includes("Verifikasi")){
                     setErrorMessage("Verifikasi akun Anda terlebih dahulu!")
                 }
