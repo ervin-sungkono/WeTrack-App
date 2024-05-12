@@ -12,10 +12,11 @@ export default function CommentCard({ comment, deleteComment }){
     const { data: session, status } = useSession()
 
     const renderComment = (comment) => {
-        const splitPattern = /(?<=.)(@\[[^\]]+\]\([^)]+\))(?=.)/g;
+        const splitPattern = /(@\[[^\]]+\]\([^)]+\))/g;
         const segments = comment.split(splitPattern)
 
         return segments.map((segment, index) => {
+            if(!segment) return null
             const data = extractSingleMentionTag(segment)
             if(data.mention){
                 return (

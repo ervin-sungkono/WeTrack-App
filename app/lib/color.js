@@ -22,3 +22,12 @@ export function pickTextColorBasedOnBgColor(bgColor, lightColor = '#FFFFFF', dar
     var L = (0.2126 * c[0]) + (0.7152 * c[1]) + (0.0722 * c[2]);
     return (L > 0.179) ? darkColor : lightColor;
 }
+
+export function getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}

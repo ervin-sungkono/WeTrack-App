@@ -7,6 +7,7 @@ import { addComment } from "@/app/lib/fetch/comment"
 import { deleteComment } from "@/app/lib/fetch/comment"
 import { getQueryReference, getDocumentReference } from "@/app/firebase/util"
 import { onSnapshot, getDoc } from "firebase/firestore"
+import EmptyState from "../../common/EmptyState"
 
 const CommentInput  = dynamic(() => import("./comment/CommentInput"))
 const CommentCard = dynamic(() => import("./comment/CommentCard"))
@@ -71,9 +72,14 @@ export default function CommentSection({ comments, setCommentData, taskId }){
         <SessionProvider>
             <div className="flex flex-col">
                 <CommentInput onSubmit={sendComment}/>
-                {comments?.map(comment => (
+                {comments && (comments.length > 0 ? 
+                comments.map(comment => (
                     <CommentCard key={comment.id} comment={comment} deleteComment={handleDeleteComment}/>
-                ))}
+                ))
+                : 
+                <div className="py-2">
+                    <EmptyState message="Belum ada komentar yang tersedia.."/>
+                </div>)}
             </div>
         </SessionProvider>
     )

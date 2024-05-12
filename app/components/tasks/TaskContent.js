@@ -8,6 +8,7 @@ import SelectButton from "../common/button/SelectButton"
 
 import { IoFilter as FilterIcon } from "react-icons/io5"
 import { getAllTask } from "@/app/lib/fetch/task"
+import EmptyState from "../common/EmptyState"
 
 export default function TaskContent({ projectId, taskId }){
     const [query, setQuery] = useState("")
@@ -62,10 +63,15 @@ export default function TaskContent({ projectId, taskId }){
                     </div>
                 </div>
             </div>
-            <div className="h-full flex flex-col sm:flex-row gap-2 sm:gap-4 overflow-hidden sm:overflow-y-auto">
-                <TaskList tasks={tasks} taskId={taskId ?? taskData?.id}/>
-                <TaskDetail taskId={taskId ?? taskData?.id}/>
-            </div>
+            {
+                tasks.length > 0 ? 
+                <div className="h-full flex flex-col sm:flex-row gap-2 sm:gap-4 overflow-hidden sm:overflow-y-auto">
+                    <TaskList tasks={tasks} taskId={taskId ?? taskData?.id}/>
+                    <TaskDetail taskId={taskId ?? taskData?.id}/>
+                </div>
+                :
+                <EmptyState message="Belum ada tugas yang dibuat.."/>
+            }
         </div>
     )
 }
