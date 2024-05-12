@@ -210,16 +210,6 @@ export async function POST(request, response) {
         const result = await runTransaction(db, async (transaction) => {
             const counterRef = doc(db, 'taskOrderCounters', statusId);
             const counterSnap = await transaction.get(counterRef);
-            let lastOrder = 0;
-
-            if (counterSnap.exists()) {
-                lastOrder = counterSnap.data().lastOrder;
-            } else {
-                transaction.set(counterRef, { 
-                    lastOrder: 0,
-                    updatedAt: serverTimestamp()
-                });
-            }
 
             const newTaskDocRef = doc(collection(db, 'tasks'));
             const newTask = {
@@ -230,7 +220,7 @@ export async function POST(request, response) {
                 taskName,
                 labels: labels ?? [],
                 status: statusId ?? null,
-                order: lastOrder,
+                order: counterSnap.exists() ? counterSnap.data().lastOrder : 0,
                 priority: priority ?? 0,
                 description: description ?? null,
                 startDate: startDate ?? null,
@@ -242,10 +232,17 @@ export async function POST(request, response) {
             };
 
             transaction.set(newTaskDocRef, newTask);
-            transaction.update(counterRef, { 
-                lastOrder: lastOrder + 1,
-                updatedAt: serverTimestamp()
-            });
+            if (!counterSnap.exists()) {
+                transaction.set(counterRef, { 
+                    lastOrder: 1,
+                    updatedAt: serverTimestamp()
+                });
+            }else{
+                transaction.update(counterRef, { 
+                    lastOrder: counterSnap.data().lastOrder + 1,
+                    updatedAt: serverTimestamp()
+                });
+            }
 
             return {
                 id: newTaskDocRef.id,

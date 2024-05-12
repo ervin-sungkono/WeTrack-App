@@ -1,9 +1,8 @@
-import { addDoc, collection, updateDoc, serverTimestamp, getDoc, query, where, getDocs, doc, FieldPath } from 'firebase/firestore';
+import { addDoc, collection, updateDoc, serverTimestamp, getDoc, query, where, getDocs, doc } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
-import { sendMail } from '@/app/lib/mail';
 
 export async function GET(request, response) {
     try {
@@ -16,46 +15,31 @@ export async function GET(request, response) {
             }, { status: 401 })
         }
 
-        const directProjectsRef = collection(db, 'projects');
-        const directQuery = query(directProjectsRef, where('createdBy', "==", userId));
-        const directProjectSnapshots = await getDocs(directQuery);
-
-        console.log("direct projek docs", directProjectSnapshots)
-
-        const teamsRef = collection(db, 'team');    
-        const teamQuery = query(teamsRef, where('userId', "==", userId), where('status', "==", 'accepted'));
+        const teamsRef = collection(db, 'teams');    
+        const teamQuery = query(teamsRef, where('userId', "==", userId));
         const teamSnapshots = await getDocs(teamQuery);
+        const projectIds = teamSnapshots.docs.filter(team => (team.data().status == 'accepted'))
+                                .map(project => project.data().projectId)
 
-        console.log("team docs", teamSnapshots)
-
-        const teamProjectIds = teamSnapshots.docs.map(doc => doc.data().projectId);
-        const projectFetches = teamProjectIds.map(projectId => getDoc(doc(db, 'projects', projectId)));
-        const teamProjects = await Promise.all(projectFetches);
-
-        console.log("team projek", teamProjects)
-
-        const combinedProjectDocs = [...directProjectSnapshots.docs, ...teamProjects.filter(doc => doc.exists())];
-
-        console.log("combine projek docs", combinedProjectDocs)
-
-        const projects = await Promise.all(combinedProjectDocs.map(async (item) => {
-            const projectData = item.data();
+        const allProjects = await Promise.all(projectIds.map(async (item) => {
+            const projectDoc = await getDoc(doc(db, "projects", item))
+            const projectData = projectDoc.exists() ? projectDoc.data() : null
             const userDoc = await getDoc(doc(db, 'users', projectData.createdBy));
-            const userData = userDoc.exists() ? userDoc.data() : null;
 
             return {
-                id: item.id,
+                id: projectDoc.id,
                 ...projectData,
-                createdBy: userData ? {
+                createdBy: {
                     id: userDoc.id,
-                    fullName: userData.fullName,
-                    profileImage: userData.profileImage
-                } : null
-            };
-        }));
+                    fullName: userDoc.data().fullName,
+                    email: userDoc.data().email,
+                    profileImage: userDoc.data().profileImage
+                }
+            }
+        }))
 
         return NextResponse.json({
-            data: projects,
+            data: allProjects,
             message: "Projects retrieved successfully"
         }, { status: 200 });
         
@@ -119,9 +103,6 @@ export async function POST(request, response) {
                 endStatusId = statusDocRef.id;
             }
         }
-
-        // console.log("startStatusId", startStatusId)
-        // console.log("endStatusId", endStatusId)
         
         await updateDoc(docRef, {
             startStatus: startStatusId, 

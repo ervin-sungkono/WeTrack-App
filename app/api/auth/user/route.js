@@ -2,7 +2,7 @@ import { auth, db } from "@/app/firebase/config";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { deleteExistingFile, uploadSingleFile } from "@/app/lib/file";
 import { getUserSession } from "@/app/lib/session";
-import { updateProfile } from "firebase/auth";
+import { deleteUser, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, getDoc, updateDoc, runTransaction, serverTimestamp } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
@@ -161,13 +161,29 @@ export async function DELETE(request, response){
         }
 
         const userId = session.user.uid;
+        const email = session.user.email;
+
         if (!userId) {
             return NextResponse.json({ 
                 message: "User not found" 
             }, { status: 404 });
         }
 
+        const { password } = await request.json()
 
+        const credential = await signInWithEmailAndPassword(auth, email, password)
+        if(!credential) {
+            return NextResponse.json({
+                message: "Wrong confirmation text"
+            }, { status: 404 })
+        }
+
+        await deleteUser(auth.currentUser)
+
+        return NextResponse.json({
+            success: true,
+            message: "Successfully delete user"
+        }, { status: 200 })
 
     } catch (error) {
         return NextResponse.json({
