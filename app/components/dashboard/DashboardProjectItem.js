@@ -18,12 +18,12 @@ export default function DashboardProjectItem({project, setSelectedProject}){
             <div className="bg-white px-2 md:px-4 py-2 md:py-4 flex flex-col rounded-lg">
                 <div className="flex justify-between items-center">
                     <a href={`/projects/${project.id}`}>
-                        <div className="text-base md:text-lg text-basic-blue font-bold">
+                        <div className="text-sm md:text-base text-basic-blue font-bold">
                             {project.projectName} ({project.tasks.length})
                         </div>
                     </a>
                     <div className="cursor-pointer" onClick={handleShowTasks}>
-                        {showTasks ? <DropdownCloseIcon size={24}/> : <DropdownIcon size={24}/>}
+                        {showTasks ? <DropdownCloseIcon size={20}/> : <DropdownIcon size={20}/>}
                     </div>
                 </div>
                 {showTasks && (

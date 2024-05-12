@@ -108,12 +108,12 @@ export default function TeamContent({ projectId }){
             if (res.error) {
                 setError(true);
                 console.log(JSON.parse(res.error).errors)
-                setLoading(false)
             } else {
                 setSuccessAdd(true)
             }
         }catch(error){
             console.log(error)
+        }finally{
             setLoading(false)
         }
     }
@@ -133,7 +133,6 @@ export default function TeamContent({ projectId }){
                     if (res.error) {
                         setError(true);
                         console.log(JSON.parse(res.error).errors)
-                        setLoading(false)
                     } else {
                         if(selectDelete.length !== 0){
                             Promise.all(selectDelete.map(async (item) => {
@@ -144,7 +143,6 @@ export default function TeamContent({ projectId }){
                                 if (res.error) {
                                     setError(true);
                                     console.log(JSON.parse(res.error).errors)
-                                    setLoading(false)
                                 } else {
                                     setSuccessManage(true)
                                 }
@@ -163,7 +161,6 @@ export default function TeamContent({ projectId }){
                     if (res.error) {
                         setError(true);
                         console.log(JSON.parse(res.error).errors)
-                        setLoading(false)
                     } else {
                         setSuccessManage(true)
                     }
@@ -171,6 +168,7 @@ export default function TeamContent({ projectId }){
             }
         }catch(error){
             console.log(error)
+        }finally{
             setLoading(false)
         }
     } 
@@ -298,8 +296,8 @@ export default function TeamContent({ projectId }){
                             setSuccessAdd(false)
                             setSelectUpdate([])
                             setSelectDelete([])
-                            setLoading(false)
                             setEditMode(false)
+                            setLoading(false)
                         }} className="w-24 md:w-32">OK</Button>
                     </div>
                 </PopUpInfo>

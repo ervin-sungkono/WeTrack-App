@@ -2,9 +2,9 @@
 
 "use client"
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { signIn, useSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
 import { forgotPasswordSchema } from "@/app/lib/schema"
 
 import Link from "next/link";
@@ -13,6 +13,7 @@ import FormikField from "./formik/FormikField";
 import FormikWrapper from "./formik/FormikWrapper";
 import Button from "../button/Button";
 import PopUpLoad from "../alert/PopUpLoad";
+import { resetUserPassword } from "@/app/lib/fetch/user";
 
 export default function ForgotPasswordForm(){
     const initialValues = {
@@ -20,11 +21,9 @@ export default function ForgotPasswordForm(){
     }
     
     const [error, setError] = useState(false)
-    const [errorMessage, setErrorMessage] = useState("Kredensial yang dimasukkan salah!")
+    const [errorMessage, setErrorMessage] = useState("")
     const [loading, setLoading] = useState(false)
     const router = useRouter()
-    const searchParams = useSearchParams()
-    const callbackUrl = searchParams.get('callbackUrl')
     const { status } = useSession()
 
     useEffect(() => {
@@ -37,22 +36,20 @@ export default function ForgotPasswordForm(){
         setError(false);
         setLoading(true);
         try {
-            const res = await signIn("credentials", { //akan diganti dengan API forgot password jika sudah ada
-                ...values,
-                redirect: false
+            const res = await resetUserPassword({
+                email: values.email
             })
-            if (res.error) {
-                setError(true);
-                console.log(JSON.parse(res.error).errors)
+            if(res.success){
+                router.push('/login')
             } else {
-                // router.replace(callbackUrl ?? "/dashboard");
-                router.push("/dashboard")
+                setError(true)
+                setErrorMessage(res.message)
             }
-        } catch (error) {
-            setError(true);
-            console.log(error)
-        } finally {
-            setLoading(false);
+        }catch(error){
+            setError(true)
+            setErrorMessage("Terjadi kesalahan, silakan coba lagi.")
+        }finally{
+            setLoading(false)
         }
     };
     

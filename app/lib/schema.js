@@ -74,10 +74,9 @@ export const updateProfileSchema = yup.object().shape({
 })
 
 export const deleteProfileSchema = yup.object().shape({
-    email: yup
+    password: yup
         .string()
-        .required("Email harus diisi!")
-        .email("Email tidak valid!")
+        .required("Kata sandi harus diisi!")
 })
 
 export const projectTemplateSchema = yup.object().shape({

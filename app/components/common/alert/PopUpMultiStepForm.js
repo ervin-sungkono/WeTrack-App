@@ -9,7 +9,9 @@ export default function PopUpMultiStepForm({steps, onConfirm, onClose, error, er
     const nextFormStep = () => setFormStep((currentStep) => currentStep + 1)
 
     return (
-        <PopUpForm>
+        <PopUpForm
+            wrapContent
+        >
             <div>
                 {steps.map((step, index) => (
                     <div className={`text-xs md:text-sm font-medium py-3 flex-grow border-b-[3px] 

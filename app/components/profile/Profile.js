@@ -13,7 +13,7 @@ import { useEffect, useState, useRef } from "react"
 import ChangePasswordForm from "../common/form/profile/ChangePasswordForm"
 import DeleteAccountForm from "../common/form/profile/DeleteAccountForm"
 import UpdateProfileForm from "../common/form/profile/UpdateProfileForm"
-import { getUserProfile, updateUserProfile, deleteUserImageProfile, deleteUserProfile } from "@/app/lib/fetch/user"
+import { getUserProfile, updateUserProfile, deleteUserImageProfile, deleteUserProfile, changeUserPassword } from "@/app/lib/fetch/user"
 import { dateFormat } from "@/app/lib/date"
 import { useRouter } from "next/navigation";
 import PopUpInfo from "../common/alert/PopUpInfo";
@@ -132,6 +132,23 @@ export default function ProfileLayout(){
     const handleChangePassword = async (values) => {
         setError(false);
         setLoading(true);
+        try{
+            const res = await changeUserPassword({
+                oldPassword: values.oldPassword,
+                newPassword: values.newPassword
+            })
+            if(res.error){
+                setError(true);
+                console.log(res.error)
+            }else{
+                setChangePassword(false)
+            }
+        }catch(error){
+            setError(true);
+            setErrorMessage("Kata sandi lama yang Anda masukkan tidak sesuai dengan kredensial Anda!");
+        }finally{
+            setLoading(false);
+        }
     }
 
     const handleUpdateProfile = async (values) => {
@@ -180,14 +197,10 @@ export default function ProfileLayout(){
     const handleDeleteAccount = async (values) => {
         setError(false);
         setLoading(true);
-        if(values.email !== session.user.email){
-            setError(true);
-            setErrorMessage("Email yang dimasukkan tidak sesuai dengan email akun Anda!")
-            setLoading(false);
-            return;
-        }
         try {
-            const res = await deleteUserProfile()
+            const res = await deleteUserProfile({
+                password: values.password
+            })
             if(res.error){
                 setError(true);
                 console.log(res.error)
@@ -196,7 +209,7 @@ export default function ProfileLayout(){
             }
         }catch (error){
             setError(true);
-            console.log(error)
+            setErrorMessage("Kata sandi yang Anda masukkan tidak sesuai dengan kredensial Anda!");
         }finally{
             setLoading(false);
         }
@@ -269,7 +282,7 @@ export default function ProfileLayout(){
                                     <ProfileField
                                         icon={<IoIosInformationCircle className="text-lg md:text-xl"/>}
                                         label={"Deskripsi"}
-                                        value={initialValues.description || "Deskripsi belum diatur oleh pengguna."}
+                                        value={initialValues.description || "Anda belum mengisi deskripsi."}
                                         nullValue={initialValues.description === ""}
                                     />
                                     <ProfileField
@@ -280,22 +293,40 @@ export default function ProfileLayout(){
                                     <ProfileField
                                         icon={<TbBriefcaseFilled className="text-lg md:text-xl"/>}
                                         label={"Posisi Pekerjaan"}
-                                        value={initialValues.jobPosition || "Posisi pekerjaan belum diatur oleh pengguna."}
+                                        value={initialValues.jobPosition || "Anda belum mengisi posisi pekerjaan."}
                                         nullValue={initialValues.jobPosition === ""}
                                     />
                                     <ProfileField
                                         icon={<IoMdPin className="text-lg md:text-xl"/>}
                                         label={"Lokasi"}
-                                        value={initialValues.location || "Lokasi belum diatur oleh pengguna."}
+                                        value={initialValues.location || "Anda belum mengisi lokasi."}
                                         nullValue={initialValues.location === ""}
                                     />
                                 </div>
                                 <div className="mt-4 md:mt-6 text-center xs:text-left">
                                     <p className="text-base md:text-lg font-semibold">Kelola Akun</p>
                                     <div className="flex flex-col xs:flex-row gap-2 md:gap-4 mt-2 md:mt-4 mb-12">
-                                        <Button variant="primary" onClick={() => setChangePassword(true)}>Ganti Kata Sandi</Button>
-                                        <Button variant="primary" outline onClick={() => setUpdateProfile(true)}>Perbarui Profil</Button>
-                                        <Button variant="danger" outline onClick={() => setDeleteAccount(true)}>Hapus Akun</Button>
+                                        <Button variant="primary" onClick={() => {
+                                            setError(false)
+                                            setErrorMessage("")
+                                            setChangePassword(true)
+                                        }}>
+                                            Ganti Kata Sandi
+                                        </Button>
+                                        <Button variant="primary" outline onClick={() => {
+                                            setError(false)
+                                            setErrorMessage("")
+                                            setUpdateProfile(true)
+                                        }}>
+                                            Perbarui Profil
+                                        </Button>
+                                        <Button variant="danger" outline onClick={() => {
+                                            setError(false)
+                                            setErrorMessage("")
+                                            setDeleteAccount(true)
+                                        }}>
+                                            Hapus Akun
+                                        </Button>
                                     </div>
                                 </div>
                             </div>
@@ -306,6 +337,8 @@ export default function ProfileLayout(){
                     <ChangePasswordForm
                         onConfirm={handleChangePassword}
                         onClose={() => setChangePassword(false)}
+                        error={error}
+                        errorMessage={errorMessage}
                     />
                 )}
                 {deleteAccount && (
