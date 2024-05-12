@@ -1,9 +1,9 @@
 "use client"
 import { useCallback, useEffect, useState } from "react"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
-import { createNewTask } from "@/app/lib/fetch/task"
+import { createNewTask, reorderTask } from "@/app/lib/fetch/task"
 import { createNewTaskStatus, deleteTaskStatus, reorderTaskStatus, updateTaskStatus } from "@/app/lib/fetch/taskStatus"
-import { getQueryReference, getQueryReferenceOrderBy } from "@/app/firebase/util"
+import { getQueryReferenceOrderBy } from "@/app/firebase/util"
 import { onSnapshot } from "firebase/firestore"
 import { debounce } from "@/app/lib/helper"
 
@@ -165,7 +165,7 @@ export default function BoardContent({ projectId }){
       setTaskStatusData(taskStatusData)
     }))
 
-    const taskReference = getQueryReference({ collectionName: "tasks", field: "projectId", id: projectId })
+    const taskReference = getQueryReferenceOrderBy({ collectionName: "tasks", field: "projectId", id: projectId, orderByKey: "order" })
     const taskUnsubscribe = onSnapshot(taskReference, (taskSnapshot => {
       const taskData = taskSnapshot.docs.map(taskDoc => ({
         id: taskDoc.id,
@@ -220,6 +220,15 @@ export default function BoardContent({ projectId }){
       newState[dInd].content = result[dInd];
       setState(newState)
     }
+
+    await reorderTask({ 
+      taskId: state[dInd].content[destination.index].id,
+      statusId: state[sInd].id,
+      newStatusId: state[dInd].id,
+      oldIndex: source.index,
+      newIndex: destination.index,
+    })
+    return
   }
 
   const onDragUpdate = (event) => {

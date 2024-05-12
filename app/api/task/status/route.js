@@ -1,4 +1,5 @@
 import { db } from "@/app/firebase/config";
+import { getProjectRole } from "@/app/firebase/util";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { getUserSession } from "@/app/lib/session";
 import { addDoc, collection, getDocs, doc, getDoc, orderBy, query, where, serverTimestamp } from "firebase/firestore";
@@ -84,6 +85,14 @@ export async function POST(request, response){
                 message: "Project not found",
                 success: false
             }, { status: 404 })
+        }
+
+        const projectRole = await getProjectRole({ projectId, userId})
+        if(projectRole !== 'Owner'){
+            return NextResponse.json({
+                message: "Unauthorized",
+                success: false
+            }, { status: 401 })
         }
 
         const { statusName } = await request.json()
