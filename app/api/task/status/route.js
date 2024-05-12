@@ -1,7 +1,8 @@
 import { db } from "@/app/firebase/config";
+import { getProjectRole } from "@/app/firebase/util";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { getUserSession } from "@/app/lib/session";
-import { addDoc, collection, getDocs, doc, getDoc, orderBy, query, where } from "firebase/firestore";
+import { addDoc, collection, getDocs, doc, getDoc, orderBy, query, where, serverTimestamp } from "firebase/firestore";
 import { NextResponse } from 'next/server'
 
 export async function GET(request, response) {
@@ -64,46 +65,76 @@ export async function POST(request, response){
 
         if(!userId){
             return NextResponse.json({
-                message: "You are not authorized"
+                message: "You are not authorized",
+                success: false
             }, { status: 401 })
         }
 
         const projectId = request.nextUrl.searchParams.get("projectId")
-        const { taskStatus } = await request.json()
-
         if(!projectId){
             return NextResponse.json({
-                message: "Missing parameter"
+                message: "Missing parameter",
+                success: false
             }, { status: 400 })
         }
 
+        const projectRef = doc(db, "projects", projectId)
+        const projectSnap = await getDoc(projectRef)
+        if(!projectSnap.exists()){
+            return NextResponse.json({
+                message: "Project not found",
+                success: false
+            }, { status: 404 })
+        }
+
+        const projectRole = await getProjectRole({ projectId, userId})
+        if(projectRole !== 'Owner'){
+            return NextResponse.json({
+                message: "Unauthorized",
+                success: false
+            }, { status: 401 })
+        }
+
+        const { statusName } = await request.json()
+
+        if(!statusName){
+            return NextResponse.json({
+                message: "Missing mandatory fields",
+                success: false
+            }, { status: 400 })
+        }
+        
+        const taskStatusColRef= collection(db, "taskStatuses")
+        const q = query(taskStatusColRef, where("projectId", '==', projectId))
+        const querySnapshot = await getDocs(q)
+        const order = querySnapshot.docs.length
+    
         const newTaskStatus = await addDoc(collection(db, 'taskStatuses'), {
-            status: taskStatus,
+            statusName: statusName,
             projectId: projectId,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            order: order,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
             deletedAt: null
         });
 
         if(!newTaskStatus){
             return NextResponse.json({
-                message: "Fail to create new task status"
+                message: "Fail to create new task status",
+                success: false
             }, { status: 500 })
         }
 
         return NextResponse.json({
-            data: {
-                id: newTaskStatus.id,
-                ...newTaskStatus
-            },
-            message: "Successfully create new task status"
+            message: "Successfully create new task status",
+            success: true
         }, {  status: 200 })
 
     } catch (error) {
         console.error("Cannot get task statuses", error);
         return NextResponse.json({
-            data: null,
-            message: error.message
+            message: error.message,
+            success: false
         }, { status: 500 });
     }
 }

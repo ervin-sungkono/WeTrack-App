@@ -52,3 +52,19 @@ export function createNewTask({
 
     return response
 }
+
+export function reorderTask({ taskId, statusId, newStatusId, oldIndex, newIndex }){
+    if(statusId === newStatusId && newIndex === oldIndex) return
+    const response = fetch(`/api/task/${taskId}/transition`,{
+        method: 'POST',
+        body: JSON.stringify({
+            newStatusId,
+            oldIndex,
+            newIndex
+        })
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
+
+    return response
+}

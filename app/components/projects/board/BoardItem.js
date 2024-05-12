@@ -15,7 +15,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
     marginBottom: '8px',
   
     // change background colour if dragging
-    background: isDragging ? "rgba(255,255,255,0.7)" : "white",
+    background: "white",
     pointerEvents: isDragging ? "none" : "",
 
     display: 'flex',

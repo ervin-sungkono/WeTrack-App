@@ -92,13 +92,14 @@ export async function POST(request, response){
 
         const usersRef = collection(db, 'users')
         const docRef = await getDoc(doc(db, 'projects', projectId))
-        const { projectName } = docRef.data()
 
         if(!docRef.exists()){
             return NextResponse.json({
                 message: "Project not found"
             }, { status: 404 })
         }
+
+        const { projectName } = docRef.data()
         
         let teamList = []
         if(teams){
@@ -111,8 +112,6 @@ export async function POST(request, response){
                     return {
                         id: userData.id,
                         email,
-                        role: "Member",
-                        status: "pending" // status = pending OR accepted
                     }
                 }
                 return null
@@ -123,8 +122,8 @@ export async function POST(request, response){
                 return await addDoc(collection(db, "teams"), {
                     userId: team.id,
                     projectId: projectId,
-                    role: team.role, 
-                    status: team.status,
+                    role: "Member", 
+                    status: "pending",
                     createdAt: serverTimestamp(),
                     updatedAt: serverTimestamp(),
                     deletedAt: null
@@ -140,6 +139,7 @@ export async function POST(request, response){
                     email,
                     senderName: senderName,
                     teamId: doc.id,
+                    projectId: projectId,
                     projectName
                 })
             }))

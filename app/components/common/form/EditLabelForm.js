@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react"
 import CustomTooltip from "../CustomTooltip"
-import { pickTextColorBasedOnBgColor } from "@/app/lib/color"
+import { getRandomColor, pickTextColorBasedOnBgColor } from "@/app/lib/color"
 
 import { 
     IoMdCheckmark as CheckIcon,
@@ -10,7 +10,8 @@ import {
 
 export default function EditLabelForm({ defaultContent, defaultColor, onCancel, onSubmit }){
     const [content, setContent] = useState(defaultContent)
-    const [backgroundColor, setBackgroundColor] = useState(defaultColor ?? "#000000")
+    const [submitting, setSubmitting] = useState(false)
+    const [backgroundColor, setBackgroundColor] = useState(defaultColor ?? getRandomColor())
 
     return(
         <div className="flex items-center gap-2">
@@ -38,7 +39,15 @@ export default function EditLabelForm({ defaultContent, defaultColor, onCancel, 
                     </button>
                 </CustomTooltip>
                 <CustomTooltip id={`cancel-btn`} content={"Tambah Label"}>
-                    <button className="p-1.5 text-white bg-basic-blue border border-basic-blue rounded" onClick={() => onSubmit({content, backgroundColor})}>
+                    <button 
+                        disabled={submitting} 
+                        className="p-1.5 text-white bg-basic-blue border border-basic-blue rounded disabled:bg-gray-400 disabled:border-gray-400" 
+                        onClick={async(e) => {
+                            setSubmitting(true)
+                            await onSubmit({content, backgroundColor})
+                            setSubmitting(false)
+                        }}
+                    >
                         <CheckIcon size={16}/>
                     </button>
                 </CustomTooltip>

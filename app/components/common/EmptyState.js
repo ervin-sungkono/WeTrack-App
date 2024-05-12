@@ -9,8 +9,9 @@ export default function EmptyState({ message = "Belum ada data yang tersedia..",
                 height={320}
                 src={"/images/EmptyState.svg"}
                 alt="Belum ada data yang tersedia.."
+                className="px-4"
             />
-            <p className="text-sm md:text-base text-dark-blue/80">{message}</p>
+            <p className="text-xs md:text-sm text-dark-blue/80 text-center">{message}</p>
             {action && (
                 <LinkButton href={href} variant="primary" size={`md`} className="mt-2 md:mt-4 px-2 xl:px-4">
                     {action}
