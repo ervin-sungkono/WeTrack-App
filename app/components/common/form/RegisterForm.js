@@ -57,8 +57,6 @@ export default function RegisterForm(){
                 console.log(JSON.parse(res.error).errors)
             } else {
                 setSuccess(true);
-                // router.replace(callbackUrl ?? "/dashboard");
-                // router.push("/login")
             }
         } catch (error) {
             setError(true);

@@ -53,11 +53,6 @@ export default function LoginForm(){
             }
         } catch (error) {
             setError(true);
-            // let errorMessage = JSON.parse(error.message).message;
-            // if(errorMessage === "Firebase: Error (auth/invalid-credential)."){
-            //     errorMessage = "Kredensial yang Anda masukkan salah!"
-            // }
-            // setErrorMessage(errorMessage);
             console.log(error);
         } finally {
             setLoading(false);

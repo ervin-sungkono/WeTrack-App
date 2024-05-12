@@ -41,11 +41,10 @@ export async function GET(request, response) {
 
             return null
 
-        }).filter((item) => item != null))
-
+        }))
 
         return NextResponse.json({
-            data: allProjects,
+            data: allProjects.filter((item) => item != null),
             message: "Projects retrieved successfully"
         }, { status: 200 });
         

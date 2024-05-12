@@ -159,20 +159,20 @@ export default function DashboardInsight({project}){
                 Ringkasan Tugas Saya
             </div>
             <a href={`/projects/${project?.id}`} className="cursor-pointer">
-                <div className="text-base md:text-lg text-basic-blue font-bold">
+                <div className="text-sm md:text-base text-basic-blue font-bold">
                     {project?.projectName}
                 </div>
             </a>
             <div className="w-full flex flex-col gap-24 mb-12">
                 <div className="h-64 flex flex-col gap-8">
-                    <div className="font-bold text-md md:text-lg">Status Tugas</div>
+                    <div className="font-bold text-sm md:text-base">Status Tugas</div>
                     <Doughnut
                         data={doughnutChartData}
                         options={doughnutChartOptions}
                     />
                 </div>
                 <div className="h-64 flex flex-col gap-8">
-                    <div className="font-bold text-md md:text-lg">Prioritas Tugas</div>
+                    <div className="font-bold text-sm md:text-base">Prioritas Tugas</div>
                     <Bar
                         data={barChartData}
                         options={barChartOptions}
