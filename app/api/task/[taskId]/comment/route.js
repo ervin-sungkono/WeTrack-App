@@ -79,6 +79,7 @@ export async function POST(request, response){
         }
 
         const newComment = await addDoc(collection(db, 'comments'), {
+            projectId: taskSnap.data().projectId,
             taskId: taskId,
             userId: userId,
             commentText: commentText,
