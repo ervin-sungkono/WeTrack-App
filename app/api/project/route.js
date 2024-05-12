@@ -23,20 +23,26 @@ export async function GET(request, response) {
 
         const allProjects = await Promise.all(projectIds.map(async (item) => {
             const projectDoc = await getDoc(doc(db, "projects", item))
-            const projectData = projectDoc.exists() ? projectDoc.data() : null
-            const userDoc = await getDoc(doc(db, 'users', projectData.createdBy));
+            if(projectDoc.exists()) {
+                const projectData = projectDoc.data()
+                const userDoc = await getDoc(doc(db, 'users', projectData.createdBy));
 
-            return {
-                id: projectDoc.id,
-                ...projectData,
-                createdBy: {
-                    id: userDoc.id,
-                    fullName: userDoc.data().fullName,
-                    email: userDoc.data().email,
-                    profileImage: userDoc.data().profileImage
+                return {
+                    id: projectDoc.id,
+                    ...projectData,
+                    createdBy: {
+                        id: userDoc.id,
+                        fullName: userDoc.data().fullName,
+                        email: userDoc.data().email,
+                        profileImage: userDoc.data().profileImage
+                    }
                 }
             }
-        }))
+
+            return null
+
+        }).filter((item) => item != null))
+
 
         return NextResponse.json({
             data: allProjects,
