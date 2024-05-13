@@ -2,7 +2,7 @@ import { db } from "@/app/firebase/config";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { uploadMultipleFiles } from "@/app/lib/file";
 import { getUserSession } from "@/app/lib/session";
-import { addDoc, collection, getDocs, query, serverTimestamp, where } from "firebase/firestore";
+import { addDoc, collection, getDoc, getDocs, query, serverTimestamp, where } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
 export async function GET(request, response) {
@@ -55,7 +55,14 @@ export async function POST(request, response) {
         const attachments = formData.getAll('attachments')
 
         const { taskId } = response.params
-        const projectId = request.nextUrl.searchParams.get("projectId")
+
+        const taskDoc = await getDoc(doc(db, "tasks", taskId))
+        if(!taskDoc.exists()) {
+            return NextResponse.json({
+                message: "Tasks doesn't exists"
+            }, { status: 400 })
+        }
+        const projectId = taskDoc.data().projectId
 
         if(!taskId ||!projectId) {
             return NextResponse.json({

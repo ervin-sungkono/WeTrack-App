@@ -72,7 +72,8 @@ export async function POST(request, response) {
         const { 
             projectId, 
             assignedTo,
-            typeId,
+            type,
+            parentId,
             taskName,
             labels,
             statusId,
@@ -93,7 +94,7 @@ export async function POST(request, response) {
             }, { status: 401 })
         }
         
-        if (!projectId ||!taskName ||!statusId) {
+        if (!projectId ||!taskName ||!statusId ||type) {
             return NextResponse.json({
                 data: null,
                 message: "Missing mandatory fields"
@@ -150,23 +151,16 @@ export async function POST(request, response) {
             }
         }
 
-        let taskTypeDetails = null;
-        if (typeId) {
-            const taskTypeDocRef = doc(db, 'taskTypes', typeId);
-            const taskTypeSnap = await getDoc(taskTypeDocRef);
+        if(type == 'Task' && parentId) {
+            return NextResponse.json({
+                message: "Task can't have a parent task"
+            }, { status: 404 })
+        }
 
-            if (taskTypeSnap.exists()) {
-                const { type } = taskTypeSnap.data()
-                taskTypeDetails = {
-                    id: taskTypeSnap.id,
-                    taskType: type
-                }
-
-            } else {
-                return NextResponse.json({
-                    message: "The task type not found"
-                }, { status: 404 })
-            }
+        if(type == 'SubTask' && !parentId) {
+            return NextResponse.json({
+                message: "Sub task must have a parent task"
+            }, { status: 404 })
         }
 
         let taskStatusDetails = null;
@@ -215,7 +209,8 @@ export async function POST(request, response) {
             const newTask = {
                 projectId,
                 assignedTo: assignedTo ?? null,
-                type: typeId ?? null,
+                type: type,
+                parentId: parentId ?? null,
                 createdBy,
                 taskName,
                 labels: labels ?? [],
@@ -254,7 +249,6 @@ export async function POST(request, response) {
             data: {
                 id: result.id,
                 ...result,
-                type: taskTypeDetails,
                 assignedTo: assignedToDetails,
                 createdBy: createdByDetails,
                 status: taskStatusDetails,

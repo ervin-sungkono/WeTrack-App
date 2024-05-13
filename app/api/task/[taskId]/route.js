@@ -1,4 +1,4 @@
-import { updateDoc, getDoc, doc } from 'firebase/firestore';
+import { updateDoc, getDoc, doc, collection, query, where, getDocs } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 
@@ -7,21 +7,26 @@ export async function GET(request, context) {
         const { taskId } = context.params
 
         const taskRef = doc(db, "tasks", taskId)
-
-        if (!taskRef) {
-            return NextResponse.json({
-                message: "Task not found"
-            }, { status: 404 });
-        }
-
         const taskSnap = await getDoc(taskRef);
+
+        const subTaskRef = collection(db, "tasks")
+        const q = query(subTaskRef, where("parentId", "==", taskId))
+        const subTaskDocs = await getDocs(q)
+
+        const subTasks = !subTaskDocs.empty() ? subTaskDocs.docs.map((item) => {
+            return {
+                id: item.id,
+                taskName: item.data().taskName
+            }
+        }) : []
         
         if(taskSnap.exists()){
             const taskData = taskSnap.data()
             return NextResponse.json({
                 data: {
                     id: taskSnap.id,
-                    ...taskData
+                    ...taskData,
+                    subTasks: subTasks
                 },
                 message: "Successfully get Task detail"
             }, { status: 200 })
@@ -47,7 +52,6 @@ export async function PUT(request, context) {
         const {
             projectId,
             assignedTo,
-            typeId,
             taskName,
             label,
             statusId,
@@ -94,21 +98,6 @@ export async function PUT(request, context) {
             }
         }
 
-        let taskTypeDetails = null;
-        if (typeId) {
-            const userDocRef = doc(db, 'taskTypes', typeId);
-            const taskTypeSnap = await getDoc(userDocRef);
-            
-            if (taskTypeSnap.exists()) {
-                taskTypeDetails = taskTypeSnap.data();
-
-            } else {
-                return NextResponse.json({
-                    message: "The task type not found"
-                }, { status: 404 })
-            }
-        }
-
         let taskStatusDetails = null;
         if (statusId) {
             const userDocRef = doc(db, 'taskStatuses', statusId);
@@ -127,7 +116,6 @@ export async function PUT(request, context) {
         const updatedTask = {
             ...taskToUpdate,
             assignedTo: { assignedTo, assignedToDetails } ?? taskToUpdate.assignedTo,
-            type: { typeId, taskTypeDetails } ?? taskToUpdate.type,
             taskName: taskName ?? taskToUpdate.taskName,
             label: label ?? taskToUpdate.label,
             status: { statusId, taskStatusDetails } ?? taskToUpdate.status,
@@ -159,7 +147,6 @@ export async function PUT(request, context) {
         //update task collection
         await updateDoc(taskDocRef, {
             assignedTo: { assignedTo, assignedToDetails } ?? taskCollectionToUpdate.assignedTo,
-            type: { typeId, taskTypeDetails } ?? taskCollectionToUpdate.type,
             taskName: taskName ?? taskCollectionToUpdate.taskName,
             label: label ?? taskCollectionToUpdate.label,
             status: { statusId, taskStatusDetails } ?? taskCollectionToUpdate.status,
