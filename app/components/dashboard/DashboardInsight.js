@@ -49,7 +49,7 @@ export const doughnutChartOptions = {
     plugins: {
         legend: {
             display: true,
-            position: 'right',
+            position: 'bottom',
             labels: {
                 font: {
                     size: 14,
@@ -84,22 +84,22 @@ export const barChartData = {
     labels: priorityDataLabels,
     datasets: [
         {
-            label: priorityDataLabels[0],
+            label: priorityDataLabels[0].substring(0, priorityDataLabels[0].indexOf(':')),
             data: [priorityDataNumbers[0], null, null, null],
             backgroundColor: 'rgba(158, 158, 158, 1)',
         },
         {
-            label: priorityDataLabels[1],
+            label: priorityDataLabels[1].substring(0, priorityDataLabels[1].indexOf(':')),
             data: [null, priorityDataNumbers[1], null, null],
             backgroundColor: 'rgba(92, 221, 105, 1)',
         },
         {
-            label: priorityDataLabels[2],
+            label: priorityDataLabels[2].substring(0, priorityDataLabels[2].indexOf(':')),
             data: [null, null, priorityDataNumbers[2], null],
             backgroundColor: 'rgba(227, 213, 91, 1)',
         },
         {
-            label: priorityDataLabels[3],
+            label: priorityDataLabels[3].substring(0, priorityDataLabels[3].indexOf(':')),
             data: [null, null, null, priorityDataNumbers[3]],
             backgroundColor: 'rgba(227, 116, 91, 1)',
         },
@@ -112,8 +112,8 @@ export const barChartOptions = {
     skipNull: true,
     plugins: {
         legend: {
-            display: true,
-            position: 'right',
+            display: false,
+            position: 'bottom',
             labels: {
                 font: {
                     size: 14,
@@ -129,7 +129,7 @@ export const barChartOptions = {
                 display: false
             },
             ticks: {
-                display: false,
+                display: true,
                 font: {
                     size: 14,
                     weight: 'bold'
@@ -139,9 +139,10 @@ export const barChartOptions = {
         },
         y: {
             grid: {
-                display: true
+                display: false
             },
             ticks: {
+                display: false,
                 font: {
                     size: 14,
                     weight: 'bold'
@@ -163,15 +164,15 @@ export default function DashboardInsight({project}){
                     {project?.projectName}
                 </div>
             </a>
-            <div className="w-full flex flex-col gap-24 mb-12">
-                <div className="h-64 flex flex-col gap-8">
+            <div className="w-full flex flex-col gap-12 md:gap-24 mb-12">
+                <div className="h-64 md:h-80 flex flex-col gap-4 md:gap-8">
                     <div className="font-bold text-sm md:text-base">Status Tugas</div>
                     <Doughnut
                         data={doughnutChartData}
                         options={doughnutChartOptions}
                     />
                 </div>
-                <div className="h-64 flex flex-col gap-8">
+                <div className="h-64 md:h-80 flex flex-col gap-4 md:gap-8">
                     <div className="font-bold text-sm md:text-base">Prioritas Tugas</div>
                     <Bar
                         data={barChartData}

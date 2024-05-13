@@ -73,12 +73,13 @@ export async function POST(request, response){
             }, { status: 404 });
         }
 
-        const { teams } = await request.json()
+        const { teams, role } = await request.json()
         const { projectId } = response.params
         
         console.log("teams", teams)
+        console.log("role", role)
         console.log("projectId", projectId)
-        if(!teams){
+        if(!teams || !role){
             return NextResponse.json({
                 message: "Payload is not complete"
             }, { status: 400 })
@@ -122,7 +123,7 @@ export async function POST(request, response){
                 return await addDoc(collection(db, "teams"), {
                     userId: team.id,
                     projectId: projectId,
-                    role: "Member", 
+                    role: role, 
                     status: "pending",
                     createdAt: serverTimestamp(),
                     updatedAt: serverTimestamp(),

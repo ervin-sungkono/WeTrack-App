@@ -8,7 +8,7 @@ import TeamList from "./TeamList"
 import InviteForm from "../../common/form/InviteForm"
 import PopUpLoad from "../../common/alert/PopUpLoad"
 import PopUpForm from "../../common/alert/PopUpForm"
-import { inviteMember, updateRole, deleteMember, getProjectTeam } from "@/app/lib/fetch/project"
+import { inviteMember, updateRole, deleteMember } from "@/app/lib/fetch/project"
 import PopUpInfo from "../../common/alert/PopUpInfo"
 import { getQueryReference, getDocumentReference } from "@/app/firebase/util"
 import { onSnapshot, getDoc } from "firebase/firestore"
@@ -16,7 +16,6 @@ import { onSnapshot, getDoc } from "firebase/firestore"
 export default function TeamContent({ projectId }){
     const [query, setQuery] = useState("")
     const [loading, setLoading] = useState(false)
-    const [error, setError] = useState(false)
 
     const handleSearch = (query) => {
         setQuery(query.toLowerCase())
@@ -26,6 +25,8 @@ export default function TeamContent({ projectId }){
 
     const [addMode, setAddMode] = useState(false)
     const [successAdd, setSuccessAdd] = useState(false)
+    const [error, setError] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("")
 
     const [manageMode, setManageMode] = useState(false)
     const [successManage, setSuccessManage] = useState(false)
@@ -34,6 +35,7 @@ export default function TeamContent({ projectId }){
     const [selectDelete, setSelectDelete] = useState([])
 
     const [teams, setTeams] = useState(null)
+    const [role, setRole] = useState(null)
     const [teamFetched, setTeamFetched] = useState([])
     const [acceptedTeam, setAcceptedTeam] = useState([]) 
     const [pendingTeam, setPendingTeam] = useState([])
@@ -78,32 +80,28 @@ export default function TeamContent({ projectId }){
             setTeamFetched(allTeam)
         })
         return unsubscribe
-        // getProjectTeam(projectId).then(res => {
-        //     if (res.data) {
-        //         console.log(res.data)
-        //         const filteredAcceptedTeam = res.data.filter(team => team.status === "accepted" && team.user.fullName.toLowerCase().includes(query))
-        //         const filteredPendingTeam = res.data.filter(team => team.status === "pending" && team.user.fullName.toLowerCase().includes(query))
-        //         setAcceptedTeam(filteredAcceptedTeam)
-        //         setPendingTeam(filteredPendingTeam)
-        //         const allTeam = [
-        //             ...filteredAcceptedTeam,
-        //             ...filteredPendingTeam
-        //         ]
-        //         setTeamFetched(allTeam)
-        //     } else {
-        //         console.log(res)
-        //     }
-        // })
     }, [projectId, query])
 
     const handleAddMember = async () => {
         setAddMode(false)
         setError(false)
         setLoading(true)
+        if(teams === null){
+            setError(true)
+            setErrorMessage("Anggota tim harus diisi.")
+            setLoading(false)
+            return
+        }else if(role === null){
+            setError(true)
+            setErrorMessage("Peran anggota tim harus dipilih.")
+            setLoading(false)
+            return
+        }
         try{
             const res = await inviteMember({
                 projectId: projectId,
-                teams: teams
+                teams: teams,
+                role: role,
             })
             if (res.error) {
                 setError(true);
@@ -112,6 +110,7 @@ export default function TeamContent({ projectId }){
                 setSuccessAdd(true)
             }
         }catch(error){
+            setError(true)
             console.log(error)
         }finally{
             setLoading(false)
@@ -248,6 +247,9 @@ export default function TeamContent({ projectId }){
                     onClose={() => setAddMode(false)}
                     team={teamFetched}
                     setTeams={setTeams}
+                    setRole={setRole}
+                    error={error}
+                    errorMessage={errorMessage}
                 />
             )}
             {manageMode && (

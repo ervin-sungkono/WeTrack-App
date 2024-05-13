@@ -68,10 +68,11 @@ export default function HomeLayout(){
                 <div>
                     <h1 className="text-2xl md:text-3xl lg:text-4xl lg:leading-tight font-bold">
                         Selesaikan tugas secara efisien, <br />
-                        berkolaborasi dengan peralatan AI yang canggih.
+                        berkolaborasi dengan peralatan<br /> 
+                        <span className="italic">Artificial Intelligence</span> (AI) yang canggih.
                     </h1>
                     <p className="mt-1 lg:mt-2 text-sm lg:text-md">
-                        WeTrack menawarkan solusi terbaik dalam manajemen proyek dan pelacakan tugas.
+                        WeTrack menawarkan solusi terbaik dalam manajemen tugas Anda.
                     </p>
                     <a href="/login">
                         <Button variant="primary" size={`md`} className="mt-2 lg:mt-6 xl:mt-8 px-2 xl:px-8">
@@ -89,7 +90,7 @@ export default function HomeLayout(){
                     <CustomLine size="md"/>
                 </div>
                 <p className="text-sm md:text-md mt-2 md:mt-4 w-full lg:w-5/6 opacity-80">
-                WeTrack adalah sebuah platform manajemen proyek kolaboratif inovatif yang membantu developer mempercepat proses pengembangan proyek dengan efisiensi dan presisi, dengan integrasi yang mulus dengan kemampuan kecerdasan buatan terkini untuk membantu dalam pembuatan tugas dan penyelesaian tugas, sehingga meningkatkan produktivitas dan mendorong kesuksesan proyek.
+                WeTrack adalah sebuah platform manajemen tugas kolaboratif dan inovatif yang membantu Anda mempercepat proses pengerjaan tugas dengan efisiensi dan presisi, melalui integrasi dengan peralatan AI terkini untuk meningkatkan produktivitas dalam pengerjaan tugas Anda.
                 </p>
             </div>
             <div className="py-4 md:py-6 lg:py-8 pb-10 md:pb-10 lg:pb-12 container">
@@ -103,18 +104,18 @@ export default function HomeLayout(){
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 xl:gap-8 mt-4 lg:mt-8 w-full md:w-3/5 xl:w-5/6 lg:w-full">
                         <FeatureCard 
                             image={'/images/AIPoweredAssistance.png'}
-                            title="Bantuan AI"
-                            description="WeTrack menggunakan bantuan kecerdasan buatan untuk membantu pengguna dalam membuat tugas dengan efisien, memanfaatkan algoritma cerdas untuk mempercepat proses manajemen tugas dan meningkatkan produktivitas."
+                            title="Integrasi AI"
+                            description="WeTrack menggunakan bantuan AI untuk membantu Anda membuat tugas dengan efisien, memanfaatkan algoritma cerdas untuk mempercepat proses manajemen tugas dan meningkatkan produktivitas."
                         />
                         <FeatureCard
                             image={'/images/TimelineManagement.png'}
                             title="Pengaturan Jadwal"
-                            description="WeTrack memungkinkan pengguna untuk mengelola jadwal proyek dengan mudah, menawarkan representasi visual dari kemajuan proyek dan tonggak kunci, sehingga memfasilitasi perencanaan dan koordinasi yang lebih baik di antara anggota tim."
+                            description="WeTrack memungkinkan Anda mengelola jadwal pengerjaan tugas dengan mudah, menawarkan representasi visual dari kemajuan pengerjaan tugas, sehingga memfasilitasi perencanaan dan koordinasi yang lebih baik di antara anggota tim."
                         />
                         <FeatureCard
                             image={'/images/CollaborativeProjectManagement.png'}
-                            title="Manajemen Proyek Kolaboratif"
-                            description="WeTrack menawarkan kolaborasi di antara anggota tim dengan menyediakan platform terpusat untuk manajemen proyek, memungkinkan pengguna untuk berkolaborasi  dalam waktu nyata, membagikan pembaruan, dan menangani masalah dengan cepat."
+                            title="Manajemen Tugas Kolaboratif"
+                            description="WeTrack menawarkan kolaborasi antara anggota tim dengan menyediakan platform terpusat yang memungkinkan Anda berkolaborasi secara langsung, membagikan pembaruan, dan menyelesaikan tugas dengan cepat."
                         />
                     </div>
                 </div>
