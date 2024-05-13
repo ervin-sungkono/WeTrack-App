@@ -102,7 +102,7 @@ export async function POST(request, response) {
             const statusCounterSnap = await getDoc(statusCounterRef)
 
             if(!statusCounterSnap.exists()){
-                await addDoc(statusCounterRef, {
+                await addDoc(collection(db, "taskOrderCounters"), {
                     lastOrder: 0,
                     updatedAt: serverTimestamp()
                 })
@@ -125,7 +125,7 @@ export async function POST(request, response) {
             const newStatusCounterSnap = await getDoc(newStatusCounterRef)
 
             if(!newStatusCounterSnap.exists()){
-                await addDoc(newStatusCounterRef, {
+                await addDoc(collection(db, "taskOrderCounters"), {
                     lastOrder: newStatusCounterSnap.data().lastOrder + 1,
                     updatedAt: serverTimestamp()
                 })
