@@ -26,6 +26,12 @@ export async function DELETE(request, response) {
 
         const attachmentDocRef = doc(db, 'attachments', attachmentId);
         const attachmentDoc = await getDoc(attachmentDocRef);
+        
+        if(!attachmentDoc.exists()) {
+            return NextResponse.json({
+                message: "Attachment doesn;t exists"
+            }, { status: 400 })
+        }
         const attachmentData = attachmentDoc.data();
 
         if (attachmentData && attachmentData.attachmentStoragePath) {
