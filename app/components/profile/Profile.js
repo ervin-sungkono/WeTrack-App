@@ -120,7 +120,7 @@ export default function ProfileLayout(){
                         Foto Profil
                     </label>
                     <div className="relative flex items-center">
-                        <Button variant="danger" outline onClick={deleteImageUpload} disabled={profileImageUploadedURL === null || originalProfileImageFile !== null}>
+                        <Button variant="danger" outline onClick={deleteImageUpload} disabled={profileImageUploadedURL === null || originalProfileImageFile === null}>
                             Hapus Foto Profil
                         </Button>
                     </div>
@@ -128,6 +128,11 @@ export default function ProfileLayout(){
             </div>
         )
     }
+
+    useEffect(() => {
+        console.log(profileImageUploadedURL)
+        console.log(originalProfileImageFile)
+    }, [profileImageUploadedURL, originalProfileImageFile])
 
     const handleChangePassword = async (values) => {
         setError(false);
