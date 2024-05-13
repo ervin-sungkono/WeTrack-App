@@ -98,7 +98,7 @@ export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, s
                         {user?.fullName}
                     </div>
                 )}
-                {status !== "pending" && (
+                {
                     (editMode && role != 'Owner') ? (
                         <div className="mt-4 mb-6">
                             <SelectButton
@@ -115,7 +115,7 @@ export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, s
                             {role}
                         </button>
                     )
-                )}
+                }
                 {pending && (
                     <Button variant="primary" onClick={setAddMode}>
                         Tambah Anggota

@@ -50,7 +50,7 @@ export default function Dashboard(){
                     <Header title={"Dasbor"} links={links}/>
                 </div>
                 {projectsData?.length > 0 ? (
-                    <div className="flex flex-col md:flex-row gap-4 w-full mt-4">
+                    <div className="flex flex-col md:flex-row gap-2 md:gap-4 w-full mt-4 mb-8 md:mb-0">
                         <div className="w-full md:w-1/2">
                             <DashboardInsight project={selectedProject}/>
                         </div>

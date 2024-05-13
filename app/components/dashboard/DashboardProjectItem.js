@@ -16,13 +16,11 @@ export default function DashboardProjectItem({project, setSelectedProject}){
     return (
         <>
             <div className="bg-white px-2 md:px-4 py-2 md:py-4 flex flex-col rounded-lg">
-                <div className="flex justify-between items-center">
-                    <a href={`/projects/${project.id}`}>
-                        <div className="text-sm md:text-base text-basic-blue font-bold">
-                            {project.projectName} ({project.tasks.length})
-                        </div>
-                    </a>
-                    <div className="cursor-pointer" onClick={handleShowTasks}>
+                <div className="flex justify-between items-center cursor-pointer" onClick={handleShowTasks}>
+                    <div className="text-sm md:text-base font-bold">
+                        {project.projectName} ({project.tasks.length})
+                    </div>
+                    <div>
                         {showTasks ? <DropdownCloseIcon size={20}/> : <DropdownIcon size={20}/>}
                     </div>
                 </div>
@@ -40,7 +38,7 @@ export default function DashboardProjectItem({project, setSelectedProject}){
                                 </div>
                             ))
                         ) : (
-                            <div className="text-xs md:text-sm text-dark-blue">
+                            <div className="text-xs md:text-sm text-dark-blue italic">
                                 Belum ada data tugas yang tersedia.
                             </div>
                         )}

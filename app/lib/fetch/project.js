@@ -69,9 +69,10 @@ export function getProjectTeam(id){
     return response
 }
 
-export function inviteMember({projectId, teams}){
+export function inviteMember({projectId, teams, role}){
     const payload = {
         teams: teams ? JSON.parse(teams).map(user => user.value) : null,
+        role: role
     }
     const response = fetch(`/api/project/${projectId}/team`,{
         method: 'POST',
