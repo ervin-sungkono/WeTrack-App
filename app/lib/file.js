@@ -6,7 +6,6 @@ export async function uploadSingleFile(file, path) {
   try {
     const storageRef = ref(storage, path);
     const snapshot = await uploadBytes(storageRef, file);
-    console.log("snapshot", snapshot)
     const downloadURL = await getDownloadURL(snapshot.ref);
     return downloadURL;
 
@@ -19,10 +18,10 @@ export async function uploadSingleFile(file, path) {
 // Function to upload multiple files
 export async function uploadMultipleFiles(files, basePath) {
   const uploadTasks = files.map(async (file) => {
-    const storageRef = ref(storage, `${basePath}/${file.name}`);
     try {
-      await uploadBytesResumable(storageRef, file);
-      const downloadURL = await getDownloadURL(storageRef);
+      const storageRef = ref(storage, `${basePath}/${file.name}`);
+      const snapshot = await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(snapshot.ref);
       return { 
         originalFileName: file.name, 
         attachmentStoragePath: downloadURL 
