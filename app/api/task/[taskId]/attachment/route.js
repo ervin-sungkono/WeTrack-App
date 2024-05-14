@@ -1,4 +1,5 @@
 import { db } from "@/app/firebase/config";
+import { getProjectRole } from "@/app/firebase/util";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { uploadMultipleFiles } from "@/app/lib/file";
 import { getUserSession } from "@/app/lib/session";
@@ -75,6 +76,24 @@ export async function POST(request, response) {
             }, { status: 400 })
         }
         const projectId = taskDoc.data().projectId
+
+        const projectRole = await getProjectRole({ projectId, userId})
+        if(projectRole === 'Viewer'){
+            return NextResponse.json({
+                message: "Unauthorized",
+                success: false
+            }, { status: 401 })
+        }
+
+        const attachmentsQuery = query(collection(db, "attachments"), where("taskId", "==", taskId));
+        const attachmentsSnapshot = await getDocs(attachmentsQuery);
+        const attachmentCount = attachmentsSnapshot.size;
+
+        if (attachmentCount >= 10) {
+            return NextResponse.json({
+                message: "The task already has 10 attachments"
+            }, { status: 400 });
+        }
         
         const imageSizePerFile = 2 * 1024 * 1024
         if(attachments.length > 0) {
@@ -89,7 +108,6 @@ export async function POST(request, response) {
 
         if(attachments && attachments.length > 0){
             const results = await uploadMultipleFiles(attachments, `/project/${projectId}/tasks/${taskId}`);
-            console.log(results)
             if(results.length > 0){
                 await Promise.all(results.map(async (item) => {
                     return addDoc(collection(db, "attachments"), {

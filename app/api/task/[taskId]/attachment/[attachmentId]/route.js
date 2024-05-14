@@ -26,10 +26,11 @@ export async function DELETE(request, response) {
 
         const attachmentDocRef = doc(db, 'attachments', attachmentId);
         const attachmentDoc = await getDoc(attachmentDocRef);
-        
+
         if(!attachmentDoc.exists()) {
             return NextResponse.json({
-                message: "Attachment doesn;t exists"
+                success: false,
+                message: "Attachment doesn't exists"
             }, { status: 400 })
         }
         const attachmentData = attachmentDoc.data();
@@ -40,11 +41,13 @@ export async function DELETE(request, response) {
             await deleteDoc(attachmentDocRef)
 
             return NextResponse.json({
+                success: true,
                 message: "Attachment deleted successfully"
             }, { status: 200 });
 
         } else {
             return NextResponse.json({
+                success: false,
                 message: "No Attachment found to delete"
             }, { status: 404 });
         }
