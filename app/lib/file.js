@@ -1,4 +1,4 @@
-import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { deleteObject, getDownloadURL, ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
 import { storage } from '../firebase/config';
 
 // Function to upload a single file
@@ -20,8 +20,8 @@ export async function uploadMultipleFiles(files, basePath) {
   const uploadTasks = files.map(async (file) => {
     try {
       const storageRef = ref(storage, `${basePath}/${file.name}`);
-      const snapshot = await uploadBytesResumable(storageRef, file);
-      const downloadURL = await getDownloadURL(snapshot.ref);
+      await uploadBytesResumable(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
       return { 
         originalFileName: file.name, 
         attachmentStoragePath: downloadURL 
