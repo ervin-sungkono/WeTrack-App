@@ -33,7 +33,7 @@ export default function DashboardProjectItem({project, setSelectedProject}){
                                         {task.taskName}
                                     </div>
                                     <div className="text-xs md:text-sm text-dark-blue">
-                                        {task.status.statusName}
+                                        {task.status.statusName.toUpperCase()}
                                     </div>
                                 </div>
                             ))
