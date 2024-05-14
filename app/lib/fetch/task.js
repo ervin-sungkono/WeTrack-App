@@ -1,0 +1,72 @@
+export function getTaskById(taskId){
+    const response = fetch(`/api/task/${taskId}`,{
+        method: 'GET',
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
+
+    return response
+}
+
+export function getAllTask(projectId){
+    const response = fetch(`/api/task?projectId=${projectId}`,{
+        method: 'GET',
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
+
+    return response
+}
+
+export function createNewTask({ 
+    taskName, 
+    type = "Task",
+    startDate,
+    dueDate,
+    priority, 
+    description = "", 
+    projectId, 
+    statusId,
+    assignedTo,
+    labels,
+    parentId
+}){
+    const payload = {
+        taskName,
+        type,
+        startDate,
+        dueDate,
+        priority,
+        description,
+        projectId,
+        statusId,
+        assignedTo,
+        labels: labels ? JSON.parse(labels).map(label => label.value) : null,
+        parentId
+    }
+
+    const response = fetch('/api/task', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
+
+    return response
+}
+
+export function reorderTask({ taskId, statusId, newStatusId, oldIndex, newIndex }){
+    if(statusId === newStatusId && newIndex === oldIndex) return
+    const response = fetch(`/api/task/${taskId}/transition`,{
+        method: 'POST',
+        body: JSON.stringify({
+            newStatusId,
+            oldIndex,
+            newIndex
+        })
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
+
+    return response
+}

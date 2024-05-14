@@ -1,18 +1,19 @@
 import CredentialsProvider from "next-auth/providers/credentials";
-import { loginUser } from "./fetch/auth";
+import { signIn } from "./fetch/user";
 
 export const nextAuthOptions = {
   session: {
     strategy: "jwt",
+    maxAge: 7 * 24 * 60 * 60
   },
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: {
-          label: "Username",
+        email: {
+          label: "Email",
           type: "text",
-          placeholder: "Enter your username",
+          placeholder: "Enter your email",
         },
         password: { 
           label: "Password",
@@ -20,11 +21,11 @@ export const nextAuthOptions = {
           placeholder: "Enter your password"
         },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         // Call Login API and pass in credentials variable
-        if (!credentials?.username || !credentials?.password) return null
+        if (!credentials?.email || !credentials?.password) return null
 
-        const user = await loginUser(credentials)
+        const user = await signIn(credentials)
 
         if(user.data) return user.data
         else {
@@ -34,27 +35,14 @@ export const nextAuthOptions = {
     }),
   ],
   callbacks: {
-    session: ({ session, token }) => {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: token.id,
-          randomKey: token.randomKey,
-        },
-      };
+    jwt: async ({ token, user }) => {
+        user && (token.user = user)
+        return token
     },
-    jwt: ({ token, user }) => {
-      if (user) {
-        const u = user;
-        return {
-          ...token,
-          id: u.id,
-          randomKey: u.randomKey,
-        };
-      }
-      return token;
-    },
+    session: async ({ session, token }) => {
+        session.user = token.user
+        return session
+    }
   },
   pages:{
     signIn: "/login",

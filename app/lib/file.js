@@ -1,0 +1,51 @@
+import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { storage } from '../firebase/config';
+
+// Function to upload a single file
+export async function uploadSingleFile(file, path) {
+  try {
+    const storageRef = ref(storage, path);
+    const snapshot = await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    return downloadURL;
+
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    throw error;
+  }
+}
+
+// Function to upload multiple files
+export async function uploadMultipleFiles(files, basePath) {
+  const uploadTasks = files.map(async (file) => {
+    try {
+      const storageRef = ref(storage, `${basePath}/${file.name}`);
+      const snapshot = await uploadBytesResumable(storageRef, file);
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      return { 
+        originalFileName: file.name, 
+        attachmentStoragePath: downloadURL 
+      };
+      
+    } catch (error) {
+      console.error(`Error uploading ${file.name}:`, error);
+      throw new Error(`${error.message}`)
+    }
+  });
+
+  return Promise.all(uploadTasks);
+}
+
+// Function to delete file
+export async function deleteExistingFile(path) {
+  try {
+      const storageRef = ref(storage, path);
+      const deletedFile = await deleteObject(storageRef);
+      console.log("snapshot", deletedFile)
+      return deletedFile;
+
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      throw error;
+    }
+}
