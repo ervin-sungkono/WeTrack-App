@@ -29,7 +29,7 @@ export default function LoginForm(){
 
     useEffect(() => {
         if(status === 'authenticated'){
-            router.replace('/dashboard')
+            router.replace(callbackUrl ?? '/dashboard')
         }
     })
 
@@ -48,8 +48,6 @@ export default function LoginForm(){
                 }else if(res.error.includes("Verifikasi")){
                     setErrorMessage("Verifikasi akun Anda terlebih dahulu!")
                 }
-            } else {
-                router.replace(callbackUrl ?? "/dashboard");
             }
         } catch (error) {
             setError(true);

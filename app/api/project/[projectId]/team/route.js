@@ -73,13 +73,10 @@ export async function POST(request, response){
             }, { status: 404 });
         }
 
-        const { teams, role } = await request.json()
+        const { teams, role = "Member" } = await request.json()
         const { projectId } = response.params
         
-        console.log("teams", teams)
-        console.log("role", role)
-        console.log("projectId", projectId)
-        if(!teams || !role){
+        if(!teams){
             return NextResponse.json({
                 message: "Payload is not complete"
             }, { status: 400 })
