@@ -14,9 +14,11 @@ export default function AcceptInvitationForm({ teamId }){
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
+        setLoading(true)
         validateTeamMember({ projectId: searchParams.get('projectId'), teamId: teamId})
             .then(res => {
                 if(!res.success) setAuthorized(false)
+                setLoading(false)
             })
     }, [searchParams, teamId])
 

@@ -25,7 +25,7 @@ export const addTeam = ({ teams, projectId }) => {
     const response = fetch(`/api/project/${projectId}/team`, {
         method: 'POST',
         body: JSON.stringify({
-            teams: teamList
+            teams: teamList,
         })
     })
     .then(res => res.json())

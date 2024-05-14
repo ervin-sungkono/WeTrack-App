@@ -9,6 +9,7 @@ export async function GET(request, response) {
         const session = await getUserSession(request, response, nextAuthOptions);
         if (!session.user) {
             return NextResponse.json({ 
+                success: false,
                 message: "Unauthorized, must login first" 
             }, { status: 401 });
         }
@@ -16,6 +17,7 @@ export async function GET(request, response) {
         const userId = session.user.uid;
         if (!userId) {
             return NextResponse.json({ 
+                success: false,
                 message: "User not found" 
             }, { status: 404 });
         }
@@ -24,14 +26,12 @@ export async function GET(request, response) {
 
         if(!projectId){
             return NextResponse.json({
+                success: false,
                 message: "Missing parameter"
             }, { status: 400 })
         }
 
         const teamsRef = collection(db, 'teams')
-
-        // const fieldRef = new FieldPath('userId')
-        // const fieldRef2 = new FieldPath('projectId')
 
         const q = query(teamsRef, 
             where('userId', '==', userId),
@@ -52,19 +52,14 @@ export async function GET(request, response) {
             updatedAt: new Date().toISOString()
         });
 
-        const updatedTeam = await getDoc(teamDocRef)
-
         return NextResponse.json({
-            data: {
-                id: updatedTeam.id,
-                ...updatedTeam.data()
-            },
+            success: true,
             message: "Successfully accept invitation of new member to team"
         }, { status: 200 });
 
     } catch (error) {
         return NextResponse.json({
-            data: null,
+            success: false,
             message: error.message
         }, { status: 500 });
     }
