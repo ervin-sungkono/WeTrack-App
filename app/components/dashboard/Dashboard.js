@@ -62,7 +62,7 @@ export default function Dashboard(){
                     <div className="mt-12 flex flex-col justify-center items-center text-center">
                         <EmptyState 
                             message={"Belum ada data proyek yang tersedia untuk ditampilkan dalam dasbor."}
-                            action={"Buat Proyek Sekarang"}
+                            action={"Buat Proyek Baru Sekarang"}
                             href={`/projects/create`}
                         />
                     </div>
