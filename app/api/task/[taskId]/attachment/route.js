@@ -2,7 +2,7 @@ import { db } from "@/app/firebase/config";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { uploadMultipleFiles } from "@/app/lib/file";
 import { getUserSession } from "@/app/lib/session";
-import { addDoc, collection, getDoc, getDocs, query, serverTimestamp, where } from "firebase/firestore";
+import { addDoc, collection, getDoc, getDocs, doc, query, serverTimestamp, where } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
 export async function GET(request, response) {
@@ -54,7 +54,19 @@ export async function POST(request, response) {
         const formData = await request.formData();
         const attachments = formData.getAll('attachments')
 
+        if(!attachments){
+            return NextResponse.json({
+                message: "Missing payload"
+            }, { status: 404 })
+        }
+
         const { taskId } = response.params
+
+        if(!taskId) {
+            return NextResponse.json({
+                message: "Missing parameter or query"
+            }, { status: 404 })
+        }
 
         const taskDoc = await getDoc(doc(db, "tasks", taskId))
         if(!taskDoc.exists()) {
@@ -63,38 +75,24 @@ export async function POST(request, response) {
             }, { status: 400 })
         }
         const projectId = taskDoc.data().projectId
-
-        if(!taskId ||!projectId) {
-            return NextResponse.json({
-                message: "Missing parameter or query"
-            }, { status: 404 })
-        }
-        
-        if(!attachments){
-            return NextResponse.json({
-                message: "Missing payload"
-            }, { status: 404 })
-        }
         
         const imageSizePerFile = 2 * 1024 * 1024
-        
         if(attachments.length > 0) {
             for (const attachment of attachments) {
-                if (attachment > imageSizePerFile) {
+                if (attachment.size > imageSizePerFile) {
                     return NextResponse.json({
                         message: "Sorry, the attachment exceeded the limit of 2mb per object"
                     }, { status: 400 })
                 }
-                console.log("Lolos bang")
             }
         }
 
         if(attachments && attachments.length > 0){
-            const results = await uploadMultipleFiles(attachments, `project/${projectId}/tasks/${taskId}`);
+            const results = await uploadMultipleFiles(attachments, `/project/${projectId}/tasks/${taskId}`);
             console.log(results)
             if(results.length > 0){
-                const result = await Promise.all(results.map(async (item) => {
-                    await addDoc(collection(db, "attachments"), {
+                await Promise.all(results.map(async (item) => {
+                    return addDoc(collection(db, "attachments"), {
                         taskId: taskId,
                         originalFileName: item.originalFileName,
                         attachmentStoragePath: item.attachmentStoragePath,

@@ -13,12 +13,10 @@ export async function GET(request, context) {
         const q = query(subTaskRef, where("parentId", "==", taskId))
         const subTaskDocs = await getDocs(q)
 
-        const subTasks = !subTaskDocs.empty() ? subTaskDocs.docs.map((item) => {
-            return {
+        const subTasks = subTaskDocs.docs.map(item => ({
                 id: item.id,
                 taskName: item.data().taskName
-            }
-        }) : []
+        }))
         
         if(taskSnap.exists()){
             const taskData = taskSnap.data()

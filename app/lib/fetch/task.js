@@ -20,6 +20,7 @@ export function getAllTask(projectId){
 
 export function createNewTask({ 
     taskName, 
+    type = "Task",
     startDate,
     dueDate,
     priority, 
@@ -32,6 +33,7 @@ export function createNewTask({
 }){
     const payload = {
         taskName,
+        type,
         startDate,
         dueDate,
         priority,
