@@ -125,6 +125,7 @@ export default function AttachmentSection({ taskId }){
             if(!res.success){
                 alert("Gagal menambahkan lampiran")
             }
+            fileInput.remove()
         }
         fileInput.click()
     }
