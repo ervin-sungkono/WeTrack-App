@@ -1,20 +1,20 @@
 "use client"
 import dynamic from "next/dynamic"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { dateFormat } from "@/app/lib/date"
 import DotButton from "../../common/button/DotButton"
 import CustomTooltip from "../../common/CustomTooltip"
-import { onSnapshot } from "firebase/firestore"
 
-const Table = dynamic(() => import("../../common/table/Table"))
 
 import { FiPlus as PlusIcon } from "react-icons/fi"
 import { FaFileAlt as FileIcon } from "react-icons/fa";
 import { MdFileDownload as DownloadIcon, MdDelete as DeleteIcon } from "react-icons/md"
+import { onSnapshot } from "firebase/firestore"
 import { getQueryReference } from "@/app/firebase/util"
-import { addAttachment } from "@/app/l  ib/fetch/attachment"
-import { deleteAttachment } from "@/app/lib/fetch/attachment"
+import { addAttachment, deleteAttachment } from "@/app/lib/fetch/attachment"
+import { saveAs } from "file-saver"
 
+const Table = dynamic(() => import("../../common/table/Table"))
 
 export default function AttachmentSection({ taskId }){
     const attachmentsAction = [
@@ -85,12 +85,13 @@ export default function AttachmentSection({ taskId }){
             header: "",
             cell: ({ row }) => {
                 const id = row.getValue("id")
+                const filename = row.getValue("originalFileName")
                 const attachmentLocation = row.getValue("attachmentStoragePath")
                 return (
                     <div className="flex gap-1">
-                        <a href={attachmentLocation} download className="hover:bg-gray-200 p-1.5 rounded transition-colors duration-300">
+                        <button onClick={() => saveAs(attachmentLocation, filename)} className="hover:bg-gray-200 p-1.5 rounded transition-colors duration-300">
                             <DownloadIcon size={20}/>
-                        </a>
+                        </button>
                         <button className="hover:bg-gray-200 p-1.5 rounded transition-colors duration-300">
                             <DeleteIcon className="text-danger-red" size={20} onClick={() => handleDeleteAttachment(id)}/>
                         </button>
