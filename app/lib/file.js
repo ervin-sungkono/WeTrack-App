@@ -20,7 +20,7 @@ export async function uploadMultipleFiles(files, basePath) {
   const uploadTasks = files.map(async (file) => {
     try {
       const storageRef = ref(storage, `${basePath}/${file.name}`);
-      const snapshot = await uploadBytes(storageRef, file);
+      const snapshot = await uploadBytesResumable(storageRef, file);
       const downloadURL = await getDownloadURL(snapshot.ref);
       return { 
         originalFileName: file.name, 

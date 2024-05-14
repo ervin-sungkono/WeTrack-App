@@ -1,10 +1,21 @@
 import { updateDoc, getDoc, doc, collection, query, where, getDocs } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
+import { getUserSession } from '@/app/lib/session';
+import { nextAuthOptions } from '@/app/lib/auth';
 
-export async function GET(request, context) {
+export async function GET(request, response) {
     try {
-        const { taskId } = context.params
+        const session = await getUserSession(request, response, nextAuthOptions)
+        const userId = session.user.uid
+
+        if(!userId){
+            return NextResponse.json({
+                message: "Unauthorized, user id not found"
+            }, { status: 401 })
+        }
+
+        const { taskId } = response.params
 
         const taskRef = doc(db, "tasks", taskId)
         const taskSnap = await getDoc(taskRef);
@@ -44,9 +55,18 @@ export async function GET(request, context) {
     }
 }
 
-export async function PUT(request, context) {
+export async function PUT(request, response) {
     try {
-        const { taskId } = context.params;
+        const session = await getUserSession(request, response, nextAuthOptions)
+        const userId = session.user.uid
+
+        if(!userId){
+            return NextResponse.json({
+                message: "Unauthorized, user id not found"
+            }, { status: 401 })
+        }
+
+        const { taskId } = response.params;
         const {
             projectId,
             assignedTo,
