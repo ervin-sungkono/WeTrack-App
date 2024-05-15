@@ -1,9 +1,7 @@
-export function addAttachment({ taskId, attachments }){
+export function addAttachment({ taskId, attachment }){
     let formData = new FormData()
     formData.enctype = "multipart/form-data"
-    attachments.forEach(attachment => {
-        formData.append("attachments", attachment)
-    })
+    formData.append("attachment", attachment)
     
     const response = fetch(`/api/task/${taskId}/attachment`, {
         method: 'POST',

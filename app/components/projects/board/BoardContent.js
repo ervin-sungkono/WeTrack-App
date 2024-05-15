@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import { createNewTask, reorderTask } from "@/app/lib/fetch/task"
 import { createNewTaskStatus, deleteTaskStatus, reorderTaskStatus, updateTaskStatus } from "@/app/lib/fetch/taskStatus"
-import { getQueryReferenceOrderBy } from "@/app/firebase/util"
+import { getQueryReferenceOrderBy, getTaskReferenceOrderBy } from "@/app/firebase/util"
 import { onSnapshot } from "firebase/firestore"
 import { debounce } from "@/app/lib/helper"
 
@@ -16,10 +16,11 @@ import DotButton from "../../common/button/DotButton"
 import UpdateStatusForm from "../../common/form/UpdateStatusForm"
 import DeleteStatusForm from "../../common/form/DeleteStatusForm"
 import { TailSpin } from "react-loader-spinner"
+import { useSessionStorage } from "usehooks-ts"
 
 import { IoFilter as FilterIcon } from "react-icons/io5"
 import { FiPlus as PlusIcon } from "react-icons/fi"
-
+import { FaCheck as CheckIcon } from "react-icons/fa"
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -56,6 +57,7 @@ export default function BoardContent({ projectId }){
   const [taskStatusData, setTaskStatusData] = useState()
   const [taskData, setTaskData] = useState()
   const [placeholderProps, setPlaceholderProps] = useState({});
+  const [project, _] = useSessionStorage("project")
 
   const queryAttr = "data-rfd-draggable-id";
   const destinationQuertAttr = "data-rfd-droppable-id";
@@ -148,6 +150,8 @@ export default function BoardContent({ projectId }){
     , 300)
   , [])
 
+  useEffect(() => {console.log(state)}, [state])
+
   useEffect(() => {
     if(!taskData && !taskStatusData) return
     updateState(taskData, taskStatusData)
@@ -165,7 +169,7 @@ export default function BoardContent({ projectId }){
       setTaskStatusData(taskStatusData)
     }))
 
-    const taskReference = getQueryReferenceOrderBy({ collectionName: "tasks", field: "projectId", id: projectId, orderByKey: "order" })
+    const taskReference = getTaskReferenceOrderBy({ collectionName: "tasks", field: "projectId", id: projectId, orderByKey: "order" })
     const taskUnsubscribe = onSnapshot(taskReference, (taskSnapshot => {
       const taskData = taskSnapshot.docs.map(taskDoc => ({
         id: taskDoc.id,
@@ -392,7 +396,10 @@ export default function BoardContent({ projectId }){
                         className="custom-scrollbar min-h-[280px] max-h-full flex-shrink-0 mr-4 flex flex-col p-2 gap-4 bg-gray-200 rounded-md overflow-y-auto"
                       >
                         <div className="flex items-center gap-2 px-1 text-dark-blue/80">
-                          <div className="uppercase flex-grow text-xs md:text-sm font-semibold">{el.status} <span className="text-[10.8px] md:text-xs">({el.content.filter(task => task.taskName.toLowerCase().includes(query)).length})</span></div>
+                          <div className="uppercase flex-grow text-xs md:text-sm font-semibold flex items-center gap-1"><span>{el.status}</span>
+                            <span className="text-[10.8px] md:text-xs">({el.content.filter(task => task.taskName.toLowerCase().includes(query)).length})</span>
+                           { project && <span>{project.endStatus === el.id && <CheckIcon size={14} className="text-green-700"/>}</span>}
+                          </div>
                           <DotButton 
                             name={`taskStatus-${el.id}`} 
                             actions={[
@@ -420,10 +427,10 @@ export default function BoardContent({ projectId }){
                               <TailSpin width={32} height={32} color="#47389F"/>
                             </div> :
                             <SimpleInputForm
-                            name={"taskName"}
-                            onSubmit={(e) => createTask(e)}
-                            onBlur={() => setActiveStatusId(null)}
-                            placeholder="Apa yang ingin dikerjakan?"
+                              name={"taskName"}
+                              onSubmit={(e) => createTask(e)}
+                              onBlur={() => setActiveStatusId(null)}
+                              placeholder="Apa yang ingin dikerjakan?"
                             />
                           )}
                         </BoardList>
@@ -456,7 +463,7 @@ export default function BoardContent({ projectId }){
         (<div className="w-[278px] flex-shrink-0">
           <SimpleInputForm
             name={"taskStatusName"}
-            placeholder=""
+            placeholder="Nama status.."
             onSubmit={(e) => createTaskStatus(e)}
             onBlur={() => setCreatingList(false)}
           />

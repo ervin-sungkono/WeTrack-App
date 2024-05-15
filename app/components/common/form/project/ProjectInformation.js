@@ -21,6 +21,7 @@ export default function ProjectInformation({prevFormStep}){
     const [isLoading, setLoading] = useState(true)
     const [completed, setCompleted] = useState(false)
     const [projectId, setProjectId] = useState(null)
+    const [isSubmittingProject, setSubmitProject] = useState(false)
     const { projectData, submitProjectData } = useProjectData()
     
     useEffect(() => setLoading(false), [])
@@ -32,6 +33,7 @@ export default function ProjectInformation({prevFormStep}){
     }
 
     const onSubmit = async(values, { setSubmitting }) => {
+        setSubmitProject(true)
         if(projectData.templateType === 'ai-generated'){
             if(values.projectDescription.length < 30){
                 alert("Deskripsi Proyek harus terdiri dari minimal 30 karakter.")
@@ -60,10 +62,11 @@ export default function ProjectInformation({prevFormStep}){
                         console.log(res)
                         alert("Gagal mengirim data formulir")
                     }
+                    setSubmitProject(false)
                 })
                 .catch(err => console.log(err))
         }
-        if(projectData.templateType === 'default'){
+        else if(projectData.templateType === 'default'){
             submitProjectData(values)
             .then(async(res) => {
                 if(res.data){
@@ -73,6 +76,7 @@ export default function ProjectInformation({prevFormStep}){
                     console.log(res)
                     alert("Gagal mengirim data formulir")
                 }
+                setSubmitProject(false)
             })
             .catch(err => console.log(err))
         }
@@ -109,27 +113,30 @@ export default function ProjectInformation({prevFormStep}){
         </div> 
     )
     return(
-        <FormikWrapper
-            initialValues={initialValues}
-            onSubmit={onSubmit}
-            validationSchema={projectInformationSchema}
-        >
-            {(formik) => {
-                return(
-                    <div className="w-full flex flex-col gap-6">
-                        <div className="flex flex-col gap-4">
-                            <FormikField label="Nama Proyek" required name="projectName" type="text" placeholder={"Masukkan nama proyek.."}/>
-                            <KeyFormikField/>
-                            {projectData.templateType === 'ai-generated' && <FormikTextarea label="Deskripsi Proyek" name="projectDescription" placeholder={"Masukkan deskripsi proyek.."} rows={4}/>}
+        <>
+            {isSubmittingProject && <PopUpLoad/>}
+            <FormikWrapper
+                initialValues={initialValues}
+                onSubmit={onSubmit}
+                validationSchema={projectInformationSchema}
+            >
+                {(formik) => {
+                    return(
+                        <div className="w-full flex flex-col gap-6">
+                            <div className="flex flex-col gap-4">
+                                <FormikField label="Nama Proyek" required name="projectName" type="text" placeholder={"Masukkan nama proyek.."}/>
+                                <KeyFormikField/>
+                                {projectData.templateType === 'ai-generated' && <FormikTextarea label="Deskripsi Proyek" name="projectDescription" placeholder={"Masukkan deskripsi proyek.."} rows={4}/>}
+                            </div>
+                            <div className="flex justify-end gap-2 md:gap-4">
+                                <Button variant="secondary" onClick={prevFormStep} className="w-24 md:w-32">Kembali</Button>
+                                <Button type={"submit"} disabled={formik.isSubmitting} className="w-24 md:w-32">Kirim</Button>
+                            </div>
+                            {formik.isSubmitting && <PopUpLoad/>}
                         </div>
-                        <div className="flex justify-end gap-2 md:gap-4">
-                            <Button variant="secondary" onClick={prevFormStep} className="w-24 md:w-32">Kembali</Button>
-                            <Button type={"submit"} disabled={formik.isSubmitting} className="w-24 md:w-32">Kirim</Button>
-                        </div>
-                        {formik.isSubmitting && <PopUpLoad/>}
-                    </div>
-                ) 
-            }}
-        </FormikWrapper>
+                    ) 
+                }}
+            </FormikWrapper>
+        </>
     )
 }
