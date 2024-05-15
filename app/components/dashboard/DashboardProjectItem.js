@@ -1,4 +1,5 @@
 import { IoIosArrowDown as DropdownIcon, IoIosArrowUp as DropdownCloseIcon } from "react-icons/io";
+import DashboardTaskItem from "./DashboardTaskItem";
 
 export default function DashboardProjectItem({project, selectedProject, setSelectedProject}){
     const currentProject = selectedProject && selectedProject.id === project.id;
@@ -25,16 +26,18 @@ export default function DashboardProjectItem({project, selectedProject, setSelec
             </div>
             {currentProject && (
                 <div className="px-2 md:px-4 pb-2 md:pb-4">
-                    <div className={`flex flex-col gap-2`}>
+                    <div className={`flex flex-col gap-4`}>
                         {project.tasks.length > 0 ? (
                             project.tasks.map((task, index) => (
                                 <div key={index}>
-                                    <div className="text-sm md:text-base text-dark-blue font-semibold">
-                                        {task.taskName}
-                                    </div>
-                                    <div className="text-xs md:text-sm text-dark-blue">
-                                        {task.status.statusName.toUpperCase()}
-                                    </div>
+                                    <DashboardTaskItem 
+                                        title={task.taskName}
+                                        status={task.status.statusName}
+                                        priority={task.priority}
+                                        id={task.id}
+                                        href={`/projects/${project.id}/tasks/${task.id}`}
+                                        firstItem={index === 0}
+                                    />
                                 </div>
                             ))
                         ) : (

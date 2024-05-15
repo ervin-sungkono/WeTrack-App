@@ -2,6 +2,7 @@
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut, Bar } from "react-chartjs-2";
 import EmptyState from "../common/EmptyState";
+import { stringToColour } from "@/app/lib/color";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
@@ -29,22 +30,7 @@ export default function DashboardInsight({project}){
         });
     
         const statusDataColors = Object.keys(statusData).map((key) => {
-            let color = '';
-            switch(key){
-                case 'In Progress':
-                    color = 'rgba(227, 213, 91, 1)';
-                    break;
-                case 'Done':
-                    color = 'rgba(92, 221, 105, 1)';
-                    break;
-                case 'To Do':
-                    color = 'rgba(227, 116, 91, 1)';
-                    break;
-                default:
-                    color = 'rgba(158, 158, 158, 1)';
-                    break;
-            }
-            return color;
+            return stringToColour(key);
         });
         
         doughnutChartData = {
@@ -77,15 +63,17 @@ export default function DashboardInsight({project}){
             },
         };
     
-        const priorityData = project?.tasks.reduce((value, task) => {
+        let priorityData = [0, 0, 0, 0];
+
+        priorityData = project?.tasks.reduce((value, task) => {
             const priority = task.priority;
-            if(value[priority]){
+            if (priority >= 0 && priority < value.length) {
                 value[priority] += 1;
-            }else{
-                value[priority] = 1;
             }
             return value;
-        }, {});
+        }, priorityData);
+
+        console.log(priorityData);
         
         const priorityDataTotal = Object.values(priorityData).reduce((total, curr) => total + curr, 0);
         

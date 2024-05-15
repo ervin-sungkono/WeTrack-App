@@ -8,6 +8,7 @@ import { getDocumentReference, getQueryReferenceOrderBy } from "@/app/firebase/u
 import { getDoc, onSnapshot } from "firebase/firestore";
 import Table from "../../common/table/Table";
 import UserIcon from "../../common/UserIcon";
+import LinkButton from "../../common/button/LinkButton";
 
 export default function OverviewContent({ projectId }){
 
@@ -94,10 +95,10 @@ export default function OverviewContent({ projectId }){
                 return(
                     <div className="w-full h-full block">
                         {
-                            priority === 0 ? "Tinggi" :
-                            priority === 1 ? "Sedang" :
-                            priority === 2 ? "Rendah" :
-                            priority === 3 ? "Tidak Ada" : "-"
+                            priority === 0 ? "TINGGI" :
+                            priority === 1 ? "SEDANG" :
+                            priority === 2 ? "RENDAH" :
+                            priority === 3 ? "TIDAK ADA" : "-"
                         }
                     </div>
                 )
@@ -132,13 +133,27 @@ export default function OverviewContent({ projectId }){
 
     return(
         <div className="flex flex-col gap-4">
-            <OverviewCard title="Tugas Terbaru" action={"Lihat semua"} href={`/projects/${projectId}/tasks`}>
-                <Table 
-                    data={taskData}
-                    columns={columns}
-                    usePagination={false}
-                />
-            </OverviewCard>
+            {taskData.length === 0 ? (
+                <OverviewCard title="Tugas Terbaru">
+                    <div className="flex flex-col items-center justify-center">
+                        <div className="text-center">
+                            Belum ada data tugas yang tersedia.
+                        </div>
+                        <LinkButton href={`/projects/${projectId}/board`} variant="primary" size={`md`} className="mt-2 md:mt-4 px-2 xl:px-4">
+                            Buat Tugas Baru Sekarang
+                        </LinkButton>
+                    </div>
+                </OverviewCard>
+            ) : (
+                <OverviewCard title="Tugas Terbaru" action={"Lihat semua"} href={`/projects/${projectId}/tasks`}>
+                    <Table 
+                        data={taskData}
+                        columns={columns}
+                        usePagination={false}
+                    />
+                </OverviewCard>
+            )}
+            
             <div className="flex flex-col md:flex-row justify-between gap-4">
                 <OverviewCard title="Ditugaskan Kepada Saya" action={<PlusIcon className="text-xl md:text-2xl" />}>
                     <div className="flex flex-col gap-2">
