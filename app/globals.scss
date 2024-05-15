@@ -106,6 +106,7 @@ textarea{
     }
 
     .nav-menu{
+        min-width: 160px;
         height: 100vh;
         z-index: 9999;
         position: absolute;
@@ -115,7 +116,6 @@ textarea{
         flex-direction: column;
         background-color: white;
         padding-top: 5rem;
-        padding-bottom: 1rem;
         padding-inline: 1rem;
         transition: 0.5s transform ease-in-out;
 

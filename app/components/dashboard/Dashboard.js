@@ -46,27 +46,29 @@ export default function Dashboard(){
     }else{
         return (
             <DashboardLayout>
-                <div className="flex flex-col gap-4">
-                    <Header title={"Dasbor"} links={links}/>
+                <div className="flex flex-col md:h-full">
+                    <div className="flex flex-col gap-4">
+                        <Header title={"Dasbor"} links={links}/>
+                    </div>
+                    {projectsData?.length > 0 ? (
+                        <div className="flex flex-grow flex-col-reverse md:flex-row gap-4 w-full md:h-full md:overflow-y-auto mt-4 mb-8 md:mb-0">
+                            <div className="w-full md:h-full md:w-1/2 md:overflow-y-auto custom-scrollbar">
+                                <DashboardInsight project={selectedProject}/>
+                            </div>
+                            <div className="w-full md:h-full md:w-1/2 md:overflow-y-auto">
+                                <DashboardTaskList list={projectsData} selectedProject={selectedProject} setSelectedProject={setSelectedProject} />
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="mt-12 flex flex-col justify-center items-center text-center">
+                            <EmptyState 
+                                message={"Belum ada data proyek yang tersedia untuk ditampilkan dalam dasbor."}
+                                action={"Buat Proyek Baru Sekarang"}
+                                href={`/projects/create`}
+                            />
+                        </div>
+                    )}    
                 </div>
-                {projectsData?.length > 0 ? (
-                    <div className="flex flex-col md:flex-row gap-2 md:gap-4 w-full mt-4 mb-8 md:mb-0">
-                        <div className="w-full md:w-1/2">
-                            <DashboardInsight project={selectedProject}/>
-                        </div>
-                        <div className="w-full md:w-1/2">
-                            <DashboardTaskList list={projectsData} selectedProject={selectedProject} setSelectedProject={setSelectedProject} />
-                        </div>
-                    </div>
-                ) : (
-                    <div className="mt-12 flex flex-col justify-center items-center text-center">
-                        <EmptyState 
-                            message={"Belum ada data proyek yang tersedia untuk ditampilkan dalam dasbor."}
-                            action={"Buat Proyek Baru Sekarang"}
-                            href={`/projects/create`}
-                        />
-                    </div>
-                )}    
             </DashboardLayout> 
         )
     }
