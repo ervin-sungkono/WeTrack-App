@@ -101,7 +101,6 @@ export async function POST(request, response) {
             }, { status: 400 });
         }
         
-        console.log("Checking project document reference");
         const projectDocRef = doc(db, 'projects', projectId);
 
         if(!projectDocRef){
@@ -169,9 +168,6 @@ export async function POST(request, response) {
         if (statusId) {
             const taskStatusDocRef = doc(db, 'taskStatuses', statusId);
             taskStatusSnap = await getDoc(taskStatusDocRef);
-
-            console.log(taskStatusDocRef)
-            console.log(taskStatusSnap)
             if (taskStatusSnap.exists()){
                 const { statusName } = taskStatusSnap.data()
                 taskStatusDetails = {
@@ -190,13 +186,11 @@ export async function POST(request, response) {
         if(labels && labels.length > 0){
             labelDetails = await Promise.all(labels.map(async (label) =>{
                 const labelDoc = await getDoc(doc(db, "labels", label))
-
                 if(labelDoc.exists()){
                     return {
                         ...labelDoc.data()
                     }
                 }
-
                 return null
             }))
         }
@@ -204,6 +198,9 @@ export async function POST(request, response) {
         const result = await runTransaction(db, async (transaction) => {
             const counterRef = doc(db, 'taskOrderCounters', statusId);
             const counterSnap = await transaction.get(counterRef);
+            
+            const displayIdCounterRef = doc(db, 'displayIdCounters', projectId);
+            const displayIdCounterSnap = await transaction.get(displayIdCounterRef);
 
             const newTaskDocRef = doc(collection(db, 'tasks'));
             const newTask = {
@@ -215,6 +212,7 @@ export async function POST(request, response) {
                 taskName,
                 labels: labels ?? [],
                 status: statusId ?? null,
+                displayId: displayIdCounterSnap.exists() ? displayIdCounterSnap.data().displayId : 1,
                 order: counterSnap.exists() ? counterSnap.data().lastOrder : 0,
                 priority: priority ?? 0,
                 description: description ?? null,
@@ -232,11 +230,23 @@ export async function POST(request, response) {
                     lastOrder: 1,
                     updatedAt: serverTimestamp()
                 });
-            }else{
+            } else {
                 transaction.update(counterRef, { 
                     lastOrder: counterSnap.data().lastOrder + 1,
                     updatedAt: serverTimestamp()
                 });
+            }
+
+            if(!displayIdCounterSnap.exists()) {
+                transaction.set(displayIdCounterRef, {
+                    displayId: 2,
+                    updatedAt: serverTimestamp()
+                })
+            } else {
+                transaction.update(displayIdCounterRef, {
+                    displayId: displayIdCounterSnap.data().displayId + 1,
+                    updatedAt: serverTimestamp()
+                })
             }
 
             return {
