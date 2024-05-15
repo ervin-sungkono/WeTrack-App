@@ -51,7 +51,8 @@ export default function OverviewContent({ projectId }){
                     ...document.data()
                 })
             }))
-            setTaskData(data.slice(0, 3))
+            setTaskData(data)
+            // setTaskData(data.slice(0, 3))
             console.log(data)
         })
         return unsubscribe
