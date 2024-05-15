@@ -69,7 +69,7 @@ export default function AttachmentSection({ taskId }){
             cell: ({ row }) => {
                 const attachmentName = row.getValue("originalFileName")
                 const attachmentLocation = row.getValue("attachmentStoragePath")
-                return <a href={attachmentLocation} target="_blank" className="cursor-pointer text-xs md:text-sm text-basic-blue hover:underline">{attachmentName}</a>
+                return <a href={attachmentLocation} target="_blank" className="break-words cursor-pointer text-xs md:text-sm text-basic-blue hover:underline">{attachmentName}</a>
             }
         },
         {
@@ -77,7 +77,7 @@ export default function AttachmentSection({ taskId }){
             header: 'Tanggal diunggah',
             cell: ({ row }) => {
                 const createdAt = row.getValue("createdAt")
-                return <p className="text-xs md:text-sm">{dateFormat(createdAt, true)}</p>
+                return <p className="text-xs md:text-sm">{dateFormat(createdAt.seconds, true)}</p>
             }
         }, 
         {
@@ -110,21 +110,17 @@ export default function AttachmentSection({ taskId }){
         fileInput.multiple = true
         fileInput.formEnctype = "multipart/form-data"
         fileInput.onchange = async() => {
-            const files =  Array.from(fileInput.files)
-
             const imageSizePerFile = 2 * 1024 * 1024
-            for(let i = 0; i < files.length; i++){
-                if(files[i].size > imageSizePerFile){
-                    alert("Lampiran tidak boleh melebihi 2MB")
-                    return
-                }
-            }
+            const files =  Array.from(fileInput.files).filter(file => file.size <= imageSizePerFile)
             
-            const res = await addAttachment({ taskId: taskId, attachments: files })
+            const res = await Promise.all(files.map(async(file) => {
+                await addAttachment({ taskId: taskId, attachment: file })
+            })) 
 
-            if(!res.success){
-                alert("Gagal menambahkan lampiran")
-            }
+            res.forEach((r, index) => {
+                if(!r.success) alert(`Fail to upload file ${files[index].name}`)
+            })
+
             fileInput.remove()
         }
         fileInput.click()
