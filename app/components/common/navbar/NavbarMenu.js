@@ -56,7 +56,7 @@ export default function NavbarMenu({ showForm, hideMenu }){
                 <Link href={"/"}>
                     <WeTrackLogo/>
                 </Link>
-                <div className={`nav-menu h-full flex-grow flex justify-between items-center 
+                <div className={`nav-menu h-full flex-grow flex justify-between items-center pb-16 md:pb-0 
                     ${hamburgerState ? 'active' : ''}`}
                 >
                     {   
