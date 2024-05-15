@@ -1,33 +1,39 @@
 import dynamic from "next/dynamic"
+import { useState, useEffect } from "react"
 import { dateFormat } from "@/app/lib/date"
 import CustomTooltip from "../../common/CustomTooltip"
 import UserSelectButton from "../../common/UserSelectButton"
 import SelectButton from "../../common/button/SelectButton"
 
 import { FiPlus as PlusIcon } from "react-icons/fi"
+import { FaTasks as TaskIcon } from "react-icons/fa";
 import { getPriority } from "@/app/lib/string"
+import { getQueryReference } from "@/app/firebase/util"
+import { onSnapshot } from "firebase/firestore"
 
 const Table = dynamic(() => import("../../common/table/Table"))
 
 export default function SubtaskSection({ taskId }){
+    const [subtaskData, setSubtaskData] = useState([])
+
     const updateAssignee = (value) => {
         console.log(value)
     }
 
-    const subtasks = [
-        { 
-            id: 'ST1023',
-            taskName: 'Develop Initial UI',
-            priority: 3,
-            statusId: "SI232",
-        },
-        { 
-            id: 'ST1024',
-            taskName: 'Add Animation',
-            priority: 2,
-            statusId: "SI233",
-        }
-    ]
+    useEffect(() => {
+        if(!taskId) return
+
+        const reference = getQueryReference({ collectionName: 'tasks', field: 'parentId', id: taskId })
+        const unsubscribe = onSnapshot(reference, (snapshot) => {
+            const updatedSubTask = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }))
+            setSubtaskData(updatedSubTask)
+        })
+
+        return () => unsubscribe()
+    }, [taskId])
 
     const columns = [
         {
@@ -92,7 +98,7 @@ export default function SubtaskSection({ taskId }){
     return(
         <div className="flex flex-col gap-1 md:gap-2">
             <div className="flex items-center">
-                <p className="font-semibold text-xs md:text-sm flex-grow">Subtugas <span>({subtasks.length})</span></p>
+                <p className="font-semibold text-xs md:text-sm flex-grow">Subtugas <span>({subtaskData.length})</span></p>
                 <div className="flex gap-1">
                     <CustomTooltip id="subtask-tooltip" content={"Tambah Subtugas"}>
                         <button
@@ -104,19 +110,25 @@ export default function SubtaskSection({ taskId }){
                     </CustomTooltip>
                 </div>
             </div>
-            <div className="w-full flex items-center gap-2">
-                <div className="flex-grow h-2 bg-gray-200 rounded-full">
-                    <div className="bg-basic-blue h-full rounded-full" style={{width: '50%'}}></div>
+            {subtaskData.length > 0 ? 
+            <>
+                <div className="w-full flex items-center gap-2">
+                    <div className="flex-grow h-2 bg-gray-200 rounded-full">
+                        <div className="bg-basic-blue h-full rounded-full" style={{width: '50%'}}></div>
+                    </div>
+                    <p className="text-xs md:text-sm">50% Selesai</p>
                 </div>
-                <p className="text-xs md:text-sm">50% Selesai</p>
-            </div>
-            {subtasks.length > 0 ? 
-            <Table
-                data={subtasks}
-                columns={columns}
-                usePagination={false}
-            /> :
-            <p className="text-xs md:text-sm">Belum ada subtugas yang ditambahkan.</p>}
+                <Table
+                    data={subtaskData}
+                    columns={columns}
+                    usePagination={false}
+                />
+            </>
+            :
+            <div className="flex flex-col items-center gap-2 py-8">
+                <TaskIcon size={48} className="text-dark-blue/60"/>
+                <p className="text-xs md:text-sm text-dark-blue/80">Belum ada subtugas yang ditambahkan.</p>
+            </div>}
         </div>
     )
 }
