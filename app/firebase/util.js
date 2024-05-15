@@ -1,6 +1,11 @@
 import { db } from "@/app/firebase/config"
 import { query, orderBy, where, collection, doc, and, getDocs, getDoc, updateDoc, serverTimestamp, addDoc } from "firebase/firestore"
 
+export const getTaskReferenceOrderBy = ({ collectionName, field, id, orderByKey }) => {
+    const q = query(collection(db, collectionName), and(where(field, '==', id), where('type', '==', 'Task')), orderBy(orderByKey))
+    return q
+}
+
 export const getQueryReferenceOrderBy = ({ collectionName, field, id, orderByKey }) => {
     const q = query(collection(db, collectionName), where(field, '==', id), orderBy(orderByKey))
     return q
