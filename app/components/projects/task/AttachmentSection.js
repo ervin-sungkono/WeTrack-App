@@ -118,13 +118,11 @@ export default function AttachmentSection({ taskId }){
             const files =  Array.from(fileInput.files).filter(file => file.size <= imageSizePerFile)
             
             try{
-                const res = await Promise.all(files.map(async(file) => {
-                    await addAttachment({ taskId: taskId, attachment: file })
-                })) 
-    
-                res.forEach((r, index) => {
-                    if(!r.success) alert(`Fail to upload file ${files[index].name}`)
+                files.forEach(async(file) => {
+                    const res = await addAttachment({ taskId: taskId, attachment: file })
+                    if(!res.success) console.log(`Fail to upload file ${file.name}`)
                 })
+    
             }catch(e){
                 console.log(e)
             }finally{
