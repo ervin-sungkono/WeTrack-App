@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { dateFormat } from "@/app/lib/date"
 import DotButton from "../../common/button/DotButton"
 import CustomTooltip from "../../common/CustomTooltip"
-
+import PopUpLoad from "../../common/alert/PopUpLoad"
 
 import { FiPlus as PlusIcon } from "react-icons/fi"
 import { FaFileAlt as FileIcon } from "react-icons/fa";
@@ -17,6 +17,9 @@ import { saveAs } from "file-saver"
 const Table = dynamic(() => import("../../common/table/Table"))
 
 export default function AttachmentSection({ taskId }){
+    const [uploading, setUploading] = useState(false)
+    const [attachmentData, setAttachmentData] = useState([])
+
     const attachmentsAction = [
         {
             label: "Unduh Semua",
@@ -34,7 +37,7 @@ export default function AttachmentSection({ taskId }){
             }
         }
     ]
-    const [attachmentData, setAttachmentData] = useState([])
+
     const handleDeleteAttachment = async(attachmentId) => {
         // Tambahin popup Konfirmasi
         const res = await deleteAttachment({ taskId, attachmentId })
@@ -110,24 +113,31 @@ export default function AttachmentSection({ taskId }){
         fileInput.multiple = true
         fileInput.formEnctype = "multipart/form-data"
         fileInput.onchange = async() => {
+            setUploading(true)
             const imageSizePerFile = 2 * 1024 * 1024
             const files =  Array.from(fileInput.files).filter(file => file.size <= imageSizePerFile)
             
-            const res = await Promise.all(files.map(async(file) => {
-                await addAttachment({ taskId: taskId, attachment: file })
-            })) 
-
-            res.forEach((r, index) => {
-                if(!r.success) alert(`Fail to upload file ${files[index].name}`)
-            })
-
-            fileInput.remove()
+            try{
+                const res = await Promise.all(files.map(async(file) => {
+                    await addAttachment({ taskId: taskId, attachment: file })
+                })) 
+    
+                res.forEach((r, index) => {
+                    if(!r.success) alert(`Fail to upload file ${files[index].name}`)
+                })
+            }catch(e){
+                console.log(e)
+            }finally{
+                setUploading(false)
+                fileInput.remove()
+            }
         }
         fileInput.click()
     }
 
     return(
         <div className="flex flex-col gap-1 md:gap-2">
+            {uploading && <PopUpLoad/>}
             <div className="flex items-center">
                 <div className="flex flex-grow flex-col gap-1">
                     <p className="font-semibold text-xs md:text-sm text-dark-blue">Lampiran <span>({attachmentData.length})</span> <span className="text-[10.8px] md:text-xs">maks 10</span></p>
