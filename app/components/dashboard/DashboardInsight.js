@@ -190,15 +190,15 @@ export default function DashboardInsight({project}){
     }
 
     return (
-        <div className="flex flex-col gap-1 md:gap-2 items-center md:items-start justify-center md:justify-start">
-            <a href={`/projects/${project?.id}`} className="cursor-pointer">
+        <div className="flex h-full flex-col gap-2 items-center md:items-start justify-center md:justify-start">
+            {project && <a href={`/projects/${project.id}`} className="cursor-pointer">
                 <div className="text-lg md:text-xl text-basic-blue font-bold hover:underline hover:text-basic-blue/75">
-                    {project?.projectName.toUpperCase()}
+                    {project.projectName.toUpperCase()}
                 </div>
-            </a>
-            <div className="w-full flex flex-col gap-12 md:gap-24 mb-12">
+            </a>}
+            <div className="w-full h-full flex flex-col gap-12 md:gap-24 mb-12">
                 {project?.tasks.length === 0 ? (
-                    <div className="">
+                    <div className="h-full">
                         <EmptyState
                             message={"Belum ada data tugas yang tersedia."}
                             action={"Buat Tugas Baru Sekarang"}

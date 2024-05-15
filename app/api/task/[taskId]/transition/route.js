@@ -23,7 +23,7 @@ export async function POST(request, response) {
             newIndex
         } = await request.json();
 
-        if(!taskId) {
+        if(!taskId || !oldIndex) {
             return NextResponse.json({
                 message: "Missing paramater"
             }, { status: 404 })
@@ -113,20 +113,21 @@ export async function POST(request, response) {
                 })
             }  
 
-            // Move the task to the new document
-            await updateDoc(taskRef, {
-                status: newStatusId,
-                order: newIndex,
-                updatedAt: serverTimestamp()
-            })
-
             // Update the new status order counter
             const newStatusCounterRef = doc(db, "taskOrderCounters", newStatusId)
             const newStatusCounterSnap = await getDoc(newStatusCounterRef)
 
+            // Move the task to the new document
+            await updateDoc(taskRef, {
+                status: newStatusId,
+                order: newIndex ?? (newStatusCounterSnap.exists() ? newStatusCounterSnap.data().lastOrder : 0),
+                updatedAt: serverTimestamp()
+            })
+
+            // Update the new status order counter
             if(!newStatusCounterSnap.exists()){
                 await addDoc(collection(db, "taskOrderCounters"), {
-                    lastOrder: newStatusCounterSnap.data().lastOrder + 1,
+                    lastOrder: 1,
                     updatedAt: serverTimestamp()
                 })
             }else{
@@ -135,6 +136,8 @@ export async function POST(request, response) {
                     updatedAt: serverTimestamp()
                 })
             }  
+
+            
         }
 
         
