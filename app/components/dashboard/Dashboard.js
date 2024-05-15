@@ -55,14 +55,14 @@ export default function Dashboard(){
                             <DashboardInsight project={selectedProject}/>
                         </div>
                         <div className="w-full md:w-1/2">
-                            <DashboardTaskList list={projectsData} setSelectedProject={setSelectedProject} />
+                            <DashboardTaskList list={projectsData} selectedProject={selectedProject} setSelectedProject={setSelectedProject} />
                         </div>
                     </div>
                 ) : (
                     <div className="mt-12 flex flex-col justify-center items-center text-center">
                         <EmptyState 
                             message={"Belum ada data proyek yang tersedia untuk ditampilkan dalam dasbor."}
-                            action={"Buat Proyek Sekarang"}
+                            action={"Buat Proyek Baru Sekarang"}
                             href={`/projects/create`}
                         />
                     </div>

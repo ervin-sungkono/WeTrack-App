@@ -69,7 +69,7 @@ export default function UserIcon({ src, alt = "", fullName, size = 'md' }){
     )
   
     return (
-        <div className={`relative ${getIconSize()} overflow-hidden rounded-full`}>
+        <div className={`relative ${getIconSize()} overflow-hidden rounded-full bg-white`}>
             <Image
                 alt={alt}
                 onError={setError}
