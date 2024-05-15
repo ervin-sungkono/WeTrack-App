@@ -1,9 +1,9 @@
 import { db } from "@/app/firebase/config";
 import { getProjectRole } from "@/app/firebase/util";
 import { nextAuthOptions } from "@/app/lib/auth";
-import { uploadMultipleFiles } from "@/app/lib/file";
+import { uploadMultipleFiles, uploadSingleFile } from "@/app/lib/file";
 import { getUserSession } from "@/app/lib/session";
-import { addDoc, collection, getDoc, getDocs, doc, query, serverTimestamp, where } from "firebase/firestore";
+import { addDoc, collection, getDoc, getDocs, doc, query, serverTimestamp, where, runTransaction } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
 export async function GET(request, response) {
@@ -53,9 +53,9 @@ export async function POST(request, response) {
         }
 
         const formData = await request.formData();
-        const attachments = formData.getAll('attachments')
+        const attachment = formData.get('attachment')
 
-        if(!attachments){
+        if(!attachment){
             return NextResponse.json({
                 message: "Missing payload"
             }, { status: 404 })
@@ -85,48 +85,54 @@ export async function POST(request, response) {
             }, { status: 401 })
         }
 
-        const attachmentsQuery = query(collection(db, "attachments"), where("taskId", "==", taskId));
-        const attachmentsSnapshot = await getDocs(attachmentsQuery);
-        const attachmentCount = attachmentsSnapshot.size;
+        const imageSizeLimit = 2 * 1024 * 1024
 
-        if (attachmentCount >= 10) {
+        if (attachment.size > imageSizeLimit) {
             return NextResponse.json({
-                message: "The task already has 10 attachments"
-            }, { status: 400 });
+                message: "Sorry, the attachment exceeded the limit of 2mb"
+            }, { status: 400 })
         }
+
+        const result = await runTransaction(db, async (transaction) => {
+            const counterRef = doc(db, "attachmentCounters", taskId)
+            const counterSnap = await transaction.get(counterRef)
+            const attachmentCount = counterSnap.exists() ? counterSnap.data().count : 0 
+
+            if (attachmentCount >= 10) {
+                throw new Error("The task already has 10 attachments");
+            }
         
-        const imageSizePerFile = 2 * 1024 * 1024
-        if(attachments.length > 0) {
-            for (const attachment of attachments) {
-                if (attachment.size > imageSizePerFile) {
-                    return NextResponse.json({
-                        message: "Sorry, the attachment exceeded the limit of 2mb per object"
-                    }, { status: 400 })
-                }
+            const result = await uploadSingleFile(attachment, `/project/${projectId}/tasks/${taskId}`);
+            const attachmentDocRef = doc(collection(db, "attachments"))
+            transaction.set((attachmentDocRef), {
+                taskId: taskId,
+                originalFileName: attachment.name,
+                attachmentStoragePath: result,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp(),
+                deletedAt: null
+            })
+
+            if(!counterSnap.exists()) {
+                transaction.set(counterRef, {
+                    count: 1,
+                    updatedAt: serverTimestamp()
+                })
+            } else {
+                transaction.set(counterRef, {
+                    count: counterSnap.data().count + 1,
+                    updatedAt: serverTimestamp()
+                })
             }
-        }
 
-        if(attachments && attachments.length > 0){
-            const results = await uploadMultipleFiles(attachments, `/project/${projectId}/tasks/${taskId}`);
-            if(results.length > 0){
-                await Promise.all(results.map(async (item) => {
-                    return addDoc(collection(db, "attachments"), {
-                        taskId: taskId,
-                        originalFileName: item.originalFileName,
-                        attachmentStoragePath: item.attachmentStoragePath,
-                        createdAt: serverTimestamp(),
-                        updatedAt: serverTimestamp(),
-                        deletedAt: null
-                    })
-                }))
-
-                return NextResponse.json({
-                    success: true,
-                    message: "Files uploaded successfully"
-                }, { status: 200 });
-            }
-        }
-
+            return result
+        })
+           
+        return NextResponse.json({
+            success: true,
+            message: "Files uploaded successfully"
+        }, { status: 200 });
+            
     } catch (error) {
         return NextResponse.json({
             success: false,

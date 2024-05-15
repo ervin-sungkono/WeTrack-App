@@ -19,7 +19,7 @@ export const getAllTeamMember = ({ projectId }) => {
 }
 
 export const addTeam = ({ teams, projectId }) => {
-    const teamList = JSON.parse(teams).map(user => user.value)
+    const teamList = teams && JSON.parse(teams).map(user => user.value)
     if(!teamList) return
 
     const response = fetch(`/api/project/${projectId}/team`, {

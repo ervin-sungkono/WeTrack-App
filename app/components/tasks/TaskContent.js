@@ -7,7 +7,8 @@ import SearchBar from "../common/SearchBar"
 import SelectButton from "../common/button/SelectButton"
 
 import { IoFilter as FilterIcon } from "react-icons/io5"
-import { getAllTask } from "@/app/lib/fetch/task"
+import { onSnapshot } from "firebase/firestore"
+import { getQueryReferenceOrderBy } from "@/app/firebase/util"
 import EmptyState from "../common/EmptyState"
 
 export default function TaskContent({ projectId, taskId }){
@@ -21,21 +22,20 @@ export default function TaskContent({ projectId, taskId }){
     }
 
     useEffect(() => {
-        if(projectId){
-            getAllTask(projectId)
-                .then(res => {
-                    if(res.data){
-                        setTasks(res.data)
-                        if(!taskId){
-                            setTaskData(res.data[0])
-                        }
-                    }
-                    else{
-                        alert("Gagal mengambil data tugas")
-                    }
-                })
-        }
-    }, [projectId, taskId])
+        if(!projectId) return
+
+        const reference = getQueryReferenceOrderBy({ collectionName: "tasks", field: "projectId", id: projectId, orderByKey: 'order' })
+        const unsubscribe = onSnapshot(reference, (snapshot) => {
+            const updatedTasks = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }))
+            setTasks(updatedTasks)
+            setTaskData(updatedTasks[0])
+        })
+
+        return () => unsubscribe()
+    }, [projectId])
 
     return(
         <div className="w-full h-full flex flex-col gap-2.5 sm:gap-4 overflow-y-auto">

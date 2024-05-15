@@ -13,7 +13,7 @@ export default function BoardPage({ params: { id } }){
 
     return(
         <ProjectLayout projectId={id}>
-            <Header title={"Papan"} links={links}/>
+            <Header title={"Papan Kanban"} links={links}/>
             <TaskProvider>
                 <BoardContent projectId={id}/>
             </TaskProvider>
