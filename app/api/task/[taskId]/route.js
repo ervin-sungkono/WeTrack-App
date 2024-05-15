@@ -1,4 +1,4 @@
-import { updateDoc, getDoc, doc, collection, query, where, getDocs } from 'firebase/firestore';
+import { updateDoc, getDoc, doc, collection, query, where, getDocs, deleteDoc } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
@@ -68,15 +68,13 @@ export async function PUT(request, response) {
 
         const { taskId } = response.params;
         const {
-            projectId,
             assignedTo,
             taskName,
-            label,
-            statusId,
+            labels,
+            priority,
             description,
             startDate,
             dueDate
-
         } = await request.json();
 
         const projectDocRef = doc(db, 'projects', projectId);
@@ -88,20 +86,7 @@ export async function PUT(request, response) {
                 message: "No such project found"
             }, { status: 404 });
         }
-
-        const projectData = projectSnap.data();
-        const taskList = projectData.taskList || [];
-
-        const taskIndex = taskList.findIndex(task => task.id === taskId);
-
-        const taskToUpdate = taskList[taskIndex];
-
-        if (taskIndex === -1) {
-            return NextResponse.json({
-                message: 'Task not found'
-            }, { status: 404 });
-        }
-
+        
         let assignedToDetails = null;
         if (assignedTo) {
             const userDocRef = doc(db, 'users', assignedTo);
@@ -116,124 +101,83 @@ export async function PUT(request, response) {
             }
         }
 
-        let taskStatusDetails = null;
-        if (statusId) {
-            const userDocRef = doc(db, 'taskStatuses', statusId);
-
-            const taskStatusSnap = await getDoc(userDocRef);
-            if (taskStatusSnap.exists()) {
-                taskStatusDetails = taskStatusSnap.data();
-
-            } else {
-                return NextResponse.json({
-                    message: "The task status not found"
-                }, { status: 404 })
-            }
-        }
-
-        const updatedTask = {
-            ...taskToUpdate,
-            assignedTo: { assignedTo, assignedToDetails } ?? taskToUpdate.assignedTo,
-            taskName: taskName ?? taskToUpdate.taskName,
-            label: label ?? taskToUpdate.label,
-            status: { statusId, taskStatusDetails } ?? taskToUpdate.status,
-            description: description ?? taskToUpdate.description,
-            startDate: startDate ?? taskToUpdate.startDate,
-            dueDate: dueDate ?? taskToUpdate.dueDate,
-            updatedAt: new Date().toISOString(),
-        };
-
-        const updatedTaskList = [
-            ...taskList.slice(0, taskIndex),
-            updatedTask,
-            ...taskList.slice(taskIndex + 1),
-        ];
-
-        const taskDocRef = doc(db, 'tasks', taskToUpdate.id)
+        const taskDocRef = doc(db, 'tasks', taskId)
         const taskSnap = await getDoc(taskDocRef)
         
-        let taskCollectionToUpdate;
-        if (taskSnap.exists()) {
-            taskCollectionToUpdate = taskSnap.data();
-            
-        } else {
+        if(!taskSnap.exists()) {
             return NextResponse.json({
-                message: "Can't find the task collection"
+                message: "Task not found"
             }, { status: 404 })
         }
+
+        const taskData = taskSnap.data()
+
+        if(labels.length > 0) {
+            labels.forEach(async (label) => {
+                const labelDoc = await getDoc(doc(db, "labels", label))
+                if(!labelDoc.exists) {
+                    return NextResponse.json({
+                        message: "Label not found"
+                    }, { status: 400 })
+                }
+            });
+        }
         
-        //update task collection
         await updateDoc(taskDocRef, {
-            assignedTo: { assignedTo, assignedToDetails } ?? taskCollectionToUpdate.assignedTo,
-            taskName: taskName ?? taskCollectionToUpdate.taskName,
-            label: label ?? taskCollectionToUpdate.label,
-            status: { statusId, taskStatusDetails } ?? taskCollectionToUpdate.status,
-            description: description ?? taskCollectionToUpdate.description,
-            startDate: startDate ?? taskCollectionToUpdate.startDate,
-            dueDate: dueDate ?? taskCollectionToUpdate.dueDate,
+            assignedTo: assignedTo ?? taskData.assignedTo,
+            taskName: taskName ?? taskData.taskName,
+            priority: priority ?? taskData.priority,
+            labels: labels ?? taskData.labels,
+            description: description ?? taskData.description,
+            startDate: startDate ?? taskData.startDate,
+            dueDate: dueDate ?? taskData.dueDate,
             updatedAt: new Date().toISOString()
         })
         
-        //update task in project collection
-        await updateDoc(projectDocRef, {
-            taskList: updatedTaskList,
-        });
-
         return NextResponse.json({
-            data: updatedTask,
+            success: true,
             message: 'Task updated successfully'
         }, { status: 200 });
 
     } catch (error) {
-        console.error("Cannot update task", error);
         return NextResponse.json({
-            data: null,
+            success: false,
             message: error.message
         }, { status: 500 });
     }
 }
 
-export async function DELETE(request, context) {
+export async function DELETE(request, response) {
     try {
-        const { taskId } = context.params;
-        const projectId = request.nextUrl.searchParams.get("projectId")
+        const session = await getUserSession(request, response, nextAuthOptions)
+        const userId = session.user.uid
 
-        const projectDocRef = doc(db, 'projects', projectId);
-        const projectSnap = await getDoc(projectDocRef);
-
-        if (!projectSnap.exists()) {
+        if(!userId){
             return NextResponse.json({
-                data: null,
-                message: "Project not found"
-            }, { status: 404 });
+                message: "Unauthorized, user id not found"
+            }, { status: 401 })
         }
 
-        const projectData = projectSnap.data();
-        let taskList = projectData.taskList || [];
-        const taskIndex = taskList.findIndex(task => task.id === taskId);
-
-        if (taskIndex === -1) {
+        const { taskId } = response.params;
+        const taskDocRef = doc(db, "tasks", taskId)
+        const taskDoc = await getDoc(taskDocRef)
+        if(!taskDoc.exists()) {
             return NextResponse.json({
-                data: null,
-                message: 'Task not found'
-            }, { status: 404 });
+                message: "Task not found"
+            }, { status: 404 })
         }
 
-        taskList.splice(taskIndex, 1);
-
-        await updateDoc(projectDocRef, {
-            taskList: taskList
-        });
+        await deleteDoc(taskDocRef) 
 
         return NextResponse.json({
+            success: true,
             message: "Task successfully deleted"
         }, { status: 200 });
 
 
     } catch (error) {
-        console.error("Can't delete task", error);
         return NextResponse.json({
-            data: null,
+            success: false,
             message: error.message
         }, { status: 500 });
     }
