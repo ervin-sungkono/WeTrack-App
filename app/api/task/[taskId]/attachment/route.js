@@ -102,7 +102,7 @@ export async function POST(request, response) {
                 throw new Error("The task already has 10 attachments");
             }
         
-            const result = await uploadSingleFile(attachment, `/project/${projectId}/tasks/${taskId}`);
+            const result = await uploadSingleFile(attachment, `/project/${projectId}/tasks/${taskId}/${attachment.name}`);
             const attachmentDocRef = doc(collection(db, "attachments"))
             transaction.set((attachmentDocRef), {
                 taskId: taskId,
