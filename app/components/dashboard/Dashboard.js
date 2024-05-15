@@ -55,7 +55,7 @@ export default function Dashboard(){
                             <DashboardInsight project={selectedProject}/>
                         </div>
                         <div className="w-full md:w-1/2">
-                            <DashboardTaskList list={projectsData} setSelectedProject={setSelectedProject} />
+                            <DashboardTaskList list={projectsData} selectedProject={selectedProject} setSelectedProject={setSelectedProject} />
                         </div>
                     </div>
                 ) : (
