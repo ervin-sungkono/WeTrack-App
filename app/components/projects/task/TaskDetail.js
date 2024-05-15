@@ -66,7 +66,6 @@ function TaskDetail({ taskId, closeFn }){
                 height={100}
                 width={100}
             />
-            <p className="text-sm md:text-base">Memuat data tugas..</p>
         </div>
     )
 
@@ -131,7 +130,7 @@ function TaskDetail({ taskId, closeFn }){
                     </div>
                     <ChatSection taskId={taskId} title={task.taskName}/>
                     <AttachmentSection taskId={taskId}/>
-                    <SubtaskSection taskId={taskId}/>
+                    {task.type !== "SubTask" && <SubtaskSection taskId={taskId}/>}
                     <ActivitySection taskId={taskId}/>
                 </div>
             </div>
