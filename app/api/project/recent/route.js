@@ -15,21 +15,34 @@ export async function GET(request, response) {
             }, { status: 400 })
         }
 
-        const projectsRef = collection(db, 'projects')
-        // const fieldRef = new FieldPath('createdBy', 'id')
+        const teamsRef = collection(db, 'teams');    
+        const teamQuery = query(teamsRef, where('userId', "==", userId));
+        const teamSnapshots = await getDocs(teamQuery);
+        const projectIds = teamSnapshots.docs.filter(team => (team.data().status == 'accepted'))
+                                .slice(0,3)
+                                .map(project => project.data().projectId)
 
-        const q = query(projectsRef, where('createdBy', "==", userId), orderBy("createdAt", "desc"), limit(3));
-        const querySnapshot = await getDocs(q);
-
-        const projects = querySnapshot.docs.map(doc => {
-            return {
-                id: doc.id,
-                ...doc.data(),
+        const allProjects = await Promise.all(projectIds.map(async (item) => {
+            const projectDoc = await getDoc(doc(db, "projects", item))
+            if(projectDoc.exists()) {
+                const projectData = projectDoc.data()
+                const userDoc = await getDoc(doc(db, 'users', projectData.createdBy));
+                return {
+                    id: projectDoc.id,
+                    ...projectData,
+                    createdBy: {
+                        id: userDoc.id,
+                        fullName: userDoc.data().fullName,
+                        email: userDoc.data().email,
+                        profileImage: userDoc.data().profileImage
+                    }
+                }
             }
-        });
+            return null
+        }))
 
         return NextResponse.json({
-            data: projects,
+            data: allProjects.filter((item) => item != null),
             message: "Projects retrieved successfully"
         }, { status: 200 });
         
