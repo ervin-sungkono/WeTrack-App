@@ -56,7 +56,7 @@ export default function OverviewContent({ projectId }){
             // setTaskData(data.slice(0, 3))
             console.log(data)
         })
-        return unsubscribe
+        return () => unsubscribe()
     }, [projectId])
 
     const columns = [

@@ -79,7 +79,7 @@ export default function TeamContent({ projectId }){
             ]
             setTeamFetched(allTeam)
         })
-        return unsubscribe
+        return () => unsubscribe()
     }, [projectId, query])
 
     const handleAddMember = async () => {
