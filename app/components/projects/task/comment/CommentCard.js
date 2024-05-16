@@ -52,7 +52,7 @@ export default function CommentCard({ comment, deleteComment }){
                         {renderComment(comment.commentText)}
                     </p>
                 </div>
-                {comment.userId === session.user.uid && 
+                {(comment.userId === session.user.uid) && deleteComment && 
                 <button 
                     className="flex items-center gap-2 text-danger-red hover:underline" 
                     onClick={() => deleteComment(comment)}
