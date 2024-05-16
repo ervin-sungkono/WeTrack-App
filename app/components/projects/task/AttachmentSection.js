@@ -5,6 +5,8 @@ import { dateFormat } from "@/app/lib/date"
 import DotButton from "../../common/button/DotButton"
 import CustomTooltip from "../../common/CustomTooltip"
 import PopUpLoad from "../../common/alert/PopUpLoad"
+import PopUpForm from "../../common/alert/PopUpForm"
+import Button from "../../common/button/Button"
 
 import { FiPlus as PlusIcon } from "react-icons/fi"
 import { FaFileAlt as FileIcon } from "react-icons/fa";
@@ -19,7 +21,44 @@ const Table = dynamic(() => import("../../common/table/Table"))
 
 export default function AttachmentSection({ taskId }){
     const [uploading, setUploading] = useState(false)
+    const [isDeleting, setDeleting] = useState(false)
+    const [deleteConfirmation, setDeleteConfirmation] = useState(false)
+    const [deleteMode, setDeleteMode] = useState(null)
+    const [fileFocus, setFileFocus] = useState(null)
     const [attachmentData, setAttachmentData] = useState([])
+
+    const handleDeleteAttachment = async() => {
+        // Tambahin popup Konfirmasi
+        setDeleting(true)
+        try{
+            if(deleteMode === "single"){
+                const res = await deleteAttachment({ taskId, attachmentId: fileFocus })
+
+                if(!res.success){
+                    alert("Gagal menghapus lampiran")
+                }
+            }else if(deleteMode === "all"){
+                await Promise.all(attachmentData.map(attachment => {
+                    return deleteAttachment({ taskId, attachmentId: attachment.id })
+                }))
+            } 
+        }
+        catch(e){
+            console.log(e)
+        }finally{
+            setDeleteConfirmation(false)
+            setDeleteMode(null)
+            setFileFocus(null)
+            setDeleting(false)
+        }
+    }
+
+    const showDeleteConfirmation = (mode, id = null) => {
+        setDeleteConfirmation(true)
+        setDeleteMode(mode)
+
+        if(mode === "single" && id) setFileFocus(id)
+    }
 
     const attachmentsAction = [
         {
@@ -42,23 +81,9 @@ export default function AttachmentSection({ taskId }){
         },
         {
             label: "Hapus Semua",
-            fnCall: async() => {
-                // Tambahin popup konfirmasi
-                await Promise.all(attachmentData.map(attachment => {
-                    return deleteAttachment({ taskId, attachmentId: attachment.id })
-                }))
-            }
+            fnCall: () => showDeleteConfirmation("all")
         }
     ]
-
-    const handleDeleteAttachment = async(attachmentId) => {
-        // Tambahin popup Konfirmasi
-        const res = await deleteAttachment({ taskId, attachmentId })
-
-        if(!res.success){
-            alert("Gagal menghapus lampiran")
-        }
-    }
 
     useEffect(() => {
         if(!taskId) return
@@ -109,7 +134,7 @@ export default function AttachmentSection({ taskId }){
                             <DownloadIcon size={20}/>
                         </button>
                         <button className="hover:bg-gray-200 p-1.5 rounded transition-colors duration-300">
-                            <DeleteIcon className="text-danger-red" size={20} onClick={() => handleDeleteAttachment(id)}/>
+                            <DeleteIcon className="text-danger-red" size={20} onClick={() => showDeleteConfirmation("single", id)}/>
                         </button>
                     </div>
                 )
@@ -148,7 +173,19 @@ export default function AttachmentSection({ taskId }){
 
     return(
         <div className="flex flex-col gap-1 md:gap-2">
-            {uploading && <PopUpLoad/>}
+            {(uploading || isDeleting) && <PopUpLoad/>}
+            {deleteConfirmation && 
+            <PopUpForm
+                title={deleteMode === 'single' ? "Hapus Lampiran" : "Hapus Semua Lampiran"}
+                titleSize="large"
+                message={deleteMode === 'single' ? 'Apakah Anda yakin ingin menghapus lampiran ini?' : 'Apakah Anda yakin ingin menghapus semua lampiran dalam tugas ini?'}
+                wrapContent
+            >
+                <div className="mt-4 flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
+                    <Button variant="danger" onClick={handleDeleteAttachment}>Hapus</Button>
+                    <Button variant="secondary" onClick={() => {setDeleteConfirmation(false)}}>Batal</Button>
+                </div>
+            </PopUpForm>}
             <div className="flex items-center">
                 <div className="flex flex-grow flex-col gap-1">
                     <p className="font-semibold text-xs md:text-sm text-dark-blue">Lampiran <span>({attachmentData.length})</span> <span className="text-[10.8px] md:text-xs">maks 10</span></p>

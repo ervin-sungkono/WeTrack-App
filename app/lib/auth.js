@@ -1,10 +1,12 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import { signIn } from "./fetch/user";
 
+// const MAX_AGE = 60 * 60 * 24 * 7 // 7 days
+const MAX_AGE = 60 * 60 // 1 hour
+
 export const nextAuthOptions = {
   session: {
     strategy: "jwt",
-    maxAge: 7 * 24 * 60 * 60
   },
   providers: [
     CredentialsProvider({
@@ -27,7 +29,10 @@ export const nextAuthOptions = {
 
         const user = await signIn(credentials)
 
-        if(user.data) return user.data
+        if(user.data) return {
+          ...user.data,
+          expires: Date.now() + (1000 * MAX_AGE)
+        }
         else {
           throw new Error( JSON.stringify({ errors: user.message, status: false }))
         }
@@ -37,6 +42,9 @@ export const nextAuthOptions = {
   callbacks: {
     jwt: async ({ token, user }) => {
         user && (token.user = user)
+        if (Date.now() > token.user.expires) {
+          return null; // Return null to invalidate the session
+        }
         return token
     },
     session: async ({ session, token }) => {
