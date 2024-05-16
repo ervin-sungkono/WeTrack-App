@@ -86,7 +86,6 @@ export async function POST(request, response) {
         } = await request.json();
 
         const session = await getUserSession(request, response, nextAuthOptions)
-
         const createdBy = session.user.uid
 
         if(!createdBy){
@@ -257,7 +256,13 @@ export async function POST(request, response) {
             };
         });
 
-        await createHistory({ userId, taskId: result.id, projectId, eventType, action })
+        await createHistory({ 
+            userId: createdBy, 
+            taskId: result.id, 
+            projectId: projectId, 
+            eventType: "Task", 
+            action: "created" 
+        })
 
         return NextResponse.json({
             data: {

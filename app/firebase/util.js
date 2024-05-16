@@ -139,13 +139,13 @@ export const handleDeletedUser = async({ userId }) => {
 
 export const createHistory = async({ userId, taskId, projectId, eventType, action, previousValue, newValue }) => {
     try {
-        if(!userId && !taskId && !projectId) return null
+        if(!userId) return null
 
         const historyDocRef = collection(db, "histories")
         const newHistory =  await addDoc(historyDocRef, {
             userId: userId,
-            taskId: taskId,
-            projectId: projectId,
+            taskId: taskId ?? null,
+            projectId: projectId ?? null,
             eventType: eventType,
             action: action,
             previousValue: previousValue ?? null,
