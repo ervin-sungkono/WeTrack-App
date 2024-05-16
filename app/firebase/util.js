@@ -159,3 +159,26 @@ export const createHistory = async({ userId, taskId, projectId, eventType, actio
         throw new Error("Something went wrong when adding to history")
     }
 }
+
+export const createNotification = async({ userId, senderId, taskId, projectId, eventType, action, newValue }) => {
+    try {
+        if(!userId && !taskId && !projectId) return null
+
+        const notificationDocRef = collection(db, "notifications")
+        const newNotification = await addDoc(notificationDocRef, {
+            userId: userId,
+            senderId: senderId,
+            taskId: taskId,
+            projectId: projectId,
+            eventType: eventType,
+            action: action,
+            previousValue: previousValue ?? null,
+            newValue: newValue ?? null,
+            createdAt: serverTimestamp()
+        })
+
+        return newNotification.id
+    } catch (error) {
+        throw new Error("Something went wrong when adding to notification")
+    }
+}
