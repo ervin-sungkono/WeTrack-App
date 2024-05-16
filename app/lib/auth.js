@@ -1,8 +1,7 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import { signIn } from "./fetch/user";
 
-// const MAX_AGE = 60 * 60 * 24 * 7 // 7 days
-const MAX_AGE = 60 * 60 // 1 hour
+const MAX_AGE = 60 * 60 * 24 * 7 // 7 days
 
 export const nextAuthOptions = {
   session: {
