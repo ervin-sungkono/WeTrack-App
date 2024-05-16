@@ -10,8 +10,10 @@ export default function ProjectLayout({ children, hideSidebar, projectId }){
     useEffect(() => {
         if(projectId && (!project || project.id != projectId)){
             getProjectByID(projectId)
-            .then(project => {
-                if(project.data) setProject(project.data)
+            .then(async(project) => {
+                if(project.data){
+                    setProject(project.data)
+                }
                 else alert("Gagal memperoleh rincian proyek")
             })
         }
