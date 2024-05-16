@@ -5,64 +5,66 @@ import { nextAuthOptions } from "@/app/lib/auth";
 import { generateChatResponse } from "@/app/lib/OpenAIFunctions";
 import { getUserSession } from "@/app/lib/session";
 
-export async function GET(request, response){
-    try{
-        const session = await getUserSession(request, response, nextAuthOptions)
-        const userId = session.user.uid
+export const runtime = 'edge'
 
-        if(!userId){
-            return NextResponse.json({
-                message: "Unauthorized, user id not found"
-            }, { status: 401 })
-        }
+// export async function GET(request, response){
+//     try{
+//         const session = await getUserSession(request, response, nextAuthOptions)
+//         const userId = session.user.uid
 
-        const { taskId } = response.params
+//         if(!userId){
+//             return NextResponse.json({
+//                 message: "Unauthorized, user id not found"
+//             }, { status: 401 })
+//         }
 
-        if(!taskId) {
-            return NextResponse.json({
-                message: "Missing paramater"
-            }, { status: 404 })
-        }
+//         const { taskId } = response.params
 
-        const chatsColRef = collection(db, 'chats')
-        const q = query(chatsColRef, where('taskId', '==', taskId))
-        const querySnapshot = await getDocs(q)
+//         if(!taskId) {
+//             return NextResponse.json({
+//                 message: "Missing paramater"
+//             }, { status: 404 })
+//         }
 
-        const chats = await Promise.all(querySnapshot.docs.map(async(document) => {
-            const senderId = document.data().senderId
-            if(senderId){
-                const userRef = doc(db, "users", senderId)
-                const userSnap = await getDoc(userRef)
-                const { fullName, profileImage } = userSnap.data()
+//         const chatsColRef = collection(db, 'chats')
+//         const q = query(chatsColRef, where('taskId', '==', taskId))
+//         const querySnapshot = await getDocs(q)
 
-                return({
-                    id: document.id,
-                    sender: {
-                        fullName,
-                        profileImage
-                    },
-                    ...document.data()
-                })
-            }
-            return({
-                id: document.id,
-                sender: null,
-                ...document.data()
-            })
-        }))
+//         const chats = await Promise.all(querySnapshot.docs.map(async(document) => {
+//             const senderId = document.data().senderId
+//             if(senderId){
+//                 const userRef = doc(db, "users", senderId)
+//                 const userSnap = await getDoc(userRef)
+//                 const { fullName, profileImage } = userSnap.data()
 
-        return NextResponse.json({
-            data: chats, 
-            message: "Succesfully get all available chats"
-        }, { status: 200 })
-    }catch(error){
-        console.error("Cannot get chats", error);
-        return NextResponse.json({
-            data: null,
-            message: error.message
-        }, { status: 500 });
-    }
-}
+//                 return({
+//                     id: document.id,
+//                     sender: {
+//                         fullName,
+//                         profileImage
+//                     },
+//                     ...document.data()
+//                 })
+//             }
+//             return({
+//                 id: document.id,
+//                 sender: null,
+//                 ...document.data()
+//             })
+//         }))
+
+//         return NextResponse.json({
+//             data: chats, 
+//             message: "Succesfully get all available chats"
+//         }, { status: 200 })
+//     }catch(error){
+//         console.error("Cannot get chats", error);
+//         return NextResponse.json({
+//             data: null,
+//             message: error.message
+//         }, { status: 500 });
+//     }
+// }
 
 export async function POST(request, response){
     try {
