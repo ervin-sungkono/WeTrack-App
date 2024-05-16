@@ -7,13 +7,22 @@ import { useEffect, useState } from "react";
 import FormikSelectField from "../formik/FormikSelectField";
 import Button from "../../button/Button";
 import PopUpLoad from "../../alert/PopUpLoad";
-import { getDocumentReference } from "@/app/firebase/util";
-import { getDoc } from "firebase/firestore";
+import { getDocumentReference, getQueryReferenceOrderBy } from "@/app/firebase/util";
+import { getDoc, onSnapshot } from "firebase/firestore";
+import { updateProject, deleteProject } from "@/app/lib/fetch/project";
+import PopUpInfo from "../../alert/PopUpInfo";
+import DeleteProjectForm from "./DeleteProjectForm";
+import { useRouter } from "next/navigation";
+import KeyFormikField from "./KeyFormikField";
 
 export default function SettingForm({projectId}){
 
     const [error, setError] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("")
+    const [errorDelete, setErrorDelete] = useState(false)
+    const [errorDeleteMessage, setErrorDeleteMessage] = useState("")
     const [loading, setLoading] = useState(true)
+    const router = useRouter()
 
     const [projectSettings, setProjectSettings] = useState({
         projectName: "",
@@ -21,29 +30,91 @@ export default function SettingForm({projectId}){
         startStatus: "",
         endStatus: "",
     })
+    
+    const [taskStatusesOptions, setTaskStatusesOptions] = useState([])
 
-    const statusOptions = [
-        { value: "To Do", label: "To Do" },
-        { value: "In Progress", label: "In Progress" },
-        { value: "Done", label: "Done" },
-    ]
+    const [successUpdateProject, setSuccessUpdateProject] = useState(false)
+    const [deleteProjectMode, setDeleteProjectMode] = useState(false)
+    const [successDeleteProject, setSuccessDeleteProject] = useState(false)
 
     const handleUpdateStartStatus = (value) => {
-        console.log(value)
+        setProjectSettings(prevState => ({
+            ...prevState,
+            startStatus: value
+        }))
     }
 
     const handleUpdateEndStatus = (value) => {
-        console.log(value)
+        setProjectSettings(prevState => ({
+            ...prevState,
+            endStatus: value
+        }))
     }
 
-    const handleSubmit = (values) => {
-        setError(false)
-        setLoading(true)
+    const handleUpdateProjectName = (e) => {
+        setProjectSettings(prevState => ({
+            ...prevState,
+            projectName: e.target.value
+        }))
     }
 
-    const handleDeleteProject = () => {
+    const handleUpdateKey = (e) => {
+        setProjectSettings(prevState => ({
+            ...prevState,
+            key: e.target.value
+        }))
+    }
+
+    const handleUpdateProject = async (values) => {
         setError(false)
         setLoading(true)
+        try{
+            const res = await updateProject({
+                projectId: projectId,
+                projectName: values.projectName,
+                key: values.key,
+                startStatus: values.startStatus,
+                endStatus: values.endStatus
+            })
+            if(res.error){
+                setError(true)
+                console.log(JSON.parse(res.error).errors)
+            }else{
+                setSuccessUpdateProject(true)
+            }
+        }catch(err){
+            console.log(err)
+        }finally{
+            setLoading(false)
+        }
+    }
+
+    const handleDeleteProject = async (values) => {
+        setError(false)
+        setErrorDelete(false)
+        setLoading(true)
+        if(values.projectName !== projectSettings.projectName){
+            setErrorDelete(true)
+            setErrorDeleteMessage("Nama proyek yang Anda masukkan tidak sesuai!")
+            setLoading(false)
+            return
+        }
+        try{
+            const res = await deleteProject({
+                id: projectId
+            })
+            if(res.error){
+                setErrorDelete(true)
+                console.log(JSON.parse(res.error).errors)
+            }else{
+                setDeleteProjectMode(false)
+                setSuccessDeleteProject(true)
+            }
+        }catch(err){
+            console.log(err)
+        }finally{
+            setLoading(false)
+        }
     }
 
     useEffect(() => {
@@ -67,16 +138,29 @@ export default function SettingForm({projectId}){
         })
     }, [projectId])
 
+    useEffect(() => {
+        const reference = getQueryReferenceOrderBy({collectionName: "taskStatuses", field: "projectId", id: projectId, orderByKey: "order"})
+        const unsubscribe = onSnapshot(reference, (snapshot) => {
+            const taskStatusesData = snapshot.docs.map(taskStatusDoc => ({
+                id: taskStatusDoc.id,
+                status: taskStatusDoc.data().statusName
+            }))
+            setTaskStatusesOptions(taskStatusesData.map(taskStatus => ({
+                label: taskStatus.status,
+                value: taskStatus.id
+            })))
+        })
+        return unsubscribe
+    }, [projectId])
+
     if(loading){
-        return (
-            <PopUpLoad />
-        )
+        return <PopUpLoad />
     }else{
         return (
             <div>
                 <FormikWrapper
                     initialValues={projectSettings}
-                    handleSubmit={handleSubmit}
+                    onSubmit={handleUpdateProject}
                     validationSchema={updateProjectSchema}
                     children={(formik) => (
                         <div className="w-full md:w-3/4">
@@ -88,24 +172,18 @@ export default function SettingForm({projectId}){
                                     label="Nama Proyek"
                                     placeholder="Masukkan nama proyek..."
                                 />
+                                {error && <p className="text-xs md:text-sm text-danger-red font-medium">{errorMessage}</p>}
                             </div>
-                            {error && <p className="text-xs md:text-sm text-center text-danger-red font-medium">{errorMessage}</p>}
                             <div className="mb-4">
-                                <FormikField
-                                    name="key"
-                                    required
-                                    type="text"
-                                    label="Kunci"
-                                    placeholder="Masukkan kunci..."
-                                />
+                                <KeyFormikField />
+                                {error && <p className="text-xs md:text-sm text-danger-red font-medium">{errorMessage}</p>}
                             </div>
-                            {error && <p className="text-xs md:text-sm text-center text-danger-red font-medium">{errorMessage}</p>}
                             <div className="mb-4">
                                 <FormikSelectField
                                     name="startStatus"
                                     label="Status Awal"
                                     placeholder="Pilih status awal..."
-                                    options={statusOptions}
+                                    options={taskStatusesOptions}
                                     onChange={handleUpdateStartStatus}
                                 />
                             </div>
@@ -114,22 +192,61 @@ export default function SettingForm({projectId}){
                                     name="endStatus"
                                     label="Status Akhir"
                                     placeholder="Pilih status akhir..."
-                                    options={statusOptions}
+                                    options={taskStatusesOptions}
                                     onChange={handleUpdateEndStatus}
                                 />
                             </div>
                             <div className="flex justify-between">
                                 <div>
-                                    <Button onClick={handleDeleteProject} variant="danger">Hapus Proyek</Button>
+                                    <Button onClick={() => {
+                                        setErrorDelete(false)
+                                        setDeleteProjectMode(true)
+                                    }} variant="danger">Hapus Proyek</Button>
                                 </div>
                                 <div className="flex gap-2 md:gap-4">
                                     <Button variant="secondary">Batal</Button>
-                                    <Button onClick={handleSubmit} variant="primary">Perbarui</Button>
+                                    <Button type="submit" variant="primary">Perbarui</Button>
                                 </div>
                             </div>
                         </div>
                     )}
                 />
+                {deleteProjectMode && (
+                    <DeleteProjectForm 
+                        onConfirm={handleDeleteProject}
+                        onClose={() => setDeleteProjectMode(false)}
+                        error={errorDelete}
+                        errorMessage={errorDeleteMessage}
+                    />
+                )}
+                {successUpdateProject &&
+                    <PopUpInfo
+                        title={"Proyek Diperbarui"}
+                        titleSize={"large"}
+                        message={"Data proyek telah berhasil diperbarui."}
+                    >
+                        <div className="flex justify-end gap-2 md:gap-4">
+                            <Button onClick={() => {
+                                setSuccessUpdateProject(false)
+                                location.reload()
+                            }} className="w-24 md:w-32">OK</Button>
+                        </div>
+                    </PopUpInfo>
+                }
+                {successDeleteProject &&
+                    <PopUpInfo
+                        title={"Proyek Dihapus"}
+                        titleSize={"large"}
+                        message={"Proyek telah dihapus. Anda akan dialihkan ke halaman daftar proyek."}
+                    >
+                        <div className="flex justify-end gap-2 md:gap-4">
+                            <Button onClick={() => {
+                                setSuccessDeleteProject(false)
+                                router.push("/projects")
+                            }} className="w-24 md:w-32">OK</Button>
+                        </div>
+                    </PopUpInfo>
+                }
             </div>
         )
     }

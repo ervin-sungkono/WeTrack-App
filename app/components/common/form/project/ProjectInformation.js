@@ -125,7 +125,7 @@ export default function ProjectInformation({prevFormStep}){
                         <div className="w-full flex flex-col gap-6">
                             <div className="flex flex-col gap-4">
                                 <FormikField label="Nama Proyek" required name="projectName" type="text" placeholder={"Masukkan nama proyek.."}/>
-                                <KeyFormikField/>
+                                <KeyFormikField settingMode={true}/>
                                 {projectData.templateType === 'ai-generated' && <FormikTextarea label="Deskripsi Proyek" name="projectDescription" placeholder={"Masukkan deskripsi proyek.."} rows={4}/>}
                             </div>
                             <div className="flex justify-end gap-2 md:gap-4">
