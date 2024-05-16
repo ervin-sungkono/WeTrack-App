@@ -204,11 +204,14 @@ export default function AttachmentSection({ taskId }){
                 </div>
             </div>
             {attachmentData.length > 0 ? 
-            <Table
-                data={attachmentData}
-                columns={columns}
-                usePagination={false}
-            /> :
+            <div className="max-h-[400px] overflow-y-auto">
+                <Table
+                    data={attachmentData}
+                    columns={columns}
+                    usePagination={false}
+                />
+            </div>
+             :
             <div className="flex flex-col items-center gap-2 py-8">
                 <FileIcon size={48} className="text-dark-blue/60"/>
                 <p className="text-xs md:text-sm text-dark-blue/80">Belum ada lampiran yang diunggah.</p>
