@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
+import { createHistory } from '@/app/firebase/util';
 
 export async function GET(request, response) {
     try {
@@ -254,6 +255,8 @@ export async function POST(request, response) {
                 ...newTask
             };
         });
+
+        await createHistory({ userId, taskId: result.id, projectId, eventType, action })
 
         return NextResponse.json({
             data: {
