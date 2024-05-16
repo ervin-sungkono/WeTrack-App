@@ -34,41 +34,39 @@ export default function ProjectInformation({prevFormStep}){
 
     const onSubmit = async(values, { setSubmitting }) => {
         setSubmitProject(true)
-        if(projectData.templateType === 'ai-generated'){
-            if(values.projectDescription.length < 30){
-                alert("Deskripsi Proyek harus terdiri dari minimal 30 karakter.")
-                setSubmitting(false)
-                return
-            }
-            const taskList = await generateTask(values)
-            if(!taskList.success){
-                alert(taskList.message)
-                return
-            }
-
-            submitProjectData(values)
-                .then(async(res) => {
-                    if(res.data){
-                        setCompleted(true)
-                        setProjectId(res.data.id)
-                        await Promise.all(taskList.data.map((task) => {
-                            return createNewTask({ 
-                                ...task, 
-                                projectId: res.data.id, 
-                                statusId: res.data.startStatus 
-                            })
-                        }))
-                    }else{
-                        console.log(res)
-                        alert("Gagal mengirim data formulir")
-                    }
+        try{
+            if(projectData.templateType === 'ai-generated'){
+                if(values.projectDescription.length < 30){
+                    alert("Deskripsi Proyek harus terdiri dari minimal 30 karakter.")
                     setSubmitProject(false)
-                })
-                .catch(err => console.log(err))
-        }
-        else if(projectData.templateType === 'default'){
-            submitProjectData(values)
-            .then(async(res) => {
+                    return
+                }
+                const taskList = await generateTask(values)
+                if(!taskList.success){
+                    alert(taskList.message)
+                    return
+                }
+    
+                const res = await submitProjectData(values)
+                    
+                if(res.data){
+                    setCompleted(true)
+                    setProjectId(res.data.id)
+                    await Promise.all(taskList.data.map((task) => {
+                        return createNewTask({ 
+                            ...task, 
+                            projectId: res.data.id, 
+                            statusId: res.data.startStatus 
+                        })
+                    }))
+                }else{
+                    console.log(res)
+                    alert("Gagal mengirim data formulir")
+                }
+            }
+            else if(projectData.templateType === 'default'){
+                const res = await submitProjectData(values)
+
                 if(res.data){
                     setCompleted(true)
                     setProjectId(res.data.id)
@@ -76,9 +74,14 @@ export default function ProjectInformation({prevFormStep}){
                     console.log(res)
                     alert("Gagal mengirim data formulir")
                 }
-                setSubmitProject(false)
-            })
-            .catch(err => console.log(err))
+                
+            }
+            setSubmitProject(false)
+        }catch(e){
+            console.log(e)
+        }
+        finally{
+            setSubmitProject(false)
         }
     }
 
@@ -132,7 +135,6 @@ export default function ProjectInformation({prevFormStep}){
                                 <Button variant="secondary" onClick={prevFormStep} className="w-24 md:w-32">Kembali</Button>
                                 <Button type={"submit"} disabled={formik.isSubmitting} className="w-24 md:w-32">Kirim</Button>
                             </div>
-                            {formik.isSubmitting && <PopUpLoad/>}
                         </div>
                     ) 
                 }}

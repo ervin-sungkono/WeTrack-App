@@ -150,8 +150,6 @@ export default function BoardContent({ projectId }){
     , 300)
   , [])
 
-  useEffect(() => {console.log(state)}, [state])
-
   useEffect(() => {
     if(!taskData && !taskStatusData) return
     updateState(taskData, taskStatusData)
@@ -428,7 +426,7 @@ export default function BoardContent({ projectId }){
                             </div> :
                             <SimpleInputForm
                               name={"taskName"}
-                              onSubmit={(e) => createTask(e)}
+                              onSubmit={createTask}
                               onBlur={() => setActiveStatusId(null)}
                               placeholder="Apa yang ingin dikerjakan?"
                             />
@@ -464,7 +462,7 @@ export default function BoardContent({ projectId }){
           <SimpleInputForm
             name={"taskStatusName"}
             placeholder="Nama status.."
-            onSubmit={(e) => createTaskStatus(e)}
+            onSubmit={createTaskStatus}
             onBlur={() => setCreatingList(false)}
           />
         </div>)}

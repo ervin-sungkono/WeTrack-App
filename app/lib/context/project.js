@@ -16,13 +16,14 @@ export const ProjectProvider = ({ children }) => {
 
         const project = await createNewProject(payload)
 
-        if(project.data){
+        if(project.data && projectData.teams){
             const team = await addTeam({ teams: projectData.teams, projectId: project.data.id })
             if(!team.data){
                 console.log("Gagal mengundang anggota tim")
             }
-            setProjectData({})
         }
+
+        setProjectData({})
         return project
     }
 
