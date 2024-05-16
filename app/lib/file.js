@@ -5,7 +5,7 @@ import { storage } from '../firebase/config';
 export async function uploadSingleFile(file, path) {
   try {
     const storageRef = ref(storage, path);
-    const snapshot = await uploadBytes(storageRef, file);
+    const snapshot = await uploadBytesResumable(storageRef, file);
     const downloadURL = await getDownloadURL(snapshot.ref);
     return downloadURL;
 
