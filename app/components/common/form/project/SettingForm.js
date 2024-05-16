@@ -51,20 +51,6 @@ export default function SettingForm({projectId}){
         }))
     }
 
-    const handleUpdateProjectName = (e) => {
-        setProjectSettings(prevState => ({
-            ...prevState,
-            projectName: e.target.value
-        }))
-    }
-
-    const handleUpdateKey = (e) => {
-        setProjectSettings(prevState => ({
-            ...prevState,
-            key: e.target.value
-        }))
-    }
-
     const handleUpdateProject = async (values) => {
         setError(false)
         setLoading(true)
@@ -150,7 +136,7 @@ export default function SettingForm({projectId}){
                 value: taskStatus.id
             })))
         })
-        return unsubscribe
+        return () => unsubscribe()
     }, [projectId])
 
     if(loading){
@@ -204,8 +190,7 @@ export default function SettingForm({projectId}){
                                     }} variant="danger">Hapus Proyek</Button>
                                 </div>
                                 <div className="flex gap-2 md:gap-4">
-                                    <Button variant="secondary">Batal</Button>
-                                    <Button type="submit" variant="primary">Perbarui</Button>
+                                    <Button type="submit" variant="primary">Perbarui Proyek</Button>
                                 </div>
                             </div>
                         </div>
