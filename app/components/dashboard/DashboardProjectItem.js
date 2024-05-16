@@ -35,7 +35,7 @@ export default function DashboardProjectItem({project, selectedProject, setSelec
                                         status={task.status.statusName}
                                         priority={task.priority}
                                         id={task.id}
-                                        href={`/projects/${project.id}/tasks/${task.id}`}
+                                        href={`/projects/${project.id}/tasks?taskId=${task.id}`}
                                         firstItem={index === 0}
                                     />
                                 </div>

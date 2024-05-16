@@ -104,3 +104,28 @@ export function deleteMember({projectId, teamId}){
     .catch(err => console.log(err))
     return response
 }
+
+export function updateProject({projectId, projectName, key, startStatus, endStatus}){
+    const payload = {
+        projectName,
+        key,
+        startStatus,
+        endStatus
+    }
+    const response = fetch(`/api/project/${projectId}`,{
+        method: 'PUT',
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
+    return response
+}
+
+export function deleteProject({id}){
+    const response = fetch(`/api/project/${id}`,{
+        method: 'DELETE',
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
+    return response
+}

@@ -25,10 +25,12 @@ export default function Dashboard(){
             if(projects.data){
                 const tasks = projects.data.map(project => {
                     return getAllTask(project.id).then(tasks => {
+                        tasks.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                         project.tasks = tasks.data || []
                     })
                 })
                 Promise.all(tasks).then(() => {
+                    projects.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                     setProjectsData(projects.data)
                     setSelectedProject(projects.data[0])
                     setLoading(false)

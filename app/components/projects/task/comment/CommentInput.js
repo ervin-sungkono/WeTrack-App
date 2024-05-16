@@ -1,6 +1,9 @@
 "use client"
 import { useSession } from "next-auth/react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { getAllTeamMember } from "@/app/lib/fetch/team"
+import { useSessionStorage } from "usehooks-ts"
+
 import { Mention, MentionsInput } from "react-mentions"
 import UserIcon from "@/app/components/common/UserIcon"
 import Button from "@/app/components/common/button/Button"
@@ -9,12 +12,21 @@ export default function CommentInput({ onSubmit }){
     const { data: session, status } = useSession()
     const [comment, setComment] = useState()
     const [focused, setFocus] = useState(false)
+    const [users, setUsers] = useState([])
+    const [project, _] = useSessionStorage("project")
 
-    const users=[
-        {id: "ervin", display:"Ervin Cahyadinata Sungkono"},
-        {id: "kenneth", display:"Kenneth Nathanael"},
-        {id: "chris", display:"Christopher Vinantius"}
-    ]
+    useEffect(() => {
+        if(project && project.id){
+            getAllTeamMember({ projectId: project.id})
+                .then(res => {
+                    if(res.data) setUsers(res.data.filter(user => user.status === "accepted").map(d => ({
+                        id: d.userId,
+                        display: d.user.fullName
+                    })))
+                })
+                .catch(e => console.log(e))
+        }
+    },[project])
 
     const resetComment = () => {
         setComment("")
