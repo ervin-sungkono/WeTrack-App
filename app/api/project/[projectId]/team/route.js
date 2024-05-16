@@ -119,6 +119,7 @@ export async function POST(request, response){
             const teamDocList = await Promise.all(teamList.map(async (team) => {
                 return await addDoc(collection(db, "teams"), {
                     userId: team.id,
+                    email: team.email,
                     projectId: projectId,
                     role: role, 
                     status: "pending",

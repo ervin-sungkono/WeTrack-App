@@ -73,8 +73,6 @@ export default function DashboardInsight({project}){
             }
             return value;
         }, priorityData);
-
-        console.log(priorityData);
         
         const priorityDataTotal = Object.values(priorityData).reduce((total, curr) => total + curr, 0);
         

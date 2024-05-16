@@ -64,6 +64,7 @@ export default function TeamContent({ projectId }){
                     ...document.data()
                 })
             }))
+            updatedTeams.sort((a, b) => {a.user.fullName.localeCompare(b.user.fullName)})
             updatedTeams.sort((a, b) => {
                 if(a.role === "Owner" && b.role !== "Owner") return -1
                 if(a.role !== "Owner" && b.role === "Owner") return 1

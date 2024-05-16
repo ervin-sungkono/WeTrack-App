@@ -9,12 +9,20 @@ import PopUpForm from "../alert/PopUpForm"
 export default function InviteForm({ onConfirm, onClose, team, setTeams, setRole, error, errorMessage }){
     const { data: session } = useSession()
 
+    let blacklistedEmails = [session.user.email]
+
+    team.forEach(member => {
+        if(member.email !== undefined){
+            blacklistedEmails.push(member.email)
+        }
+    })
+
     const tagifyRef = useRef()
     const tagifySettings = {
         editTags: {
             keepInvalid: false,
         },
-        blacklist: [session.user.email],
+        blacklist: blacklistedEmails,
         backspace: 'edit',
         delimiters: " ",
         keepInvalidTags: true,
