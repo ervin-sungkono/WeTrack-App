@@ -129,11 +129,6 @@ export default function ProfileLayout(){
         )
     }
 
-    useEffect(() => {
-        console.log(profileImageUploadedURL)
-        console.log(originalProfileImageFile)
-    }, [profileImageUploadedURL, originalProfileImageFile])
-
     const handleChangePassword = async (values) => {
         setError(false);
         setLoading(true);
@@ -354,9 +349,6 @@ export default function ProfileLayout(){
                         errorMessage={errorMessage}
                     />
                 )}
-                {loading && (
-                    <PopUpLoad />
-                )}
                 {successUpdateProfile &&
                     <PopUpInfo
                         title={"Profil Diperbarui"}
@@ -371,6 +363,9 @@ export default function ProfileLayout(){
                         </div>
                     </PopUpInfo>
                 }
+                {loading && (
+                    <PopUpLoad />
+                )}
             </div>
         )
     }

@@ -25,8 +25,8 @@ export default function KeyFormikField(){
 
     return(
         <div className="flex flex-col gap-1">
-            <FormikField label="Kunci" required name="key" type="text" placeholder={"Masukkan kunci.."}/>
-            <p className="text-xs text-dark-blue">Kunci akan digunakan sebagai awalan untuk tugas proyek Anda, dapat dihasilkan secara otomatis.</p>
+            <FormikField label="Kunci Proyek" required name="key" type="text" placeholder={"Masukkan kunci.."}/>
+            <p className="text-xs text-dark-blue">Kunci proyek akan digunakan sebagai awalan untuk tugas proyek Anda, dapat dihasilkan secara otomatis.</p>
         </div>
     )
 }
