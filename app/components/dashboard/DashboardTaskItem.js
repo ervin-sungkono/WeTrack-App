@@ -1,21 +1,9 @@
 import { dateFormat } from "@/app/lib/date";
+import { getPriority } from "@/app/lib/string";
 import { MdChecklist as TaskIcon } from "react-icons/md";
+import Label from "../common/Label";
 
 export default function DashboardTaskItem({title, startDate, endDate, status, priority, id, href, firstItem}){
-
-    const getPriorityName = () => {
-        switch(priority){
-            case 0:
-                return "Tinggi";
-            case 1:
-                return "Sedang";
-            case 2:
-                return "Rendah";
-            case 3:
-                return "Tidak Ada";
-        }
-    }
-
     return (
         <div>
             {!firstItem && (
@@ -27,8 +15,16 @@ export default function DashboardTaskItem({title, startDate, endDate, status, pr
                 <div className="flex flex-col justify-between">
                     <div className="text-sm md:text-base font-semibold">{title}</div>
                     <div className="text-xs md:text-sm">{dateFormat(startDate)} - {dateFormat(endDate)}</div>
-                    <div className="font-semibold text-xs md:text-sm">Status: {status.toUpperCase()}</div>
-                    <div className="font-semibold text-xs md:text-sm">Prioritas: {getPriorityName().toUpperCase()}</div>
+                    <div className="mt-1 flex flex-col gap-1">
+                        <div className="flex gap-1 font-semibold text-xs md:text-sm w-fit">
+                            Status:
+                            <Label text={status.toUpperCase()}/>
+                        </div>
+                        <div className="flex gap-1 font-semibold text-xs md:text-sm w-fit">
+                            Prioritas: 
+                            <Label text={getPriority(priority).toUpperCase()}/>
+                        </div>
+                    </div>
                 </div>
                 <div className="text-right flex flex-col justify-between">
                     <div className="text-xs md:text-sm flex items-center gap-1 justify-end">
