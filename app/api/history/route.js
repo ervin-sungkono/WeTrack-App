@@ -4,9 +4,9 @@ import { getUserSession } from "@/app/lib/session";
 import { and, collection, getDoc, getDocs, query, where, doc } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
-export async function GET(request) {
+export async function GET(request, response) {
     try {
-        const session = await getUserSession(request, nextAuthOptions);
+        const session = await getUserSession(request, response, nextAuthOptions);
         console.log(session)
         const userId = session.user.uid;
         if (!userId) {
