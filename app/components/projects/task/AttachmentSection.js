@@ -13,6 +13,7 @@ import { onSnapshot } from "firebase/firestore"
 import { getQueryReference } from "@/app/firebase/util"
 import { addAttachment, deleteAttachment } from "@/app/lib/fetch/attachment"
 import { saveAs } from "file-saver"
+import JSZip from "jszip"
 
 const Table = dynamic(() => import("../../common/table/Table"))
 
@@ -23,8 +24,20 @@ export default function AttachmentSection({ taskId }){
     const attachmentsAction = [
         {
             label: "Unduh Semua",
-            fnCall: () => {
-                console.log("download all")
+            fnCall: async() => {
+                const zip = new JSZip()
+                
+                await Promise.all(attachmentData.map(async(attachment) => {
+                    const image = await fetch(attachment.attachmentStoragePath)
+                        .then(res => res.blob())
+                        .catch(e => console.log(e))
+
+                    zip.file(attachment.originalFileName, image)
+                }))
+
+                zip.generateAsync({type: "blob"}).then(function(content) {
+                    saveAs(content, `${taskId}_attachments.zip`);
+                })
             }
         },
         {
