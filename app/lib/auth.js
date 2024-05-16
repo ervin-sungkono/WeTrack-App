@@ -42,7 +42,6 @@ export const nextAuthOptions = {
   callbacks: {
     jwt: async ({ token, user }) => {
         user && (token.user = user)
-        console.log(Date.now())
         if (Date.now() > token.user.expires) {
           return null; // Return null to invalidate the session
         }
