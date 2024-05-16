@@ -117,18 +117,18 @@ export default function AttachmentSection({ taskId }){
             const imageSizePerFile = 2 * 1024 * 1024
             const files =  Array.from(fileInput.files).filter(file => file.size <= imageSizePerFile)
             
-            try{
-                files.forEach(async(file) => {
+            for(const file of files){
+                try{
                     const res = await addAttachment({ taskId: taskId, attachment: file })
                     if(!res.success) console.log(`Fail to upload file ${file.name}`)
-                })
-    
-            }catch(e){
-                console.log(e)
-            }finally{
-                setUploading(false)
-                fileInput.remove()
+                }catch(e){
+                    console.log(`Fail to upload file ${file.name}`)
+                    continue
+                }
             }
+
+            setUploading(false)
+            fileInput.remove()
         }
         fileInput.click()
     }
