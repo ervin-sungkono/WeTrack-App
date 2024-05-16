@@ -9,6 +9,8 @@ import { getDoc, onSnapshot } from "firebase/firestore";
 import Table from "../../common/table/Table";
 import UserIcon from "../../common/UserIcon";
 import LinkButton from "../../common/button/LinkButton";
+import { getPriority } from "@/app/lib/string";
+import Label from "../../common/Label";
 
 export default function OverviewContent({ projectId }){
 
@@ -18,14 +20,18 @@ export default function OverviewContent({ projectId }){
             startDate: new Date("2024-04-17"),
             endDate: new Date("2024-04-20"),
             status: "TO DO",
-            id: "TASK-1"
+            priority: 1,
+            id: "TASK-1",
+            href: `#`
         },
         {
             title: "API Integration",
             startDate: new Date("2024-04-09"),
             endDate: new Date("2024-04-15"),
             status: "IN PROGRESS",
-            id: "TASK-2"
+            priority: 2,
+            id: "TASK-2",
+            href: `#`
         },
     ]
 
@@ -52,11 +58,12 @@ export default function OverviewContent({ projectId }){
                     ...document.data()
                 })
             }))
+            data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
             setTaskData(data)
             // setTaskData(data.slice(0, 3))
             console.log(data)
         })
-        return unsubscribe
+        return () => unsubscribe()
     }, [projectId])
 
     const columns = [
@@ -93,13 +100,10 @@ export default function OverviewContent({ projectId }){
             cell: ({ row }) => {
                 const priority = row.getValue('priority')
                 return(
-                    <div className="w-full h-full block">
-                        {
-                            priority === 0 ? "TINGGI" :
-                            priority === 1 ? "SEDANG" :
-                            priority === 2 ? "RENDAH" :
-                            priority === 3 ? "TIDAK ADA" : "-"
-                        }
+                    <div className="w-fit h-full block font-semibold">
+                        <Label 
+                            text={getPriority(priority).toUpperCase()}
+                        />
                     </div>
                 )
             }
@@ -123,8 +127,8 @@ export default function OverviewContent({ projectId }){
             cell: ({ row }) => {
                 const statusName = row.getValue('statusName')
                 return(
-                    <div className="w-full h-full block">
-                        {statusName.toUpperCase()}
+                    <div className="w-fit h-full block font-semibold">
+                        <Label text={statusName.toUpperCase()}/>
                     </div>
                 )
             }

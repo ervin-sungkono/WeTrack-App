@@ -93,7 +93,7 @@ export const projectInformationSchema = yup.object().shape({
         .max(50),
     key: yup
         .string()
-        .required("Kunci harus diisi!")
+        .required("Kunci proyek harus diisi!")
         .max(7)
 })
 
@@ -105,8 +105,14 @@ export const updateProjectSchema = yup.object().shape({
         .max(50),
     key: yup
         .string()
-        .required("Kunci harus diisi!")
+        .required("Kunci proyek harus diisi!")
         .max(7)
+})
+
+export const deleteProjectSchema = yup.object().shape({
+    projectName: yup
+        .string()
+        .required("Nama proyek harus diisi!")
 })
 
 export const updateStatusSchema = yup.object().shape({

@@ -9,7 +9,7 @@ export default function PopUpLoad() {
                 left: 0,
                 width: "100%",
                 height: "100%",
-                zIndex: 10000,
+                zIndex: 10001,
                 backgroundColor: "rgba(0, 0, 0, 0.5)",
             }
         }>

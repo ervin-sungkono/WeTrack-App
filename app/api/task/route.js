@@ -50,6 +50,7 @@ export async function GET(request, response) {
                 labels: item.data().labels,
                 assignedTo: item.data().assignedTo,
                 priority: item.data().priority,
+                createdAt: item.data().createdAt,
                 status: taskStatusDetail
             }
         })) 

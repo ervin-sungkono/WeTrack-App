@@ -74,11 +74,11 @@ export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, s
     const getRoleClass = () => {
         switch(role){
             case "Owner":
-                return "bg-warning-yellow"
+                return "bg-warning-yellow text-black"
             case "Member":
-                return "bg-basic-blue"
+                return "bg-basic-blue text-white"
             case "Viewer":
-                return "bg-success-green"
+                return "bg-success-green text-white"
         }
     }
 
@@ -111,7 +111,7 @@ export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, s
                             />
                         </div>
                     ) : (
-                        <button className={`mt-4 mb-6 text-xs md:text-sm px-3 md:px-4 py-2 md:py-1.5 rounded-full text-white font-medium ${getRoleClass()}`}>
+                        <button className={`mt-4 mb-6 text-xs md:text-sm px-3 md:px-4 py-2 md:py-1.5 rounded-full font-medium ${getRoleClass()}`}>
                             {role}
                         </button>
                     )

@@ -3,6 +3,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, T
 import { Doughnut, Bar } from "react-chartjs-2";
 import EmptyState from "../common/EmptyState";
 import { stringToColour } from "@/app/lib/color";
+import { getPriority } from "@/app/lib/string";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
@@ -26,7 +27,7 @@ export default function DashboardInsight({project}){
         });
         
         const statusDataLabels = Object.keys(statusData).map((key, index) => {
-            return `${key} (${statusDataPercentages[index]}%)`;
+            return `${key.toUpperCase()} (${statusDataPercentages[index]}%)`;
         });
     
         const statusDataColors = Object.keys(statusData).map((key) => {
@@ -72,8 +73,6 @@ export default function DashboardInsight({project}){
             }
             return value;
         }, priorityData);
-
-        console.log(priorityData);
         
         const priorityDataTotal = Object.values(priorityData).reduce((total, curr) => total + curr, 0);
         
@@ -82,36 +81,22 @@ export default function DashboardInsight({project}){
         });
         
         const priorityDataLabels = Object.keys(priorityData).map((key, index) => {
-            let label = '';
-            switch(key){
-                case '0':
-                    label = 'Tinggi';
-                    break;
-                case '1':
-                    label = 'Sedang';
-                    break;
-                case '2':
-                    label = 'Rendah';
-                    break;
-                default:
-                    label = 'Tidak Ada';
-            }
-            return `${label} (${priorityDataPercentages[index]}%)`;
+            return `${getPriority(key).toUpperCase()} (${priorityDataPercentages[index]}%)`;
         });
     
         const priorityDatasets = Object.keys(priorityData).map((key, index) => {
             let backgroundColor = '';
             switch(key){
-                case '0':
+                case '3':
                     backgroundColor = 'rgba(227, 116, 91, 1)';
                     break;
-                case '1':
+                case '2':
                     backgroundColor = 'rgba(227, 213, 91, 1)';
                     break;
-                case '2':
+                case '1':
                     backgroundColor = 'rgba(92, 221, 105, 1)';
                     break;
-                case '3':
+                case '0':
                     backgroundColor = 'rgba(158, 158, 158, 1)';
                     break;
             }
