@@ -1,9 +1,7 @@
 import { generateTaskByPrompt } from "@/app/lib/OpenAIFunctions";
 import { NextResponse } from "next/server";
 
-export const config = {
-    runtime: 'edge', // Specify the runtime as 'edge'
-};
+export const runtime = 'edge'
 
 export async function POST(req){
     const { projectDescription } = await req.json()
