@@ -4,6 +4,7 @@ import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
 import { createHistory } from '@/app/firebase/util';
+import { getProjectRole } from '@/app/firebase/util';
 
 export async function GET(request, response) {
     try {
@@ -70,6 +71,21 @@ export async function PUT(request, response) {
         const projectSnap = await getDoc(projectDocRef);
         const projectData = projectSnap.data()
 
+        if(!projectSnap.exists()){
+            return NextResponse.json({
+                data: null,
+                message: "Project not found"
+            }, { status: 404 })
+        }
+        
+        const projectRole = await getProjectRole({ projectId, userId})
+        if(projectRole !== 'Owner'){
+            return NextResponse.json({
+                message: "Unauthorized",
+                success: false
+            }, { status: 401 })
+        }
+
         await updateDoc(projectDocRef, {
             key: key ?? projectData.key,
             projectName: projectName ?? projectData.projectName,
@@ -118,11 +134,20 @@ export async function DELETE(request, response) {
         
         const { projectId } = response.params;
         const projectDocRef = doc(db, 'projects', projectId);
+        const projectDocSnap = await getDoc(projectDocRef)
 
-        if (!projectDocRef) {
+        if (!projectDocSnap.exists()) {
             return NextResponse.json({
                 message: "Project not found"
             }, { status: 404 })
+        }
+
+        const projectRole = await getProjectRole({ projectId, userId})
+        if(projectRole !== 'Owner'){
+            return NextResponse.json({
+                message: "Unauthorized",
+                success: false
+            }, { status: 401 })
         }
 
         await deleteDoc(projectDocRef);

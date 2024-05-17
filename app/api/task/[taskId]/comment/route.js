@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { extractUniqueMentionTags } from "@/app/lib/string";
 import { getUserSession } from "@/app/lib/session";
+import { getProjectRole } from "@/app/firebase/util";
 import { createHistory, createNotification } from "@/app/firebase/util";
 
 export async function GET(request, response){
@@ -69,9 +70,15 @@ export async function POST(request, response){
             }, { status: 404 })
         }
 
-        const { 
-            commentText
-        } = await request.json()
+        const projectRole = await getProjectRole({ projectId: taskSnap.data().projectId, userId})
+        if(projectRole !== 'Owner' && projectRole !== 'Member'){
+            return NextResponse.json({
+                message: "Unauthorized",
+                success: false
+            }, { status: 401 })
+        }
+
+        const {  commentText} = await request.json()
 
         if(!commentText){
             return NextResponse.json({

@@ -3,6 +3,7 @@ import { createNotification } from "@/app/firebase/util";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { getUserSession } from "@/app/lib/session";
 import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import { getProjectRole } from "@/app/firebase/util";
 import { NextResponse } from "next/server";
 
 export async function GET(request, response){
@@ -50,7 +51,7 @@ export async function GET(request, response){
 
     } catch (error) {
         return NextResponse.json({
-            data: null,
+            success: false,
             message: error.message
         }, { status: 500 });
     }
@@ -61,35 +62,53 @@ export async function PUT(request, response){
         const session = await getUserSession(request, response, nextAuthOptions);
         if (!session.user) {
             return NextResponse.json({ 
-                message: "Unauthorized, must login first" 
+                message: "Unauthorized, must login first" ,
+                success: false
             }, { status: 401 });
         }
 
         const userId = session.user.uid;
         if (!userId) {
             return NextResponse.json({ 
-                message: "User not found" 
+                message: "User not found",
+                success: false
             }, { status: 404 });
         }
 
         const { teamId } = response.params
-        const { role } = await request.json()
 
         if(!teamId){
             return NextResponse.json({
-                message: "Please check your parameter"
-            }, { status: 404 })
-        }
-
-        if(!role){
-            return NextResponse.json({
-                message: "Please check your payload"
+                message: "Please check your parameter",
+                success: false
             }, { status: 404 })
         }
 
         const teamDocRef = doc(db, "teams", teamId)
         const teamDoc = await getDoc(teamDocRef)
+        if(!teamDoc.exists()){
+            return NextResponse.json({
+                message: "Team not found",
+                success: false
+            }, { status: 404 })
+        }
         const teamData = teamDoc.data()
+
+        const projectRole = await getProjectRole({ projectId: teamData.projectId, userId})
+        if(projectRole !== 'Owner'){
+            return NextResponse.json({
+                message: "Unauthorized",
+                success: false
+            }, { status: 401 })
+        }
+
+        const { role } = await request.json()
+        if(!role){
+            return NextResponse.json({
+                message: "Please check your payload",
+                success: false
+            }, { status: 404 })
+        }
 
         await updateDoc(teamDocRef, {
             role: role ?? teamData.role,
@@ -109,12 +128,13 @@ export async function PUT(request, response){
         }
         
         return NextResponse.json({
-            message: "Successfully update the role"
+            message: "Successfully update the role",
+            success: true
         }, { status: 200 })
 
     } catch (error) {
         return NextResponse.json({
-            data: null,
+            success: false,
             message: error.message
         }, { status: 500 });
     }
@@ -125,14 +145,16 @@ export async function DELETE(request, response){
         const session = await getUserSession(request, response, nextAuthOptions);
         if (!session.user) {
             return NextResponse.json({ 
-                message: "Unauthorized, must login first" 
+                message: "Unauthorized, must login first",
+                success: false
             }, { status: 401 });
         }
 
         const userId = session.user.uid;
         if (!userId) {
             return NextResponse.json({ 
-                message: "User not found" 
+                message: "User not found",
+                success: false
             }, { status: 404 });
         }
 
@@ -140,8 +162,25 @@ export async function DELETE(request, response){
 
         if(!teamId){
             return NextResponse.json({
-                message: "Please check your parameter"
+                message: "Please check your parameter",
+                success: false
             }, { status: 404 })
+        }
+        const teamDocRef = doc(db, "teams", teamId)
+        const teamDoc = await getDoc(teamDocRef)
+        if(!teamDoc.exists()){
+            return NextResponse.json({
+                message: "Team not found",
+                success: false
+            }, { status: 404 })
+        }
+
+        const projectRole = await getProjectRole({ projectId: teamDoc.data().projectId, userId})
+        if(projectRole !== 'Owner' && userId !== teamDoc.data().userId){
+            return NextResponse.json({
+                message: "Unauthorized",
+                success: false
+            }, { status: 401 })
         }
 
         await deleteDoc(doc(db, "teams", teamId))
