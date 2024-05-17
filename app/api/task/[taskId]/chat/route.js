@@ -5,8 +5,6 @@ import { nextAuthOptions } from "@/app/lib/auth";
 import { generateChatResponse } from "@/app/lib/OpenAIFunctions";
 import { getUserSession } from "@/app/lib/session";
 
-export const runtime = 'edge'
-
 // export async function GET(request, response){
 //     try{
 //         const session = await getUserSession(request, response, nextAuthOptions)
