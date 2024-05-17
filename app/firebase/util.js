@@ -2,8 +2,13 @@ import { db } from "@/app/firebase/config"
 import { query, orderBy, where, collection, doc, and, getDocs, getDoc, updateDoc, serverTimestamp, addDoc } from "firebase/firestore"
 import { getSession } from "next-auth/react"
 
-export const getTaskReferenceOrderBy = ({ collectionName, field, id, orderByKey }) => {
-    const q = query(collection(db, collectionName), and(where(field, '==', id), where('type', '==', 'Task')), orderBy(orderByKey))
+export const getTaskReferenceOrderBy = ({ field, id, orderByKey }) => {
+    const q = query(collection(db, 'tasks'), and(where(field, '==', id), where('type', '==', 'Task')), orderBy(orderByKey))
+    return q
+}
+
+export const getNewNotificationReference = ({ id }) => {
+    const q = query(collection(db, 'notifications'), and(where('userId', '==', id), where('status', '==', 'new')))
     return q
 }
 
@@ -177,6 +182,7 @@ export const createNotification = async({ userId, senderId, taskId, projectId, t
             projectId: projectId,
             type: type, // RoleChange, Mention, AddedComment, AssignedTask
             newValue: newValue ?? null,
+            status: "new",
             createdAt: serverTimestamp()
         })
 
