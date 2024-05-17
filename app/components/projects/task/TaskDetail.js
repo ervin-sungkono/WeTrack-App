@@ -119,7 +119,7 @@ function TaskDetail({ taskId, closeFn }){
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
                         <p className="font-semibold">Prioritas</p>
-                        <Label text={label.toUpperCase} color={color}/>
+                        <Label text={label.toUpperCase()} color={color}/>
                     </div>
                 </div>
                 <div className="flex flex-col gap-4">
