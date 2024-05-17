@@ -1,7 +1,7 @@
 import { db } from "@/app/firebase/config";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { getUserSession } from "@/app/lib/session";
-import { collection, getDoc, getDocs, query, where, doc } from "firebase/firestore";
+import { collection, getDoc, getDocs, query, where, doc, orderBy } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
 export async function GET(request, response) {
@@ -17,7 +17,7 @@ export async function GET(request, response) {
         }
 
         const notificationColRef = collection(db, 'notifications');
-        const q = query(notificationColRef, where('userId', '==', userId))
+        const q = query(notificationColRef, where('userId', '==', userId), orderBy('createdAt', 'desc'))
         const notificationSnapshot = await getDocs(q);
 
         const notificationsData = await Promise.all(notificationSnapshot.docs.map(async (doc) => {
