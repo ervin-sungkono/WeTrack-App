@@ -144,7 +144,7 @@ export async function POST(request, response) {
                 userId: createdBy, 
                 projectId: docRef.id, 
                 eventType: "Project", 
-                action: "created" 
+                action: "create" 
             })
 
             return NextResponse.json({

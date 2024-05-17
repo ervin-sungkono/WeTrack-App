@@ -147,7 +147,7 @@ export const createHistory = async({ userId, taskId, projectId, eventType, actio
             taskId: taskId ?? null,
             projectId: projectId ?? null,
             eventType: eventType,
-            action: action,
+            action: action, // create, update, delete
             previousValue: previousValue ?? null,
             newValue: newValue ?? null,
             createdAt: serverTimestamp()
@@ -160,18 +160,17 @@ export const createHistory = async({ userId, taskId, projectId, eventType, actio
     }
 }
 
-export const createNotification = async({ userId, senderId, taskId, projectId, eventType, action, newValue }) => {
+export const createNotification = async({ userId, senderId, taskId, projectId, type, newValue }) => {
     try {
         if(!userId && !taskId && !projectId) return null
 
         const notificationDocRef = collection(db, "notifications")
         const newNotification = await addDoc(notificationDocRef, {
             userId: userId,
-            senderId: senderId,
+            senderId: senderId ?? null,
             taskId: taskId,
             projectId: projectId,
-            eventType: eventType,
-            action: action,
+            type: type, // RoleChange, Mention, AddedComment, AssignedTask
             previousValue: previousValue ?? null,
             newValue: newValue ?? null,
             createdAt: serverTimestamp()

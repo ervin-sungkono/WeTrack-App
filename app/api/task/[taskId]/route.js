@@ -175,7 +175,7 @@ export async function DELETE(request, response) {
             taskId: taskId,
             projectId: taskDoc.data().projectId,
             eventType: "Task",
-            action: "deleted"
+            action: "delete"
         })
 
         return NextResponse.json({
