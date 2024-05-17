@@ -106,14 +106,17 @@ export async function POST(request, response){
                 action: 'create'
             })
 
-            await createNotification({
-                userId: taskSnap.data().createdBy,
-                senderId: userId,
-                taskId: taskId,
-                projectId: taskSnap.data().projectId,
-                type: 'AddedComment'
-            })
-            
+            // Pastikan pembuat komen bukan pembuat tugas
+            if(taskSnap.data().createdBy !== userId){
+                await createNotification({
+                    userId: taskSnap.data().createdBy,
+                    senderId: userId,
+                    taskId: taskId,
+                    projectId: taskSnap.data().projectId,
+                    type: 'AddedComment'
+                })
+            }
+
             const mentions = extractUniqueMentionTags(commentText)
             await Promise.all(mentions.map(mention => (
                 createNotification({ 
