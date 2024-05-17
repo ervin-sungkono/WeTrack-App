@@ -1,5 +1,6 @@
 import { db } from "@/app/firebase/config"
 import { query, orderBy, where, collection, doc, and, getDocs, getDoc, updateDoc, serverTimestamp, addDoc } from "firebase/firestore"
+import { getSession } from "next-auth/react"
 
 export const getTaskReferenceOrderBy = ({ collectionName, field, id, orderByKey }) => {
     const q = query(collection(db, collectionName), and(where(field, '==', id), where('type', '==', 'Task')), orderBy(orderByKey))
@@ -30,8 +31,12 @@ export const getProjectRole = async({ projectId, userId }) => {
     return querySnapshot?.docs[0]?.data().role
 }
 
-export const getContentAuthorization = async({ projectId, userId }) => {
-    if(!projectId && !userId) return false
+export const getContentAuthorization = async({ projectId }) => {
+    if(!projectId) return false
+
+    const session = await getSession()
+    const userId = session.user.uid
+    if(!userId) return false
 
     const q = query(collection(db, "teams"), and(where("projectId", '==', projectId), where("userId", '==', userId)))
     const querySnapshot = await getDocs(q)
@@ -139,13 +144,13 @@ export const handleDeletedUser = async({ userId }) => {
 
 export const createHistory = async({ userId, taskId, projectId, eventType, action, previousValue, newValue }) => {
     try {
-        if(!userId) return null
+        if(!userId || !projectId) return null
 
         const historyDocRef = collection(db, "histories")
         const newHistory =  await addDoc(historyDocRef, {
             userId: userId,
             taskId: taskId ?? null,
-            projectId: projectId ?? null,
+            projectId: projectId,
             eventType: eventType,
             action: action, // create, update, delete
             previousValue: previousValue ?? null,
@@ -162,16 +167,15 @@ export const createHistory = async({ userId, taskId, projectId, eventType, actio
 
 export const createNotification = async({ userId, senderId, taskId, projectId, type, newValue }) => {
     try {
-        if(!userId && !taskId && !projectId) return null
+        if(!userId && !projectId) return null
 
         const notificationDocRef = collection(db, "notifications")
         const newNotification = await addDoc(notificationDocRef, {
             userId: userId,
             senderId: senderId ?? null,
-            taskId: taskId,
+            taskId: taskId ?? null,
             projectId: projectId,
             type: type, // RoleChange, Mention, AddedComment, AssignedTask
-            previousValue: previousValue ?? null,
             newValue: newValue ?? null,
             createdAt: serverTimestamp()
         })
