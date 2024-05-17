@@ -1,4 +1,5 @@
 import { db } from "@/app/firebase/config";
+import { createNotification } from "@/app/firebase/util";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { getUserSession } from "@/app/lib/session";
 import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
@@ -94,6 +95,18 @@ export async function PUT(request, response){
             role: role ?? teamData.role,
             updatedAt: new Date().toISOString()
         })
+
+        const updatedTeamDoc = await getDoc(teamDocRef)
+       
+        if(updatedTeamDoc.exists()){
+            const updatedTeamData = updatedTeamDoc.data()
+            await createNotification({
+                userId: teamData.userId,
+                projectId: teamData.projectId,
+                type: 'RoleChange',
+                newValue: updatedTeamData.role
+            })
+        }
         
         return NextResponse.json({
             message: "Successfully update the role"

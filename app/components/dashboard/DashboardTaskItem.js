@@ -4,6 +4,7 @@ import { MdChecklist as TaskIcon } from "react-icons/md";
 import Label from "../common/Label";
 
 export default function DashboardTaskItem({title, startDate, endDate, status, priority, id, href, firstItem}){
+    const { label, color } = getPriority(priority)
     return (
         <div>
             {!firstItem && (
@@ -22,7 +23,7 @@ export default function DashboardTaskItem({title, startDate, endDate, status, pr
                         </div>
                         <div className="flex gap-1 font-semibold text-xs md:text-sm w-fit">
                             Prioritas: 
-                            <Label text={getPriority(priority).toUpperCase()}/>
+                            <Label text={label.toUpperCase()} color={color}/>
                         </div>
                     </div>
                 </div>

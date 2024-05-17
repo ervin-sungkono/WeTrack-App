@@ -90,11 +90,11 @@ export default function SubtaskSection({ projectId, taskId }){
             accessorKey: 'priority',
             header: 'Prioritas',
             cell: ({ row }) => {
-                const priorityIndex = row.getValue("priority")
-                const priority = getPriority(priorityIndex)
+                const priority = row.getValue("priority")
+                const { label, color } = getPriority(priority)
                 return (
                     <div className="flex justify-start">
-                        <Label text={priority}/>
+                        <Label text={label.toUpperCase()} color={color}/>
                     </div>
                 )
             },

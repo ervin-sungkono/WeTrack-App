@@ -99,11 +99,10 @@ export default function OverviewContent({ projectId }){
             header: 'Prioritas',
             cell: ({ row }) => {
                 const priority = row.getValue('priority')
+                const { label, color } = getPriority(priority)
                 return(
                     <div className="w-fit h-full block font-semibold">
-                        <Label 
-                            text={getPriority(priority).toUpperCase()}
-                        />
+                        <Label text={label.toUpperCase()}color={color}/>
                     </div>
                 )
             }
