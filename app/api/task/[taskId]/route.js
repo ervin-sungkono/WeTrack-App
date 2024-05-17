@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
-import { createHistory, createNotification } from '@/app/firebase/util';
+import { createHistory, createNotification, getProjectRole } from '@/app/firebase/util';
 
 export async function GET(request, response) {
     try {
@@ -86,6 +86,14 @@ export async function PUT(request, response) {
                 data: null,
                 message: "No such project found"
             }, { status: 404 });
+        }
+
+        const projectRole = await getProjectRole({ projectId, userId})
+        if(projectRole !== 'Owner' && projectRole !== 'Member'){
+            return NextResponse.json({
+                message: "Unauthorized",
+                success: false
+            }, { status: 401 })
         }
         
         let assignedToDetails = null;
@@ -180,6 +188,14 @@ export async function DELETE(request, response) {
             return NextResponse.json({
                 message: "Task not found"
             }, { status: 404 })
+        }
+
+        const projectRole = await getProjectRole({ projectId: taskDoc.data().projectId, userId})
+        if(projectRole !== 'Owner' && projectRole !== 'Member'){
+            return NextResponse.json({
+                message: "Unauthorized",
+                success: false
+            }, { status: 401 })
         }
 
         await deleteDoc(taskDocRef) 

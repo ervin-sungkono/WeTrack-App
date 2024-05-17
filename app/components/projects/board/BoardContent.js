@@ -167,7 +167,7 @@ export default function BoardContent({ projectId }){
       setTaskStatusData(taskStatusData)
     }))
 
-    const taskReference = getTaskReferenceOrderBy({ collectionName: "tasks", field: "projectId", id: projectId, orderByKey: "order" })
+    const taskReference = getTaskReferenceOrderBy({ field: "projectId", id: projectId, orderByKey: "order" })
     const taskUnsubscribe = onSnapshot(taskReference, (taskSnapshot => {
       const taskData = taskSnapshot.docs.map(taskDoc => ({
         id: taskDoc.id,

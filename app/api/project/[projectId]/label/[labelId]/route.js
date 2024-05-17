@@ -2,6 +2,7 @@ import { db } from "@/app/firebase/config";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { getUserSession } from "@/app/lib/session";
 import { updateDoc, deleteDoc, doc, getDoc, serverTimestamp } from "firebase/firestore";
+import { getProjectRole } from "@/app/firebase/util";
 import { NextResponse } from "next/server";
 
 export async function PUT(request, response){
@@ -33,6 +34,14 @@ export async function PUT(request, response){
                 message: "Label not found",
                 success: false
             }, { status: 404 })
+        }
+
+        const projectRole = await getProjectRole({ projectId: docSnap.data().projectId, userId})
+        if(projectRole !== 'Owner'){
+            return NextResponse.json({
+                message: "Unauthorized",
+                success: false
+            }, { status: 401 })
         }
         
         await updateDoc(docRef, {
@@ -73,12 +82,22 @@ export async function DELETE(request, response){
         }
 
         const { labelId } = response.params
+        const docRef = doc(db, 'labels', labelId)
+        const docSnap = await getDoc(docRef)
 
-        if(!labelId){
+        if(!docSnap.exists()){
             return NextResponse.json({
                 message: "Missing parameter",
                 success: false
             }, { status: 404 })
+        }
+
+        const projectRole = await getProjectRole({ projectId: docSnap.data().projectId, userId})
+        if(projectRole !== 'Owner'){
+            return NextResponse.json({
+                message: "Unauthorized",
+                success: false
+            }, { status: 401 })
         }
 
         await deleteDoc(doc(db, "labels", labelId))

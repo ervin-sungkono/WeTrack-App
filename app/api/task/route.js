@@ -1,9 +1,10 @@
-import { doc, getDoc, arrayUnion, addDoc, collection, updateDoc, getDocs, query, where, runTransaction, orderBy, limit, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, query, where, runTransaction, serverTimestamp } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
 import { createHistory } from '@/app/firebase/util';
+import { getProjectRole } from '@/app/firebase/util';
 
 export async function GET(request, response) {
     try {
@@ -103,11 +104,20 @@ export async function POST(request, response) {
         }
         
         const projectDocRef = doc(db, 'projects', projectId);
+        const projectDocSnap = await getDoc(projectDocRef)
 
-        if(!projectDocRef){
+        if(!projectDocSnap.exists()){
             return NextResponse.json({
                 message: "The referred project is not found"
             }, { status: 404 })
+        }
+
+        const projectRole = await getProjectRole({ projectId, userId})
+        if(projectRole !== 'Owner' && projectRole !== 'Member'){
+            return NextResponse.json({
+                message: "Unauthorized",
+                success: false
+            }, { status: 401 })
         }
 
         let assignedToDetails = null;

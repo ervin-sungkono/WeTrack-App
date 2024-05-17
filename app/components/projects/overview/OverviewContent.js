@@ -126,9 +126,7 @@ export default function OverviewContent({ projectId }){
             cell: ({ row }) => {
                 const statusName = row.getValue('statusName')
                 return(
-                    <div className="w-fit h-full block font-semibold">
-                        <Label text={statusName.toUpperCase()}/>
-                    </div>
+                    <Label text={statusName.toUpperCase()}/>
                 )
             }
         },
