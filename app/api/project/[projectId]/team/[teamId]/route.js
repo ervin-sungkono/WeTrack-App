@@ -183,6 +183,13 @@ export async function DELETE(request, response){
             }, { status: 401 })
         }
 
+        if(teamDoc.data().role === 'Owner'){
+            return NextResponse.json({
+                message: "Cannot delete Owner from the team",
+                success: false
+            }, { status: 401 })
+        }
+
         await deleteDoc(doc(db, "teams", teamId))
 
         return NextResponse.json({
