@@ -1,9 +1,9 @@
 import { db } from "@/app/firebase/config";
 import { getProjectRole } from "@/app/firebase/util";
 import { nextAuthOptions } from "@/app/lib/auth";
-import { uploadMultipleFiles, uploadSingleFile } from "@/app/lib/file";
+import { uploadSingleFile } from "@/app/lib/file";
 import { getUserSession } from "@/app/lib/session";
-import { addDoc, collection, getDoc, getDocs, doc, query, serverTimestamp, where, runTransaction } from "firebase/firestore";
+import { collection, getDoc, getDocs, doc, query, serverTimestamp, where, runTransaction } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
 export async function GET(request, response) {
@@ -78,7 +78,7 @@ export async function POST(request, response) {
         const projectId = taskDoc.data().projectId
 
         const projectRole = await getProjectRole({ projectId, userId})
-        if(projectRole === 'Viewer'){
+        if(projectRole !== 'Owner' && projectRole !== 'Member'){
             return NextResponse.json({
                 message: "Unauthorized",
                 success: false
@@ -105,6 +105,7 @@ export async function POST(request, response) {
             const result = await uploadSingleFile(attachment, `/project/${projectId}/tasks/${taskId}/${attachment.name}`);
             const attachmentDocRef = doc(collection(db, "attachments"))
             transaction.set((attachmentDocRef), {
+                projectId: projectId,
                 taskId: taskId,
                 originalFileName: attachment.name,
                 attachmentStoragePath: result,
