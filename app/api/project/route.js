@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
+import { createHistory } from '@/app/firebase/util';
 
 export async function GET(request, response) {
     try {
@@ -139,6 +140,13 @@ export async function POST(request, response) {
         }
 
         if (updatedProjectSnap.exists()) {
+            await createHistory({
+                userId: createdBy, 
+                projectId: docRef.id, 
+                eventType: "Project", 
+                action: "created" 
+            })
+
             return NextResponse.json({
                 data: {
                     id: updatedProjectSnap.id,

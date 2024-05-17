@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
+import { createHistory } from '@/app/firebase/util';
 
 export async function GET(request, response) {
     try {
@@ -168,6 +169,14 @@ export async function DELETE(request, response) {
         }
 
         await deleteDoc(taskDocRef) 
+
+        await createHistory({ 
+            userId: userId,
+            taskId: taskId,
+            projectId: taskDoc.data().projectId,
+            eventType: "Task",
+            action: "deleted"
+        })
 
         return NextResponse.json({
             success: true,
