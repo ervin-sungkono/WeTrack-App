@@ -4,6 +4,8 @@ import Label from "../../common/Label";
 import { getPriority } from "@/app/lib/string";
 
 export default function AssignedTaskItem({title, startDate, endDate, status, priority, id, href}){
+    const { label, color } = getPriority(priority)
+
     return (
         <div className="bg-white flex justify-between p-4">
             <div className="flex flex-col justify-between">
@@ -16,7 +18,7 @@ export default function AssignedTaskItem({title, startDate, endDate, status, pri
                     </div>
                     <div className="flex gap-1 font-semibold text-xs md:text-sm w-fit">
                         Prioritas: 
-                        <Label text={getPriority(priority).toUpperCase()}/>
+                        <Label text={label.toUpperCase()} color={color}/>
                     </div>
                 </div>
             </div>

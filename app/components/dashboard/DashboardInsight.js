@@ -2,7 +2,7 @@
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut, Bar } from "react-chartjs-2";
 import EmptyState from "../common/EmptyState";
-import { stringToColour } from "@/app/lib/color";
+import { generateColors } from "@/app/lib/color";
 import { getPriority } from "@/app/lib/string";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
@@ -29,10 +29,8 @@ export default function DashboardInsight({project}){
         const statusDataLabels = Object.keys(statusData).map((key, index) => {
             return `${key.toUpperCase()} (${statusDataPercentages[index]}%)`;
         });
-    
-        const statusDataColors = Object.keys(statusData).map((key) => {
-            return stringToColour(key);
-        });
+
+        const statusDataColors = generateColors(Object.keys(statusData).length)
         
         doughnutChartData = {
             labels: statusDataLabels,
@@ -81,7 +79,7 @@ export default function DashboardInsight({project}){
         });
         
         const priorityDataLabels = Object.keys(priorityData).map((key, index) => {
-            return `${getPriority(key).toUpperCase()} (${priorityDataPercentages[index]}%)`;
+            return `${getPriority(key).label.toUpperCase()} (${priorityDataPercentages[index]}%)`;
         });
     
         const priorityDatasets = Object.keys(priorityData).map((key, index) => {
