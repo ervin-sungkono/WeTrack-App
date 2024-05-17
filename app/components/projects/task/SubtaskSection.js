@@ -93,9 +93,7 @@ export default function SubtaskSection({ projectId, taskId }){
                 const priority = row.getValue("priority")
                 const { label, color } = getPriority(priority)
                 return (
-                    <div className="flex justify-start">
-                        <Label text={label.toUpperCase()} color={color}/>
-                    </div>
+                    <Label text={label.toUpperCase()} color={color}/>
                 )
             },
             size: 140
