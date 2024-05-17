@@ -77,6 +77,7 @@ function TaskDetail({ taskId, closeFn }){
         )
     }
 
+    const { label, color } = getPriority(task.priority)
     return(
         <div className={`w-full h-full flex flex-col gap-3 md:gap-6 px-4 py-4 md:px-8 md:py-6 bg-white text-dark-blue rounded-lg shadow-lg overflow-y-auto`}>
             <div className="flex items-start gap-4">
@@ -118,7 +119,7 @@ function TaskDetail({ taskId, closeFn }){
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
                         <p className="font-semibold">Prioritas</p>
-                        <p>{getPriority(task.priority)}</p>
+                        <Label text={label.toUpperCase} color={color}/>
                     </div>
                 </div>
                 <div className="flex flex-col gap-4">

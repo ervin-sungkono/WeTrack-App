@@ -3,6 +3,7 @@ import { deleteDoc, getDoc, doc } from "firebase/firestore";
 import { NextResponse } from "next/server";
 import { getUserSession } from "@/app/lib/session";
 import { nextAuthOptions } from "@/app/lib/auth";
+import { createHistory } from "@/app/firebase/util";
 
 export async function DELETE(request, response) {
     try {
@@ -28,6 +29,14 @@ export async function DELETE(request, response) {
 
         if(commentSnap.data().userId === userId){
             await deleteDoc(commentDocRef)
+            await createHistory({
+                userId: userId,
+                taskId: taskId,
+                projectId: taskSnap.projectId,
+                eventType: 'Comment',
+                action: 'delete'
+            })
+
             return NextResponse.json({
                 message: "Comment successfully deleted"
             }, { status: 200 });

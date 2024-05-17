@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
-import { createHistory } from '@/app/firebase/util';
+import { createHistory, createNotification } from '@/app/firebase/util';
 
 export async function GET(request, response) {
     try {
@@ -134,6 +134,20 @@ export async function PUT(request, response) {
             dueDate: dueDate ?? taskData.dueDate,
             updatedAt: new Date().toISOString()
         })
+
+        const updatedTaskSnap = await getDoc(taskDocRef)
+        if(updatedTaskSnap.exists()){
+            const updatedTaskData = updatedTaskSnap.data()
+
+            if(updatedTaskData.assignedTo){
+                await createNotification({
+                    userId: updatedTaskData.assignedTo,
+                    taskId: taskId,
+                    projectId: updatedTaskData.projectId,
+                    type: 'AssignedTask'
+                })
+            }
+        }
         
         return NextResponse.json({
             success: true,
@@ -175,7 +189,7 @@ export async function DELETE(request, response) {
             taskId: taskId,
             projectId: taskDoc.data().projectId,
             eventType: "Task",
-            action: "deleted"
+            action: "delete"
         })
 
         return NextResponse.json({

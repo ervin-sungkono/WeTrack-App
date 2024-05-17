@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { extractUniqueMentionTags } from "@/app/lib/string";
 import { getUserSession } from "@/app/lib/session";
+import { createHistory, createNotification } from "@/app/firebase/util";
 
 export async function GET(request, response){
     try{
@@ -96,8 +97,34 @@ export async function POST(request, response){
 
         const newCommentSnap = await getDoc(newComment)
 
-        const mentions = extractUniqueMentionTags(commentText)
-        // TODO: add to notifications regarding mentions
+        if(newCommentSnap.exists()){
+            await createHistory({
+                userId: userId,
+                taskId: taskId,
+                projectId: taskSnap.data().projectId,
+                eventType: 'Comment',
+                action: 'create'
+            })
+
+            await createNotification({
+                userId: taskSnap.data().createdBy,
+                senderId: userId,
+                taskId: taskId,
+                projectId: taskSnap.data().projectId,
+                type: 'AddedComment'
+            })
+            
+            const mentions = extractUniqueMentionTags(commentText)
+            await Promise.all(mentions.map(mention => (
+                createNotification({ 
+                    userId: mention.id,
+                    senderId: userId,
+                    taskId: taskId,
+                    projectId: taskSnap.data().projectId,
+                    type: 'Mention'
+                })
+            )))
+        }
 
         return NextResponse.json({
             data: {
@@ -108,7 +135,7 @@ export async function POST(request, response){
         }, {  status: 200 })
 
     } catch (error) {
-        console.error("Cannot get comment", error);
+        console.error("Cannot add comment", error);
         return NextResponse.json({
             data: null,
             message: error.message

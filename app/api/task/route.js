@@ -261,7 +261,7 @@ export async function POST(request, response) {
             taskId: result.id, 
             projectId: projectId, 
             eventType: "Task", 
-            action: "created" 
+            action: "create" 
         })
 
         return NextResponse.json({
