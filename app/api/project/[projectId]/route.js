@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
+import { createHistory } from '@/app/firebase/util';
 
 export async function GET(request, response) {
     try {
@@ -115,8 +116,8 @@ export async function DELETE(request, response) {
             }, { status: 401 })
         }
         
-        const { id } = response.params;
-        const projectDocRef = doc(db, 'projects', id);
+        const { projectId } = response.params;
+        const projectDocRef = doc(db, 'projects', projectId);
 
         if (!projectDocRef) {
             return NextResponse.json({
@@ -125,6 +126,13 @@ export async function DELETE(request, response) {
         }
 
         await deleteDoc(projectDocRef);
+
+        await createHistory({
+            userId: userId,
+            projectId: projectId,
+            eventType: "Project",
+            action: "deleted"
+        })
 
         return NextResponse.json({
             message: "Project successfully deleted"
