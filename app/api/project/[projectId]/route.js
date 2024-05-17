@@ -131,7 +131,7 @@ export async function DELETE(request, response) {
             userId: userId,
             projectId: projectId,
             eventType: "Project",
-            action: "deleted"
+            action: "delete"
         })
 
         return NextResponse.json({
