@@ -119,3 +119,45 @@ export async function deleteUserProfile(password) {
         throw new Error(await res.text())
     }
 }
+
+export async function getUserHistory(){
+    const res = await fetch(`/api/history`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    if(res.ok){
+        return res.json()
+    }else{
+        throw new Error(await res.text())
+    }
+}
+
+export async function getUserTaskHistory({taskId}) {
+    const res = await fetch(`/api/history?taskId=${taskId}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    if(res.ok){
+        return res.json()
+    }else{
+        throw new Error(await res.text())
+    }
+}
+
+export async function getUserNotification(){
+    const res = await fetch(`/api/notification`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    if(res.ok){
+        return res.json()
+    }else{
+        throw new Error(await res.text())
+    }
+}
