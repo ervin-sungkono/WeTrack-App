@@ -2,7 +2,7 @@ import PopUp from "./PopUp"
 
 export default function PopUpInfo({
     title, 
-    titleSize,
+    titleSize = 'default',
     size,
     message, 
     children

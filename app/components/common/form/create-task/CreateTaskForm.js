@@ -11,16 +11,18 @@ import PopUpLoad from "../../alert/PopUpLoad";
 import SelectStatusOption from "./SelectStatusOption";
 import SelectProjectOption from "./SelectProjectOption";
 import SelectAssigneeOption from "./SelectAssigneeOption";
+import SelectParentOption from "./SelectParentOption";
+import PopUpInfo from "../../alert/PopUpInfo";
 
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { createNewTask } from "@/app/lib/fetch/task";
 import { priorityList } from "@/app/lib/string";
 import { newTaskSchema } from "@/app/lib/schema";
-import SelectParentOption from "./SelectParentOption";
 
 export default function CreateTaskForm({ onCancel }){
     const [labels, setLabels] = useState([])
+    const [createSuccess, setCreateSuccess] = useState(false)
 
     const initialValues = {
         projectId: '',
@@ -48,7 +50,7 @@ export default function CreateTaskForm({ onCancel }){
             })
 
             if(res.data){
-                alert("Tugas berhasil dibuat")
+                setCreateSuccess(true)
             }
         }catch(e){
             console.log(e)
@@ -86,6 +88,15 @@ export default function CreateTaskForm({ onCancel }){
             >
                 {(formik) => (
                     <>
+                        {createSuccess && 
+                        <PopUpInfo
+                            title={"Tugas Berhasil Dibuat"}
+                            message={"Silahkan cek tugas yang telah dibuat pada halaman tugas atau papan kanban."}
+                        >
+                            <div className="flex justify-end gap-2 md:gap-4">
+                                <Button onClick={() => setCreateSuccess(false)} className="w-24 md:w-32">OK</Button>
+                            </div>
+                        </PopUpInfo>}
                         <div className="custom-scrollbar w-full pb-2 md:pb-4 h-full pr-2 flex flex-col gap-2.5 md:gap-4 overflow-y-auto">
                             <div className="flex flex-col md:flex-row gap-2.5 md:gap-4">
                                 <SelectProjectOption/>
