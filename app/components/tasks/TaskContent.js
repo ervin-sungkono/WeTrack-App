@@ -66,7 +66,7 @@ export default function TaskContent({ projectId, taskId }){
             {
                 tasks.length > 0 ? 
                 <div className="h-full flex flex-col sm:flex-row gap-2 sm:gap-4 overflow-hidden sm:overflow-y-auto">
-                    <TaskList tasks={tasks} taskId={taskId ?? taskData?.id}/>
+                    <TaskList tasks={tasks.filter(task => task.taskName.toLowerCase().includes(query))} taskId={taskId ?? taskData?.id}/>
                     <TaskDetail taskId={taskId ?? taskData?.id}/>
                 </div>
                 :

@@ -6,6 +6,7 @@ import { useTaskData } from "@/app/lib/context/task";
 import DotButton from "../../common/button/DotButton";
 import UserSelectButton from "../../common/UserSelectButton";
 import CustomTooltip from "../../common/CustomTooltip";
+import { useSessionStorage } from "usehooks-ts";
 
 const getItemStyle = (isDragging, draggableStyle) => ({
     // some basic styles to make the items look a bit nicer
@@ -29,6 +30,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 export default function BoardItem({ item, index }){
     const { viewTask } = useTaskData()
     const [assignee, setAssignee] = useState(item.assignedTo)
+    const [project, _] = useSessionStorage("project")
 
     useEffect(() => {
       if(assignee){
@@ -90,7 +92,7 @@ export default function BoardItem({ item, index }){
             <div className="flex items-center gap-2">
                 <div className="flex flex-grow items-center gap-1 text-dark-blue">
                   <CheckIcon size={16}/>
-                  <p className="text-[10px] md:text-xs">TASK-1</p>
+                  <p className="text-[10px] md:text-xs">{project && <span>{project.key} - {item.displayId}</span>}</p>
                 </div>
                 <CustomTooltip id={`task-${item.id}-tooltip`} content={assignee?.fullName ?? "Belum ditugaskan"}>
                   <UserSelectButton 

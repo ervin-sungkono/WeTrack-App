@@ -7,12 +7,24 @@ export const debounce = (func, timeout = 300) => {
   }
 }
 
-export const sortDateFn = ({ data, sortDirection = 'asc', key='createdAt' }) => {
-  if(sortDirection === 'asc') return data.sort((a,b) => (new Date(a[`${key}`]) - new Date(b[`${key}`])))
-  if(sortDirection === 'desc') return data.sort((a,b) => (new Date(b[`${key}`]) - new Date(a[`${key}`])))
-}
+export const sortDateFn = ({ data, sortDirection = 'asc', key = 'createdAt' }) => {
+  return [...data].sort((a, b) => {
+      const dateA = new Date(a[key]);
+      const dateB = new Date(b[key]);
+      return sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
+  });
+};
 
-export const sortDateTimestampFn = ({ data, sortDirection = 'asc', key='createdAt' }) => {
-  if(sortDirection === 'asc') return data.sort((a,b) => (new Date(a[`${key}`].seconds) - new Date(b[`${key}`].seconds)))
-  if(sortDirection === 'desc') return data.sort((a,b) => (new Date(b[`${key}`].seconds) - new Date(a[`${key}`].seconds)))
-}
+export const sortValueFn = ({ data, sortDirection =  'asc', key }) => {
+  return [...data].sort((a, b) => {
+      return sortDirection === 'asc' ? a[key] - b[key] : b[key] - a[key];
+  });
+};
+
+export const sortDateTimestampFn = ({ data, sortDirection = 'asc', key = 'createdAt' }) => {
+  return [...data].sort((a, b) => {
+      const dateA = new Date(a[key].seconds);
+      const dateB = new Date(b[key].seconds);
+      return sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
+  });
+};

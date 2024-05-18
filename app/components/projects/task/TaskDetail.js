@@ -13,6 +13,7 @@ import DotButton from "../../common/button/DotButton"
 import ActivitySection from "./ActivitySection"
 import { TailSpin } from "react-loader-spinner"
 import ChatSection from "./ChatSection"
+import { useSessionStorage } from "usehooks-ts"
 
 const AttachmentSection = dynamic(() => import("./AttachmentSection"))
 const SubtaskSection = dynamic(() => import("./SubtaskSection"))
@@ -21,6 +22,7 @@ function TaskDetail({ taskId, closeFn }){
     const [task, setTask] = useState()
     const [loading, setLoading] = useState(false)
     const [assignee, setAssignee] = useState()
+    const [project, _] = useSessionStorage("project")
 
     const userList = [
         {
@@ -82,7 +84,7 @@ function TaskDetail({ taskId, closeFn }){
         <div className={`w-full h-full flex flex-col gap-3 md:gap-6 px-4 py-4 md:px-8 md:py-6 bg-white text-dark-blue rounded-lg shadow-lg overflow-y-auto`}>
             <div className="flex items-start gap-4">
                 <div className={`text-lg md:text-2xl font-semibold text-dark-blue flex-grow`}>
-                    {task.taskName}
+                    {project && <span>[{project.key} - {task.displayId}]</span>} {task.taskName}
                 </div>
                 <div className="flex items-center gap-2.5">
                     <DotButton name={`task-detail-${taskId}`}/>
