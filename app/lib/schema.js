@@ -126,3 +126,40 @@ export const deleteStatusSchema = yup.object().shape({
         .string()
         .required("Wajib memilih status tugas baru")
 })
+
+export const newTaskSchema = yup.object().shape({
+    type: yup.string()
+        .default('Task')
+        .required('Tipe harus diisi'),
+    priority: yup.number()
+        .default(0),
+    startDate: yup.date()
+        .nullable()
+        .notRequired(),
+    dueDate: yup.date()
+        .nullable()
+        .notRequired()
+        .when('startDate', {
+            is: (startDate) => !!startDate,
+            then: (s) => s.min(yup.ref('startDate'),
+                'Tanggal selesai harus sesudah tanggal mulai'
+            ),
+            otherwise: (s) => s
+        }),
+    taskName: yup.string()
+        .required("Nama tugas wajib diisi"),
+    description: yup.string()
+        .nullable()
+        .notRequired(),
+    assignedTo: yup.string()
+        .nullable()
+        .notRequired(),
+    parentId: yup.string()
+        .nullable()
+        .notRequired()
+        .when('type', {
+            is: 'SubTask',
+            then: (s) => s.required('Wajib salah satu parent ketika memilih tipe subtugas'),
+            otherwise: (s) => s,
+        }),
+})

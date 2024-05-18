@@ -1,14 +1,12 @@
 "use client"
-import { useEffect, useState } from "react"
-import PopUp from "../alert/PopUp"
-import Button from "../button/Button"
-import CustomTooltip from "../CustomTooltip"
+import { useState } from "react"
+import PopUp from "../../alert/PopUp"
+import Button from "../../button/Button"
+import CustomTooltip from "../../CustomTooltip"
 import EditLabelForm from "./EditLabelForm"
 
 import { addLabel, updateLabel, deleteLabel } from "@/app/lib/fetch/label"
 import { pickTextColorBasedOnBgColor } from "@/app/lib/color"
-import { getQueryReference } from "@/app/firebase/util"
-import { onSnapshot } from "firebase/firestore"
 
 import { FaPlus as PlusIcon } from "react-icons/fa"
 import { 
@@ -56,7 +54,7 @@ export default function LabelForm({ labelData, projectId, onCancel }){
             <div className="w-full h-full flex justify-center items-center">
                 <div className={`w-64 md:w-80 flex flex-col gap-4 md:gap-6 px-4 py-4 md:px-8 md:py-6 bg-white text-dark-blue rounded-lg shadow-lg`}>
                     <div className="flex flex-col gap-2">
-                        <div className="text-xs font-semibold text-dark-blue uppercase">Label (maksimal 10)</div>
+                        <div className="text-xs font-semibold text-dark-blue uppercase">Label (maks 10)</div>
                         {labelData.length > 0 ? <div className="flex flex-col gap-1 mt-0.5 mb-2">
                             {labelData.map(({id, content, backgroundColor}) => (
                                 <div key={id}>

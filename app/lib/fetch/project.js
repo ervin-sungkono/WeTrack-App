@@ -21,7 +21,7 @@ export function getRecentProjects(){
 export function getAllProject(){
     const response = fetch('/api/project',{
         method: 'GET',
-        next: { revalidate: 3600, tags: ['projects'] }
+        next: { revalidate: 600, tags: ['projects'] }
     })
     .then(res => res.json())
     .catch(err => console.log(err))

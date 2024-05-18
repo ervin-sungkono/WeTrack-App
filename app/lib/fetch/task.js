@@ -32,16 +32,16 @@ export function createNewTask({
     parentId
 }){
     const payload = {
-        taskName,
+        projectId,
         type,
         startDate,
         dueDate,
         priority,
+        taskName,
         description,
-        projectId,
         statusId,
         assignedTo,
-        labels: labels ? JSON.parse(labels).map(label => label.value) : null,
+        labels: labels.length > 0 ? JSON.parse(labels).map(label => label.id) : null,
         parentId
     }
 

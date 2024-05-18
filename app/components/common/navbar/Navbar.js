@@ -5,7 +5,7 @@ import { SessionProvider } from "next-auth/react"
 
 import NavbarMenu from "./NavbarMenu"
 
-const CreateTaskForm = dynamic(() => import("../form/CreateTaskForm"))
+const CreateTaskForm = dynamic(() => import("../form/create-task/CreateTaskForm"))
 
 export default function Navbar({ hideMenu }){
     const [formVisible, setFormVisibility] = useState(false)
@@ -17,7 +17,9 @@ export default function Navbar({ hideMenu }){
                     <NavbarMenu showForm={() => setFormVisibility(true)} hideMenu={hideMenu}/>
                 </div>
             </nav>
-            {formVisible && <CreateTaskForm onCancel={() => setFormVisibility(false)}/>}
+            <div className={`${formVisible ? "block" : "hidden"}`}>
+                <CreateTaskForm onCancel={() => setFormVisibility(false)}/>
+            </div>
         </SessionProvider>
     )
 }
