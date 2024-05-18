@@ -12,10 +12,14 @@ import { inviteMember, updateRole, deleteMember } from "@/app/lib/fetch/project"
 import PopUpInfo from "../../common/alert/PopUpInfo"
 import { getQueryReference, getDocumentReference } from "@/app/firebase/util"
 import { onSnapshot, getDoc } from "firebase/firestore"
+import { useRouter } from "next/navigation"
+import { getUserProfile } from "@/app/lib/fetch/user"
 
 export default function TeamContent({ projectId }){
     const [query, setQuery] = useState("")
     const [loading, setLoading] = useState(false)
+    const router = useRouter()
+    const [userId, setUserId] = useState(null)
 
     const handleSearch = (query) => {
         setQuery(query.toLowerCase())
@@ -31,6 +35,9 @@ export default function TeamContent({ projectId }){
     const [manageMode, setManageMode] = useState(false)
     const [successManage, setSuccessManage] = useState(false)
 
+    const [leaveMode, setLeaveMode] = useState(false)
+    const [successLeave, setSuccessLeave] = useState(false)
+
     const [selectUpdate, setSelectUpdate] = useState([])
     const [selectDelete, setSelectDelete] = useState([])
 
@@ -39,6 +46,16 @@ export default function TeamContent({ projectId }){
     const [teamFetched, setTeamFetched] = useState([])
     const [acceptedTeam, setAcceptedTeam] = useState([]) 
     const [pendingTeam, setPendingTeam] = useState([])
+
+    useEffect(() => {
+        getUserProfile().then((res) => {
+            if(res.error){
+                console.log(res.error)
+            }else{
+                setUserId(res.data.uid)
+            }
+        })
+    }, [])
 
     useEffect(() => {
         const reference = getQueryReference({ collectionName: "teams", field: "projectId", id: projectId})
@@ -173,6 +190,32 @@ export default function TeamContent({ projectId }){
         }
     } 
 
+    const handleLeaveProject = async () => {
+        setLeaveMode(false)
+        setLoading(true)
+        const userData = teamFetched.find(team => team.userId === userId)
+        let deleteUserId = null
+        if(userData){
+            deleteUserId = userData.id
+        }
+        try{
+            const res = await deleteMember({
+                projectId: projectId,
+                teamId: deleteUserId
+            })
+            if (res.error) {
+                setError(true);
+                console.log(JSON.parse(res.error).errors)
+            } else {
+                setSuccessLeave(true)
+            }
+        }catch(error){
+            console.log(error)
+        }finally{
+            setLoading(false)
+        }
+    }
+
     return (
         <div className="flex flex-col gap-4">
             <div className="flex flex-col xs:flex-row justify-between gap-4 items-center">
@@ -201,6 +244,11 @@ export default function TeamContent({ projectId }){
                         <Button onClick={() => setAddMode(true)} className="flex items-center">
                             <FaUserPlus className="mr-2"/>
                             Tambah Anggota
+                        </Button>
+                    )}
+                    {!editMode && (
+                        <Button variant="danger" onClick={() => setLeaveMode(true)}>
+                            Tinggalkan Proyek
                         </Button>
                     )}
                 </div>
@@ -288,6 +336,19 @@ export default function TeamContent({ projectId }){
                     </div>
                 </PopUpForm>
             )}
+            {leaveMode && (
+                <PopUpForm
+                    title={"Tinggalkan Proyek"}
+                    titleSize={"large"}
+                    message={"Apakah Anda yakin ingin meninggalkan proyek ini?"}
+                    wrapContent
+                >
+                    <div className="mt-4 flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
+                        <Button variant="secondary" onClick={() => setLeaveMode(false)}>Tidak</Button>
+                        <Button variant="danger" onClick={handleLeaveProject}>Ya</Button>
+                    </div>
+                </PopUpForm>
+            )}
             {successAdd &&
                 <PopUpInfo
                     title={"Undangan Dikirim"}
@@ -318,6 +379,21 @@ export default function TeamContent({ projectId }){
                             setSelectDelete([])
                             setEditMode(false)
                             setLoading(false)
+                        }} className="w-24 md:w-32">OK</Button>
+                    </div>
+                </PopUpInfo>
+            }
+            {successLeave && 
+                <PopUpInfo
+                    title={"Anda Telah Meninggalkan Proyek"}
+                    titleSize={"large"}
+                    message={"Anda akan dialihkan ke halaman daftar proyek."}
+                >
+                    <div className="flex justify-end gap-2 md:gap-4">
+                        <Button onClick={() => {
+                            setSuccessLeave(false)
+                            setLoading(false)
+                            router.push(`/projects`)
                         }} className="w-24 md:w-32">OK</Button>
                     </div>
                 </PopUpInfo>

@@ -1,14 +1,15 @@
 "use client"
 import { useEffect, useState } from "react"
 import dynamic from "next/dynamic"
-import { getRecentProjects } from "@/app/lib/fetch/project"
-import { sortDateFn } from "@/app/lib/helper"
+import { getAllProject } from "@/app/lib/fetch/project"
+import { sortDateTimestampFn } from "@/app/lib/helper"
 
 import Header from "../common/Header"
 import SelectButton from "../common/button/SelectButton"
 import SortButton from "../common/button/SortButton"
 import DashboardLayout from "../layout/DashboardLayout"
 import EmptyState from "../common/EmptyState"
+import { getUserHistory } from "@/app/lib/fetch/user"
 
 const HistoryList = dynamic(() => import("../history/HistoryList"))
 
@@ -18,11 +19,38 @@ export default function History(){
         {label: "Riwayat", url: "/history"},
     ]
 
-    const [projectOptions, setProjectOptions] = useState([])
-    const [sorting, setSorting] = useState('asc')
+    const [project, setProject] = useState("Semua")
+    const [type, setType] = useState("Semua")
+    const [pageIndex, setPageIndex] = useState(0)
+    const [pageSize, setPageSize] = useState(10)
+    const [pageCount, setPageCount] = useState(0)
+    const [historyData, setHistoryData] = useState([])
+    const [sorting, setSorting] = useState('desc')
+
+    const [dataFetched, setDataFetched] = useState([])
 
     useEffect(() => {
-        getRecentProjects()
+        getUserHistory().then(res => {
+            const data = res.data 
+            data.sort((a, b) => new Date(a.createdAt.seconds) - new Date(b.createdAt.seconds))
+            setDataFetched(data)
+            setHistoryData(data)
+        }).catch(err => {
+            console.error(err)
+        })
+    }, [])
+
+    useEffect(() => {
+        if(!historyData || historyData.length <= 0) return
+        const totalPageCount = Math.ceil(historyData.length / pageSize)
+        setPageCount(totalPageCount)
+    }, [historyData, pageSize])
+
+    
+    const [projectOptions, setProjectOptions] = useState([])
+
+    useEffect(() => {
+        getAllProject()
         .then(projects => {
             if(projects.data){
                 const options = projects.data.map(project => ({
@@ -37,55 +65,12 @@ export default function History(){
             else alert("Gagal memperoleh data proyek")
         })
     }, [])
-
-    const dummyData = [
-        {type: 1, task: "Design Creation", project: "WeTrack Beta", createdAt: new Date("2024-04-18 14:20:20")},
-        {type: 2, task: "Design Creation", project: "WeTrack Beta", createdAt: new Date("2024-04-17 11:15:00")},
-        {type: 3, task: "Design Creation", project: "WeTrack Beta", oldStatus: "TO DO", newStatus: "IN PROGRESS", createdAt: new Date("2024-02-11 19:59:20")},
-        {type: 1, task: "Design Creation", project: "WeTrack Beta", createdAt: new Date("2024-04-18 14:20:20")},
-        {type: 2, task: "Design Creation", project: "WeTrack Beta", createdAt: new Date("2024-04-17 11:15:00")},
-        {type: 3, task: "Design Creation", project: "WeTrack Beta", oldStatus: "TO DO", newStatus: "IN PROGRESS", createdAt: new Date("2024-02-11 19:59:20")},
-        {type: 1, task: "Design Creation", project: "WeTrack Beta", createdAt: new Date("2024-04-18 14:20:20")},
-        {type: 2, task: "Design Creation", project: "WeTrack Beta", createdAt: new Date("2024-04-17 11:15:00")},
-        {type: 3, task: "Design Creation", project: "WeTrack Beta", oldStatus: "TO DO", newStatus: "IN PROGRESS", createdAt: new Date("2024-02-11 19:59:20")},
-        {type: 1, task: "Design Creation", project: "WeTrack Beta", createdAt: new Date("2024-04-18 14:20:20")},
-        {type: 2, task: "Design Creation", project: "WeTrack Beta", createdAt: new Date("2024-04-17 11:15:00")},
-        {type: 3, task: "Design Creation", project: "WeTrack Beta", oldStatus: "TO DO", newStatus: "IN PROGRESS", createdAt: new Date("2024-02-11 19:59:20")},
-        {type: 1, task: "Design Creation", project: "WeTrack Beta", createdAt: new Date("2024-04-18 14:20:20")},
-        {type: 2, task: "Design Creation", project: "WeTrack Beta", createdAt: new Date("2024-04-17 11:15:00")},
-        {type: 3, task: "Design Creation", project: "WeTrack Beta", oldStatus: "TO DO", newStatus: "IN PROGRESS", createdAt: new Date("2024-02-11 19:59:20")},
-        {type: 1, task: "Design Creation", project: "WeTrack Beta", createdAt: new Date("2024-04-18 14:20:20")},
-        {type: 2, task: "Design Creation", project: "WeTrack Beta", createdAt: new Date("2024-04-17 11:15:00")},
-        {type: 3, task: "Design Creation", project: "Test Project", oldStatus: "TO DO", newStatus: "IN PROGRESS", createdAt: new Date("2024-02-11 19:59:20")},
-        {type: 1, task: "Design Creation", project: "Test Project", createdAt: new Date("2024-04-18 14:20:20")},
-        {type: 2, task: "Design Creation", project: "Test Project", createdAt: new Date("2024-04-17 11:15:00")},
-        {type: 3, task: "Design Creation", project: "Test Project", oldStatus: "TO DO", newStatus: "IN PROGRESS", createdAt: new Date("2024-02-11 19:59:20")},
-        {type: 1, task: "Design Creation", project: "Test Project", createdAt: new Date("2024-04-18 14:20:20")},
-        {type: 2, task: "Design Creation", project: "Test Project", createdAt: new Date("2024-04-17 11:15:00")},
-        {type: 3, task: "Design Creation", project: "Test Project", oldStatus: "TO DO", newStatus: "IN PROGRESS", createdAt: new Date("2024-02-11 19:59:20")},
-        {type: 1, task: "Design Creation", project: "Test Project", createdAt: new Date("2024-04-18 14:20:20")},
-        {type: 2, task: "Design Creation", project: "Test Project", createdAt: new Date("2024-04-17 11:15:00")},
-        {type: 3, task: "Design Creation", project: "Test Project", oldStatus: "TO DO", newStatus: "IN PROGRESS", createdAt: new Date("2024-02-11 19:59:20")},
-        {type: 1, task: "Design Creation", project: "Test Project", createdAt: new Date("2024-04-18 14:20:20")},
-        {type: 2, task: "Design Creation", project: "Test Project", createdAt: new Date("2024-04-17 11:15:00")},
-        {type: 3, task: "Design Creation", project: "Test Project", oldStatus: "TO DO", newStatus: "IN PROGRESS", createdAt: new Date("2024-02-11 19:59:20")},
-        {type: 1, task: "Design Creation", project: "Test Project", createdAt: new Date("2024-04-18 14:20:20")},
-        {type: 2, task: "Design Creation", project: "Test Project", createdAt: new Date("2024-04-17 11:15:00")},
-        {type: 3, task: "Design Creation", project: "Test Project", oldStatus: "TO DO", newStatus: "IN PROGRESS", createdAt: new Date("2024-02-11 19:59:20")}
-    ]
-
-    const [project, setProject] = useState("Semua")
-    const [type, setType] = useState("Semua")
-    const [pageIndex, setPageIndex] = useState(0)
-    const [pageSize, setPageSize] = useState(10)
-    const [pageCount, setPageCount] = useState(0)
-    const [historyData, setHistoryData] = useState(dummyData)
     
     const typeOptions = [
         {label: "Semua", value: 0},
-        {label: "Tugas", value: 1},
-        {label: "Komentar", value: 2},
-        {label: "Perubahan Status", value: 3}
+        {label: "Proyek", value: "Project"},
+        {label: "Tugas", value: "Task"},
+        {label: "Komentar", value: "Comment"}
     ]
 
     const pageSizeOptions = [
@@ -98,12 +83,12 @@ export default function History(){
         setProject(value)
         if(value === 0){
             if(type !== 0){
-                setHistoryData(dummyData.filter(item => item.type === type))
+                setHistoryData(dataFetched.filter(item => item.eventType === type))
             }else{
-                setHistoryData(dummyData)
+                setHistoryData(dataFetched)
             }
         }else{
-            setHistoryData(dummyData.filter(item => item.project === value))
+            setHistoryData(dataFetched.filter(item => item.project.projectName === value))
         }
         setPageIndex(0)
     }
@@ -111,23 +96,16 @@ export default function History(){
     const handleTypeChange = (value) => {
         setType(value)
         if(value === 0){
-            if(project !== 0){
-                setHistoryData(dummyData.filter(item => item.project === project))
+            if(project !== "Semua"){
+                setHistoryData(dataFetched.filter(item => item.project.projectName === project))
             }else{
-                setHistoryData(dummyData)
+                setHistoryData(dataFetched)
             }
         }else{
-            setHistoryData(dummyData.filter(item => item.type === value))
+            setHistoryData(dataFetched.filter(item => item.eventType === value))
         }
         setPageIndex(0)
     }
-
-    useEffect(() => {
-        if(historyData){
-            const totalPageCount = Math.ceil(historyData.length / pageSize)
-            setPageCount(totalPageCount)
-        }
-    }, [historyData, pageSize])
 
     const handlePageSizeChange = (value) => {
         setPageSize(value)
@@ -140,49 +118,51 @@ export default function History(){
                 <Header title={"Riwayat"} links={links}/>
             </div>
             <div className="h-full flex flex-col mt-4 md:mt-6 gap-4">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-2">
-                    <div className="w-full flex justify-between items-center gap-3 md:gap-6">
-                        <div className="flex items-center gap-2 md:gap-4">
-                            <div className="flex items-center gap-2">
-                                <b className="hidden xs:block text-xs md:text-sm">Proyek:</b>
-                                <SelectButton 
-                                    name={"project-button"}
-                                    placeholder={project} 
-                                    options={projectOptions} 
-                                    onChange={handleProjectChange}
-                                />
+                {historyData && historyData?.length > 0 && (
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-2">
+                        <div className="w-full flex justify-between items-center gap-3 md:gap-6">
+                            <div className="flex items-center gap-2 md:gap-4">
+                                <div className="flex items-center gap-2">
+                                    <b className="hidden xs:block text-xs md:text-sm">Proyek:</b>
+                                    <SelectButton 
+                                        name={"project-button"}
+                                        placeholder={project} 
+                                        options={projectOptions} 
+                                        onChange={handleProjectChange}
+                                    />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <b className="hidden xs:block text-xs md:text-sm">Jenis:</b>
+                                    <SelectButton 
+                                        name={"type-button"}
+                                        placeholder={type} 
+                                        options={typeOptions} 
+                                        onChange={handleTypeChange}
+                                    />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <b className="hidden xs:block text-xs md:text-sm">Tampilkan:</b>
+                                    <SelectButton 
+                                        name={"page-size-button"}
+                                        placeholder={pageSize} 
+                                        options={pageSizeOptions} 
+                                        onChange={handlePageSizeChange}
+                                    />
+                                </div>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <b className="hidden xs:block text-xs md:text-sm">Jenis:</b>
-                                <SelectButton 
-                                    name={"type-button"}
-                                    placeholder={type} 
-                                    options={typeOptions} 
-                                    onChange={handleTypeChange}
-                                />
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <b className="hidden xs:block text-xs md:text-sm">Tampilkan:</b>
-                                <SelectButton 
-                                    name={"page-size-button"}
-                                    placeholder={pageSize} 
-                                    options={pageSizeOptions} 
-                                    onChange={handlePageSizeChange}
-                                />
-                            </div>
+                            <SortButton sorting={sorting} setSorting={setSorting}/>
                         </div>
-                        <SortButton sorting={sorting} setSorting={setSorting}/>
                     </div>
-                </div>
-                {historyData?.length > 0 ? <HistoryList
-                    historyData={sortDateFn({data: historyData, sortDirection: sorting})}
+                )}
+                {historyData && historyData?.length > 0 ? <HistoryList
+                    historyData={sortDateTimestampFn({data: historyData, sortDirection: sorting, key: 'createdAt'})}
                     pageSize={pageSize}
                     pageIndex={pageIndex}
                     setPageIndex={setPageIndex}
                     pageCount={pageCount}
                     dataCount={historyData.length}
                 /> :
-                <EmptyState message="Belum ada data riwayat yang tersedia.."/>}
+                <EmptyState message="Belum ada data riwayat yang tersedia."/>}
             </div>
         </DashboardLayout>
     )

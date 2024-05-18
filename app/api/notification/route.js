@@ -20,8 +20,8 @@ export async function GET(request, response) {
         const q = query(notificationColRef, where('userId', '==', userId), orderBy('createdAt', 'desc'))
         const notificationSnapshot = await getDocs(q);
 
-        const notificationsData = await Promise.all(notificationSnapshot.docs.map(async (doc) => {
-            const { senderId, taskId, projectId } = doc.data()
+        const notificationsData = await Promise.all(notificationSnapshot.docs.map(async (item) => {
+            const { senderId, taskId, projectId } = item.data()
             const senderDoc = senderId && await getDoc(doc(db, "users", senderId));
             const taskDoc = taskId && await getDoc(doc(db, "tasks", taskId));
             const projectDoc = projectId && await getDoc(doc(db, "projects", projectId));
@@ -30,10 +30,9 @@ export async function GET(request, response) {
             const task = taskDoc && taskDoc.data()
             const project = projectDoc && projectDoc.data()
 
-
             return {
                 id: item.id,
-                ...doc.data(),
+                ...item.data(),
                 sender: sender,
                 task: task,
                 project: project

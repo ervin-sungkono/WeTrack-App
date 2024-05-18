@@ -15,18 +15,19 @@ export const dateFormat = (date, includeTime = false) => {
 
 export const listDateFormat = (date) => {
     const currentDate = moment(new Date())
-    const dateDifference = currentDate.diff(moment(date), 'days')
+    const comparedDate = moment(new Date(date*1000))
+    const dateDifference = currentDate.dayOfYear() - comparedDate.dayOfYear()
     let formatString = ""
     switch(dateDifference){
         case 0:
-            formatString = "[Hari ini], HH:mm A"
+            formatString = "[Hari ini], HH:mm"
             break
         case 1:
-            formatString = "[Kemarin], HH:mm A"
+            formatString = "[Kemarin], HH:mm"
             break
         default:
-            formatString = "DD MMM YYYY, HH:mm A"
+            formatString = "DD MMM YYYY, HH:mm"
             break
     }
-    return moment(date).format(formatString)
+    return moment.unix(date).format(formatString)
 }
