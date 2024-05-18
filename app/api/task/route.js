@@ -47,6 +47,7 @@ export async function GET(request, response) {
 
             return {
                 id: item.id,
+                displayId: item.data().displayId,
                 taskName: item.data().taskName,
                 labels: item.data().labels,
                 assignedTo: item.data().assignedTo,

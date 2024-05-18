@@ -21,11 +21,16 @@ import PopUpInfo from "../common/alert/PopUpInfo";
 export default function ProfileLayout(){
     const { data: session } = useSession()
     const router = useRouter()
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("")
+    const [changePassword, setChangePassword] = useState(false)
+    const [updateProfile, setUpdateProfile] = useState(false)
+    const [deleteAccount, setDeleteAccount] = useState(false)
 
     const [initialValues, setInitialValues] = useState({
         fullName: "",
         email: "",
-        // profileImage: null,
         description: "",
         jobPosition: "",
         location: "",
@@ -41,7 +46,6 @@ export default function ProfileLayout(){
                 setInitialValues({
                     fullName: res.data.fullName,
                     email: res.data.email,
-                    // profileImage: res.data.profileImage || "",
                     description: res.data.description || "",
                     jobPosition: res.data.jobPosition || "",
                     location: res.data.location || "",
@@ -53,17 +57,11 @@ export default function ProfileLayout(){
                     setProfileImageUploadedURL(res.data.profileImage.attachmentStoragePath)
                 }  
             }
+            setLoading(false)
         }).catch(error => {
             console.log(error)
         })
     }, [])
-
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState(false)
-    const [errorMessage, setErrorMessage] = useState("")
-    const [changePassword, setChangePassword] = useState(false)
-    const [updateProfile, setUpdateProfile] = useState(false)
-    const [deleteAccount, setDeleteAccount] = useState(false)
 
     const ProfileField = ({icon, label, value, nullValue}) => {
         return (

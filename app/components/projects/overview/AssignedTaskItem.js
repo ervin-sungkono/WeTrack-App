@@ -28,7 +28,7 @@ export default function AssignedTaskItem({title, startDate, endDate, status, pri
                     {id}
                 </div>
                 <a href={href}>
-                    <div className="text-xs md:text-sm text-basic-blue cursor-pointer font-semibold">{`View Detail ->`}</div>
+                    <div className="text-xs md:text-sm text-basic-blue cursor-pointer font-semibold">{`Lihat Rincian ->`}</div>
                 </a>
             </div>
         </div>

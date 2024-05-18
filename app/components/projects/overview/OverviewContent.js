@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import AssignedTaskItem from "./AssignedTaskItem";
 import OverviewCard from "./OverviewCard";
-import { GoPlus as PlusIcon } from "react-icons/go";
 import { getDocumentReference, getQueryReferenceOrderBy } from "@/app/firebase/util";
 import { getDoc, onSnapshot } from "firebase/firestore";
 import Table from "../../common/table/Table";
@@ -11,8 +10,22 @@ import UserIcon from "../../common/UserIcon";
 import LinkButton from "../../common/button/LinkButton";
 import { getPriority } from "@/app/lib/string";
 import Label from "../../common/Label";
+import { dateFormat } from "@/app/lib/date";
+import { getUserProfile } from "@/app/lib/fetch/user";
 
 export default function OverviewContent({ projectId }){
+    
+    const [userId, setUserId] = useState(null)
+
+    useEffect(() => {
+        getUserProfile().then((res) => {
+            if(res.error){
+                console.log(res.error)
+            }else{
+                setUserId(res.data.uid)
+            }
+        })
+    }, [])
 
     const assignedTasksDummyData = [
         {
@@ -36,27 +49,35 @@ export default function OverviewContent({ projectId }){
     ]
 
     const [taskData, setTaskData] = useState([])
+    const [assignedTaskData, setAssignedTaskData] = useState([])
 
     useEffect(() => {
         if(!projectId) return
         const reference = getQueryReferenceOrderBy({collectionName: "tasks", field: "projectId", id: projectId, orderByKey:"order"})
         const unsubscribe = onSnapshot(reference, async(snapshot) => {
             const data = await Promise.all(snapshot.docs.map(async(document) => {
-                const status = document.data().status
-                if(status){
-                    const statusRef = getDocumentReference({collectionName: "taskStatuses", id: status})
-                    const statusSnap = await getDoc(statusRef)
-                    const statusData = statusSnap.data()
-                    return({
-                        ...document.data(),
-                        statusName: statusData.statusName,
-                    })
-                }
-                return({
+                const taskData = document.data()
+                const assignedTo = taskData.assignedTo
+                const status = taskData.status
+                const task = {
                     id: document.id,
-                    status: null,
-                    ...document.data()
-                })
+                    ...taskData
+                }
+                if(assignedTo){
+                    const assignedToRef = getDocumentReference({ collectionName: "users", id: assignedTo });
+                    const assignedToSnap = await getDoc(assignedToRef);
+                    if (assignedToSnap.exists()) {
+                        task.assignedTo = assignedToSnap.data();
+                    }
+                }
+                if(status){
+                    const statusRef = getDocumentReference({ collectionName: "taskStatuses", id: status });
+                    const statusSnap = await getDoc(statusRef);
+                    if (statusSnap.exists()) {
+                        task.status = statusSnap.data();
+                    }
+                }
+                return task
             }))
             data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
             setTaskData(data)
@@ -65,6 +86,10 @@ export default function OverviewContent({ projectId }){
         })
         return () => unsubscribe()
     }, [projectId])
+
+    useEffect(() => {
+        console.log(taskData)
+    }, [taskData])
 
     const columns = [
         {
@@ -89,7 +114,7 @@ export default function OverviewContent({ projectId }){
                 const dueDate = row.getValue('dueDate')
                 return(
                     <div className="w-full h-full block">
-                        {dueDate || "-"}
+                        {dateFormat(dueDate) || "-"}
                     </div>
                 )
             }
@@ -115,16 +140,16 @@ export default function OverviewContent({ projectId }){
                 return(
                     <div className="flex gap-2 items-center">
                         <UserIcon size="sm" fullName={fullName} src={profileImage?.attachmentStoragePath} alt=""/>
-                        <p>{fullName?.split(' ')[0]}</p>
+                        <p>{fullName}</p>
                     </div>
                 )
             }
         },
         {
-            accessorKey: 'statusName',
+            accessorKey: 'status',
             header: 'Status',
             cell: ({ row }) => {
-                const statusName = row.getValue('statusName')
+                const { statusName } = row.getValue('status') ?? {}
                 return(
                     <Label text={statusName.toUpperCase()}/>
                 )
@@ -136,27 +161,31 @@ export default function OverviewContent({ projectId }){
         <div className="flex flex-col gap-4">
             {taskData.length === 0 ? (
                 <OverviewCard title="Tugas Terbaru">
-                    <div className="flex flex-col items-center justify-center">
-                        <div className="text-center">
-                            Belum ada data tugas yang tersedia.
+                    <div className="max-h-[200px] overflow-hidden">
+                        <div className="flex flex-col items-center justify-center">
+                            <div className="text-center">
+                                Belum ada data tugas yang tersedia.
+                            </div>
+                            <LinkButton href={`/projects/${projectId}/board`} variant="primary" size={`md`} className="mt-2 md:mt-4 px-2 xl:px-4">
+                                Buat Tugas Baru Sekarang
+                            </LinkButton>
                         </div>
-                        <LinkButton href={`/projects/${projectId}/board`} variant="primary" size={`md`} className="mt-2 md:mt-4 px-2 xl:px-4">
-                            Buat Tugas Baru Sekarang
-                        </LinkButton>
                     </div>
                 </OverviewCard>
             ) : (
                 <OverviewCard title="Tugas Terbaru" action={"Lihat semua"} href={`/projects/${projectId}/tasks`}>
-                    <Table 
-                        data={taskData}
-                        columns={columns}
-                        usePagination={false}
-                    />
+                    <div className="max-h-[200px] overflow-scroll">
+                        <Table 
+                            data={taskData}
+                            columns={columns}
+                            usePagination={false}
+                        />
+                    </div>
                 </OverviewCard>
             )}
             
             <div className="flex flex-col md:flex-row justify-between gap-4">
-                <OverviewCard title="Ditugaskan Kepada Saya" action={<PlusIcon className="text-xl md:text-2xl" />}>
+                <OverviewCard title="Ditugaskan Kepada Saya">
                     <div className="flex flex-col gap-2">
                         {assignedTasksDummyData.map((task, index) => (
                             <AssignedTaskItem key={index} {...task}/>

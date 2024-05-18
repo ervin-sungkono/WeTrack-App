@@ -3,7 +3,7 @@ import { getPriority } from "@/app/lib/string";
 import { MdChecklist as TaskIcon } from "react-icons/md";
 import Label from "../common/Label";
 
-export default function DashboardTaskItem({title, startDate, endDate, status, priority, id, href, firstItem}){
+export default function DashboardTaskItem({title, startDate, endDate, status, priority, projectKey, displayId, href, firstItem}){
     const { label, color } = getPriority(priority)
     return (
         <div>
@@ -30,10 +30,10 @@ export default function DashboardTaskItem({title, startDate, endDate, status, pr
                 <div className="text-right flex flex-col justify-between">
                     <div className="text-xs md:text-sm flex items-center gap-1 justify-end">
                         <TaskIcon className="text-lg md:text-xl"/>
-                        {id}
+                        {projectKey}-{displayId}
                     </div>
                     <a href={href}>
-                        <div className="text-xs md:text-sm text-basic-blue cursor-pointer font-semibold">{`View Detail ->`}</div>
+                        <div className="text-xs md:text-sm text-basic-blue cursor-pointer font-semibold">{`Lihat Rincian ->`}</div>
                     </a>
                 </div>
             </div>
