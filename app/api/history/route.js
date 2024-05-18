@@ -16,9 +16,7 @@ export async function GET(request, response) {
             }, { status: 401 });
         }
 
-        const { searchParams } = new URL(request.url);
-        console.log(searchParams)
-        const taskId = searchParams.get('taskId');
+        const taskId = request.nextUrl.searchParams.get("taskId")
 
         const historyCollectionRef = collection(db, 'histories');
         let q;
@@ -41,8 +39,8 @@ export async function GET(request, response) {
                 ...userDoc.data()
             };
             const taskDetail = {
-                id: taskDoc.id,
-                ...taskDoc.data()
+                id: taskDoc?.id,
+                ...taskDoc?.data()
             };
             const projectDetail = {
                 id: projectDoc.id,

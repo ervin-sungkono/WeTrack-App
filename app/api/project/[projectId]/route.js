@@ -94,6 +94,13 @@ export async function PUT(request, response) {
             updatedAt: serverTimestamp()
         });
 
+        await createHistory({ 
+            userId: userId,
+            projectId: projectId,
+            action: "update",
+            eventType: "Project"
+        })
+
         const updatedProjectSnap = await getDoc(projectDocRef);
 
         if (updatedProjectSnap.exists()) {

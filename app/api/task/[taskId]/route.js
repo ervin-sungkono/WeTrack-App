@@ -18,8 +18,19 @@ export async function GET(request, response) {
 
         const { taskId } = response.params
 
+        if(!taskId) {
+            return NextResponse.json({
+                message: "Missing parameter"
+            }, { status: 400 })
+        }
+
         const taskRef = doc(db, "tasks", taskId)
         const taskSnap = await getDoc(taskRef);
+        if(!taskSnap.exists()) {
+            return NextResponse.json({
+                message: "Task not found"
+            }, { status: 404 })
+        }
 
         const subTaskRef = collection(db, "tasks")
         const q = query(subTaskRef, where("parentId", "==", taskId))
@@ -29,6 +40,20 @@ export async function GET(request, response) {
                 id: item.id,
                 taskName: item.data().taskName
         }))
+
+        const labelsData = taskSnap.data().labels ?? []
+        let labels
+
+        if(labelsData) {
+            labels = await Promise.all(labelsData.map(async (label) => {
+                const labelDoc = await getDoc(doc, "labels", label)
+
+                return {
+                    id: labelDoc.id,
+                    ...labelDoc.data() 
+                }
+            }))
+        }
         
         if(taskSnap.exists()){
             const taskData = taskSnap.data()
@@ -36,6 +61,7 @@ export async function GET(request, response) {
                 data: {
                     id: taskSnap.id,
                     ...taskData,
+                    labels: labels,
                     subTasks: subTasks
                 },
                 message: "Successfully get Task detail"
@@ -69,6 +95,7 @@ export async function PUT(request, response) {
 
         const { taskId } = response.params;
         const {
+            parentId,
             assignedTo,
             taskName,
             labels,
@@ -77,9 +104,25 @@ export async function PUT(request, response) {
             startDate,
             dueDate
         } = await request.json();
+        
+        const taskDocRef = doc(db, 'tasks', taskId)
+        const taskSnap = await getDoc(taskDocRef)
+        
+        if(!taskSnap.exists()) {
+            return NextResponse.json({
+                message: "Task not found"
+            }, { status: 404 })
+        }
 
-        const projectDocRef = doc(db, 'projects', projectId);
-        const projectSnap = await getDoc(projectDocRef);
+        const taskData = taskSnap.data()
+
+        const subTaskSnap = await getDoc(doc(db, "tasks", parentId))
+
+        if(!subTaskSnap.exists()) {
+            return NextResponse.json({
+                message: "Parent Id not found"
+            }, { status: 404 })
+        }
 
         if (!projectSnap.exists()) {
             return NextResponse.json({
@@ -88,7 +131,7 @@ export async function PUT(request, response) {
             }, { status: 404 });
         }
 
-        const projectRole = await getProjectRole({ projectId, userId})
+        const projectRole = await getProjectRole({ projectId: taskData.projectId, userId})
         if(projectRole !== 'Owner' && projectRole !== 'Member'){
             return NextResponse.json({
                 message: "Unauthorized",
@@ -110,17 +153,6 @@ export async function PUT(request, response) {
             }
         }
 
-        const taskDocRef = doc(db, 'tasks', taskId)
-        const taskSnap = await getDoc(taskDocRef)
-        
-        if(!taskSnap.exists()) {
-            return NextResponse.json({
-                message: "Task not found"
-            }, { status: 404 })
-        }
-
-        const taskData = taskSnap.data()
-
         if(labels.length > 0) {
             labels.forEach(async (label) => {
                 const labelDoc = await getDoc(doc(db, "labels", label))
@@ -133,6 +165,7 @@ export async function PUT(request, response) {
         }
         
         await updateDoc(taskDocRef, {
+            parentId: parentId ?? taskData.parentId,
             assignedTo: assignedTo ?? taskData.assignedTo,
             taskName: taskName ?? taskData.taskName,
             priority: priority ?? taskData.priority,
@@ -146,6 +179,18 @@ export async function PUT(request, response) {
         const updatedTaskSnap = await getDoc(taskDocRef)
         if(updatedTaskSnap.exists()){
             const updatedTaskData = updatedTaskSnap.data()
+
+            if(taskName && (updatedTaskData.taskName != taskData.taskName)) {
+                await createHistory({
+                    userId: userId,
+                    taskId: taskId,
+                    projectId: taskData.projectId,
+                    action: "update",
+                    eventType: "Task Name",
+                    previousValue: taskData.taskName,
+                    newValue: updatedTaskData.taskName
+                })
+            }
 
             if(updatedTaskData.assignedTo){
                 await createNotification({
