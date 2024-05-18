@@ -38,7 +38,7 @@ export async function GET(request, response){
                 id: item.id,
                 ...teamData,
                 user: {
-                    id: userData.id,
+                    id: userDocRef.id,
                     fullName: userData.fullName,
                     profileImage: userData.profileImage
                 }

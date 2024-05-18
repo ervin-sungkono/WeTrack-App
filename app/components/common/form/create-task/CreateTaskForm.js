@@ -55,13 +55,15 @@ export default function CreateTaskForm({ onCancel }){
         }finally{
             resetForm({
                 values: {
+                    projectId: values.projectId,
                     startDate: null,
                     dueDate: null,
                     priority: 0,
+                    statusId: values.statusId,
                     taskName: '',
                     description: null,
-                    assignedTo: null,
-                    parentId: null
+                    assignedTo: values.assignedTo,
+                    parentId: values.parentId
                 }
             })
             setLabels([])
