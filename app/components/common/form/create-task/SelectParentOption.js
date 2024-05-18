@@ -33,6 +33,7 @@ export default function SelectParentOption(){
             required 
             name="parentId" 
             placeholder={"-- Pilih Induk Tugas --"}
+            defaultValue={taskOptions[0]}
             options={taskOptions}
         />
     )

@@ -30,6 +30,7 @@ export default function SelectStatusOption(){
                 label="Status" 
                 required 
                 name="statusId"
+                defaultValue={statusOptions[0]}
                 options={statusOptions}
             />
             <p className="text-xs text-dark-blue">Ini adalah status awal tugas setelah dibuat.</p>
