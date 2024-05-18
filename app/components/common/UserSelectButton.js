@@ -5,7 +5,7 @@ import { initDropdowns } from "flowbite"
 import { IoIosArrowDown as DropdownIcon } from 'react-icons/io'
 import UserIcon from "./UserIcon"
 
-export default function UserSelectButton({ name, type = "default", userId, placeholder, options = [], onChange = null, disabled }){ 
+export default function  UserSelectButton({ name, type = "default", userId, placeholder, options = [], onChange = null, disabled }){ 
     const [selected, setSelected] = useState({})
     const [loaded, setLoaded] = useState(false)
     const buttonRef = useRef()
@@ -47,7 +47,7 @@ export default function UserSelectButton({ name, type = "default", userId, place
                     <UserIcon size="sm" fullName={placeholder?.fullName ?? selected.fullName} src={placeholder ? placeholder?.profileImage?.attachmentStoragePath : (selected.fullName ? selected.profileImage?.attachmentStoragePath : '/images/user-placeholder.png')}/>
                 </div>}
             </button>
-            <div id={name} className="z-50 hidden bg-white divide-y divide-gray-100 rounded-md border border-dark-blue/30 w- md:w-64">
+            <div id={name} className="z-fixed hidden bg-white divide-y divide-gray-100 rounded-md border border-dark-blue/30 w- md:w-64">
                 <ul className="py-2 text-xs md:text-sm text-gray-700">
                     <li>
                         <button
