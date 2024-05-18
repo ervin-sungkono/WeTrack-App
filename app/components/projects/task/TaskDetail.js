@@ -91,7 +91,7 @@ function TaskDetail({ taskId, closeFn }){
                     {closeFn && <button onClick={closeFn}><CloseIcon size={32} className="text-basic-blue"/></button>}
                 </div>
             </div>
-            <div className="h-full flex flex-col overflow-y-auto gap-4 md:gap-6 pr-4 -mr-4 md:pr-8 md:-mr-8 custom-scrollbar">
+            <div className="h-full flex flex-col overflow-x-hidden overflow-y-auto gap-4 md:gap-6 pr-4 -mr-4 md:pr-8 md:-mr-8 custom-scrollbar">
                 <div className="flex flex-col gap-3">
                     <div className="grid grid-cols-3 gap-2">
                         <p className="font-semibold text-xs md:text-sm">Penerima</p>
