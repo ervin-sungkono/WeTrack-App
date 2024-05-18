@@ -9,6 +9,12 @@ import DotButton from "../../common/button/DotButton";
 import UserSelectButton from "../../common/UserSelectButton";
 import CustomTooltip from "../../common/CustomTooltip";
 import Label from "../../common/Label";
+import SimpleInputForm from "../../common/SimpleInputField";
+import PopUpForm from "../../common/alert/PopUpForm";
+import Button from "../../common/button/Button";
+import { deleteTask, updateTask } from "@/app/lib/fetch/task";
+import PopUpLoad from "../../common/alert/PopUpLoad";
+import UpdateTaskNameForm from "../../common/form/UpdateTaskNameForm";
 
 const getItemStyle = (isDragging, draggableStyle) => ({
     // some basic styles to make the items look a bit nicer
@@ -32,6 +38,9 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 export default function BoardItem({ item, index }){
     const { viewTask } = useTaskData()
     const [assignee, setAssignee] = useState(item.assignedTo)
+    const [loading, setLoading] = useState(false)
+    const [updateConfirmation, setUpdateConfirmation] = useState(false)
+    const [deleteConfirmation, setDeleteConfirmation] = useState(false)
     const [project, _] = useSessionStorage("project")
 
     useEffect(() => {
@@ -40,6 +49,46 @@ export default function BoardItem({ item, index }){
         // Logic untuk update assignee
       }
     }, [assignee])
+
+    const taskActions = [
+      {
+        label: "Ubah Nama Tugas",
+        fnCall: () => setUpdateConfirmation(true)
+      },
+      {
+        label: "Hapus",
+        fnCall: () => setDeleteConfirmation(true)
+      }
+    ]
+
+    const handleUpdateTaskName = async(e, taskName) => {
+      e.stopPropagation()
+      setLoading(true)
+
+      try{
+        if(taskName === item.taskName) throw Error();
+        await updateTask({ taskId: item.id, taskName })
+      }catch(e){
+        console.log(e)
+      }finally{
+        setUpdateConfirmation(false)
+        setLoading(false)
+      }
+    }
+
+    const handleDeleteTask = async(e) => {
+      e.stopPropagation()
+      setLoading(true)
+
+      try{
+        await deleteTask({ taskId: item.id })
+      }catch(e){
+        console.log(e)
+      }finally{
+        setDeleteConfirmation(false)
+        setLoading(false)
+      }
+    }
 
     const userList = [
       {
@@ -78,10 +127,43 @@ export default function BoardItem({ item, index }){
               )}
               onClick={() => viewTask(item.id)}
           >
-            <div className="flex flex-col gap-1">
+            {loading && <PopUpLoad/>}
+            {updateConfirmation &&
+              <UpdateTaskNameForm 
+                taskName={item.taskName} 
+                onSubmit={handleUpdateTaskName} 
+                onClose={(e) => {
+                  e.stopPropagation()
+                  setUpdateConfirmation(false)
+                }}
+              />
+            }
+            {deleteConfirmation &&
+              (<PopUpForm
+                title={"Hapus Tugas"}
+                titleSize="large"
+                message={'Apakah Anda yakin ingin menghapus tugas ini?'}
+                wrapContent
+              >
+                <>
+                  <div className="mt-4 flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
+                    <Button variant="danger" onClick={handleDeleteTask}>Hapus</Button>
+                    <Button variant="secondary" onClick={(e) => {
+                        e.stopPropagation()
+                        setDeleteConfirmation(false)
+                      }}
+                    >Batal</Button>
+                  </div>
+                </>
+              </PopUpForm>)
+            }
+            <div className="flex flex-col">
               <div className="flex items-center">
                 <p className="flex-grow text-xs md:text-sm font-semibold">{item.taskName}</p>
-                <DotButton name={`task-${item.id}`}/>
+                <DotButton 
+                  name={`task-${item.id}`}
+                  actions={taskActions}
+                />
               </div>
               {item.labels && (
                 <div className="flex flex-wrap gap-1">

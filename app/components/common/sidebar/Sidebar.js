@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from "react"
-
+import { useRole } from "@/app/lib/context/role"
 import SidebarMenu from "./SidebarMenu"
 
 import { 
@@ -21,6 +21,9 @@ export default function Sidebar({ project, projectId }){
     const [open, setOpen] = useState(true)
     const [mounted, setMounted] = useState(false)
     const [baseUrl, setBaseUrl] = useState()
+    const role = useRole()
+
+    console.log(role)
 
     useEffect(() => {
         setMounted(true)

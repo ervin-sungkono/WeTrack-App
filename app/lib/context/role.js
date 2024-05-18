@@ -12,7 +12,6 @@ export const RoleProvider = ({ children }) => {
     useEffect(() => {
         if(project && project.id && !role){
             getSession().then(session => {
-                console.log(session)
                 if(session.user){
                     getProjectRole({ userId: session.user.uid, projectId: project.id })
                         .then(role => setRole(role))
