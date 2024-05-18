@@ -84,7 +84,7 @@ function TaskDetail({ taskId, closeFn }){
         <div className={`w-full h-full flex flex-col gap-3 md:gap-6 px-4 py-4 md:px-8 md:py-6 bg-white text-dark-blue rounded-lg shadow-lg overflow-y-auto`}>
             <div className="flex items-start gap-4">
                 <div className={`text-lg md:text-2xl font-semibold text-dark-blue flex-grow`}>
-                    {project && <span>[{project.key} - {task.displayId}]</span>} {task.taskName}
+                    {project && <span>[{project.key}-{task.displayId}]</span>} {task.taskName}
                 </div>
                 <div className="flex items-center gap-2.5">
                     <DotButton name={`task-detail-${taskId}`}/>

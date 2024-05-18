@@ -16,7 +16,7 @@ export default function TaskItem({ task, active }){
             <div className="flex items-center gap-2">
                 <div className="flex flex-grow items-center gap-1 text-dark-blue">
                   {task.type === "Task" ? <CheckIcon size={16}/> : <SubTaskIcon size={16}/>}
-                  <p className="text-[10px] md:text-xs">{project && <span>{project.key} - {task.displayId}</span>}</p>
+                  <p className="text-[10px] md:text-xs">{project && <span>{project.key}-{task.displayId}</span>}</p>
                 </div>
                 <CustomTooltip id={`task-${task.id}-tooltip`} content={"Belum ditugaskan"}>
                   <UserIcon fullName={task.assignedTo} src={task.assignedTo ?? '/images/user-placeholder.png'} size="xs"/>

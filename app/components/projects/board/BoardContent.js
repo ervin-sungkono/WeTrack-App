@@ -4,7 +4,8 @@ import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import { createNewTask, reorderTask } from "@/app/lib/fetch/task"
 import { createNewTaskStatus, deleteTaskStatus, reorderTaskStatus, updateTaskStatus } from "@/app/lib/fetch/taskStatus"
 import { getQueryReferenceOrderBy, getTaskReferenceOrderBy } from "@/app/firebase/util"
-import { onSnapshot } from "firebase/firestore"
+import { onSnapshot, doc, getDoc } from "firebase/firestore"
+import { db } from "@/app/firebase/config"
 import { debounce } from "@/app/lib/helper"
 
 import BoardList from "./BoardList"
@@ -168,10 +169,21 @@ export default function BoardContent({ projectId }){
     }))
 
     const taskReference = getTaskReferenceOrderBy({ field: "projectId", id: projectId, orderByKey: "order" })
-    const taskUnsubscribe = onSnapshot(taskReference, (taskSnapshot => {
-      const taskData = taskSnapshot.docs.map(taskDoc => ({
-        id: taskDoc.id,
-        ...taskDoc.data()
+    const taskUnsubscribe = onSnapshot(taskReference, (async(taskSnapshot) => {
+      const taskData = await Promise.all(taskSnapshot.docs.map(async(taskDoc) => {
+        const taskLabels = taskDoc.data().labels
+        const labels = taskLabels && await Promise.all(taskLabels.map(async(label) => {
+          const labelSnap = await getDoc(doc(db, "labels", label))
+          return {
+            id: labelSnap.id,
+            ...labelSnap.data()
+          }
+        }))
+        return {
+          id: taskDoc.id,
+          ...taskDoc.data(),
+          labels: labels
+        }
       }))
       setTaskData(taskData)
     }))
