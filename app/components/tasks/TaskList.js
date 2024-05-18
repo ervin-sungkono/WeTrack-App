@@ -26,7 +26,8 @@ export default function TaskList({ tasks, taskId }){
             setSortedTask(sortedTask)
         }
         else {
-            const sortedTask = sortValueFn({ data: tasks, sortDirection, key: sortField })
+            const sortedByID = sortValueFn({ data: tasks, sortDirection: 'asc', key: 'displayId' })
+            const sortedTask = sortValueFn({ data: sortedByID, sortDirection, key: sortField })
             setSortedTask(sortedTask)
         }
     }, [sortField, sortDirection, tasks])

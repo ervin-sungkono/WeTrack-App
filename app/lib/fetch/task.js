@@ -41,7 +41,7 @@ export function createNewTask({
         description,
         statusId,
         assignedTo,
-        labels: labels.length > 0 ? JSON.parse(labels).map(label => label.id) : null,
+        labels: labels && (labels.length > 0 ? JSON.parse(labels).map(label => label.id) : null),
         parentId
     }
 
