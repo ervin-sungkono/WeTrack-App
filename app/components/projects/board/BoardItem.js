@@ -3,9 +3,12 @@ import { Draggable } from "@hello-pangea/dnd"
 import { useEffect, useState } from "react";
 import { FaCheckSquare as CheckIcon } from "react-icons/fa";
 import { useTaskData } from "@/app/lib/context/task";
+import { useSessionStorage } from "usehooks-ts";
+
 import DotButton from "../../common/button/DotButton";
 import UserSelectButton from "../../common/UserSelectButton";
 import CustomTooltip from "../../common/CustomTooltip";
+import Label from "../../common/Label";
 
 const getItemStyle = (isDragging, draggableStyle) => ({
     // some basic styles to make the items look a bit nicer
@@ -29,6 +32,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 export default function BoardItem({ item, index }){
     const { viewTask } = useTaskData()
     const [assignee, setAssignee] = useState(item.assignedTo)
+    const [project, _] = useSessionStorage("project")
 
     useEffect(() => {
       if(assignee){
@@ -79,18 +83,18 @@ export default function BoardItem({ item, index }){
                 <p className="flex-grow text-xs md:text-sm font-semibold">{item.taskName}</p>
                 <DotButton name={`task-${item.id}`}/>
               </div>
-              {(item.label?.length > 0) && (
-                <div className="flex flex-wrap">
-                  {item.label.map(label => {
-
-                  })}
+              {item.labels && (
+                <div className="flex flex-wrap gap-1">
+                  {item.labels.map(({id, content, backgroundColor}) => (
+                    <Label key={id} text={content} color={backgroundColor}/>
+                  ))}
                 </div>
               )}
             </div>
             <div className="flex items-center gap-2">
                 <div className="flex flex-grow items-center gap-1 text-dark-blue">
                   <CheckIcon size={16}/>
-                  <p className="text-[10px] md:text-xs">TASK-1</p>
+                  <p className="text-[10px] md:text-xs">{project && <span>{project.key}-{item.displayId}</span>}</p>
                 </div>
                 <CustomTooltip id={`task-${item.id}-tooltip`} content={assignee?.fullName ?? "Belum ditugaskan"}>
                   <UserSelectButton 

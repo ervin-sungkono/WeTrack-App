@@ -120,7 +120,7 @@ export default function CommentSection({ comments, setCommentData, taskId }){
                     <CommentCard key={comment.id} comment={comment} deleteComment={showDeleteConfirmation}/>
                 ))
                 : 
-                <div className="py-2">
+                <div className="py-4 md:py-2">
                     <EmptyState message="Belum ada komentar yang tersedia.."/>
                 </div>)}
             </div>

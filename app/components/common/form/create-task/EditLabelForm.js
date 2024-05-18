@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react"
-import CustomTooltip from "../CustomTooltip"
+import CustomTooltip from "../../CustomTooltip"
 import { getRandomColor, pickTextColorBasedOnBgColor } from "@/app/lib/color"
 
 import { 
@@ -19,6 +19,7 @@ export default function EditLabelForm({ defaultContent, defaultColor, onCancel, 
                 <input 
                     name="content" 
                     type="text" 
+                    autoComplete="off"
                     className="text-sm w-full h-8 rounded-full border-none" 
                     style={{backgroundColor: backgroundColor, color: pickTextColorBasedOnBgColor(backgroundColor)}}
                     value={content}

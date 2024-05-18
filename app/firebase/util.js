@@ -1,5 +1,5 @@
 import { db } from "@/app/firebase/config"
-import { query, orderBy, where, collection, doc, and, getDocs, getDoc, updateDoc, serverTimestamp, addDoc } from "firebase/firestore"
+import { query, orderBy, where, collection, doc, and, getDocs, getDoc, updateDoc, serverTimestamp, addDoc, limit } from "firebase/firestore"
 import { getSession } from "next-auth/react"
 
 export const getTaskReferenceOrderBy = ({ field, id, orderByKey }) => {
@@ -8,7 +8,7 @@ export const getTaskReferenceOrderBy = ({ field, id, orderByKey }) => {
 }
 
 export const getNewNotificationReference = ({ id }) => {
-    const q = query(collection(db, 'notifications'), and(where('userId', '==', id), where('status', '==', 'new')))
+    const q = query(collection(db, 'notifications'), and(where('userId', '==', id), where('status', '==', 'new')), limit(1))
     return q
 }
 

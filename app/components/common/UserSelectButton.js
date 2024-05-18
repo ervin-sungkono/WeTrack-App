@@ -51,6 +51,7 @@ export default function UserSelectButton({ name, type = "default", userId, place
                 <ul className="py-2 text-xs md:text-sm text-gray-700">
                     <li>
                         <button
+                            type="button"
                             disabled={!selected.id}
                             onClick={(e) => handleSelectedUpdate(e, {})} className="block w-full text-start px-4 py-2 disabled:bg-gray-300 disabled:text-dark-blue hover:bg-gray-100 hover:text-basic-blue transition-colors duration-300 ease-in-out"
                         >
@@ -62,9 +63,10 @@ export default function UserSelectButton({ name, type = "default", userId, place
                             </div>
                         </button>
                     </li>
-                    {options.map(({ user: { id, fullName, profileImage } }) => (
+                    {options.map(({ id, user: { fullName, profileImage } }) => (
                         <li key={id}>
                             <button
+                                type="button"
                                 disabled={selected && selected.id === id}
                                 onClick={(e) => handleSelectedUpdate(e, {id, fullName, profileImage})} className="block w-full text-start px-4 py-2 disabled:bg-gray-300 disabled:text-dark-blue hover:bg-gray-100 hover:text-basic-blue transition-colors duration-300 ease-in-out"
                             >
@@ -116,7 +118,7 @@ export default function UserSelectButton({ name, type = "default", userId, place
                             </div>
                         </button>
                     </li>
-                    {options.map(({ user: { id, fullName, profileImage } }) => (
+                    {options.map(({ id, user: { fullName, profileImage } }) => (
                         <li key={id}>
                             <button
                                 disabled={selected && selected.id === id}
@@ -135,6 +137,7 @@ export default function UserSelectButton({ name, type = "default", userId, place
             </div>
             {!disabled && userId && 
             <button 
+                type="button"
                 className="text-[10.8px] py-1 md:text-xs text-basic-blue font-semibold hover:underline"
                 onClick={() => setSelected(options.find(({user}) => user.id === userId)?.user ?? {})}
             >
@@ -178,7 +181,7 @@ export default function UserSelectButton({ name, type = "default", userId, place
                             </div>
                         </button>
                     </li>
-                    {options.map(({ user: { id, fullName, profileImage } }) => (
+                    {options.map(({ id, user: { fullName, profileImage } }) => (
                         <li key={id}>
                             <button
                                 disabled={selected && selected.id === id}
@@ -197,6 +200,7 @@ export default function UserSelectButton({ name, type = "default", userId, place
             </div>
             {!disabled && userId && 
             <button 
+                type="button"
                 className="text-[10.8px] py-1 md:text-xs text-basic-blue font-semibold hover:underline"
                 onClick={() => setSelected(options.find(({user}) => user.id === userId)?.user ?? {})}
             >

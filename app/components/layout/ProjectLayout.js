@@ -7,6 +7,7 @@ import { getProjectByID } from "@/app/lib/fetch/project"
 import { useRouter } from "next/navigation"
 import { getContentAuthorization } from "@/app/firebase/util"
 import PopUpLoad from "../common/alert/PopUpLoad"
+import { RoleProvider } from "@/app/lib/context/role"
 
 export default function ProjectLayout({ children, hideSidebar, projectId }){
     const [project, setProject] = useSessionStorage('project')
@@ -49,14 +50,16 @@ export default function ProjectLayout({ children, hideSidebar, projectId }){
     }
     
     return(
-        <div className="flex fixed top-0 left-0 bottom-0 right-0 bg-gray-100 pt-20">
-            <Navbar/>
-            {!hideSidebar && <Sidebar project={project} projectId={projectId}/>}
-            <div className="max-w-7xl max-h-full flex flex-col flex-grow gap-6 pt-6 pb-6 md:pb-8 pl-10 xs:pl-12 lg:pl-14 pr-6 lg:pr-12 mx-auto overflow-y-auto">
-                <main className="flex-grow flex flex-col gap-2.5 md:gap-4 overflow-y-auto">
-                    {children}
-                </main>
+        <RoleProvider>
+            <div className="flex fixed top-0 left-0 bottom-0 right-0 bg-gray-100 pt-20">
+                <Navbar/>
+                {!hideSidebar && <Sidebar project={project} projectId={projectId}/>}
+                <div className="max-w-7xl max-h-full flex flex-col flex-grow gap-6 pt-6 pb-6 md:pb-8 pl-10 xs:pl-12 lg:pl-14 pr-6 lg:pr-12 mx-auto overflow-y-auto">
+                    <main className="flex-grow flex flex-col gap-2.5 md:gap-4 overflow-y-auto">
+                        {children}
+                    </main>
+                </div>
             </div>
-        </div>
+        </RoleProvider>
     )
 }
