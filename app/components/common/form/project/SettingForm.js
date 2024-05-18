@@ -14,6 +14,8 @@ import PopUpInfo from "../../alert/PopUpInfo";
 import DeleteProjectForm from "./DeleteProjectForm";
 import { useRouter } from "next/navigation";
 import KeyFormikField from "./KeyFormikField";
+import { useRole } from "@/app/lib/context/role";
+import { validateUserRole } from "@/app/lib/helper";
 
 export default function SettingForm({projectId}){
 
@@ -23,12 +25,15 @@ export default function SettingForm({projectId}){
     const [errorDeleteMessage, setErrorDeleteMessage] = useState("")
     const [loading, setLoading] = useState(true)
     const router = useRouter()
+    const role = useRole()
 
     const [projectSettings, setProjectSettings] = useState({
         projectName: "",
         key: "",
         startStatus: "",
         endStatus: "",
+        startStatusName: "",
+        endStatusName: ""
     })
     
     const [taskStatusesOptions, setTaskStatusesOptions] = useState([])
@@ -135,6 +140,11 @@ export default function SettingForm({projectId}){
                 label: taskStatus.status,
                 value: taskStatus.id
             })))
+            setProjectSettings(prevState => ({
+                ...prevState,
+                startStatusName: taskStatusesData.find(taskStatus => taskStatus.id === prevState.startStatus)?.status || "",
+                endStatusName: taskStatusesData.find(taskStatus => taskStatus.id === prevState.endStatus)?.status || ""
+            }))
         })
         return () => unsubscribe()
     }, [projectId])
@@ -157,42 +167,70 @@ export default function SettingForm({projectId}){
                                     type="text"
                                     label="Nama Proyek"
                                     placeholder="Masukkan nama proyek..."
+                                    disabled={validateUserRole({ userRole: role, minimumRole: 'Owner' }) ? false : true}
                                 />
                                 {error && <p className="text-xs md:text-sm text-danger-red font-medium">{errorMessage}</p>}
                             </div>
                             <div className="mb-4">
-                                <KeyFormikField />
+                                <KeyFormikField 
+                                    disabled={validateUserRole({ userRole: role, minimumRole: 'Owner' }) ? false : true}
+                                />
                                 {error && <p className="text-xs md:text-sm text-danger-red font-medium">{errorMessage}</p>}
                             </div>
-                            <div className="mb-4">
-                                <FormikSelectField
-                                    name="startStatus"
-                                    label="Status Awal"
-                                    placeholder="Pilih status awal..."
-                                    options={taskStatusesOptions}
-                                    onChange={handleUpdateStartStatus}
-                                />
-                            </div>
-                            <div className="mb-6">
-                                <FormikSelectField
-                                    name="endStatus"
-                                    label="Status Akhir"
-                                    placeholder="Pilih status akhir..."
-                                    options={taskStatusesOptions}
-                                    onChange={handleUpdateEndStatus}
-                                />
-                            </div>
-                            <div className="flex justify-between">
-                                <div>
-                                    <Button onClick={() => {
-                                        setErrorDelete(false)
-                                        setDeleteProjectMode(true)
-                                    }} variant="danger">Hapus Proyek</Button>
+                            {validateUserRole({ userRole: role, minimumRole: 'Owner' }) ? (
+                                <>
+                                    <div className="mb-4">
+                                        <FormikSelectField
+                                            name="startStatus"
+                                            label="Status Awal"
+                                            placeholder="Pilih status awal..."
+                                            options={taskStatusesOptions}
+                                            onChange={handleUpdateStartStatus}
+                                        />
+                                    </div>
+                                    <div className="mb-6">
+                                        <FormikSelectField
+                                            name="endStatus"
+                                            label="Status Akhir"
+                                            placeholder="Pilih status akhir..."
+                                            options={taskStatusesOptions}
+                                            onChange={handleUpdateEndStatus}
+                                        />
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="mb-4">
+                                        <FormikField
+                                            name="startStatusName"
+                                            type="text"
+                                            label="Status Awal"
+                                            disabled
+                                        />
+                                    </div>
+                                    <div className="mb-6">
+                                        <FormikField
+                                            name="endStatusName"
+                                            type="text"
+                                            label="Status Akhir"
+                                            disabled
+                                        />
+                                    </div>
+                                </>
+                            )}
+                            {validateUserRole({ userRole: role, minimumRole: 'Owner' }) && (
+                                <div className="flex justify-between">
+                                    <div>
+                                        <Button onClick={() => {
+                                            setErrorDelete(false)
+                                            setDeleteProjectMode(true)
+                                        }} variant="danger">Hapus Proyek</Button>
+                                    </div>
+                                    <div className="flex gap-2 md:gap-4">
+                                        <Button type="submit" variant="primary">Perbarui Proyek</Button>
+                                    </div>
                                 </div>
-                                <div className="flex gap-2 md:gap-4">
-                                    <Button type="submit" variant="primary">Perbarui Proyek</Button>
-                                </div>
-                            </div>
+                            )}
                         </div>
                     )}
                 />

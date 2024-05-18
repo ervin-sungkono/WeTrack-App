@@ -5,7 +5,7 @@ import { useFormikContext } from "formik"
 import { generateProjectKey } from "@/app/lib/string"
 import { debounce } from "@/app/lib/helper"
 
-export default function KeyFormikField(){
+export default function KeyFormikField({disabled}){
     const { 
         values: { projectName },
         setFieldValue
@@ -25,8 +25,10 @@ export default function KeyFormikField(){
 
     return(
         <div className="flex flex-col gap-1">
-            <FormikField label="Kunci Proyek" required name="key" type="text" placeholder={"Masukkan kunci.."}/>
-            <p className="text-xs text-dark-blue">Kunci proyek akan digunakan sebagai awalan untuk tugas proyek Anda, dapat dihasilkan secara otomatis.</p>
+            <FormikField label="Kunci Proyek" disabled={disabled} required name="key" type="text" placeholder={"Masukkan kunci.."}/>
+            {!disabled && 
+                <p className="text-xs text-dark-blue">Kunci proyek akan digunakan sebagai awalan untuk tugas proyek Anda, dapat dihasilkan secara otomatis.</p>
+            }
         </div>
     )
 }

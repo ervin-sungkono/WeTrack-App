@@ -11,6 +11,7 @@ import UserIcon from "../../common/UserIcon";
 import LinkButton from "../../common/button/LinkButton";
 import { getPriority } from "@/app/lib/string";
 import Label from "../../common/Label";
+import { dateFormat } from "@/app/lib/date";
 
 export default function OverviewContent({ projectId }){
 
@@ -89,7 +90,7 @@ export default function OverviewContent({ projectId }){
                 const dueDate = row.getValue('dueDate')
                 return(
                     <div className="w-full h-full block">
-                        {dueDate || "-"}
+                        {dateFormat(dueDate) || "-"}
                     </div>
                 )
             }
@@ -136,27 +137,31 @@ export default function OverviewContent({ projectId }){
         <div className="flex flex-col gap-4">
             {taskData.length === 0 ? (
                 <OverviewCard title="Tugas Terbaru">
-                    <div className="flex flex-col items-center justify-center">
-                        <div className="text-center">
-                            Belum ada data tugas yang tersedia.
+                    <div className="max-h-[200px] overflow-hidden">
+                        <div className="flex flex-col items-center justify-center">
+                            <div className="text-center">
+                                Belum ada data tugas yang tersedia.
+                            </div>
+                            <LinkButton href={`/projects/${projectId}/board`} variant="primary" size={`md`} className="mt-2 md:mt-4 px-2 xl:px-4">
+                                Buat Tugas Baru Sekarang
+                            </LinkButton>
                         </div>
-                        <LinkButton href={`/projects/${projectId}/board`} variant="primary" size={`md`} className="mt-2 md:mt-4 px-2 xl:px-4">
-                            Buat Tugas Baru Sekarang
-                        </LinkButton>
                     </div>
                 </OverviewCard>
             ) : (
                 <OverviewCard title="Tugas Terbaru" action={"Lihat semua"} href={`/projects/${projectId}/tasks`}>
-                    <Table 
-                        data={taskData}
-                        columns={columns}
-                        usePagination={false}
-                    />
+                    <div className="max-h-[200px] overflow-scroll">
+                        <Table 
+                            data={taskData}
+                            columns={columns}
+                            usePagination={false}
+                        />
+                    </div>
                 </OverviewCard>
             )}
             
             <div className="flex flex-col md:flex-row justify-between gap-4">
-                <OverviewCard title="Ditugaskan Kepada Saya" action={<PlusIcon className="text-xl md:text-2xl" />}>
+                <OverviewCard title="Ditugaskan Kepada Saya">
                     <div className="flex flex-col gap-2">
                         {assignedTasksDummyData.map((task, index) => (
                             <AssignedTaskItem key={index} {...task}/>

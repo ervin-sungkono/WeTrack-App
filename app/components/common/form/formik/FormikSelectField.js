@@ -4,7 +4,7 @@ import FormikErrorMessage from "./FormikErrorMessage";
 /**
  * FormikSelectField Component
  */
-export default function FormikSelectField({ name, required, options, label, placeholder, defaultValue }){
+export default function FormikSelectField({ name, required, options, label, placeholder, defaultValue, disabled }){
     return(
         <Field name={name}>
             {(formikField) => {
@@ -17,6 +17,7 @@ export default function FormikSelectField({ name, required, options, label, plac
                             {...formikField.field}
                             id={name}
                             defaultValue={defaultValue}
+                            disabled={disabled}
                             className={`px-2.5 md:px-4 py-1.5 md:py-2.5 rounded-md bg-transparent ${formikField.meta.error && formikField.meta.touched ? "border-red-600" : "border-dark-blue/30"} text-sm`}
                         >
                             { placeholder && <option value={""} disabled selected>{placeholder}</option>}
