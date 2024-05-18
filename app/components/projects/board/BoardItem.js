@@ -10,10 +10,13 @@ import CustomTooltip from "../../common/CustomTooltip";
 import Label from "../../common/Label";
 import PopUpForm from "../../common/alert/PopUpForm";
 import Button from "../../common/button/Button";
-import { deleteTask, updateTask } from "@/app/lib/fetch/task";
 import PopUpLoad from "../../common/alert/PopUpLoad";
 import UpdateTaskNameForm from "../../common/form/UpdateTaskNameForm";
 import UserIcon from "../../common/UserIcon";
+
+import { deleteTask, updateTask } from "@/app/lib/fetch/task";
+import { validateUserRole } from "@/app/lib/helper";
+import { useRole } from "@/app/lib/context/role";
 
 const getItemStyle = (isDragging, draggableStyle) => ({
     // some basic styles to make the items look a bit nicer
@@ -41,6 +44,8 @@ export default function BoardItem({ item, index }){
     const [updateConfirmation, setUpdateConfirmation] = useState(false)
     const [deleteConfirmation, setDeleteConfirmation] = useState(false)
     const [project, _] = useSessionStorage("project")
+
+    const role = useRole()
 
     useEffect(() => {
       if(assignee){
@@ -157,12 +162,13 @@ export default function BoardItem({ item, index }){
               </PopUpForm>)
             }
             <div className="flex flex-col">
-              <div className="flex items-center">
-                <p className="flex-grow text-xs md:text-sm font-semibold">{item.taskName}</p>
+              <div className="flex items-center gap-2">
+                <p className="flex-grow text-xs md:text-sm font-semibold py-1.5">{item.taskName}</p>
+                {validateUserRole({ userRole: role, minimumRole: 'Member' }) && 
                 <DotButton 
                   name={`task-${item.id}`}
                   actions={taskActions}
-                />
+                />}
               </div>
               {item.labels && (
                 <div className="flex flex-wrap gap-1">
