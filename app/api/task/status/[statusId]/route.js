@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/app/firebase/config";
 import { getUserSession } from "@/app/lib/session";
 import { nextAuthOptions } from "@/app/lib/auth";
-import { getProjectRole } from "@/app/firebase/util";
+import { createHistory, getProjectRole } from "@/app/firebase/util";
 import { collection, updateDoc, deleteDoc, getDoc, doc, serverTimestamp, query, where, getDocs } from "firebase/firestore";
 
 export async function PUT(request, response){
@@ -19,6 +19,18 @@ export async function PUT(request, response){
 
         const { statusId } = response.params
         const { statusName } = await request.json()
+
+        if(!statusId) {
+            return NextResponse.json({
+                message: "Missing parameter"
+            }, { status: 400 })
+        }
+
+        if(!statusName) {
+            return NextResponse.json({
+                message: "Missing payload"
+            }, { status: 400 })
+        }
 
         const statusRef = doc(db, "taskStatuses", statusId)
         const statusSnap = await getDoc(statusRef)
@@ -39,9 +51,21 @@ export async function PUT(request, response){
         }
 
         await updateDoc(statusRef, {
-            statusName: statusName,
+            statusName: statusName ?? statusSnap.data().statusName,
             updatedAt: serverTimestamp()
         })
+
+        const newTaskStatus = await getDoc(doc(db, "taskStatuses", statusId))
+        if(newTaskStatus.exists()) {
+            await createHistory({
+                userId: userId,
+                projectId: projectId,
+                action: "update",
+                eventType: "Task Status",
+                previousValue: statusSnap.data().statusName,
+                newValue: newTaskStatus.data().statusName
+            })
+        }
 
         return NextResponse.json({
             message: "Task status updated successfully",
@@ -164,6 +188,14 @@ export async function DELETE(request, response){
 
         await deleteDoc(statusRef)
         await deleteDoc(statusCounterRef)
+
+        await createHistory({
+            userId: userId,
+            projectId: projectId,
+            action: "delete",
+            eventType: "Task status"
+        })
+
         return NextResponse.json({
             message: "Task status deleted successfully",
             success: true
