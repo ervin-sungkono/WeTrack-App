@@ -13,6 +13,7 @@ import DotButton from "../../common/button/DotButton"
 import ActivitySection from "./ActivitySection"
 import { TailSpin } from "react-loader-spinner"
 import ChatSection from "./ChatSection"
+import { useSessionStorage } from "usehooks-ts"
 
 const AttachmentSection = dynamic(() => import("./AttachmentSection"))
 const SubtaskSection = dynamic(() => import("./SubtaskSection"))
@@ -21,6 +22,7 @@ function TaskDetail({ taskId, closeFn }){
     const [task, setTask] = useState()
     const [loading, setLoading] = useState(false)
     const [assignee, setAssignee] = useState()
+    const [project, _] = useSessionStorage("project")
 
     const userList = [
         {
@@ -82,14 +84,14 @@ function TaskDetail({ taskId, closeFn }){
         <div className={`w-full h-full flex flex-col gap-3 md:gap-6 px-4 py-4 md:px-8 md:py-6 bg-white text-dark-blue rounded-lg shadow-lg overflow-y-auto`}>
             <div className="flex items-start gap-4">
                 <div className={`text-lg md:text-2xl font-semibold text-dark-blue flex-grow`}>
-                    {task.taskName}
+                    {project && <span>[{project.key}-{task.displayId}]</span>} {task.taskName}
                 </div>
                 <div className="flex items-center gap-2.5">
                     <DotButton name={`task-detail-${taskId}`}/>
                     {closeFn && <button onClick={closeFn}><CloseIcon size={32} className="text-basic-blue"/></button>}
                 </div>
             </div>
-            <div className="h-full flex flex-col overflow-y-auto gap-4 md:gap-6 pr-4 -mr-4 md:pr-8 md:-mr-8 custom-scrollbar">
+            <div className="h-full flex flex-col overflow-x-hidden overflow-y-auto gap-4 md:gap-6 pr-4 -mr-4 md:pr-8 md:-mr-8 custom-scrollbar">
                 <div className="flex flex-col gap-3">
                     <div className="grid grid-cols-3 gap-2">
                         <p className="font-semibold text-xs md:text-sm">Penerima</p>

@@ -112,7 +112,7 @@ export async function POST(request, response) {
             }, { status: 404 })
         }
 
-        const projectRole = await getProjectRole({ projectId, userId})
+        const projectRole = await getProjectRole({ projectId, userId: createdBy})
         if(projectRole !== 'Owner' && projectRole !== 'Member'){
             return NextResponse.json({
                 message: "Unauthorized",
