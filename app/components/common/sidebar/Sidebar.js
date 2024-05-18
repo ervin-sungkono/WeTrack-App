@@ -16,14 +16,13 @@ import {
     MdGroup as TeamIcon,
     MdSettings as SettingIcon
 } from "react-icons/md"
+import { validateUserRole } from "@/app/lib/helper"
 
 export default function Sidebar({ project, projectId }){
     const [open, setOpen] = useState(true)
     const [mounted, setMounted] = useState(false)
     const [baseUrl, setBaseUrl] = useState()
     const role = useRole()
-
-    console.log(role)
 
     useEffect(() => {
         setMounted(true)
@@ -89,8 +88,11 @@ export default function Sidebar({ project, projectId }){
             </div>
             <div className={`w-full flex flex-col gap-4 pb-4 px-4 flex-grow transition-opacity duration-300 overflow-x-hidden divide-gray-300`}>
                 <SidebarMenu links={mainLinks} baseUrl={baseUrl} open={open}/>
-                <hr className="border-dark-blue/30"/>
-                <SidebarMenu links={settingLinks} baseUrl={baseUrl} open={open}/>
+                {validateUserRole({ userRole: role, minimumRole: 'Owner' }) &&
+                <>
+                    <hr className="border-dark-blue/30"/>
+                    <SidebarMenu links={settingLinks} baseUrl={baseUrl} open={open}/>
+                </>}
             </div>
         </section>
     )
