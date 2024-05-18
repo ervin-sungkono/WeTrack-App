@@ -25,8 +25,6 @@ export default function SelectProjectOption(){
         if(!projectId && !projectOptions) fetchProjectOptions()
     }, [projectId, projectOptions])
 
-    console.log(projectId)
-
     return(
         <FormikSelectField 
             label="Proyek" 
