@@ -63,7 +63,7 @@ export default function  UserSelectButton({ name, type = "default", userId, plac
                             </div>
                         </button>
                     </li>
-                    {options.map(({ id, user: { fullName, profileImage } }) => (
+                    {options.map(({ user: {id, fullName, profileImage } }) => (
                         <li key={id}>
                             <button
                                 type="button"
@@ -118,7 +118,7 @@ export default function  UserSelectButton({ name, type = "default", userId, plac
                             </div>
                         </button>
                     </li>
-                    {options.map(({ id, user: { fullName, profileImage } }) => (
+                    {options.map(({ user: {id, fullName, profileImage } }) => (
                         <li key={id}>
                             <button
                                 disabled={selected && selected.id === id}
@@ -181,7 +181,7 @@ export default function  UserSelectButton({ name, type = "default", userId, plac
                             </div>
                         </button>
                     </li>
-                    {options.map(({ id, user: { fullName, profileImage } }) => (
+                    {options.map(({ user: {id, fullName, profileImage } }) => (
                         <li key={id}>
                             <button
                                 disabled={selected && selected.id === id}
