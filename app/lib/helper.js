@@ -28,3 +28,13 @@ export const sortDateTimestampFn = ({ data, sortDirection = 'asc', key = 'create
       return sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
   });
 };
+
+export const validateUserRole = ({ userRole, minimumRole = 'Owner' }) => {
+  if (!userRole) return false;
+
+  const roles = ['Viewer', 'Member', 'Owner'];
+  const userRoleIndex = roles.indexOf(userRole);
+  const minimumRoleIndex = roles.indexOf(minimumRole);
+
+  return userRoleIndex >= minimumRoleIndex;
+};
