@@ -16,7 +16,8 @@ export default function Table({
     data, 
     columns, 
     pageSize = 10,
-    usePagination = true
+    usePagination = true,
+    fullWidth = true,
 }){
     const memoizedData = useMemo(() => data, [data])
     const memoizedColumns = useMemo(() => columns, [columns])
@@ -71,7 +72,7 @@ export default function Table({
     return(
         <div className="h-full max-h-full flex flex-col gap-4 overflow-hidden">
             <div className='overflow-auto'>
-                <table className='w-full table-fixed'>
+                <table className={`${fullWidth ? "w-full" : ""} table-fixed`}>
                     <thead className='sticky top-0 z-40 bg-white'>
                         {getHeaderGroups().map(headerGroup => (
                             <tr key={headerGroup.id} className='border-b border-b-dark-blue/20' >
