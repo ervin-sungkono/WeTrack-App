@@ -8,25 +8,32 @@ import { TbBriefcaseFilled } from "react-icons/tb"
 import UserIcon from "../common/UserIcon"
 import PopUpLoad from "../common/alert/PopUpLoad"
 import { useEffect, useState } from "react"
-import { getUserProfile } from "@/app/lib/fetch/user"
+import { getUserProfileById } from "@/app/lib/fetch/user"
 import { dateFormat } from "@/app/lib/date"
+import { useRouter } from "next/navigation"
 
 export default function ProfileViewLayout({userId}){
     const { data: session } = useSession()
+    const sessionId = session?.user.uid
+    const router = useRouter()
+    const [loading, setLoading] = useState(true)
+    const [profileImageURL, setProfileImageURL] = useState(null)
 
     const [values, setValues] = useState({
         fullName: "",
         email: "",
-        // profileImage: null,
         description: "",
         jobPosition: "",
         location: "",
         createdAt: null
     })
 
-    const userProfile = async () => {
-        try {
-            const res = await getUserProfile()
+    useEffect(() => {
+        if(sessionId === userId){
+            router.push("/profile")
+            return
+        }
+        getUserProfileById(userId).then(res => {
             if(res.error){
                 console.log(res.error)
             }else{
@@ -34,7 +41,6 @@ export default function ProfileViewLayout({userId}){
                 setValues({
                     fullName: res.data.fullName,
                     email: res.data.email,
-                    // profileImage: res.data.profileImage || "",
                     description: res.data.description || "",
                     jobPosition: res.data.jobPosition || "",
                     location: res.data.location || "",
@@ -44,16 +50,9 @@ export default function ProfileViewLayout({userId}){
                     setProfileImageURL(res.data.profileImage.attachmentStoragePath)
                 }  
             }
-        }catch(error){
-            console.log(error)
-        }
-    }
-
-    useEffect(() => {
-        userProfile()
-    }, [])
-
-    const [loading, setLoading] = useState(false)
+            setLoading(false)
+        })
+    }, [router, sessionId, userId])
 
     const ProfileField = ({icon, label, value, nullValue}) => {
         return (
@@ -74,8 +73,6 @@ export default function ProfileViewLayout({userId}){
             </div>
         )             
     }
-
-    const [profileImageURL, setProfileImageURL] = useState(null)
 
     if(!session){
         return (

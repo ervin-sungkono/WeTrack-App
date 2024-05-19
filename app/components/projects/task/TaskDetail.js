@@ -97,7 +97,7 @@ function TaskDetail({ taskId, closeFn }){
                         <p className="font-semibold text-xs md:text-sm">Penerima</p>
                         <div className="col-span-2">
                             <UserSelectButton 
-                                name={"assignedTo"}
+                                name={`assignedToDetail-${task.id}`}
                                 type="button"
                                 placeholder={task.assignedTo}
                                 options={userList}

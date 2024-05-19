@@ -5,7 +5,7 @@ import { useFormikContext } from "formik"
 import { getAllProject } from "@/app/lib/fetch/project";
 
 export default function SelectProjectOption(){
-    const [projectOptions, setProjectOptions] = useState([])
+    const [projectOptions, setProjectOptions] = useState(null)
     const { values: { projectId }, setFieldValue } = useFormikContext()
 
     useEffect(() => {
@@ -19,10 +19,10 @@ export default function SelectProjectOption(){
                         value: project.id
                     }))
                 )
-                setFieldValue('projectId', projects.data[0].id)
+                setFieldValue('projectId', projects.data[0]?.id)
             }
         }
-        if(!projectId) fetchProjectOptions()
+        if(!projectId && !projectOptions) fetchProjectOptions()
     }, [projectId, projectOptions])
 
     return(
@@ -30,7 +30,6 @@ export default function SelectProjectOption(){
             label="Proyek" 
             required 
             name="projectId" 
-            defaultValue={projectOptions[0]}
             options={projectOptions}
         />
     )

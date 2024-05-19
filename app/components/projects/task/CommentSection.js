@@ -1,12 +1,10 @@
 "use client"
 import { SessionProvider } from "next-auth/react"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import dynamic from "next/dynamic"
 
 import { addComment } from "@/app/lib/fetch/comment"
 import { deleteComment } from "@/app/lib/fetch/comment"
-import { getQueryReference, getDocumentReference } from "@/app/firebase/util"
-import { onSnapshot, getDoc } from "firebase/firestore"
 import EmptyState from "../../common/EmptyState"
 import PopUpForm from "../../common/alert/PopUpForm"
 import Button from "../../common/button/Button"
@@ -15,41 +13,10 @@ import PopUpLoad from "../../common/alert/PopUpLoad"
 const CommentInput  = dynamic(() => import("./comment/CommentInput"))
 const CommentCard = dynamic(() => import("./comment/CommentCard"))
 
-export default function CommentSection({ comments, setCommentData, taskId }){
+export default function CommentSection({ taskId, comments }){
     const [deleteFocus, setDeleteFocus] = useState(null)
     const [deleteConfirmation, setDeleteConfirmation] = useState(false)
     const [loading, setLoading] = useState(false)
-
-    useEffect(() => {
-        if(!taskId) return
-        const reference = getQueryReference({ collectionName: "comments", field: "taskId", id: taskId })
-        const unsubscribe = onSnapshot(reference, async(snapshot) => {
-            const updatedComments = await Promise.all(snapshot.docs.map(async(document) => {
-                const userId = document.data().userId
-                if(userId){
-                    const userRef = getDocumentReference({ collectionName: "users", id: userId })
-                    const userSnap = await getDoc(userRef)
-                    const { fullName, profileImage } = userSnap.data()
-
-                    return({
-                        id: document.id,
-                        user: {
-                            fullName,
-                            profileImage
-                        },
-                        ...document.data()
-                    })
-                }
-                return({
-                    id: document.id,
-                    user: null,
-                    ...document.data()
-                })
-            }))
-            setCommentData(updatedComments)
-        })
-        return () => unsubscribe()
-    }, [taskId])
 
     const sendComment = async(comment) => {
         const newComment = await addComment({

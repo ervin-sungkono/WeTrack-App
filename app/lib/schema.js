@@ -163,3 +163,9 @@ export const newTaskSchema = yup.object().shape({
             otherwise: (s) => s,
         }),
 })
+
+export const updateTaskNameSchema = yup.object().shape({
+    taskName: yup
+        .string()
+        .required("Nama tugas wajib diisi")
+})
