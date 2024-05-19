@@ -124,7 +124,7 @@ export async function PUT(request, response) {
             }, { status: 401 })
         }
 
-        if(taskData.type === "SubTask"){
+        if(taskData.type === "SubTask" && parentId){
             // Validate if the given parentId is an existing task
             const subTaskSnap = await getDoc(doc(db, "tasks", parentId))
 
