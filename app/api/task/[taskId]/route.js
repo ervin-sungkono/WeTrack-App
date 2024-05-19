@@ -63,7 +63,7 @@ export async function GET(request, response) {
                     id: taskSnap.id,
                     ...taskData,
                     labels: labels,
-                    subTasks: subTasks
+                    subTasks: !subTaskDocs.empty ? subTasks : []
                 },
                 message: "Successfully get Task detail"
             }, { status: 200 })
@@ -125,6 +125,12 @@ export async function PUT(request, response) {
             }
 
             const parentTaskSnap = await getDoc(doc(db, "tasks", parentId))
+
+            if(parentTaskSnap.data()?.projectId != taskData.projectId) {
+                return NextResponse.json({
+                    message: "Parent id is not found in the project"
+                }, { status: 400 })
+            }
     
             if(!parentTaskSnap.exists()) {
                 return NextResponse.json({
@@ -142,10 +148,15 @@ export async function PUT(request, response) {
         }
 
         if(taskData.type === "SubTask"){
-            // Validate if the given parentId is an existing task
-            const subTaskSnap = await getDoc(doc(db, "tasks", parentId))
+            const parentTaskSnap = await getDoc(doc(db, "tasks", parentId))
 
-            if(!subTaskSnap.exists()) {
+            if(parentTaskSnap.data()?.projectId != taskData.projectId) {
+                return NextResponse.json({
+                    message: "Parent id is not found in the project"
+                }, { status: 400 })
+            }
+
+            if(!parentTaskSnap.exists()) {
                 return NextResponse.json({
                     message: "Parent Id not found"
                 }, { status: 404 })
@@ -155,25 +166,37 @@ export async function PUT(request, response) {
         if (assignedTo) {
             const userDocRef = doc(db, 'users', assignedTo);
             const userSnap = await getDoc(userDocRef);
-            if (userSnap.exists()) {
-                assignedToDetails = userSnap.data();
-
-            } else {
+            if(!userSnap.exists()) {
                 return NextResponse.json({
                     message: "Assigned user not found"
                 }, { status: 404 })
             }
+            const q = query(collection(db, "teams"), and(where("projectId", '==', taskData.projectId), where("userId", '==', assignedTo), where("status", "==", "accepted")))
+            const querySnapshot = await getDocs(q)
+
+            if(querySnapshot.empty) {
+                return NextResponse.json({
+                    message: "Can't assigned task to user not in the team"
+                }, { status: 400 })
+            }            
         }
 
-        if(labels.length > 0) {
-            labels.forEach(async (label) => {
-                const labelDoc = await getDoc(doc(db, "labels", label))
-                if(!labelDoc.exists) {
-                    return NextResponse.json({
-                        message: "Label not found"
-                    }, { status: 400 })
+        if(labels && labels.length > 0){
+            await Promise.all(labels.map(async (label) =>{
+                const labelDoc = await getDoc(doc(db, "labels", label)) 
+
+                if(labelDoc.data()?.projectId != projectId) {
+                    throw new Error("Label is not found in the project")
                 }
-            });
+
+                if(labelDoc.exists()){
+                    return {
+                        id: labelDoc.id,
+                        ...labelDoc.data()
+                    }
+                }
+                return null
+            }))
         }
         
         await updateDoc(taskDocRef, {
@@ -257,7 +280,7 @@ export async function DELETE(request, response) {
 
         await deleteDoc(taskDocRef) 
 
-        if(taskDoc.data().status !== null) {
+        if(taskDoc.data().status !== null && taskDoc.data().type == "Task") {
             const currentLastOrderDoc = await getDoc(doc(db, "taskOrderCounters", taskDoc.data().status))
             const currentLastOrder = currentLastOrderDoc.data().lastOrder
 

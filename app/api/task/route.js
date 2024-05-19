@@ -1,10 +1,11 @@
-import { doc, getDoc, collection, getDocs, query, where, runTransaction, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, query, where, runTransaction, serverTimestamp, and } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
 import { createHistory } from '@/app/firebase/util';
 import { getProjectRole } from '@/app/firebase/util';
+import { getHistoryAction, getHistoryEventType } from '@/app/lib/history';
 
 export async function GET(request, response) {
     try {
@@ -128,38 +129,43 @@ export async function POST(request, response) {
             const userDocRef = doc(db, 'users', assignedTo);
 
             const userSnap = await getDoc(userDocRef);
-            if (userSnap.exists()) {
-                const { fullName, profileImage } = userSnap.data();
-                assignedToDetails = { 
-                    id: userSnap.id,
-                    fullName: fullName,
-                    profileImage: profileImage
-                }
-                // console.log("assigned to detail", assignedToDetails)
-            } else {
+            if(!userSnap.exists()) {
                 return NextResponse.json({
                     message: "Assigned user not found"
                 }, { status: 404 })
+            }
+            const q = query(collection(db, "teams"), and(where("projectId", '==', projectId), where("userId", '==', assignedTo), where("status", "==", "accepted")))
+            const querySnapshot = await getDocs(q)
+
+            if(querySnapshot.empty) {
+                return NextResponse.json({
+                    message: "Can't assigned task to user not in the team"
+                }, { status: 400 })
+            }
+            
+            const { fullName, profileImage } = userSnap.data();
+            assignedToDetails = { 
+                id: userSnap.id,
+                fullName: fullName,
+                profileImage: profileImage
             }
         }
 
         let createdByDetails = null;
         if (createdBy) {
             const userDocRef = doc(db, 'users', createdBy);
-
             const userSnap = await getDoc(userDocRef);
-            if (userSnap.exists()) {
-                const { fullName, profileImage } = userSnap.data();
-                createdByDetails = { 
-                    id: userSnap.id,
-                    fullName: fullName,
-                    profileImage: profileImage
-                }
-
-            } else {
+            if (!userSnap.exists()) {
                 return NextResponse.json({
                     message: "The user creator not found"
                 }, { status: 404 })
+            }
+
+            const { fullName, profileImage } = userSnap.data();
+            createdByDetails = { 
+                id: userSnap.id,
+                fullName: fullName,
+                profileImage: profileImage
             }
         }
 
@@ -175,12 +181,33 @@ export async function POST(request, response) {
             }, { status: 404 })
         }
 
+        if(type === "SubTask"){
+            const parentTaskSnap = await getDoc(doc(db, "tasks", parentId))
+
+            if(parentTaskSnap.data()?.projectId != projectId) {
+                return NextResponse.json({
+                    message: "Parent id is not found in the project"
+                }, { status: 400 })
+            }
+
+            if(!parentTaskSnap.exists()) {
+                return NextResponse.json({
+                    message: "Parent Id not found"
+                }, { status: 404 })
+            }
+        }
+
         let taskStatusDetails = null;
         let taskStatusSnap;
         
         if (statusId) {
             const taskStatusDocRef = doc(db, 'taskStatuses', statusId);
             taskStatusSnap = await getDoc(taskStatusDocRef);
+
+            if(taskStatusSnap.data()?.projectId != projectId) {
+                throw new Error("Task status is not found in the project")
+            }
+
             if (taskStatusSnap.exists()){
                 const { statusName } = taskStatusSnap.data()
                 taskStatusDetails = {
@@ -198,9 +225,15 @@ export async function POST(request, response) {
         let labelDetails = []
         if(labels && labels.length > 0){
             labelDetails = await Promise.all(labels.map(async (label) =>{
-                const labelDoc = await getDoc(doc(db, "labels", label))
+                const labelDoc = await getDoc(doc(db, "labels", label)) 
+
+                if(labelDoc.data()?.projectId != projectId) {
+                    throw new Error("Label is not found in the project")
+                }
+
                 if(labelDoc.exists()){
                     return {
+                        id: labelDoc.id,
                         ...labelDoc.data()
                     }
                 }
@@ -226,7 +259,7 @@ export async function POST(request, response) {
                 labels: labels ?? [],
                 status: statusId ?? null,
                 displayId: displayIdCounterSnap.exists() ? displayIdCounterSnap.data().displayId : 1,
-                order: counterSnap.exists() ? counterSnap.data().lastOrder : 0,
+                order: type == "Task" ? (counterSnap.exists() ? counterSnap.data().lastOrder : 0) : null,
                 priority: priority ?? 0,
                 description: description ?? null,
                 startDate: startDate ?? null,
@@ -238,16 +271,19 @@ export async function POST(request, response) {
             };
 
             transaction.set(newTaskDocRef, newTask);
-            if (!counterSnap.exists()) {
-                transaction.set(counterRef, { 
-                    lastOrder: 1,
-                    updatedAt: serverTimestamp()
-                });
-            } else {
-                transaction.update(counterRef, { 
-                    lastOrder: counterSnap.data().lastOrder + 1,
-                    updatedAt: serverTimestamp()
-                });
+
+            if(type == "Task") {
+                if (!counterSnap.exists()) {
+                    transaction.set(counterRef, { 
+                        lastOrder: 1,
+                        updatedAt: serverTimestamp()
+                    });
+                } else {
+                    transaction.update(counterRef, { 
+                        lastOrder: counterSnap.data().lastOrder + 1,
+                        updatedAt: serverTimestamp()
+                    });
+                }
             }
 
             if(!displayIdCounterSnap.exists()) {
@@ -272,8 +308,8 @@ export async function POST(request, response) {
             userId: createdBy, 
             taskId: result.id, 
             projectId: projectId, 
-            eventType: "Task", 
-            action: "create" 
+            action: getHistoryAction.create,
+            eventType: getHistoryEventType.task 
         })
 
         if(result.assignedTo){

@@ -30,22 +30,14 @@ export async function GET(request, response) {
         const historyDocs = await getDocs(q);
 
         const send = await Promise.all(historyDocs.docs.map(async (item) => {
-            const userDoc = await getDoc(doc(db, "users", item.data().userId));
-            const taskDoc = await getDoc(doc(db, "tasks", item.data().taskId));
-            const projectDoc = await getDoc(doc(db, "projects", item.data().projectId));
+            const { userId, taskId, projectId } = item.data()
+            const userDoc = userId && await getDoc(doc(db, "users", userId));
+            const taskDoc = taskId && await getDoc(doc(db, "tasks", taskId));
+            const projectDoc = projectId && await getDoc(doc(db, "projects", projectId));
 
-            const userDetail = {
-                id: userDoc.id,
-                ...userDoc.data()
-            };
-            const taskDetail = {
-                id: taskDoc?.id,
-                ...taskDoc?.data()
-            };
-            const projectDetail = {
-                id: projectDoc.id,
-                ...projectDoc.data()
-            };
+            const userDetail = userDoc && userDoc.data()
+            const taskDetail = taskDoc && taskDoc.data()
+            const projectDetail = projectDoc && projectDoc.data()
 
             return {
                 id: item.id,
@@ -54,8 +46,8 @@ export async function GET(request, response) {
                 project: projectDetail,
                 eventType: item.data().eventType,
                 action: item.data().action,
-                previousValue: item.data().previousValue,
-                newValue: item.data().newValue,
+                previousValue: item.data()?.previousValue,
+                newValue: item.data()?.newValue,
                 createdAt: item.data().createdAt
             };
         }));
