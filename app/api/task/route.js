@@ -39,12 +39,19 @@ export async function GET(request, response) {
         
         const querySnapshot = await getDocs(q)
 
-        const tasks = querySnapshot.docs.map((item) => {
+        const tasks = await Promise.all(querySnapshot.docs.map(async(item) => {
+            const taskStatusDoc = await getDoc(doc(db, "taskStatuses", item.data().status))
+            const taskStatusDetail = {
+                id: taskStatusDoc.id,
+                ...taskStatusDoc.data()
+            }
+
             return {
                 id: item.id,
                 ...item.data(),
+                status: taskStatusDetail
             }
-        })
+        }))
         
         return NextResponse.json({
             data: tasks,
