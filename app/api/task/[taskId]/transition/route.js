@@ -23,7 +23,7 @@ export async function POST(request, response) {
             newIndex
         } = await request.json();
 
-        if(!taskId || !oldIndex) {
+        if(!taskId || oldIndex == null) {
             return NextResponse.json({
                 message: "Missing paramater"
             }, { status: 404 })
@@ -89,8 +89,19 @@ export async function POST(request, response) {
                 order: doc.data().order
             }))
 
+            // Get old status order reference
+            const statusCounterRef = doc(db, "taskOrderCounters", taskSnap.data().status)
+            const statusCounterSnap = await getDoc(statusCounterRef)
+
+            // Get new status order reference
+            const newStatusCounterRef = doc(db, "taskOrderCounters", newStatusId)
+            const newStatusCounterSnap = await getDoc(newStatusCounterRef)
+
+
+            const newIndexOrder = newIndex ?? (newStatusCounterSnap.exists() ? newStatusCounterSnap.data().lastOrder : 0)
+
             // Update the order for the other task
-            for(let i = newIndex; i < taskDocList.length; i++){
+            for(let i = newIndexOrder; i < taskDocList.length; i++){
                 await updateDoc(taskDocList[i].ref, {
                     order: i + 1,
                     updatedAt: serverTimestamp()
@@ -98,9 +109,6 @@ export async function POST(request, response) {
             }
 
             // Update the old status order counter
-            const statusCounterRef = doc(db, "taskOrderCounters", taskSnap.data().status)
-            const statusCounterSnap = await getDoc(statusCounterRef)
-
             if(!statusCounterSnap.exists()){
                 await addDoc(collection(db, "taskOrderCounters"), {
                     lastOrder: 0,
@@ -113,14 +121,10 @@ export async function POST(request, response) {
                 })
             }  
 
-            // Update the new status order counter
-            const newStatusCounterRef = doc(db, "taskOrderCounters", newStatusId)
-            const newStatusCounterSnap = await getDoc(newStatusCounterRef)
-
             // Move the task to the new document
             await updateDoc(taskRef, {
                 status: newStatusId,
-                order: newIndex ?? (newStatusCounterSnap.exists() ? newStatusCounterSnap.data().lastOrder : 0),
+                order: newIndexOrder,
                 updatedAt: serverTimestamp()
             })
 
@@ -135,12 +139,8 @@ export async function POST(request, response) {
                     lastOrder: newStatusCounterSnap.data().lastOrder + 1,
                     updatedAt: serverTimestamp()
                 })
-            }  
-
-            
+            }    
         }
-
-        
 
         return NextResponse.json({
             message: 'Task updated successfully',
