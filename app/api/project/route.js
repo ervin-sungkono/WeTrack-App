@@ -20,10 +20,13 @@ export async function GET(request, response) {
         const teamQuery = query(teamsRef, where('userId', "==", userId));
         const teamSnapshots = await getDocs(teamQuery);
         const projectIds = teamSnapshots.docs.filter(team => (team.data().status == 'accepted'))
-                                .map(project => project.data().projectId)
+                                .map(team => ({ 
+                                    id: team.data().projectId,
+                                    role: team.data().role
+                                }))
 
-        const allProjects = await Promise.all(projectIds.map(async (item) => {
-            const projectDoc = await getDoc(doc(db, "projects", item))
+        const allProjects = await Promise.all(projectIds.map(async ({ id, role }) => {
+            const projectDoc = await getDoc(doc(db, "projects", id))
             if(projectDoc.exists()) {
                 const projectData = projectDoc.data()
                 const userDoc = await getDoc(doc(db, 'users', projectData.createdBy));
@@ -36,7 +39,8 @@ export async function GET(request, response) {
                         fullName: userDoc.data().fullName,
                         email: userDoc.data().email,
                         profileImage: userDoc.data().profileImage
-                    }
+                    },
+                    projectRole: role
                 }
             }
 
@@ -144,7 +148,7 @@ export async function POST(request, response) {
                 userId: createdBy, 
                 projectId: docRef.id, 
                 eventType: "Project", 
-                action: "created" 
+                action: "create" 
             })
 
             return NextResponse.json({

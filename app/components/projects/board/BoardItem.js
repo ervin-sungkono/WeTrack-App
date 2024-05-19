@@ -3,9 +3,21 @@ import { Draggable } from "@hello-pangea/dnd"
 import { useEffect, useState } from "react";
 import { FaCheckSquare as CheckIcon } from "react-icons/fa";
 import { useTaskData } from "@/app/lib/context/task";
+import { useSessionStorage } from "usehooks-ts";
+
 import DotButton from "../../common/button/DotButton";
-import UserSelectButton from "../../common/UserSelectButton";
 import CustomTooltip from "../../common/CustomTooltip";
+import Label from "../../common/Label";
+import PopUpForm from "../../common/alert/PopUpForm";
+import Button from "../../common/button/Button";
+import PopUpLoad from "../../common/alert/PopUpLoad";
+import UpdateTaskNameForm from "../../common/form/UpdateTaskNameForm";
+import UserIcon from "../../common/UserIcon";
+
+import { deleteTask, updateTask } from "@/app/lib/fetch/task";
+import { validateUserRole } from "@/app/lib/helper";
+import { useRole } from "@/app/lib/context/role";
+import { getPriority } from "@/app/lib/string";
 
 const getItemStyle = (isDragging, draggableStyle) => ({
     // some basic styles to make the items look a bit nicer
@@ -29,38 +41,60 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 export default function BoardItem({ item, index }){
     const { viewTask } = useTaskData()
     const [assignee, setAssignee] = useState(item.assignedTo)
+    const [loading, setLoading] = useState(false)
+    const [updateConfirmation, setUpdateConfirmation] = useState(false)
+    const [deleteConfirmation, setDeleteConfirmation] = useState(false)
+    const [project, _] = useSessionStorage("project")
+
+    const role = useRole()
 
     useEffect(() => {
       if(assignee){
-        console.log(assignee)
+        // console.log(assignee)
         // Logic untuk update assignee
       }
     }, [assignee])
 
-    const userList = [
+    const taskActions = [
       {
-          user: {
-              id: "WeEzNxSREEdyDpSXkIYCAyA4E8y1",
-              fullName: "Ervin Cahyadinata Sungkono",
-              profileImage: null
-          }
+        label: "Ubah Nama Tugas",
+        fnCall: () => setUpdateConfirmation(true)
       },
       {
-          user: {
-              id: "02",
-              fullName: "Kenneth Nathanael",
-              profileImage: null
-          }
-      },
-      {
-          user: {
-              id: "03",
-              fullName: "Christopher Vinantius",
-              profileImage: null
-          }
+        label: "Hapus",
+        fnCall: () => setDeleteConfirmation(true)
       }
     ]
 
+    const handleUpdateTaskName = async(e, taskName) => {
+      e.stopPropagation()
+      setLoading(true)
+
+      try{
+        if(taskName !== item.taskName) await updateTask({ taskId: item.id, taskName })
+      }catch(e){
+        console.log(e)
+      }finally{
+        setUpdateConfirmation(false)
+        setLoading(false)
+      }
+    }
+
+    const handleDeleteTask = async(e) => {
+      e.stopPropagation()
+      setLoading(true)
+
+      try{
+        await deleteTask({ taskId: item.id })
+      }catch(e){
+        console.log(e)
+      }finally{
+        setDeleteConfirmation(false)
+        setLoading(false)
+      }
+    }
+
+    const {label: priorityLabel, color: priorityColor} = getPriority(item.priority)
     return (
       <Draggable draggableId={item.id} index={index}>
         {(provided, snapshot) => (
@@ -74,31 +108,67 @@ export default function BoardItem({ item, index }){
               )}
               onClick={() => viewTask(item.id)}
           >
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center">
-                <p className="flex-grow text-xs md:text-sm font-semibold">{item.taskName}</p>
-                <DotButton name={`task-${item.id}`}/>
+            {loading && <PopUpLoad/>}
+            {updateConfirmation &&
+              <UpdateTaskNameForm 
+                taskName={item.taskName} 
+                onSubmit={handleUpdateTaskName} 
+                onClose={(e) => {
+                  e.stopPropagation()
+                  setUpdateConfirmation(false)
+                }}
+              />
+            }
+            {deleteConfirmation &&
+              (<PopUpForm
+                title={"Hapus Tugas"}
+                titleSize="large"
+                message={'Apakah Anda yakin ingin menghapus tugas ini?'}
+                wrapContent
+              >
+                <>
+                  <div className="mt-4 flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
+                    <Button variant="danger" onClick={handleDeleteTask}>Hapus</Button>
+                    <Button variant="secondary" onClick={(e) => {
+                        e.stopPropagation()
+                        setDeleteConfirmation(false)
+                      }}
+                    >Batal</Button>
+                  </div>
+                </>
+              </PopUpForm>)
+            }
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <p className="flex-grow text-xs md:text-sm font-semibold py-1.5">{item.taskName}</p>
+                {validateUserRole({ userRole: role, minimumRole: 'Member' }) && 
+                <DotButton 
+                  name={`task-${item.id}`}
+                  actions={taskActions}
+                />}
               </div>
-              {(item.label?.length > 0) && (
-                <div className="flex flex-wrap">
-                  {item.label.map(label => {
-
-                  })}
+              {item.labels && (
+                <div className="flex flex-wrap gap-1">
+                  {item.labels.map(({id, content, backgroundColor}) => (
+                    <Label key={id} text={content} color={backgroundColor}/>
+                  ))}
                 </div>
               )}
             </div>
             <div className="flex items-center gap-2">
                 <div className="flex flex-grow items-center gap-1 text-dark-blue">
                   <CheckIcon size={16}/>
-                  <p className="text-[10px] md:text-xs">TASK-1</p>
+                  <p className="text-[10px] md:text-xs">{project && <span>{project.key}-{item.displayId}</span>}</p>
                 </div>
-                <CustomTooltip id={`task-${item.id}-tooltip`} content={assignee?.fullName ?? "Belum ditugaskan"}>
-                  <UserSelectButton 
-                    name={`assignedTo-${item.id}`}
-                    type="icon"
-                    placeholder={item.assignedTo}
-                    options={userList}
-                    onChange={(value) => setAssignee(value)}
+                {item.priority !== 0 && 
+                <CustomTooltip id={`task-${item.id}-priority-tooltip`} content={`Prioritas: ${priorityLabel}`}>
+                  <div className="w-4 h-4 rounded-full" style={{backgroundColor: priorityColor}}></div>
+                </CustomTooltip>}
+                <CustomTooltip id={`task-${item.id}-tooltip`} content={item.assignedTo?.fullName ?? "Belum ditugaskan"}>
+                  <UserIcon 
+                    size="sm"
+                    src={item.assignedTo ? item.assignedTo.profileImage : '/images/user-placeholder.png'}
+                    fullName={item.assignedTo?.fullName}
                   />
                 </CustomTooltip>
             </div>

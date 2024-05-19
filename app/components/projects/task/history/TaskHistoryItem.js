@@ -4,7 +4,6 @@ import { listDateFormat } from "@/app/lib/date"
 
 export default function TaskHistoryItem({history}){
     const actionTextList = {
-        add: 'menambahkan',
         create: 'membuat',
         update: 'mengubah',
         delete: 'menghapus'

@@ -32,16 +32,16 @@ export function createNewTask({
     parentId
 }){
     const payload = {
-        taskName,
+        projectId,
         type,
         startDate,
         dueDate,
         priority,
+        taskName,
         description,
-        projectId,
         statusId,
         assignedTo,
-        labels: labels ? JSON.parse(labels).map(label => label.value) : null,
+        labels: labels && (labels.length > 0 ? JSON.parse(labels).map(label => label.id) : null),
         parentId
     }
 
@@ -64,6 +64,47 @@ export function reorderTask({ taskId, statusId, newStatusId, oldIndex, newIndex 
             oldIndex,
             newIndex
         })
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
+
+    return response
+}
+
+export function updateTask({ 
+    taskId,
+    taskName, 
+    startDate,
+    dueDate,
+    priority, 
+    description, 
+    assignedTo,
+    labels,
+    parentId
+}){
+    const payload = {
+        startDate,
+        dueDate,
+        priority,
+        taskName,
+        description,
+        assignedTo,
+        labels: labels && (labels.length > 0 ? JSON.parse(labels).map(label => label.id) : null),
+        parentId
+    }
+    const response = fetch(`/api/task/${taskId}`, {
+        method: 'PUT',
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
+
+    return response
+}
+
+export function deleteTask({ taskId }){
+    const response = fetch(`/api/task/${taskId}`, {
+        method: 'DELETE',
     })
     .then(res => res.json())
     .catch(err => console.log(err))

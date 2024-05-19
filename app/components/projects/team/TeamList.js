@@ -1,13 +1,19 @@
 import TeamItem from "./TeamItem";
 
-export default function TeamList({list, listType, selectUpdate, setSelectUpdate, selectDelete, setSelectDelete, setAddMode, query, edit=false}){
+export default function TeamList({list, listType, selectUpdate, setSelectUpdate, selectDelete, setSelectDelete, setAddMode, query, owner=false, edit=false}){
     return (
         <>
             {listType === "pending" && list.length === 0 && edit === false && (
                 query === "" ? (
-                    <div className="flex justify-start">
-                        <TeamItem pending setAddMode={setAddMode}/>
-                    </div>
+                    owner ? (
+                        <div className="flex justify-start">
+                            <TeamItem pending setAddMode={setAddMode}/>
+                        </div>
+                    ) : (
+                        <div>
+                            Tidak ada data anggota yang ditemukan.
+                        </div>
+                    )
                 ) : (
                     <div>
                         Tidak ada data anggota yang ditemukan.

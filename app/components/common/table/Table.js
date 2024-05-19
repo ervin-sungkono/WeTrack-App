@@ -64,7 +64,7 @@ export default function Table({
                     radius="48"
                     color="#47389F"
                 />
-                <p className='text-sm md:text-base text-dark/80'>Loading Table Data...</p>
+                <p className='text-sm md:text-base text-dark/80'>Memuat data tabel...</p>
             </div>
         )
     }

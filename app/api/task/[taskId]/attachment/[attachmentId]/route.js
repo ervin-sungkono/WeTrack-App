@@ -3,6 +3,7 @@ import { nextAuthOptions } from "@/app/lib/auth";
 import { deleteExistingFile } from "@/app/lib/file";
 import { getUserSession } from "@/app/lib/session";
 import { deleteDoc, doc, getDoc } from "firebase/firestore";
+import { getProjectRole } from "@/app/firebase/util";
 import { NextResponse } from "next/server";
 
 export async function DELETE(request, response) {
@@ -34,6 +35,14 @@ export async function DELETE(request, response) {
             }, { status: 400 })
         }
         const attachmentData = attachmentDoc.data();
+
+        const projectRole = await getProjectRole({ projectId: attachmentData.projectId, userId})
+        if(projectRole !== 'Owner' && projectRole !== 'Member'){
+            return NextResponse.json({
+                message: "Unauthorized",
+                success: false
+            }, { status: 401 })
+        }
 
         if (attachmentData && attachmentData.attachmentStoragePath) {
             await deleteExistingFile(attachmentData.attachmentStoragePath);

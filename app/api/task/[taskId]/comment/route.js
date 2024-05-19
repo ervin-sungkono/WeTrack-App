@@ -4,6 +4,9 @@ import { NextResponse } from "next/server";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { extractUniqueMentionTags } from "@/app/lib/string";
 import { getUserSession } from "@/app/lib/session";
+import { getProjectRole } from "@/app/firebase/util";
+import { createHistory, createNotification } from "@/app/firebase/util";
+import { getHistoryAction, getHistoryEventType } from "@/app/lib/history";
 
 export async function GET(request, response){
     try{
@@ -68,9 +71,15 @@ export async function POST(request, response){
             }, { status: 404 })
         }
 
-        const { 
-            commentText
-        } = await request.json()
+        const projectRole = await getProjectRole({ projectId: taskSnap.data().projectId, userId})
+        if(projectRole !== 'Owner' && projectRole !== 'Member'){
+            return NextResponse.json({
+                message: "Unauthorized",
+                success: false
+            }, { status: 401 })
+        }
+
+        const { commentText} = await request.json()
 
         if(!commentText){
             return NextResponse.json({
@@ -96,8 +105,37 @@ export async function POST(request, response){
 
         const newCommentSnap = await getDoc(newComment)
 
-        const mentions = extractUniqueMentionTags(commentText)
-        // TODO: add to notifications regarding mentions
+        if(newCommentSnap.exists()){
+            await createHistory({
+                userId: userId,
+                taskId: taskId,
+                projectId: taskSnap.data().projectId,
+                eventType: getHistoryEventType.comment,
+                action: getHistoryAction.create
+            })
+
+            // Pastikan pembuat komen bukan pembuat tugas
+            if(taskSnap.data().createdBy !== userId){
+                await createNotification({
+                    userId: taskSnap.data().createdBy,
+                    senderId: userId,
+                    taskId: taskId,
+                    projectId: taskSnap.data().projectId,
+                    type: 'AddedComment'
+                })
+            }
+
+            const mentions = extractUniqueMentionTags(commentText)
+            await Promise.all(mentions.map(mention => (
+                createNotification({ 
+                    userId: mention.id,
+                    senderId: userId,
+                    taskId: taskId,
+                    projectId: taskSnap.data().projectId,
+                    type: 'Mention'
+                })
+            )))
+        }
 
         return NextResponse.json({
             data: {
@@ -108,7 +146,7 @@ export async function POST(request, response){
         }, {  status: 200 })
 
     } catch (error) {
-        console.error("Cannot get comment", error);
+        console.error("Cannot add comment", error);
         return NextResponse.json({
             data: null,
             message: error.message

@@ -8,10 +8,11 @@ import { useSession } from "next-auth/react"
 import { getRecentProjects } from "@/app/lib/fetch/project"
 import SkeletonText from "../../skeleton/SkeletonText"
 import Button from "../button/Button"
+import { getNewNotificationReference } from "@/app/firebase/util"
+import { onSnapshot } from "firebase/firestore"
 
 import { 
     IoMdNotifications as NotificationIcon, 
-    IoIosHelpCircle as HelpIcon,
 } from "react-icons/io"
 
 const NavLink = dynamic(() => import("./NavLink"))
@@ -20,14 +21,28 @@ const UserDropdown = dynamic(() => import("./UserDropdown"))
 const LinkButton = dynamic(() => import("../button/LinkButton"))
 
 export default function NavbarMenu({ showForm, hideMenu }){
-    const [hamburgerState, setHamburgerState] = useState(false)
     const { data: session, status } = useSession()
+    const [hamburgerState, setHamburgerState] = useState(false)
     const [recentProjects, setRecentProjects] = useState(null)
+    const [newNotifications, setNewNotifications] = useState(false)
 
     const projectLinks = [
         { label: 'Buat proyek baru', url: '/projects/create' },
         { label: 'Lihat semua proyek', url: '/projects' },
     ]
+
+    useEffect(() => {
+        if(!session) return
+        
+        const reference = getNewNotificationReference({ id: session.user.uid })
+        const unsubscribe = onSnapshot(reference, (snapshot) => {
+            const newNotifications = snapshot.docs
+            if(newNotifications.length > 0) setNewNotifications(true)
+            else setNewNotifications(false)
+        })
+
+        return () => unsubscribe()
+    }, [session])
 
     useEffect(() => {
         if(session){
@@ -91,12 +106,10 @@ export default function NavbarMenu({ showForm, hideMenu }){
                             session ?
                             <div className="h-full flex items-center gap-2">
                                 <div className="flex items-center py-4 lg:py-0">
-                                    <Link href={"/notifications"} className="p-2 text-dark-blue hover:text-basic-blue transition-colors">
+                                    <Link href={"/notifications"} className="relative p-2 text-dark-blue hover:text-basic-blue transition-colors">
                                         <NotificationIcon size={24}/>
+                                        {newNotifications && <div className="w-2 h-2 rounded-full bg-danger-red absolute top-0 right-0 -translate-x-1/2 translate-y-1/2"></div>}
                                     </Link>
-                                    {/* <Link href={"/help"} className="p-2 text-dark-blue hover:text-basic-blue transition-colors">
-                                        <HelpIcon size={24}/>
-                                    </Link> */}
                                 </div>
                                 <UserDropdown {...session.user}/>
                             </div>

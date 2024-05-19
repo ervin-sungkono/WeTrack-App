@@ -3,6 +3,7 @@ import { nextAuthOptions } from "@/app/lib/auth";
 import { sendMail } from "@/app/lib/mail";
 import { getUserSession } from "@/app/lib/session";
 import { addDoc, collection, doc, getDoc, getDocs, query, serverTimestamp, where } from "firebase/firestore";
+import { getProjectRole } from "@/app/firebase/util";
 import { NextResponse } from "next/server";
 
 export async function GET(request, response){
@@ -37,7 +38,7 @@ export async function GET(request, response){
                 id: item.id,
                 ...teamData,
                 user: {
-                    id: userData.id,
+                    id: userDocRef.id,
                     fullName: userData.fullName,
                     profileImage: userData.profileImage
                 }
@@ -62,14 +63,16 @@ export async function POST(request, response){
         const session = await getUserSession(request, response, nextAuthOptions);
         if (!session.user) {
             return NextResponse.json({ 
-                message: "Unauthorized, must login first" 
+                message: "Unauthorized, must login first",
+                success: false
             }, { status: 401 });
         }
 
         const userId = session.user.uid;
         if (!userId) {
             return NextResponse.json({ 
-                message: "User not found" 
+                message: "User not found",
+                success: false
             }, { status: 404 });
         }
 
@@ -78,13 +81,15 @@ export async function POST(request, response){
         
         if(!teams){
             return NextResponse.json({
-                message: "Payload is not complete"
+                message: "Payload is not complete",
+                success: false
             }, { status: 400 })
         }
 
         if(!projectId){
             return NextResponse.json({
-                message: "Missing parameter"
+                message: "Missing parameter",
+                success: false
             }, { status: 400 })
         }
 
@@ -93,8 +98,17 @@ export async function POST(request, response){
 
         if(!docRef.exists()){
             return NextResponse.json({
-                message: "Project not found"
+                message: "Project not found",
+                success: false
             }, { status: 404 })
+        }
+
+        const projectRole = await getProjectRole({ projectId, userId})
+        if(projectRole !== 'Owner'){
+            return NextResponse.json({
+                message: "Unauthorized",
+                success: false
+            }, { status: 401 })
         }
 
         const { projectName } = docRef.data()
@@ -145,12 +159,13 @@ export async function POST(request, response){
         }
 
         return NextResponse.json({
-            message: "Successfully sent the invitation"
+            message: "Successfully sent the invitation",
+            success: true
         }, { status: 200 })
 
     } catch (error) {
         return NextResponse.json({
-            data: null,
+            success: false,
             message: error.message
         }, { status: 500 });
     }

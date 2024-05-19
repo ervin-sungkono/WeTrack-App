@@ -3,14 +3,14 @@ import { useCallback, useEffect, useState } from "react"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import { createNewTask, reorderTask } from "@/app/lib/fetch/task"
 import { createNewTaskStatus, deleteTaskStatus, reorderTaskStatus, updateTaskStatus } from "@/app/lib/fetch/taskStatus"
-import { getQueryReferenceOrderBy, getTaskReferenceOrderBy } from "@/app/firebase/util"
-import { onSnapshot } from "firebase/firestore"
-import { debounce } from "@/app/lib/helper"
+import { getDocumentReference, getQueryReferenceOrderBy, getTaskReferenceOrderBy } from "@/app/firebase/util"
+import { onSnapshot, getDoc } from "firebase/firestore"
+import { debounce, validateUserRole } from "@/app/lib/helper"
 
 import BoardList from "./BoardList"
 import SearchBar from "../../common/SearchBar"
 import SelectButton from "../../common/button/SelectButton"
-import SimpleInputForm from "../../common/SimpleInputField"
+import SimpleInputForm from "../../common/SimpleInputForm"
 import Button from "../../common/button/Button"
 import DotButton from "../../common/button/DotButton"
 import UpdateStatusForm from "../../common/form/UpdateStatusForm"
@@ -21,6 +21,7 @@ import { useSessionStorage } from "usehooks-ts"
 import { IoFilter as FilterIcon } from "react-icons/io5"
 import { FiPlus as PlusIcon } from "react-icons/fi"
 import { FaCheck as CheckIcon } from "react-icons/fa"
+import { useRole } from "@/app/lib/context/role"
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -61,6 +62,8 @@ export default function BoardContent({ projectId }){
 
   const queryAttr = "data-rfd-draggable-id";
   const destinationQuertAttr = "data-rfd-droppable-id";
+
+  const role = useRole()
 
   const showTaskCard = (statusId) => {
     setActiveStatusId(statusId)
@@ -167,11 +170,26 @@ export default function BoardContent({ projectId }){
       setTaskStatusData(taskStatusData)
     }))
 
-    const taskReference = getTaskReferenceOrderBy({ collectionName: "tasks", field: "projectId", id: projectId, orderByKey: "order" })
-    const taskUnsubscribe = onSnapshot(taskReference, (taskSnapshot => {
-      const taskData = taskSnapshot.docs.map(taskDoc => ({
-        id: taskDoc.id,
-        ...taskDoc.data()
+    const taskReference = getTaskReferenceOrderBy({ field: "projectId", id: projectId, orderByKey: "order" })
+    const taskUnsubscribe = onSnapshot(taskReference, (async(taskSnapshot) => {
+      const taskData = await Promise.all(taskSnapshot.docs.map(async(taskDoc) => {
+        const taskLabels = taskDoc.data().labels
+        const labels = taskLabels && await Promise.all(taskLabels.map(async(label) => {
+          const labelSnap = await getDoc(getDocumentReference({ collectionName: "labels", id: label }))
+          return {
+            id: labelSnap.id,
+            ...labelSnap.data()
+          }
+        }))
+        const assignedToId = taskDoc.data().assignedTo
+        const assignedToDoc = assignedToId && await getDoc(getDocumentReference({ collectionName: "users", id: assignedToId }))
+        const assignedTo = assignedToDoc && {id: assignedToDoc.id, ...assignedToDoc.data()}
+        return {
+          id: taskDoc.id,
+          ...taskDoc.data(),
+          assignedTo: assignedTo,
+          labels: labels
+        }
       }))
       setTaskData(taskData)
     }))
@@ -394,25 +412,27 @@ export default function BoardContent({ projectId }){
                         className="custom-scrollbar min-h-[280px] max-h-full flex-shrink-0 mr-4 flex flex-col p-2 gap-4 bg-gray-200 rounded-md overflow-y-auto"
                       >
                         <div className="flex items-center gap-2 px-1 text-dark-blue/80">
-                          <div className="uppercase flex-grow text-xs md:text-sm font-semibold flex items-center gap-1"><span>{el.status}</span>
+                          <div className="uppercase flex-grow text-xs md:text-sm font-semibold flex items-center gap-1 py-1.5"><span>{el.status}</span>
                             <span className="text-[10.8px] md:text-xs">({el.content.filter(task => task.taskName.toLowerCase().includes(query)).length})</span>
                            { project && <span>{project.endStatus === el.id && <CheckIcon size={14} className="text-green-700"/>}</span>}
                           </div>
-                          <DotButton 
-                            name={`taskStatus-${el.id}`} 
-                            actions={[
-                              {
-                                label: "Ubah Nama Status",
-                                fnCall: () => showUpdateForm(el),
-                              },
-                              {
-                                label: "Hapus",
-                                fnCall: () => showDeleteForm(el),
-                                disableFn: state.length <= 1
-                              },
-                            ]}
-                            hoverClass={"hover:bg-gray-300"}
-                          />
+                          {validateUserRole({ userRole: role, minimumRole: 'Owner' }) && 
+                            <DotButton 
+                              name={`taskStatus-${el.id}`} 
+                              actions={[
+                                {
+                                  label: "Ubah Nama Status",
+                                  fnCall: () => showUpdateForm(el),
+                                },
+                                {
+                                  label: "Hapus",
+                                  fnCall: () => showDeleteForm(el),
+                                  disableFn: state.length <= 1
+                                },
+                              ]}
+                              hoverClass={"hover:bg-gray-300"}
+                            />
+                          }
                         </div>
                         <BoardList 
                           items={el.content.filter(task => task.taskName.toLowerCase().includes(query))} 
@@ -432,12 +452,13 @@ export default function BoardContent({ projectId }){
                             />
                           )}
                         </BoardList>
+                        {validateUserRole({ userRole: role, minimumRole: 'Member' }) &&
                         <Button variant="gray" outline onClick={() => showTaskCard(el.id)} className={`${el.id === activeStatusId ? "hidden" : ""}`}>
                           <div className={`flex justify-center items-center gap-2`}>
                             <PlusIcon size={16}/>
                             <p>Tambah Tugas Baru</p>
                           </div>
-                        </Button>
+                        </Button>}
                       </div>
                     )}
                   </Draggable>
@@ -447,14 +468,15 @@ export default function BoardContent({ projectId }){
             )}
           </Droppable>
         </DragDropContext>
-        {!isCreatingList && <Button 
+        {!isCreatingList && validateUserRole({ userRole: role, minimumRole: 'Owner' }) && 
+        <Button 
           variant="primary" 
           className={"w-[278px] flex-shrink-0"} 
           onClick={() => setCreatingList(true)}
         >
           <div className="flex items-center gap-2">
             <PlusIcon size={16}/>
-            <p>Add List</p>
+            <p>Tambah Status</p>
           </div>
         </Button>}
         {isCreatingList && 

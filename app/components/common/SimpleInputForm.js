@@ -26,9 +26,8 @@ export default function SimpleInputForm({ name, onSubmit, onBlur, placeholder })
             />
             <div className="flex items-center gap-1 md:gap-2">
                 <button onClick={onBlur} type="button" className="text-xs font-semibold py-1.5 px-2.5 bg-danger-red text-white rounded hover:bg-danger-red/80 transition-colors duration-300">Batal</button>
-                <button ref={buttonRef} type="submit" className="text-xs font-semibold py-1.5 px-2.5 bg-basic-blue text-white rounded hover:bg-basic-blue/80 transition-colors duration-300">Kirim</button>
+                <button ref={buttonRef} type="submit" className="text-xs font-semibold py-1.5 px-2.5 bg-basic-blue text-white rounded hover:bg-basic-blue/80 transition-colors duration-300">Buat</button>
             </div>
-            
         </form>
     )
 }
