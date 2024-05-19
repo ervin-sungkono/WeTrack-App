@@ -131,34 +131,30 @@ export async function PUT(request, response) {
             }, { status: 404 });
         } 
 
-        if(startStatus != updatedProjectSnap.data().startStatus) {
-            const q = query(collection(db, "tasks"), where("status", "==", projectData.startStatus))
-            const taskSnapShot = await getDocs(q)
-
-            if(!taskSnapShot.empty) {
-                taskSnapShot.docs.forEach(async (item) => {
-                    const taskDocRef = doc(db, "tasks", item.id)
-                    const taskDoc = await getDoc(taskDocRef)
-
-                    if(!taskDoc.exists()) {
-                        return NextResponse.json({
-                            message: "Something went wrong when updating task"
-                        }, { status: 404 })
+        if (startStatus != updatedProjectSnap.data().startStatus) {
+            const q = query(collection(db, "tasks"), where("status", "==", projectData.startStatus));
+            const taskSnapShot = await getDocs(q);
+        
+            if (!taskSnapShot.empty) {
+                const updateTasks = taskSnapShot.docs.map(async (item) => {
+                    const taskDocRef = doc(db, "tasks", item.id);
+                    const taskDoc = await getDoc(taskDocRef);
+        
+                    if (!taskDoc.exists()) {
+                        throw new Error("Something went wrong when updating task");
                     }
-
-                    const previousStartStatus = await getDoc(doc(db, "taskStatuses", taskDoc.data().status))
-                    if(!previousStartStatus.exists) {
-                        return NextResponse.json({
-                            message: "The task doesn't have a previous task status"
-                        }, { status: 404 })
+        
+                    const previousStartStatus = await getDoc(doc(db, "taskStatuses", taskDoc.data().status));
+                    if (!previousStartStatus.exists) {
+                        throw new Error("The task doesn't have a previous task status");
                     }
-
+        
                     await updateDoc(taskDocRef, {
                         status: startStatus,
                         finishedDate: startStatus == endStatus ? new Date().toDateString() : null,
                         updatedAt: serverTimestamp()
-                    })
-
+                    });
+        
                     await createHistory({
                         userId: userId,
                         taskId: item.id,
@@ -167,49 +163,49 @@ export async function PUT(request, response) {
                         eventType: getHistoryEventType.taskStatus,
                         previousValue: previousStartStatus.data().statusName,
                         newValue: startStatusDoc.data().statusName
-                    })
-                })
+                    });
+                });
+        
+                await Promise.all(updateTasks);
             }
-        }
+        }        
 
-        if(endStatus != updatedProjectSnap.data().endStatus) {
-            const q = query(collection(db, "tasks"), where("status", "==", projectData.endStatus))
-            const taskSnapShot = await getDocs(q)
-
-            taskSnapShot.docs.forEach(async (item) => {
-                const taskDocRef = doc(db, "tasks", item.id)
-                const taskDoc = await getDoc(taskDocRef)
-
-                if(!taskDoc.exists()) {
-                    return NextResponse.json({
-                        message: "Something went wrong when updating task"
-                    }, { status: 404 })
+        if (endStatus != updatedProjectSnap.data().endStatus) {
+            const q = query(collection(db, "tasks"), where("status", "==", projectData.endStatus));
+            const taskSnapShot = await getDocs(q);
+        
+            const updateTasks = taskSnapShot.docs.map(async (item) => {
+                const taskDocRef = doc(db, "tasks", item.id);
+                const taskDoc = await getDoc(taskDocRef);
+        
+                if (!taskDoc.exists()) {
+                    throw new Error("Something went wrong when updating task");
                 }
-
-                const previousEndStatus = await getDoc(doc(db, "taskStatuses", taskDoc.data().status))
-                if(!previousEndStatus.exists) {
-                    return NextResponse.json({
-                        message: "The task doesn't have a previous task status"
-                    }, { status: 404 })
+        
+                const previousEndStatus = await getDoc(doc(db, "taskStatuses", taskDoc.data().status));
+                if (!previousEndStatus.exists) {
+                    throw new Error("The task doesn't have a previous task status");
                 }
-
+        
                 await updateDoc(taskDocRef, {
                     status: endStatus,
                     finishedDate: null,
                     updatedAt: serverTimestamp()
-                })
-
+                });
+        
                 await createHistory({
                     userId: userId,
                     taskId: item.id,
                     projectId: taskDoc.data().projectId,
                     action: getHistoryAction.update,
                     eventType: getHistoryEventType.taskStatus,
-                    previousValue: previousStartStatus.data().statusName,
-                    newValue: startStatusDoc.data().statusName
-                })
-            })
-        }
+                    previousValue: previousEndStatus.data().statusName,
+                    newValue: endStatusDoc.data().statusName
+                });
+            });
+        
+            await Promise.all(updateTasks);
+        }        
 
         return NextResponse.json({
             data: {
