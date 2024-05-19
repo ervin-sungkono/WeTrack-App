@@ -26,6 +26,7 @@ import { validateUserRole } from "@/app/lib/helper"
 import SelectButton from "../../common/button/SelectButton"
 import { getAllTaskStatus } from "@/app/lib/fetch/taskStatus"
 import SimpleTextareaForm from "../../common/SimpleTextareaForm"
+import SimpleDateForm from "../../common/SimpleDateForm"
 
 const AttachmentSection = dynamic(() => import("./AttachmentSection"))
 const SubtaskSection = dynamic(() => import("./SubtaskSection"))
@@ -36,6 +37,8 @@ function TaskDetail({ taskId, closeFn }){
     const [updateConfirmation, setUpdateConfirmation] = useState(false)
     const [deleteConfirmation, setDeleteConfirmation] = useState(false)
     const [editDescription, setEditDescription] = useState(false)
+    const [editStartDate, setEditStartDate] = useState(false)
+    const [editDueDate, setEditDueDate] = useState(false)
     const [teamOptions, setTeamOptions] = useState([])
     const [statusOptions, setStatusOptions] = useState([])
     const [project, _] = useSessionStorage("project")
@@ -139,13 +142,33 @@ function TaskDetail({ taskId, closeFn }){
         setUpdateLoading(true)
   
         try{
-          if(taskName !== task.taskName) await updateTask({ taskId: task.id, taskName })
+          if(taskName !== task.taskName) await updateTask({ taskId: taskId, taskName })
         }catch(e){
           console.log(e)
         }finally{
           setUpdateConfirmation(false)
           setUpdateLoading(false)
         }
+    }
+
+    const handleUpdateStartDate = async(e) => {
+        setUpdateLoading(true)
+
+        const startDate = e.target.value
+        await updateTask({ taskId, startDate})
+
+        setEditStartDate(false)
+        setUpdateLoading(false)
+    }
+
+    const handleUpdateDueDate = async(e) => {
+        setUpdateLoading(true)
+
+        const dueDate = e.target.value
+        await updateTask({ taskId, dueDate})
+
+        setEditDueDate(false)
+        setUpdateLoading(false)
     }
 
     const handleUpdateTaskDescription = async(e) => {
@@ -183,7 +206,7 @@ function TaskDetail({ taskId, closeFn }){
         setUpdateLoading(true)
         try{
             if(priority !== task.priority) {
-                await updateTask({ taskId: task.id, priority: priority})
+                await updateTask({ taskId: taskId, priority: priority})
             }  
         }catch(e){
             console.log(e)
@@ -261,7 +284,7 @@ function TaskDetail({ taskId, closeFn }){
                         <p className="font-semibold text-xs md:text-sm">Penerima</p>
                         <div className="col-span-2">
                             <UserSelectButton 
-                                name={`assignedToDetail-${task.id}`}
+                                name={`assignedToDetail-${taskId}`}
                                 type="button"
                                 defaultValue={task.assignedTo}
                                 options={teamOptions}
@@ -281,16 +304,35 @@ function TaskDetail({ taskId, closeFn }){
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
                         <p className="font-semibold">Tanggal Mulai</p>
-                        <p>{dateFormat(task.startDate) ?? "Belum diatur"}</p>
+                        {!editStartDate ? 
+                        <p className="w-full p-2 cursor-pointer text-dark-blue/80 hover:bg-gray-200 rounded transition-colors duration-300" onClick={() => setEditStartDate(true)}>
+                            {dateFormat(task.startDate) ?? "Belum diatur"}
+                        </p> :
+                        <SimpleDateForm
+                            name={`task-${taskId}-start-date`}
+                            value={task.startDate}
+                            onChange={handleUpdateStartDate}
+                            onCancel={() => setEditStartDate(false)}
+                        />}
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
                         <p className="font-semibold">Tenggat Waktu</p>
-                        <p>{dateFormat(task.dueDate) ?? "Belum diatur"}</p>
+                        {!editDueDate ? 
+                        <p className="w-full p-2 cursor-pointer text-dark-blue/80 hover:bg-gray-200 rounded transition-colors duration-300" onClick={() => setEditDueDate(true)}>
+                            {dateFormat(task.dueDate) ?? "Belum diatur"}
+                        </p> :
+                        <SimpleDateForm
+                            name={`task-${taskId}-start-date`}
+                            value={task.dueDate}
+                            min={task.startDate}
+                            onChange={handleUpdateDueDate}
+                            onCancel={() => setEditDueDate(false)}
+                        />}
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
                         <p className="font-semibold">Prioritas</p>
                         <SelectButton
-                            name={`task-${task.id}-priority`}
+                            name={`task-${taskId}-priority`}
                             defaultValue={priorityList.find(priority => priority.value === task.priority)}
                             options={priorityList} 
                             onChange={handlePriorityChange}
@@ -300,7 +342,7 @@ function TaskDetail({ taskId, closeFn }){
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
                         <p className="font-semibold">Status</p>
                         <SelectButton
-                            name={`task-${task.id}-status`}
+                            name={`task-${taskId}-status`}
                             defaultValue={statusOptions.find(status => status.value === task.status)}
                             options={statusOptions} 
                             onChange={handleStatusChange}

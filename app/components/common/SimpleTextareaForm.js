@@ -13,7 +13,7 @@ export default function SimpleTextareaForm({ name, onSubmit, onBlur, placeholder
             <textarea
                 id={name}
                 name={name} 
-                rows={4}
+                rows={rows}
                 onKeyDown={(e) => {
                     if(e.key === 'Enter'){
                         buttonRef.current.click()
