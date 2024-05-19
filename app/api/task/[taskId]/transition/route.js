@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
+import { createHistory } from '@/app/firebase/util';
+import { getHistoryAction, getHistoryEventType } from '@/app/lib/history';
 
 export async function POST(request, response) {
     try {
@@ -49,10 +51,23 @@ export async function POST(request, response) {
             }, { status: 404 });
         }
 
+        const currentTaskStatusDocRef = doc(db, 'taskStatuses', taskStatusSnap.data().status);
+        const currentTaskStatusSnap = await getDoc(currentTaskStatusDocRef);
+
         if(taskSnap.data().type === 'SubTask'){
             await updateDoc(taskRef, {
                 status: newStatusId,
                 updatedAt: serverTimestamp()
+            })
+
+            createHistory({
+                userId: userId,
+                taskId: taskId,
+                projectId: taskSnap.data().projectId,
+                action: getHistoryAction.update,
+                eventType: getHistoryEventType.taskStatus,
+                previousValue: currentTaskStatusSnap.data().status,
+                newValue: taskStatusSnap.data().status
             })
 
             return NextResponse.json({
@@ -138,6 +153,16 @@ export async function POST(request, response) {
                 status: newStatusId,
                 order: newIndexOrder,
                 updatedAt: serverTimestamp()
+            })
+
+            createHistory({
+                userId: userId,
+                taskId: taskId,
+                projectId: taskSnap.data().projectId,
+                action: getHistoryAction.update,
+                eventType: getHistoryEventType.taskStatus,
+                previousValue: currentTaskStatusSnap.data().status,
+                newValue: taskStatusSnap.data().status
             })
 
             // Update the new status order counter
