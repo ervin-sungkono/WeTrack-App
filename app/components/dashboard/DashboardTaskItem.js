@@ -3,7 +3,7 @@ import { getPriority } from "@/app/lib/string";
 import { MdChecklist as TaskIcon } from "react-icons/md";
 import Label from "../common/Label";
 
-export default function DashboardTaskItem({title, startDate, endDate, status, priority, id, href, firstItem}){
+export default function DashboardTaskItem({title, startDate, endDate, status, priority, projectKey, displayId, href, firstItem}){
     const { label, color } = getPriority(priority)
     return (
         <div>
@@ -15,7 +15,15 @@ export default function DashboardTaskItem({title, startDate, endDate, status, pr
             <div className="bg-white flex justify-between">
                 <div className="flex flex-col justify-between">
                     <div className="text-sm md:text-base font-semibold">{title}</div>
-                    <div className="text-xs md:text-sm">{dateFormat(startDate)} - {dateFormat(endDate)}</div>
+                    {!startDate && !endDate ? (
+                    <div className="text-xs md:text-sm">Tanggal mulai dan tenggat waktu belum ditetapkan</div>
+                    ) : !startDate ? (
+                        <div className="text-xs md:text-sm">Tenggat waktu: {dateFormat(endDate)}</div>
+                    ) : !endDate ? (
+                        <div className="text-xs md:text-sm">Tanggal mulai: {dateFormat(startDate)}</div>
+                    ) : (
+                        <div className="text-xs md:text-sm">{dateFormat(startDate)} - {dateFormat(endDate)}</div>
+                    )}
                     <div className="mt-1 flex flex-col gap-1">
                         <div className="flex gap-1 font-semibold text-xs md:text-sm w-fit">
                             Status:
@@ -30,10 +38,10 @@ export default function DashboardTaskItem({title, startDate, endDate, status, pr
                 <div className="text-right flex flex-col justify-between">
                     <div className="text-xs md:text-sm flex items-center gap-1 justify-end">
                         <TaskIcon className="text-lg md:text-xl"/>
-                        {id}
+                        {projectKey}-{displayId}
                     </div>
                     <a href={href}>
-                        <div className="text-xs md:text-sm text-basic-blue cursor-pointer font-semibold">{`View Detail ->`}</div>
+                        <div className="text-xs md:text-sm text-basic-blue cursor-pointer font-semibold">{`Lihat Rincian ->`}</div>
                     </a>
                 </div>
             </div>

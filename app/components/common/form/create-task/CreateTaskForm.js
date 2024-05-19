@@ -91,7 +91,7 @@ export default function CreateTaskForm({ onCancel }){
                         {createSuccess && 
                         <PopUpInfo
                             title={"Tugas Berhasil Dibuat"}
-                            message={"Silahkan cek tugas yang telah dibuat pada halaman tugas atau papan kanban."}
+                            message={"Silakan cek tugas yang telah dibuat pada halaman tugas atau papan Kanban."}
                         >
                             <div className="flex justify-end gap-2 md:gap-4">
                                 <Button onClick={() => setCreateSuccess(false)} className="w-24 md:w-32">OK</Button>

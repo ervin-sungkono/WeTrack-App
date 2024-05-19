@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { getUserSession } from "@/app/lib/session";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { createHistory } from "@/app/firebase/util";
+import { getHistoryAction, getHistoryEventType } from "@/app/lib/history";
 
 export async function DELETE(request, response) {
     try {
@@ -33,8 +34,8 @@ export async function DELETE(request, response) {
                 userId: userId,
                 taskId: taskId,
                 projectId: taskSnap.projectId,
-                eventType: 'Comment',
-                action: 'delete'
+                eventType: getHistoryEventType.comment,
+                action: getHistoryAction.delete
             })
 
             return NextResponse.json({

@@ -14,12 +14,15 @@ import { getQueryReference, getDocumentReference } from "@/app/firebase/util"
 import { onSnapshot, getDoc } from "firebase/firestore"
 import { useRouter } from "next/navigation"
 import { getUserProfile } from "@/app/lib/fetch/user"
+import { useRole } from "@/app/lib/context/role"
+import { validateUserRole } from "@/app/lib/helper"
 
 export default function TeamContent({ projectId }){
     const [query, setQuery] = useState("")
     const [loading, setLoading] = useState(false)
     const router = useRouter()
     const [userId, setUserId] = useState(null)
+    const userRole = useRole()
 
     const handleSearch = (query) => {
         setQuery(query.toLowerCase())
@@ -223,30 +226,34 @@ export default function TeamContent({ projectId }){
                     <SearchBar placeholder={"Cari anggota.."} handleSearch={handleSearch}/>
                 </div>
                 <div className="flex flex-col md:flex-row flex-wrap justify-center gap-2 md:gap-4">
-                    {editMode ? (
-                        <div className="flex flex-col md:flex-row gap-2 md:gap-4">
-                            <Button variant="danger" onClick={() => setEditMode(false)} outline>
-                                Batalkan Perubahan
-                            </Button>
-                            {(selectUpdate.length !== 0 || selectDelete.length !== 0) && (
-                                <Button onClick={() => setManageMode(true)} outline>
-                                    Simpan Perubahan
+                    {validateUserRole({ userRole: userRole, minimumRole: 'Owner' }) && (
+                        <>
+                            {editMode ? (
+                                <div className="flex flex-col md:flex-row gap-2 md:gap-4">
+                                    <Button variant="danger" onClick={() => setEditMode(false)} outline>
+                                        Batalkan Perubahan
+                                    </Button>
+                                    {(selectUpdate.length !== 0 || selectDelete.length !== 0) && (
+                                        <Button onClick={() => setManageMode(true)} outline>
+                                            Simpan Perubahan
+                                        </Button>
+                                    )}
+                                </div>
+                                
+                            ) : (
+                                <Button onClick={() => setEditMode(true)} outline>
+                                    Kelola Anggota
                                 </Button>
                             )}
-                        </div>
-                        
-                    ) : (
-                        <Button onClick={() => setEditMode(true)} outline>
-                            Kelola Anggota
-                        </Button>
+                        </>
                     )}
-                    {!editMode && (
+                    {validateUserRole({ userRole: userRole, minimumRole: 'Owner' }) && !editMode && (
                         <Button onClick={() => setAddMode(true)} className="flex items-center">
                             <FaUserPlus className="mr-2"/>
                             Tambah Anggota
                         </Button>
                     )}
-                    {!editMode && (
+                    {userRole !== "Owner" && !editMode && (
                         <Button variant="danger" onClick={() => setLeaveMode(true)}>
                             Tinggalkan Proyek
                         </Button>
@@ -263,7 +270,7 @@ export default function TeamContent({ projectId }){
                             ({acceptedTeam.length})
                         </div>
                     </div>
-                    <div className="overflow-x-auto">
+                    <div className="min-h-[100px] overflow-x-auto">
                         {acceptedTeam.length > 0 ? (
                             <TeamList list={acceptedTeam} listType="accepted" edit={editMode} selectUpdate={selectUpdate} setSelectUpdate={setSelectUpdate} selectDelete={selectDelete} setSelectDelete={setSelectDelete}/>
                         ) : (
@@ -283,7 +290,7 @@ export default function TeamContent({ projectId }){
                         </div>
                     </div>
                     <div className="h-full overflow-x-auto">
-                        <TeamList list={pendingTeam} query={query} listType="pending" edit={editMode} selectUpdate={selectUpdate} setSelectUpdate={setSelectUpdate} selectDelete={selectDelete} setSelectDelete={setSelectDelete} setAddMode={setAddMode}/>
+                        <TeamList list={pendingTeam} query={query} owner={validateUserRole({ userRole: userRole, minimumRole: 'Owner' })} listType="pending" edit={editMode} selectUpdate={selectUpdate} setSelectUpdate={setSelectUpdate} selectDelete={selectDelete} setSelectDelete={setSelectDelete} setAddMode={setAddMode}/>
                     </div>
                 </div>
             </div>

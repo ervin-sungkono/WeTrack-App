@@ -79,7 +79,20 @@ export async function getUserProfile(){
     }else{
         throw new Error(await res.text())
     }
+}
 
+export async function getUserProfileById(profileId) {
+    const res = await fetch(`/api/user/${profileId}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    if(res.ok){
+        return res.json()
+    }else{
+        throw new Error(await res.text())
+    }
 }
 
 export async function updateUserProfile(formData) {

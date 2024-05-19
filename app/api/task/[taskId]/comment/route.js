@@ -6,6 +6,7 @@ import { extractUniqueMentionTags } from "@/app/lib/string";
 import { getUserSession } from "@/app/lib/session";
 import { getProjectRole } from "@/app/firebase/util";
 import { createHistory, createNotification } from "@/app/firebase/util";
+import { getHistoryAction, getHistoryEventType } from "@/app/lib/history";
 
 export async function GET(request, response){
     try{
@@ -78,7 +79,7 @@ export async function POST(request, response){
             }, { status: 401 })
         }
 
-        const {  commentText} = await request.json()
+        const { commentText} = await request.json()
 
         if(!commentText){
             return NextResponse.json({
@@ -109,8 +110,8 @@ export async function POST(request, response){
                 userId: userId,
                 taskId: taskId,
                 projectId: taskSnap.data().projectId,
-                eventType: 'Comment',
-                action: 'create'
+                eventType: getHistoryEventType.comment,
+                action: getHistoryAction.create
             })
 
             // Pastikan pembuat komen bukan pembuat tugas

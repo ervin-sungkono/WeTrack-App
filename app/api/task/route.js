@@ -47,11 +47,14 @@ export async function GET(request, response) {
 
             return {
                 id: item.id,
+                displayId: item.data().displayId,
                 taskName: item.data().taskName,
                 labels: item.data().labels,
                 assignedTo: item.data().assignedTo,
                 priority: item.data().priority,
                 createdAt: item.data().createdAt,
+                startDate: item.data().startDate,
+                dueDate: item.data().dueDate,
                 status: taskStatusDetail
             }
         })) 

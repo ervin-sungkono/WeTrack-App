@@ -1,10 +1,11 @@
-import { updateDoc, serverTimestamp, getDoc, deleteDoc, doc } from 'firebase/firestore';
+import { updateDoc, serverTimestamp, getDoc, deleteDoc, doc, query, where, getDocs } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
 import { createHistory } from '@/app/firebase/util';
 import { getProjectRole } from '@/app/firebase/util';
+import { getHistoryAction, getHistoryEventType } from '@/app/lib/history';
 
 export async function GET(request, response) {
     try {
@@ -67,6 +68,20 @@ export async function PUT(request, response) {
         const { projectId }  = response.params;
         const { key, projectName, startStatus, endStatus } = await request.json();
 
+        const projectRole = await getProjectRole({ projectId, userId})
+        if(projectRole !== 'Owner'){
+            return NextResponse.json({
+                message: "Unauthorized",
+                success: false
+            }, { status: 401 })
+        }
+        
+        if(!key ||!projectName ||!startStatus ||!endStatus) {
+            return NextResponse.json({
+                message: "Missing payload"
+            }, { status: 400 })
+        }
+
         const projectDocRef = doc(db, 'projects', projectId);
         const projectSnap = await getDoc(projectDocRef);
         const projectData = projectSnap.data()
@@ -78,14 +93,20 @@ export async function PUT(request, response) {
             }, { status: 404 })
         }
         
-        const projectRole = await getProjectRole({ projectId, userId})
-        if(projectRole !== 'Owner'){
+        const startStatusDoc = await getDoc(doc(db, "taskStatuses", startStatus))
+        if(!startStatusDoc.exists()) {
             return NextResponse.json({
-                message: "Unauthorized",
-                success: false
-            }, { status: 401 })
+                message: "Start status not found"
+            }, { status: 404 })
+        
         }
-
+        const endStatusDoc = await getDoc(doc(db, "taskStatuses", endStatus))
+        if(!endStatusDoc.exists()) {
+            return NextResponse.json({
+                message: "End status not found"
+            }, { status: 404 })
+        }
+        
         await updateDoc(projectDocRef, {
             key: key ?? projectData.key,
             projectName: projectName ?? projectData.projectName,
@@ -97,27 +118,106 @@ export async function PUT(request, response) {
         await createHistory({ 
             userId: userId,
             projectId: projectId,
-            action: "update",
-            eventType: "Project"
+            action: getHistoryAction.update,
+            eventType: getHistoryEventType.project
         })
 
         const updatedProjectSnap = await getDoc(projectDocRef);
 
-        if (updatedProjectSnap.exists()) {
-            return NextResponse.json({
-                data: {
-                    id: updatedProjectSnap.id,
-                    ...updatedProjectSnap.data()
-                },
-                message: "Successfully updated the project"
-            }, { status: 200 });
-            
-        } else {
+        if (!updatedProjectSnap.exists()) {
             return NextResponse.json({
                 data: null,
                 message: "No such project found"
             }, { status: 404 });
+        } 
+
+        if(startStatus != updatedProjectSnap.data().startStatus) {
+            const q = query(collection(db, "tasks"), where("status", "==", projectData.startStatus))
+            const taskSnapShot = await getDocs(q)
+
+            if(!taskSnapShot.empty) {
+                taskSnapShot.docs.forEach(async (item) => {
+                    const taskDocRef = doc(db, "tasks", item.id)
+                    const taskDoc = await getDoc(taskDocRef)
+
+                    if(!taskDoc.exists()) {
+                        return NextResponse.json({
+                            message: "Something went wrong when updating task"
+                        }, { status: 404 })
+                    }
+
+                    const previousStartStatus = await getDoc(doc(db, "taskStatuses", taskDoc.data().status))
+                    if(!previousStartStatus.exists) {
+                        return NextResponse.json({
+                            message: "The task doesn't have a previous task status"
+                        }, { status: 404 })
+                    }
+
+                    await updateDoc(taskDocRef, {
+                        status: startStatus,
+                        finishedDate: startStatus == endStatus ? new Date().toDateString() : null,
+                        updatedAt: serverTimestamp()
+                    })
+
+                    await createHistory({
+                        userId: userId,
+                        taskId: item.id,
+                        projectId: taskDoc.data().projectId,
+                        action: getHistoryAction.update,
+                        eventType: getHistoryEventType.taskStatus,
+                        previousValue: previousStartStatus.data().statusName,
+                        newValue: startStatusDoc.data().statusName
+                    })
+                })
+            }
         }
+
+        if(endStatus != updatedProjectSnap.data().endStatus) {
+            const q = query(collection(db, "tasks"), where("status", "==", projectData.endStatus))
+            const taskSnapShot = await getDocs(q)
+
+            taskSnapShot.docs.forEach(async (item) => {
+                const taskDocRef = doc(db, "tasks", item.id)
+                const taskDoc = await getDoc(taskDocRef)
+
+                if(!taskDoc.exists()) {
+                    return NextResponse.json({
+                        message: "Something went wrong when updating task"
+                    }, { status: 404 })
+                }
+
+                const previousEndStatus = await getDoc(doc(db, "taskStatuses", taskDoc.data().status))
+                if(!previousEndStatus.exists) {
+                    return NextResponse.json({
+                        message: "The task doesn't have a previous task status"
+                    }, { status: 404 })
+                }
+
+                await updateDoc(taskDocRef, {
+                    status: endStatus,
+                    finishedDate: null,
+                    updatedAt: serverTimestamp()
+                })
+
+                await createHistory({
+                    userId: userId,
+                    taskId: item.id,
+                    projectId: taskDoc.data().projectId,
+                    action: getHistoryAction.update,
+                    eventType: getHistoryEventType.taskStatus,
+                    previousValue: previousStartStatus.data().statusName,
+                    newValue: startStatusDoc.data().statusName
+                })
+            })
+        }
+
+        return NextResponse.json({
+            data: {
+                id: updatedProjectSnap.id,
+                ...updatedProjectSnap.data()
+            },
+            message: "Successfully updated the project"
+        }, { status: 200 });
 
     } catch (error) {
         console.error("Cannot update project", error);
@@ -162,8 +262,8 @@ export async function DELETE(request, response) {
         await createHistory({
             userId: userId,
             projectId: projectId,
-            eventType: "Project",
-            action: "delete"
+            eventType: getHistoryEventType.project,
+            action: getHistoryAction.delete
         })
 
         return NextResponse.json({
