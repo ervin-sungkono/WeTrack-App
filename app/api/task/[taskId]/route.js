@@ -147,7 +147,7 @@ export async function PUT(request, response) {
             }, { status: 401 })
         }
 
-        if(taskData.type === "SubTask"){
+        if(taskData.type === "SubTask" && parentId){
             const parentTaskSnap = await getDoc(doc(db, "tasks", parentId))
 
             if(parentTaskSnap.data()?.projectId != taskData.projectId) {
@@ -163,6 +163,8 @@ export async function PUT(request, response) {
             }
         }
         
+        // Validate assigned to id
+        let assignedToDetails;
         if (assignedTo) {
             const userDocRef = doc(db, 'users', assignedTo);
             const userSnap = await getDoc(userDocRef);
@@ -171,14 +173,15 @@ export async function PUT(request, response) {
                     message: "Assigned user not found"
                 }, { status: 404 })
             }
-            const q = query(collection(db, "teams"), and(where("projectId", '==', taskData.projectId), where("userId", '==', assignedTo), where("status", "==", "accepted")))
+
+            const q = query(collection(db, "teams"), and(where("projectId", '==', taskData.projectId), where("userId", '==', assignedTo)))
             const querySnapshot = await getDocs(q)
 
             if(querySnapshot.empty) {
                 return NextResponse.json({
-                    message: "Can't assigned task to user not in the team"
-                }, { status: 400 })
-            }            
+                    message: "Can't assign task to user not in project"
+                }, { status: 404 }) 
+            }
         }
 
         if(labels && labels.length > 0){
@@ -201,10 +204,10 @@ export async function PUT(request, response) {
         
         await updateDoc(taskDocRef, {
             parentId: parentId ?? taskData.parentId,
-            assignedTo: assignedTo ? assignedTo : taskData.assignedTo,
+            assignedTo: assignedTo !== undefined ? assignedTo : taskData.assignedTo,
             taskName: taskName ?? taskData.taskName,
             priority: priority ?? taskData.priority,
-            labels: labels ?? taskData.labels,
+            labels: labels !== undefined ? labels : taskData.labels,
             description: description ?? taskData.description,
             startDate: startDate ?? taskData.startDate,
             dueDate: dueDate ?? taskData.dueDate,

@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from "react"
-import { sortDateFn } from "@/app/lib/helper"
+import { sortDateFn, sortDateTimestampFn } from "@/app/lib/helper"
 import dynamic from "next/dynamic"
 import SortButton from "../../common/button/SortButton"
 import { getQueryReference, getDocumentReference } from "@/app/firebase/util"
@@ -91,7 +91,7 @@ export default function ActivitySection({taskId}){
 
     const getCategoryComponent = () => {
         if(category === "comment") return <CommentSection taskId={taskId} comments={commentData && sortDateFn({data: commentData, sortDirection: sorting})}/>
-        if(category === "history") return <HistorySection histories={historyData && sortDateFn({data: historyData, sortDirection: sorting})}/>
+        if(category === "history") return <HistorySection histories={historyData &&  sortDateTimestampFn({data: historyData, sortDirection: sorting})}/>
         return null
     }
 

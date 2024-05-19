@@ -3,91 +3,240 @@ import { useEffect, useState, memo } from "react"
 import dynamic from "next/dynamic"
 import Label from "../../common/Label"
 import UserSelectButton from "../../common/UserSelectButton"
-
-import { IoIosCloseCircle as CloseIcon } from "react-icons/io";
-
-import { getTaskById } from "@/app/lib/fetch/task"
-import { getPriority } from "@/app/lib/string"
-import { dateFormat } from "@/app/lib/date"
 import DotButton from "../../common/button/DotButton"
 import ActivitySection from "./ActivitySection"
 import { TailSpin } from "react-loader-spinner"
 import ChatSection from "./ChatSection"
+import PopUpLoad from "../../common/alert/PopUpLoad"
+import UpdateTaskNameForm from "../../common/form/UpdateTaskNameForm"
+import PopUpForm from "../../common/alert/PopUpForm"
+import Button from "../../common/button/Button"
+
 import { useSessionStorage } from "usehooks-ts"
+import { getDocumentReference } from "@/app/firebase/util"
+import { onSnapshot, getDoc } from "firebase/firestore"
+import { getPriority, priorityList } from "@/app/lib/string"
+import { dateFormat } from "@/app/lib/date"
+
+import { IoIosCloseCircle as CloseIcon } from "react-icons/io";
+import { getAllTeamMember } from "@/app/lib/fetch/team"
+import { updateTask, deleteTask, reorderTask } from "@/app/lib/fetch/task"
+import { useRole } from "@/app/lib/context/role"
+import { validateUserRole } from "@/app/lib/helper"
+import SelectButton from "../../common/button/SelectButton"
+import { getAllTaskStatus } from "@/app/lib/fetch/taskStatus"
 
 const AttachmentSection = dynamic(() => import("./AttachmentSection"))
 const SubtaskSection = dynamic(() => import("./SubtaskSection"))
 
 function TaskDetail({ taskId, closeFn }){
     const [task, setTask] = useState()
-    const [loading, setLoading] = useState(false)
-    const [assignee, setAssignee] = useState()
+    const [updateLoading, setUpdateLoading] = useState(false)
+    const [updateConfirmation, setUpdateConfirmation] = useState(false)
+    const [deleteConfirmation, setDeleteConfirmation] = useState(false)
+    const [teamOptions, setTeamOptions] = useState([])
+    const [statusOptions, setStatusOptions] = useState([])
     const [project, _] = useSessionStorage("project")
+    const role = useRole()
 
-    const userList = [
+    const taskActions = [
         {
-            user: {
-                id: "WeEzNxSREEdyDpSXkIYCAyA4E8y1",
-                fullName: "Ervin Cahyadinata Sungkono",
-                profileImage: null
-            }
+            label: "Ubah Nama Tugas",
+            fnCall: () => setUpdateConfirmation(true),
         },
         {
-            user: {
-                id: "02",
-                fullName: "Kenneth Nathanael",
-                profileImage: null
-            }
+            label: "Hapus Tugas",
+            fnCall: () => setDeleteConfirmation(true),
         },
-        {
-            user: {
-                id: "03",
-                fullName: "Christopher Vinantius",
-                profileImage: null
-            }
-        }
     ]
 
     useEffect(() => {
-        if(taskId && (!task || (task && task.id !== taskId))){
-            setLoading(true)
-            getTaskById(taskId)
-            .then(res => {
-                if(res.data){
-                    setTask(res.data)
-                }
-                setLoading(false)
-            })
+        const fetchTeamOptions = async() => {
+            getAllTeamMember({ projectId: project.id })
+                .then(res => {
+                    if(res.data) setTeamOptions(res.data)
+                    else setTeamOptions([])
+                })
         }
-    }, [taskId, task])
+        const fetchStatusOptions = async() => {
+            getAllTaskStatus(project.id)
+                .then(res => {
+                    if(res.data){
+                        setStatusOptions(res.data.map(status => ({
+                            label: status.status,
+                            value: status.id
+                        })))
+                    }else setStatusOptions([])
+                })
+        }
+        if(project && project.id) {
+            fetchTeamOptions()
+            fetchStatusOptions()
+        }
+    }, [project])
 
-    if(loading) return(
+    useEffect(() => {
+        if(!taskId) return
+        const reference = getDocumentReference({ collectionName: 'tasks', id: taskId })
+        const unsubscribe = onSnapshot(reference, async(doc) => {
+            if(doc.exists()){
+                const id = doc.id
+                const labelsData = doc.data().labels
+                const labels = labelsData && await Promise.all(labelsData.map(async (label) => {
+                    const labelDoc = await getDoc(getDocumentReference({ collectionName: "labels", id: label }))
+    
+                    return {
+                        id: labelDoc.id,
+                        ...labelDoc.data() 
+                    }
+                }))
+                const assignedToId = doc.data().assignedTo
+                const assignedToDoc = assignedToId && await getDoc(getDocumentReference({ collectionName: "users", id: assignedToId }))
+                const assignedTo = assignedToDoc && {id: assignedToDoc.id, ...assignedToDoc.data()}
+                setTask({
+                    id,
+                    ...doc.data(),
+                    labels: labels,
+                    assignedTo: assignedTo
+                })
+                return
+            }
+            setTask(null)
+        })
+
+        return () => unsubscribe()
+    }, [taskId])
+
+    const getSelectPriorityClass = () => {
+        switch(task.priority){
+            case 0: 
+                return "border-[#C5C5C5] bg-[#C5C5C5] hover:bg-[#C5C5C5]/80"
+            case 1:
+                return "border-[#006400] bg-[#006400] hover:bg-[#006400]/80 text-white"
+            case 2:
+                return "border-[#FFBF00] bg-[#FFBF00] hover:bg-[#FFBF00]/80"
+            case 3:
+                return "border-[#D2222D] bg-[#D2222D] hover:bg-[#D2222D]/80 text-white"
+            default:
+                return null
+        }
+    }
+
+    const handleAssigneeChange = async(value) => {
+        setUpdateLoading(true)
+        try{
+            if(value?.id !== task.assignedTo) await updateTask({ taskId, assignedTo: value?.id ?? null })
+        }catch(e){
+            console.log(e)
+        }finally{
+            setUpdateLoading(false)
+        }
+    }
+
+    const handleUpdateTaskName = async(e, taskName) => {
+        setUpdateLoading(true)
+  
+        try{
+          if(taskName !== task.taskName) await updateTask({ taskId: task.id, taskName })
+        }catch(e){
+          console.log(e)
+        }finally{
+          setUpdateConfirmation(false)
+          setUpdateLoading(false)
+        }
+      }
+
+      const handleStatusChange = async(id) => {
+        setUpdateLoading(true)
+        try{
+            if(id !== task.status) {
+                await reorderTask({ 
+                    taskId: task.id,
+                    statusId: task.status,
+                    newStatusId: id,
+                    oldIndex: task.order
+                })
+            }  
+        }catch(e){
+            console.log(e)
+        }finally{
+            setUpdateLoading(false)
+        }
+      }
+
+      const handlePriorityChange = async(priority) => {
+        setUpdateLoading(true)
+        try{
+            if(priority !== task.priority) {
+                await updateTask({ taskId: task.id, priority: priority})
+            }  
+        }catch(e){
+            console.log(e)
+        }finally{
+            setUpdateLoading(false)
+        }
+      }
+  
+      const handleDeleteTask = async(e) => {
+        setUpdateLoading(true)
+  
+        try{
+          await deleteTask({ taskId: item.id })
+        }catch(e){
+          console.log(e)
+        }finally{
+          setDeleteConfirmation(false)
+          setUpdateLoading(false)
+        }
+      }
+
+    if(!task) return(
         <div className="w-full h-full flex flex-col gap-4 justify-center items-center">
             <TailSpin 
                 color="#47389F"
                 height={100}
                 width={100}
             />
+            <p className="text-sm md:text-base text-dark-blue/80">Memuat data tugas..</p>
         </div>
     )
 
-    if(!task){
-        return (
-            <div className="w-full h-full flex justify-center items-center">
-                <p className="text-sm md:text-base text-dark-blue/80">Tugas tidak dapat ditemukan..</p>
-            </div>
-        )
-    }
-
-    const { label, color } = getPriority(task.priority)
     return(
         <div className={`w-full h-full flex flex-col gap-3 md:gap-6 px-4 py-4 md:px-8 md:py-6 bg-white text-dark-blue rounded-lg shadow-lg overflow-y-auto`}>
+            {updateLoading && <PopUpLoad/>}
+            {updateConfirmation &&
+              <UpdateTaskNameForm 
+                taskName={task.taskName} 
+                onSubmit={handleUpdateTaskName} 
+                onClose={() => setUpdateConfirmation(false)}
+              />
+            }
+            {deleteConfirmation &&
+              (<PopUpForm
+                title={"Hapus Tugas"}
+                titleSize="large"
+                message={'Apakah Anda yakin ingin menghapus tugas ini?'}
+                wrapContent
+              >
+                <>
+                  <div className="mt-4 flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
+                    <Button variant="danger" onClick={handleDeleteTask}>Hapus</Button>
+                    <Button variant="secondary" onClick={() => setDeleteConfirmation(false)}
+                    >Batal</Button>
+                  </div>
+                </>
+              </PopUpForm>)
+            }
             <div className="flex items-start gap-4">
                 <div className={`text-lg md:text-2xl font-semibold text-dark-blue flex-grow`}>
                     {project && <span>[{project.key}-{task.displayId}]</span>} {task.taskName}
                 </div>
                 <div className="flex items-center gap-2.5">
-                    <DotButton name={`task-detail-${taskId}`}/>
+                    {validateUserRole({ userRole: role, minimumRole: 'Member' }) &&
+                    <DotButton 
+                        name={`task-detail-${taskId}`}
+                        actions={taskActions}
+                    />}
                     {closeFn && <button onClick={closeFn}><CloseIcon size={32} className="text-basic-blue"/></button>}
                 </div>
             </div>
@@ -99,16 +248,20 @@ function TaskDetail({ taskId, closeFn }){
                             <UserSelectButton 
                                 name={`assignedToDetail-${task.id}`}
                                 type="button"
-                                placeholder={task.assignedTo}
-                                options={userList}
-                                onChange={(value) => setAssignee(value)}
+                                defaultValue={task.assignedTo}
+                                options={teamOptions}
+                                onChange={handleAssigneeChange}
                             />
                         </div>
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
-                        <p className="font-semibold">Penanda</p>
-                        <div className="flex flex-wrap gap-2">
-                            <Label text={"test-label"}/>
+                        <p className="font-semibold">Label</p>
+                        <div className="flex flex-wrap gap-1 md:gap-2 col-span-2">
+                            {task.labels.length > 0 ? 
+                            task.labels.map(label => (
+                                <Label key={label.id} text={label.content} color={label.backgroundColor}/>
+                            )) :
+                            <div className="text-xs md:text-sm text-dark-blue/80">Belum ada label yang ditambahkan..</div>}
                         </div>
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
@@ -121,19 +274,34 @@ function TaskDetail({ taskId, closeFn }){
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
                         <p className="font-semibold">Prioritas</p>
-                        <Label text={label.toUpperCase()} color={color}/>
+                        <SelectButton
+                            name={`task-${task.id}-priority`}
+                            defaultValue={priorityList.find(priority => priority.value === task.priority)}
+                            options={priorityList} 
+                            onChange={handlePriorityChange}
+                            buttonClass={getSelectPriorityClass()}
+                        />
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
+                        <p className="font-semibold">Status</p>
+                        <SelectButton
+                            name={`task-${task.id}-status`}
+                            defaultValue={statusOptions.find(status => status.value === task.status)}
+                            options={statusOptions} 
+                            onChange={handleStatusChange}
+                        />
                     </div>
                 </div>
                 <div className="flex flex-col gap-4">
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col items-start gap-2">
                         <p className="font-semibold text-xs md:text-sm">Deskripsi Tugas</p>
-                        {task.description ? 
-                        <p className="text-xs md:text-sm">{task.description}</p> :
-                        <p>Tambahkan deskripsi tugas..</p>}
+                        <p className="w-full cursor-pointer text-xs md:text-sm text-dark-blue/80 hover:bg-gray-200 -m-1.5 p-1.5" onClick={() => console.log("test")}>
+                            {task.description ?? "Tambahkan deskripsi tugas.."}
+                        </p>
                     </div>
                     <ChatSection taskId={taskId} title={task.taskName}/>
                     <AttachmentSection taskId={taskId}/>
-                    {task.type !== "SubTask" && <SubtaskSection taskId={taskId}/>}
+                    {task.type === "Task" && <SubtaskSection taskId={taskId} statusOptions={statusOptions} teamOptions={teamOptions}/>}
                     <ActivitySection taskId={taskId}/>
                 </div>
             </div>
