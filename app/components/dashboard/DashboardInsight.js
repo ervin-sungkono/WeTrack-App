@@ -3,7 +3,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, T
 import { Doughnut, Bar } from "react-chartjs-2";
 import EmptyState from "../common/EmptyState";
 import { generateColors } from "@/app/lib/color";
-import { getPriority } from "@/app/lib/string";
+import { getPriority, getProgress } from "@/app/lib/string";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
@@ -48,10 +48,12 @@ export default function DashboardInsight({project}){
         });
         
         const statusDataLabels = Object.keys(statusData).map((key, index) => {
-            return `${key.toUpperCase()} (${statusDataPercentages[index]}%)`;
+            return `${getProgress(key).label.toUpperCase()} (${statusDataPercentages[index]}%)`;
         });
 
-        const statusDataColors = generateColors(Object.keys(statusData).length)
+        const statusDataColors = Object.keys(statusData).map((key) => {
+            return getProgress(key).color;
+        });
         
         doughnutChartData = {
             labels: statusDataLabels,

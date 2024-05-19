@@ -233,7 +233,7 @@ export default function OverviewContent({ projectId }){
         <div className="flex flex-col gap-4">
             {taskData.length === 0 ? (
                 <OverviewCard title="Tugas Terbaru">
-                    <div className="max-h-[300px] md:max-h-[150px] overflow-hidden">
+                    <div className="max-h-[300px] md:max-h-[150px] overflow-x-hidden overflow-y-hidden">
                         <div className="flex flex-col items-center justify-center">
                             <div className="text-center">
                                 Belum ada data tugas yang tersedia.
@@ -248,7 +248,7 @@ export default function OverviewContent({ projectId }){
                 </OverviewCard>
             ) : (
                 <OverviewCard title="Tugas Terbaru" action={"Lihat semua"} href={`/projects/${projectId}/tasks`}>
-                    <div className="max-h-[300px] md:max-h-[150px] overflow-scroll">
+                    <div className="max-h-[300px] md:max-h-[150px] overflow-x-hidden overflow-y-scroll">
                         <Table 
                             data={taskData}
                             columns={columns}
@@ -260,7 +260,7 @@ export default function OverviewContent({ projectId }){
             
             <div className="flex flex-col md:flex-row justify-between gap-4">
                 <OverviewCard title="Ditugaskan Kepada Saya">
-                    <div className="flex flex-col gap-2 max-h-[200px] md:h-[150px] overflow-scroll">
+                    <div className="flex flex-col gap-2 max-h-[200px] md:h-[150px] overflow-x-hidden overflow-y-scroll">
                         {validateUserRole({ userRole: role, minimumRole: 'Member' }) && assignedTaskData && assignedTaskData.length > 0 ? (
                             <>
                                 {assignedTaskData.map((task, index) => (
@@ -285,7 +285,7 @@ export default function OverviewContent({ projectId }){
                     </div>
                 </OverviewCard>
                 <OverviewCard title="Komentar Terbaru">
-                <div className="flex flex-col gap-2 max-h-[200px] md:h-[150px] overflow-scroll">
+                <div className="flex flex-col gap-2 max-h-[200px] md:h-[150px] overflow-x-hidden overflow-y-scroll">
                         {assignedCommentData && assignedCommentData.length > 0 ? (
                             <>
                                 {assignedCommentData.map((comment, index) => (
