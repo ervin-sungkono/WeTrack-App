@@ -191,7 +191,7 @@ const TagifyWrapper = ({
     return (
         // a wrapper must be used because Tagify will appened inside it it's component,
         // keeping the virtual-DOM out of the way
-        <div className="w-full tags-input">
+        <div className="w-full h-12 tags-input">
             <InputMode {...inputAttrs} />
         </div>
     )

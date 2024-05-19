@@ -68,7 +68,6 @@ function TaskDetail({ taskId, closeFn }){
                                 label: `${project.key}-${t.displayId} ${t.taskName}`,
                                 value: t.id
                             }))
-                        console.log(parentOptions)
                         setParentTaskOptions(parentOptions)
                     }else{
                         setParentTaskOptions([])
