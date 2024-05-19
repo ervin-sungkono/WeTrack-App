@@ -159,7 +159,7 @@ export const newTaskSchema = yup.object().shape({
         .notRequired()
         .when('type', {
             is: 'SubTask',
-            then: (s) => s.required('Wajib salah satu parent ketika memilih tipe subtugas'),
+            then: (s) => s.required('Wajib salah satu induk ketika memilih tipe subtugas'),
             otherwise: (s) => s,
         }),
 })

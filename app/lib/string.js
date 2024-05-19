@@ -26,6 +26,17 @@ export const getPriority = (priority) => {
     return priorityList[priority]
 }
 
+export const progressList = [
+    { label: "Belum Dimulai", color: '#A9A9A9' },
+    { label: "Dalam Proses", color: '#FFBF00' },
+    { label: "Selesai", color: '#006400' },
+    { label: "Terlambat", color: '#D2222D' }
+]
+
+export const getProgress = (progress) => {
+    return progressList.find(d => d.label === progress)
+}
+
 export const extractUniqueMentionTags = (text) => {
     const pattern = /@\[([^[\]]+)]\(([^)]+)\)/g
     const dataArray = []

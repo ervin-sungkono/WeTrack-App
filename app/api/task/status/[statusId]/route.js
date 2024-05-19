@@ -193,7 +193,7 @@ export async function DELETE(request, response){
             userId: userId,
             projectId: projectId,
             action: "delete",
-            eventType: "Task status"
+            eventType: "Task Status"
         })
 
         return NextResponse.json({

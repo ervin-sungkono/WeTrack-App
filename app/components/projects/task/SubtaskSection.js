@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import CustomTooltip from "../../common/CustomTooltip"
 import UserSelectButton from "../../common/UserSelectButton"
 import SelectButton from "../../common/button/SelectButton"
-import SimpleInputForm from "../../common/SimpleInputField"
+import SimpleInputForm from "../../common/SimpleInputForm"
 import PopUpLoad from "../../common/alert/PopUpLoad"
 import Label from "../../common/Label"
 import Link from "next/link"
@@ -64,7 +64,7 @@ export default function SubtaskSection({ projectId, taskId, statusOptions, teamO
             cell: ({ row }) => {
                 const taskId = row.getValue('id')
                 const taskName = row.getValue('taskName')
-                return <Link href={`/project/${projectId}/tasks/${taskId}`} className="text-basic-blue hover:underline">{taskName}</Link>
+                return <Link href={`/projects/${project.id}/tasks?taskId=${taskId}`} className="text-basic-blue hover:underline">{taskName}</Link>
             }
         },
         {

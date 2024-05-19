@@ -45,7 +45,6 @@ export default function History(){
         const totalPageCount = Math.ceil(historyData.length / pageSize)
         setPageCount(totalPageCount)
     }, [historyData, pageSize])
-
     
     const [projectOptions, setProjectOptions] = useState([])
 

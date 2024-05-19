@@ -17,6 +17,7 @@ import UserIcon from "../../common/UserIcon";
 import { deleteTask, updateTask } from "@/app/lib/fetch/task";
 import { validateUserRole } from "@/app/lib/helper";
 import { useRole } from "@/app/lib/context/role";
+import { getPriority } from "@/app/lib/string";
 
 const getItemStyle = (isDragging, draggableStyle) => ({
     // some basic styles to make the items look a bit nicer
@@ -93,6 +94,7 @@ export default function BoardItem({ item, index }){
       }
     }
 
+    const {label: priorityLabel, color: priorityColor} = getPriority(item.priority)
     return (
       <Draggable draggableId={item.id} index={index}>
         {(provided, snapshot) => (
@@ -158,6 +160,10 @@ export default function BoardItem({ item, index }){
                   <CheckIcon size={16}/>
                   <p className="text-[10px] md:text-xs">{project && <span>{project.key}-{item.displayId}</span>}</p>
                 </div>
+                {item.priority !== 0 && 
+                <CustomTooltip id={`task-${item.id}-priority-tooltip`} content={`Prioritas: ${priorityLabel}`}>
+                  <div className="w-4 h-4 rounded-full" style={{backgroundColor: priorityColor}}></div>
+                </CustomTooltip>}
                 <CustomTooltip id={`task-${item.id}-tooltip`} content={item.assignedTo?.fullName ?? "Belum ditugaskan"}>
                   <UserIcon 
                     size="sm"

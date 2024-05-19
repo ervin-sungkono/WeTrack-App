@@ -9,5 +9,5 @@ export const getHistoryEventType = {
     taskName: "Nama Tugas",
     taskStatus: "Status Tugas",
     project: "Proyek",
-    comment: "Komen"
+    comment: "Komentar"
 }
