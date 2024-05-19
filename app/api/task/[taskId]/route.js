@@ -1,4 +1,4 @@
-import { updateDoc, getDoc, doc, collection, query, where, getDocs, deleteDoc, serverTimestamp } from 'firebase/firestore';
+import { updateDoc, getDoc, doc, collection, query, where, getDocs, deleteDoc, serverTimestamp, and } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
@@ -117,13 +117,7 @@ export async function PUT(request, response) {
 
         const taskData = taskSnap.data()
 
-        if(taskData.type == 'SubTask') {
-            if(!parentId) {
-                return NextResponse.json({
-                    message: "Missing parameter"
-                }, { status: 400 })
-            }
-
+        if(taskData.type == 'SubTask' && parentId) {
             const parentTaskSnap = await getDoc(doc(db, "tasks", parentId))
 
             if(parentTaskSnap.data()?.projectId != taskData.projectId) {
@@ -147,24 +141,7 @@ export async function PUT(request, response) {
             }, { status: 401 })
         }
 
-        if(taskData.type === "SubTask" && parentId){
-            const parentTaskSnap = await getDoc(doc(db, "tasks", parentId))
-
-            if(parentTaskSnap.data()?.projectId != taskData.projectId) {
-                return NextResponse.json({
-                    message: "Parent id is not found in the project"
-                }, { status: 400 })
-            }
-
-            if(!parentTaskSnap.exists()) {
-                return NextResponse.json({
-                    message: "Parent Id not found"
-                }, { status: 404 })
-            }
-        }
-        
         // Validate assigned to id
-        let assignedToDetails;
         if (assignedTo) {
             const userDocRef = doc(db, 'users', assignedTo);
             const userSnap = await getDoc(userDocRef);
