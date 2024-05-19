@@ -20,13 +20,14 @@ import { dateFormat } from "@/app/lib/date"
 
 import { IoIosCloseCircle as CloseIcon } from "react-icons/io";
 import { getAllTeamMember } from "@/app/lib/fetch/team"
-import { updateTask, deleteTask, reorderTask } from "@/app/lib/fetch/task"
+import { updateTask, deleteTask, reorderTask, getAllTask } from "@/app/lib/fetch/task"
 import { useRole } from "@/app/lib/context/role"
 import { validateUserRole } from "@/app/lib/helper"
 import SelectButton from "../../common/button/SelectButton"
 import { getAllTaskStatus } from "@/app/lib/fetch/taskStatus"
 import SimpleTextareaForm from "../../common/SimpleTextareaForm"
 import SimpleDateForm from "../../common/SimpleDateForm"
+import ParentSelectButton from "../../common/ParentSelectButton"
 
 const AttachmentSection = dynamic(() => import("./AttachmentSection"))
 const SubtaskSection = dynamic(() => import("./SubtaskSection"))
@@ -41,6 +42,7 @@ function TaskDetail({ taskId, closeFn }){
     const [editDueDate, setEditDueDate] = useState(false)
     const [teamOptions, setTeamOptions] = useState([])
     const [statusOptions, setStatusOptions] = useState([])
+    const [parentTaskOptions, setParentTaskOptions] = useState([])
     const [project, _] = useSessionStorage("project")
     const role = useRole()
 
@@ -54,6 +56,27 @@ function TaskDetail({ taskId, closeFn }){
             fnCall: () => setDeleteConfirmation(true),
         },
     ]
+
+    useEffect(() => {
+        const fetchParentOptions = async() => {
+            getAllTask(project.id)
+                .then(res => {
+                    if(res.data){
+                        const parentOptions =  res.data
+                            .filter(t => t.type === "Task")
+                            .map(t => ({
+                                label: `${project.key}-${t.displayId} ${t.taskName}`,
+                                value: t.id
+                            }))
+                        console.log(parentOptions)
+                        setParentTaskOptions(parentOptions)
+                    }else{
+                        setParentTaskOptions([])
+                    }
+                })
+        }
+        if(task && project && task.type === 'SubTask') fetchParentOptions()
+    }, [task, project])
 
     useEffect(() => {
         const fetchTeamOptions = async() => {
@@ -86,6 +109,7 @@ function TaskDetail({ taskId, closeFn }){
         const unsubscribe = onSnapshot(reference, async(doc) => {
             if(doc.exists()){
                 const id = doc.id
+
                 const labelsData = doc.data().labels
                 const labels = labelsData && await Promise.all(labelsData.map(async (label) => {
                     const labelDoc = await getDoc(getDocumentReference({ collectionName: "labels", id: label }))
@@ -95,6 +119,10 @@ function TaskDetail({ taskId, closeFn }){
                         ...labelDoc.data() 
                     }
                 }))
+                const parentId = doc.data().parentId
+                const parentDoc = parentId && await getDoc(getDocumentReference({ collectionName: "tasks", id: parentId }))
+                const parent = parentDoc && parentDoc.data()
+
                 const assignedToId = doc.data().assignedTo
                 const assignedToDoc = assignedToId && await getDoc(getDocumentReference({ collectionName: "users", id: assignedToId }))
                 const assignedTo = assignedToDoc && {id: assignedToDoc.id, ...assignedToDoc.data()}
@@ -102,7 +130,8 @@ function TaskDetail({ taskId, closeFn }){
                     id,
                     ...doc.data(),
                     labels: labels,
-                    assignedTo: assignedTo
+                    assignedTo: assignedTo,
+                    parent: parent,
                 })
                 return
             }
@@ -202,6 +231,19 @@ function TaskDetail({ taskId, closeFn }){
         }
     }
 
+    const handleParentChange = async(parentId) => {
+        setUpdateLoading(true)
+        try{
+            if(parentId && parentId !== task.parentId) {
+                await updateTask({ taskId, parentId: parentId})
+            }  
+        }catch(e){
+            console.log(e)
+        }finally{
+            setUpdateLoading(false)
+        }
+    }
+
     const handlePriorityChange = async(priority) => {
         setUpdateLoading(true)
         try{
@@ -247,8 +289,7 @@ function TaskDetail({ taskId, closeFn }){
                 taskName={task.taskName} 
                 onSubmit={handleUpdateTaskName} 
                 onClose={() => setUpdateConfirmation(false)}
-              />
-            }
+              />}
             {deleteConfirmation &&
               (<PopUpForm
                 title={"Hapus Tugas"}
@@ -263,11 +304,12 @@ function TaskDetail({ taskId, closeFn }){
                     >Batal</Button>
                   </div>
                 </>
-              </PopUpForm>)
-            }
+              </PopUpForm>)}
             <div className="flex items-start gap-4">
-                <div className={`text-lg md:text-2xl font-semibold text-dark-blue flex-grow`}>
-                    {project && <span>[{project.key}-{task.displayId}]</span>} {task.taskName}
+                <div className="flex items-end flex-grow">
+                    <div className={`text-lg md:text-2xl font-semibold text-dark-blue`}>
+                        {project && <span>[{project.key}-{task.displayId}]</span>} {task.taskName}
+                    </div>
                 </div>
                 <div className="flex items-center gap-2.5">
                     {validateUserRole({ userRole: role, minimumRole: 'Member' }) &&
@@ -304,50 +346,70 @@ function TaskDetail({ taskId, closeFn }){
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
                         <p className="font-semibold">Tanggal Mulai</p>
-                        {!editStartDate ? 
-                        <p className="w-full p-2 cursor-pointer text-dark-blue/80 hover:bg-gray-200 rounded transition-colors duration-300" onClick={() => setEditStartDate(true)}>
-                            {dateFormat(task.startDate) ?? "Belum diatur"}
-                        </p> :
-                        <SimpleDateForm
-                            name={`task-${taskId}-start-date`}
-                            value={task.startDate}
-                            onChange={handleUpdateStartDate}
-                            onCancel={() => setEditStartDate(false)}
-                        />}
+                        <div className="col-span-2">
+                            {!editStartDate ? 
+                            <p className="w-full p-2 cursor-pointer text-dark-blue/80 hover:bg-gray-200 rounded transition-colors duration-300" onClick={() => setEditStartDate(true)}>
+                                {dateFormat(task.startDate) ?? "Belum diatur"}
+                            </p> :
+                            <SimpleDateForm
+                                name={`task-${taskId}-start-date`}
+                                value={task.startDate}
+                                onChange={handleUpdateStartDate}
+                                onCancel={() => setEditStartDate(false)}
+                            />}
+                        </div>
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
                         <p className="font-semibold">Tenggat Waktu</p>
-                        {!editDueDate ? 
-                        <p className="w-full p-2 cursor-pointer text-dark-blue/80 hover:bg-gray-200 rounded transition-colors duration-300" onClick={() => setEditDueDate(true)}>
-                            {dateFormat(task.dueDate) ?? "Belum diatur"}
-                        </p> :
-                        <SimpleDateForm
-                            name={`task-${taskId}-start-date`}
-                            value={task.dueDate}
-                            min={task.startDate}
-                            onChange={handleUpdateDueDate}
-                            onCancel={() => setEditDueDate(false)}
-                        />}
+                        <div className="col-span-2">
+                            {!editDueDate ? 
+                            <p className="w-full p-2 cursor-pointer text-dark-blue/80 hover:bg-gray-200 rounded transition-colors duration-300" onClick={() => setEditDueDate(true)}>
+                                {dateFormat(task.dueDate) ?? "Belum diatur"}
+                            </p> :
+                            <SimpleDateForm
+                                name={`task-${taskId}-start-date`}
+                                value={task.dueDate}
+                                min={task.startDate}
+                                onChange={handleUpdateDueDate}
+                                onCancel={() => setEditDueDate(false)}
+                            />}
+                        </div>
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
                         <p className="font-semibold">Prioritas</p>
-                        <SelectButton
-                            name={`task-${taskId}-priority`}
-                            defaultValue={priorityList.find(priority => priority.value === task.priority)}
-                            options={priorityList} 
-                            onChange={handlePriorityChange}
-                            buttonClass={getSelectPriorityClass()}
-                        />
+                        <div className="col-span-2">
+                            <SelectButton
+                                name={`task-${taskId}-priority`}
+                                defaultValue={priorityList.find(priority => priority.value === task.priority)}
+                                options={priorityList} 
+                                onChange={handlePriorityChange}
+                                buttonClass={getSelectPriorityClass()}
+                            />
+                        </div>
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
                         <p className="font-semibold">Status</p>
-                        <SelectButton
-                            name={`task-${taskId}-status`}
-                            defaultValue={statusOptions.find(status => status.value === task.status)}
-                            options={statusOptions} 
-                            onChange={handleStatusChange}
-                        />
+                        <div className="col-span-2">
+                            <SelectButton
+                                name={`task-${taskId}-status`}
+                                defaultValue={statusOptions.find(status => status.value === task.status)}
+                                options={statusOptions} 
+                                onChange={handleStatusChange}
+                            />
+                        </div>
                     </div>
+                    {task.type === "SubTask" &&
+                    <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
+                        <p className="font-semibold">Induk Tugas</p>
+                        <div className="col-span-2">
+                            <ParentSelectButton
+                                name={`task-${taskId}-parent`}
+                                defaultValue={parentTaskOptions.find(t=> t.value === task.parentId)}
+                                options={parentTaskOptions}
+                                onChange={handleParentChange}
+                            />
+                        </div>
+                    </div>}
                 </div>
                 <div className="flex flex-col gap-4">
                     <div className="flex flex-col items-start gap-2">
@@ -357,7 +419,7 @@ function TaskDetail({ taskId, closeFn }){
                             className="w-full cursor-pointer text-xs md:text-sm text-dark-blue/80 hover:bg-gray-200 p-2 rounded transition-colors duration-300"
                             onClick={() => setEditDescription(true)} 
                         >
-                            {task.description ?? "Tambahkan deskripsi tugas.."}
+                            {task.description ? task.description : "Tambahkan deskripsi tugas.."}
                         </p> :
                         <SimpleTextareaForm
                             name={`task-${taskId}-description`}

@@ -1,4 +1,4 @@
-import { doc, getDoc, collection, getDocs, query, where, runTransaction, serverTimestamp, and } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, query, where, runTransaction, serverTimestamp, and, orderBy } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
@@ -29,7 +29,7 @@ export async function GET(request, response) {
             }, { status: 404 });
         }
 
-        const q = query(taskRef, where('projectId', '==', projectId))
+        const q = query(taskRef, where('projectId', '==', projectId), orderBy('createdAt', 'asc'))
         if (!q) {
             return NextResponse.json({
                 data: null,
@@ -39,26 +39,12 @@ export async function GET(request, response) {
         
         const querySnapshot = await getDocs(q)
 
-        const tasks = await Promise.all(querySnapshot.docs.map(async (item) => {
-            const taskStatusDoc = await getDoc(doc(db, "taskStatuses", item.data().status))
-            const taskStatusDetail = {
-                id: taskStatusDoc.id,
-                ...taskStatusDoc.data()
-            }
-
+        const tasks = querySnapshot.docs.map((item) => {
             return {
                 id: item.id,
-                displayId: item.data().displayId,
-                taskName: item.data().taskName,
-                labels: item.data().labels,
-                assignedTo: item.data().assignedTo,
-                priority: item.data().priority,
-                createdAt: item.data().createdAt,
-                startDate: item.data().startDate,
-                dueDate: item.data().dueDate,
-                status: taskStatusDetail
+                ...item.data(),
             }
-        })) 
+        })
         
         return NextResponse.json({
             data: tasks,

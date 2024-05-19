@@ -64,7 +64,7 @@ export default function SubtaskSection({ projectId, taskId, statusOptions, teamO
             cell: ({ row }) => {
                 const taskId = row.getValue('id')
                 const taskName = row.getValue('taskName')
-                return <Link href={`/project/${projectId}/tasks/${taskId}`} className="text-basic-blue hover:underline">{taskName}</Link>
+                return <Link href={`/projects/${project.id}/tasks?taskId=${taskId}`} className="text-basic-blue hover:underline">{taskName}</Link>
             }
         },
         {
