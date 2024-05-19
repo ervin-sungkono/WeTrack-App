@@ -8,7 +8,7 @@ import {
     IoMdClose as CloseIcon
 } from "react-icons/io"
 
-export default function EditLabelForm({ defaultContent, defaultColor, onCancel, onSubmit }){
+export default function EditLabelForm({ action="add", defaultContent, defaultColor, onCancel, onSubmit }){
     const [content, setContent] = useState(defaultContent)
     const [submitting, setSubmitting] = useState(false)
     const [backgroundColor, setBackgroundColor] = useState(defaultColor ?? getRandomColor())
@@ -19,6 +19,7 @@ export default function EditLabelForm({ defaultContent, defaultColor, onCancel, 
                 <input 
                     name="content" 
                     type="text" 
+                    maxLength={"20"}
                     autoComplete="off"
                     className="text-sm w-full h-8 rounded-full border-none" 
                     style={{backgroundColor: backgroundColor, color: pickTextColorBasedOnBgColor(backgroundColor)}}
@@ -39,7 +40,7 @@ export default function EditLabelForm({ defaultContent, defaultColor, onCancel, 
                         <CloseIcon size={16}/>
                     </button>
                 </CustomTooltip>
-                <CustomTooltip id={`cancel-btn`} content={"Tambah Label"}>
+                <CustomTooltip id={`cancel-btn`} content={action === "add" ? "Tambah Label" : action === "edit" ? "Ubah Label" : ""}>
                     <button 
                         disabled={submitting} 
                         className="p-1.5 text-white bg-basic-blue border border-basic-blue rounded disabled:bg-gray-400 disabled:border-gray-400" 

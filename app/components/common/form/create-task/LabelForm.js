@@ -60,6 +60,7 @@ export default function LabelForm({ labelData, projectId, onCancel }){
                                 <div key={id}>
                                     {(id === labelFocus) ?
                                     <EditLabelForm
+                                        action="edit"
                                         defaultContent={content}
                                         defaultColor={backgroundColor}
                                         onCancel={() => setLabelFocus(null)}
