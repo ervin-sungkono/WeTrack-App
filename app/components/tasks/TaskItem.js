@@ -13,8 +13,8 @@ export default function TaskItem({ task, active }){
 
     const {label: priorityLabel, color: priorityColor} = getPriority(task.priority)
     return(
-        <Link href={`?taskId=${task.id}`} className={`bg-white rounded px-2.5 py-4 flex flex-col gap-1 ${active ? "border border-basic-blue pointer-events-none" : ""}`}>
-            <p className="text-xs md:text-sm">{task.taskName}</p>
+        <Link href={`?taskId=${task.id}`} className={`bg-white rounded px-2.5 py-4 flex flex-col gap-1 border ${active ? "border-basic-blue pointer-events-none" : "border-white"}`}>
+            <p className="text-xs md:text-sm text-dark-blue font-semibold">{task.taskName}</p>
             <div className="flex items-center gap-2">
                 <div className="flex flex-grow items-center gap-1 text-dark-blue">
                   {task.type === "Task" ? <CheckIcon size={16}/> : <SubTaskIcon size={16}/>}
