@@ -141,7 +141,7 @@ export async function PUT(request, response) {
             }, { status: 401 })
         }
 
-        if(taskData.type === "SubTask"){
+        if(taskData.type === "SubTask" && parentId){
             // Validate if the given parentId is an existing task
             const subTaskSnap = await getDoc(doc(db, "tasks", parentId))
 
@@ -152,12 +152,13 @@ export async function PUT(request, response) {
             }
         }
         
+        // Validate assigned to id
+        let assignedToDetails;
         if (assignedTo) {
             const userDocRef = doc(db, 'users', assignedTo);
             const userSnap = await getDoc(userDocRef);
             if (userSnap.exists()) {
                 assignedToDetails = userSnap.data();
-
             } else {
                 return NextResponse.json({
                     message: "Assigned user not found"
@@ -165,7 +166,8 @@ export async function PUT(request, response) {
             }
         }
 
-        if(labels.length > 0) {
+        // Validate label id
+        if(labels && labels.length > 0) {
             labels.forEach(async (label) => {
                 const labelDoc = await getDoc(doc(db, "labels", label))
                 if(!labelDoc.exists) {
@@ -178,10 +180,10 @@ export async function PUT(request, response) {
         
         await updateDoc(taskDocRef, {
             parentId: parentId ?? taskData.parentId,
-            assignedTo: assignedTo ? assignedTo : taskData.assignedTo,
+            assignedTo: assignedTo !== undefined ? assignedTo : taskData.assignedTo,
             taskName: taskName ?? taskData.taskName,
             priority: priority ?? taskData.priority,
-            labels: labels ?? taskData.labels,
+            labels: labels !== undefined ? labels : taskData.labels,
             description: description ?? taskData.description,
             startDate: startDate ?? taskData.startDate,
             dueDate: dueDate ?? taskData.dueDate,

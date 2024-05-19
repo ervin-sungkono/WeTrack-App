@@ -49,7 +49,7 @@ export default function BoardItem({ item, index }){
 
     useEffect(() => {
       if(assignee){
-        console.log(assignee)
+        // console.log(assignee)
         // Logic untuk update assignee
       }
     }, [assignee])
@@ -70,8 +70,7 @@ export default function BoardItem({ item, index }){
       setLoading(true)
 
       try{
-        if(taskName === item.taskName) throw Error();
-        await updateTask({ taskId: item.id, taskName })
+        if(taskName !== item.taskName) await updateTask({ taskId: item.id, taskName })
       }catch(e){
         console.log(e)
       }finally{
@@ -93,30 +92,6 @@ export default function BoardItem({ item, index }){
         setLoading(false)
       }
     }
-
-    const userList = [
-      {
-          user: {
-              id: "WeEzNxSREEdyDpSXkIYCAyA4E8y1",
-              fullName: "Ervin Cahyadinata Sungkono",
-              profileImage: null
-          }
-      },
-      {
-          user: {
-              id: "02",
-              fullName: "Kenneth Nathanael",
-              profileImage: null
-          }
-      },
-      {
-          user: {
-              id: "03",
-              fullName: "Christopher Vinantius",
-              profileImage: null
-          }
-      }
-    ]
 
     return (
       <Draggable draggableId={item.id} index={index}>

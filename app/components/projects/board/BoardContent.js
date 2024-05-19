@@ -3,9 +3,8 @@ import { useCallback, useEffect, useState } from "react"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import { createNewTask, reorderTask } from "@/app/lib/fetch/task"
 import { createNewTaskStatus, deleteTaskStatus, reorderTaskStatus, updateTaskStatus } from "@/app/lib/fetch/taskStatus"
-import { getQueryReferenceOrderBy, getTaskReferenceOrderBy } from "@/app/firebase/util"
-import { onSnapshot, doc, getDoc } from "firebase/firestore"
-import { db } from "@/app/firebase/config"
+import { getDocumentReference, getQueryReferenceOrderBy, getTaskReferenceOrderBy } from "@/app/firebase/util"
+import { onSnapshot, getDoc } from "firebase/firestore"
 import { debounce, validateUserRole } from "@/app/lib/helper"
 
 import BoardList from "./BoardList"
@@ -176,15 +175,19 @@ export default function BoardContent({ projectId }){
       const taskData = await Promise.all(taskSnapshot.docs.map(async(taskDoc) => {
         const taskLabels = taskDoc.data().labels
         const labels = taskLabels && await Promise.all(taskLabels.map(async(label) => {
-          const labelSnap = await getDoc(doc(db, "labels", label))
+          const labelSnap = await getDoc(getDocumentReference({ collectionName: "labels", id: label }))
           return {
             id: labelSnap.id,
             ...labelSnap.data()
           }
         }))
+        const assignedToId = taskDoc.data().assignedTo
+        const assignedToDoc = assignedToId && await getDoc(getDocumentReference({ collectionName: "users", id: assignedToId }))
+        const assignedTo = assignedToDoc && {id: assignedToDoc.id, ...assignedToDoc.data()}
         return {
           id: taskDoc.id,
           ...taskDoc.data(),
+          assignedTo: assignedTo,
           labels: labels
         }
       }))
