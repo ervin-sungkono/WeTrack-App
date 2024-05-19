@@ -1,5 +1,5 @@
 import { db } from "@/app/firebase/config"
-import { query, orderBy, where, collection, doc, and, getDocs, getDoc, updateDoc, serverTimestamp, addDoc, limit } from "firebase/firestore"
+import { query, orderBy, where, collection, doc, and, getDocs, getDoc, updateDoc, serverTimestamp, addDoc, limit, deleteDoc } from "firebase/firestore"
 import { getSession } from "next-auth/react"
 
 export const getTaskReferenceOrderBy = ({ field, id, orderByKey }) => {
@@ -67,8 +67,16 @@ export const deleteTaskStatuses = async({ projectId }) => {
         if(!projectId) return null
     
         const taskStatusCollectionRef = collection(db, "taskStatuses")
-        const q = query(taskCollectionRef, where("projectId", "==", projectId))
-        const taskStatusDocRef = await getDocs(q)
+        const q = query(taskStatusCollectionRef, where("projectId", "==", projectId))
+        const taskStatusDocSnapShot = await getDocs(q)
+
+        if(!taskStatusDocSnapShot.empty) {
+            await Promise.all(taskStatusDocSnapShot.docs.map(async (item) => {
+                const taskStatusDocRef = doc(db, "taskStatuses", item.id);
+
+                await deleteDoc(taskStatusDocRef)
+            }))
+        }
 
     } catch (error) {
         throw new Error("Something went wrong when deleting task status")
@@ -81,7 +89,15 @@ export const deleteTasks = async({ projectId }) => {
     
         const taskCollectionRef = collection(db, "tasks")
         const q = query(taskCollectionRef, where("projectId", "==", projectId))
-        const taskDocRef = await getDocs(q)
+        const taskDocSnapShot = await getDocs(q)
+
+        if(!taskDocRef.empty) {
+            await Promise.all(taskDocSnapShot.docs.map(async (item) => {
+                const taskDocRef = doc(db, "tasks", item.id)
+
+                await deleteDoc(taskDocRef)
+            }))
+        }
 
     } catch (error) {
         throw new Error("Something went wrong when deleting tasks")
@@ -94,25 +110,45 @@ export const deleteLabels = async({ taskId }) => {
     
         const labelCollectionRef = collection(db, "labels")
         const q = query(labelCollectionRef, where("taskId", "==", taskId))
-        const labelDocRef = await getDocs(q)
+        const labelDocSnapShot = await getDocs(q)
+
+        if(!labelDocSnapShot.empty) {
+            await Promise.all(labelDocSnapShot.docs.map(async (item) => {
+                const labelDocRef = doc(db, "tasks", item.id)
+
+                await deleteDoc(labelDocRef)
+            }))
+        }
 
     } catch (error) {
         throw new Error("Something went wrong when deleting label")
     }
 }
 
-export const deleteAttachments = async({ taskId }) => {
-    try {   
-        if(!taskId) return null
+// export const deleteAttachments = async({ taskId }) => {
+//     try {   
+//         if(!taskId) return null
     
-        const attachmentCollectionRef = collection(db, "attachments")
-        const q = query(attachmentCollectionRef, where("taskId", "==", taskId))
-        const attachmentDocs = await getDocs(q)
+//         const attachmentCollectionRef = collection(db, "attachments")
+//         const q = query(attachmentCollectionRef, where("taskId", "==", taskId))
+//         const attachmentDocSnapShot = await getDocs(q)
 
-    } catch (error) {
-        throw new Error("Something went wrong when deleting label")
-    }
-}
+//         if(!attachmentDocSnapShot.empty) {
+//             await Promise.all(attachmentDocSnapShot.docs.map(async (item) => {
+//                 const attachmentDocRef = doc(db, "attachments", item.id)
+//                 const attachmentDoc = await getDoc(attachmentDocRef)
+
+//                 if(!attachmentDoc.exists()) {
+
+//                 }
+
+//             }))
+//         }
+
+//     } catch (error) {
+//         throw new Error("Something went wrong when deleting label")
+//     }
+// }
 
 export const handleDeletedUser = async({ userId }) => {
     try {
