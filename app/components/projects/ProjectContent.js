@@ -30,18 +30,34 @@ export default function ProjectContent(){
         setQuery(query.toLowerCase())
     }
 
+    const getProjectActions = ({ role, id}) => {
+        if(role === 'Owner') 
+        return [
+            {
+                link: `/projects/${id}/setting`,
+                label: "Pengaturan"
+            },
+            {
+                link: `/projects/${id}/team`,
+                label: "Lihat Tim"
+            },
+        ]
+        else 
+        return [
+            {
+                link: `/projects/${id}/team`,
+                label: "Lihat Tim"
+            },
+        ]
+    }
+
     useEffect(() => {
         getAllProject()
             .then(projects => {
                 if(projects.data) setProjectData(
                     projects.data.map(project => ({
                         ...project,
-                        action: [
-                            {
-                                link: `/projects/${project.id}/setting`,
-                                label: "Pengaturan"
-                            },
-                        ]
+                        action: getProjectActions({ role: project.projectRole, id: project.id})
                     }))
                 )
                 else alert("Gagal memperoleh data proyek")

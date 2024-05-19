@@ -188,8 +188,8 @@ export default function AttachmentSection({ taskId }){
             </PopUpForm>}
             <div className="flex items-center">
                 <div className="flex flex-grow flex-col gap-1">
-                    <p className="font-semibold text-xs md:text-sm text-dark-blue">Lampiran <span>({attachmentData.length})</span> <span className="text-[10.8px] md:text-xs">maks 10</span></p>
-                    <p className="text-[10.8px] md:text-xs text-dark-blue/80">*Batas ukuran lampiran adalah 2MB</p>
+                    <p className="font-semibold text-xs md:text-sm text-dark-blue">Lampiran <span>({attachmentData.length})</span> <span className="text-[10.8px] md:text-xs">maksimal 10</span></p>
+                    <p className="text-[10.8px] md:text-xs text-dark-blue/80">Batas ukuran dari satu lampiran adalah 2MB.</p>
                 </div>
                 <div className="flex gap-1">
                     <DotButton name={"attachments-action"} actions={attachmentsAction}/>

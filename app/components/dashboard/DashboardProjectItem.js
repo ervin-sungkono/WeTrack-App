@@ -3,7 +3,7 @@ import DashboardTaskItem from "./DashboardTaskItem";
 
 export default function DashboardProjectItem({project, selectedProject, setSelectedProject}){
     const currentProject = selectedProject && selectedProject.id === project.id;
-
+    
     const handleShowTasks = () => {
         if(currentProject){
             setSelectedProject(null)
@@ -31,17 +31,21 @@ export default function DashboardProjectItem({project, selectedProject, setSelec
                             project.tasks.map((task, index) => (
                                 <div key={index}>
                                     <DashboardTaskItem 
+                                        key={index}
                                         title={task.taskName}
+                                        startDate={task.startDate}
+                                        endDate={task.dueDate}
                                         status={task.status.statusName}
                                         priority={task.priority}
-                                        id={task.id}
+                                        projectKey={project.key}
+                                        displayId={task.displayId}
                                         href={`/projects/${project.id}/tasks?taskId=${task.id}`}
                                         firstItem={index === 0}
                                     />
                                 </div>
                             ))
                         ) : (
-                            <div className="text-xs md:text-sm text-dark-blue italic">
+                            <div className="text-xs md:text-sm text-dark-blue">
                                 Belum ada data tugas yang tersedia.
                             </div>
                         )}

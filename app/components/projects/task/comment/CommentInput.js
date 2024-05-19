@@ -39,7 +39,7 @@ export default function CommentInput({ onSubmit }){
             <div>
                 <UserIcon fullName={session?.user.fullName} src={session?.user.profileImage} alt="" size="sm"/>
             </div>
-            <div className="w-full flex flex-col items-end gap-1">
+            <div className="relative w-full flex flex-col items-end gap-1">
                 <MentionsInput
                     className="mentions"
                     value={comment}
@@ -56,7 +56,7 @@ export default function CommentInput({ onSubmit }){
                     />
                 </MentionsInput>
                 {focused && (
-                    <div className="flex gap-1">
+                    <div className="absolute right-0 -bottom-2 translate-y-full flex gap-1 z-50">
                         <Button onClick={resetComment} variant="danger" size="sm">Batal</Button>
                         <Button onClick={() => {
                             onSubmit(comment)

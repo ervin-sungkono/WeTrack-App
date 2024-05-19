@@ -79,7 +79,20 @@ export async function getUserProfile(){
     }else{
         throw new Error(await res.text())
     }
+}
 
+export async function getUserProfileById(profileId) {
+    const res = await fetch(`/api/user/${profileId}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    if(res.ok){
+        return res.json()
+    }else{
+        throw new Error(await res.text())
+    }
 }
 
 export async function updateUserProfile(formData) {
@@ -112,6 +125,48 @@ export async function deleteUserProfile(password) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(password)
+    })
+    if(res.ok){
+        return res.json()
+    }else{
+        throw new Error(await res.text())
+    }
+}
+
+export async function getUserHistory(){
+    const res = await fetch(`/api/history`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    if(res.ok){
+        return res.json()
+    }else{
+        throw new Error(await res.text())
+    }
+}
+
+export async function getUserTaskHistory({taskId}) {
+    const res = await fetch(`/api/history?taskId=${taskId}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    if(res.ok){
+        return res.json()
+    }else{
+        throw new Error(await res.text())
+    }
+}
+
+export async function getUserNotification(){
+    const res = await fetch(`/api/notification`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
     })
     if(res.ok){
         return res.json()

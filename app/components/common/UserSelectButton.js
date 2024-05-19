@@ -5,14 +5,18 @@ import { initDropdowns } from "flowbite"
 import { IoIosArrowDown as DropdownIcon } from 'react-icons/io'
 import UserIcon from "./UserIcon"
 
-export default function UserSelectButton({ name, type = "default", userId, placeholder, options = [], onChange = null, disabled }){ 
-    const [selected, setSelected] = useState({})
+export default function  UserSelectButton({ name, type = "default", userId, placeholder, options = [], onChange = null, disabled, defaultValue }){ 
+    const [selected, setSelected] = useState(defaultValue ?? {})
     const [loaded, setLoaded] = useState(false)
     const buttonRef = useRef()
 
     useEffect(() => {
         initDropdowns()
     })
+
+    useEffect(() => {
+        setSelected(defaultValue ?? {})
+    }, [defaultValue])
 
     useEffect(() => {
         if(selected){
@@ -47,10 +51,11 @@ export default function UserSelectButton({ name, type = "default", userId, place
                     <UserIcon size="sm" fullName={placeholder?.fullName ?? selected.fullName} src={placeholder ? placeholder?.profileImage?.attachmentStoragePath : (selected.fullName ? selected.profileImage?.attachmentStoragePath : '/images/user-placeholder.png')}/>
                 </div>}
             </button>
-            <div id={name} className="z-50 hidden bg-white divide-y divide-gray-100 rounded-md border border-dark-blue/30 w- md:w-64">
+            <div id={name} className="z-fixed hidden bg-white divide-y divide-gray-100 rounded-md border border-dark-blue/30 w- md:w-64">
                 <ul className="py-2 text-xs md:text-sm text-gray-700">
                     <li>
                         <button
+                            type="button"
                             disabled={!selected.id}
                             onClick={(e) => handleSelectedUpdate(e, {})} className="block w-full text-start px-4 py-2 disabled:bg-gray-300 disabled:text-dark-blue hover:bg-gray-100 hover:text-basic-blue transition-colors duration-300 ease-in-out"
                         >
@@ -62,9 +67,10 @@ export default function UserSelectButton({ name, type = "default", userId, place
                             </div>
                         </button>
                     </li>
-                    {options.map(({ user: { id, fullName, profileImage } }) => (
+                    {options.map(({ user: {id, fullName, profileImage } }) => (
                         <li key={id}>
                             <button
+                                type="button"
                                 disabled={selected && selected.id === id}
                                 onClick={(e) => handleSelectedUpdate(e, {id, fullName, profileImage})} className="block w-full text-start px-4 py-2 disabled:bg-gray-300 disabled:text-dark-blue hover:bg-gray-100 hover:text-basic-blue transition-colors duration-300 ease-in-out"
                             >
@@ -116,7 +122,7 @@ export default function UserSelectButton({ name, type = "default", userId, place
                             </div>
                         </button>
                     </li>
-                    {options.map(({ user: { id, fullName, profileImage } }) => (
+                    {options.map(({ user: {id, fullName, profileImage } }) => (
                         <li key={id}>
                             <button
                                 disabled={selected && selected.id === id}
@@ -135,6 +141,7 @@ export default function UserSelectButton({ name, type = "default", userId, place
             </div>
             {!disabled && userId && 
             <button 
+                type="button"
                 className="text-[10.8px] py-1 md:text-xs text-basic-blue font-semibold hover:underline"
                 onClick={() => setSelected(options.find(({user}) => user.id === userId)?.user ?? {})}
             >
@@ -178,7 +185,7 @@ export default function UserSelectButton({ name, type = "default", userId, place
                             </div>
                         </button>
                     </li>
-                    {options.map(({ user: { id, fullName, profileImage } }) => (
+                    {options.map(({ user: {id, fullName, profileImage } }) => (
                         <li key={id}>
                             <button
                                 disabled={selected && selected.id === id}
@@ -197,6 +204,7 @@ export default function UserSelectButton({ name, type = "default", userId, place
             </div>
             {!disabled && userId && 
             <button 
+                type="button"
                 className="text-[10.8px] py-1 md:text-xs text-basic-blue font-semibold hover:underline"
                 onClick={() => setSelected(options.find(({user}) => user.id === userId)?.user ?? {})}
             >

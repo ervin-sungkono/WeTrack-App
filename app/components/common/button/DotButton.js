@@ -25,7 +25,10 @@ export default function DotButton({ name, actions = [], hoverClass }){
                     {actions.map(({label, fnCall, disableFn = false}, index) => (
                         <li key={`${name}-${index}`}>
                             <button
-                                onClick={fnCall} 
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    fnCall(e)
+                                }} 
                                 disabled={disableFn} 
                                 className="block w-full text-start px-4 py-2 hover:bg-gray-100 hover:text-basic-blue disabled:pointer-events-none disabled:text-dark-blue/60 text-dark-blue transition-colors duration-300 ease-in-out"
                             >

@@ -15,18 +15,36 @@ export const dateFormat = (date, includeTime = false) => {
 
 export const listDateFormat = (date) => {
     const currentDate = moment(new Date())
-    const dateDifference = currentDate.diff(moment(date), 'days')
+    let dateDifference = 0
     let formatString = ""
-    switch(dateDifference){
-        case 0:
-            formatString = "[Hari ini], HH:mm A"
-            break
-        case 1:
-            formatString = "[Kemarin], HH:mm A"
-            break
-        default:
-            formatString = "DD MMM YYYY, HH:mm A"
-            break
+    if(typeof date === "string"){ //ISO String
+        dateDifference = currentDate.diff(moment(date), 'days')
+        switch(dateDifference){
+            case 0:
+                formatString = "[Hari ini], HH:mm"
+                break
+            case 1:
+                formatString = "[Kemarin], HH:mm"
+                break
+            default:
+                formatString = "DD MMM YYYY, HH:mm"
+                break
+        }
+        return moment(date).format(formatString)
+    }else if(typeof date === "object"){ //Timestamp
+        const comparedDate = moment.unix(date.seconds)
+        dateDifference = currentDate.dayOfYear() - comparedDate.dayOfYear()
+        switch(dateDifference){
+            case 0:
+                formatString = "[Hari ini], HH:mm"
+                break
+            case 1:
+                formatString = "[Kemarin], HH:mm"
+                break
+            default:
+                formatString = "DD MMM YYYY, HH:mm"
+                break
+        }
+        return moment.unix(date.seconds).format(formatString)
     }
-    return moment(date).format(formatString)
 }

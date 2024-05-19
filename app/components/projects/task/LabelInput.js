@@ -1,18 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import Tags from "@/app/lib/tagify";
-import LabelForm from "../../common/form/LabelForm";
+import LabelForm from "../../common/form/create-task/LabelForm";
 import Button from "../../common/button/Button";
 
 import { getQueryReference } from "@/app/firebase/util";
 import { onSnapshot } from "firebase/firestore";
 import { pickTextColorBasedOnBgColor } from "@/app/lib/color";
 
-export default function LabelInput({ projectId, onChange }){
+export default function LabelInput({ projectId, labelData, onChange, resetLabel }){
     const [labelModal, setLabelModal] = useState(false)
-    const [labels, setLabels] = useState()
+    const [labels, setLabels] = useState([])
 
     useEffect(() => {
         if(!projectId) return
+        resetLabel()
 
         const reference = getQueryReference({ collectionName: "labels", field: "projectId", id: projectId })
         const unsubscribe = onSnapshot(reference, (snapshot) => {
@@ -28,14 +29,17 @@ export default function LabelInput({ projectId, onChange }){
 
     const tagifyRef = useRef()
     const tagifySettings = {
+        duplicates: false,
         skipInvalid: true,
+        enforceWhitelist: true,
+        userInput: false,
         maxTags: 6,
         placeholder: "Masukkan label..",
         dropdown: {
             maxItems: 20,           // <- mixumum allowed rendered suggestions
             classname: "tags-look", // <- custom classname for this dropdown, so it could be targeted
             enabled: 0,             // <- show suggestions on focus
-            closeOnSelect: false    // <- do not hide the suggestions dropdown once an item has been selected
+            closeOnSelect: false,   // <- do not hide the suggestions dropdown once an item has been selected
         },
         transformTag: (tagData) => {
             tagData.style = `
@@ -50,28 +54,23 @@ export default function LabelInput({ projectId, onChange }){
         }
     }
 
-    if(!labels) return null
     return(
         <div className="w-full flex flex-col gap-2">
             <label htmlFor="label" className="block font-semibold text-xs md:text-sm text-dark-blue">
                 Label
             </label>
-            <div className="w-full flex flex-col md:flex-row gap-2 md:gap-4">
+            <div className="w-full flex flex-col md:flex-row gap-2">
                 <Tags
                     name="label"
                     whitelist={labels.map(label => ({
+                        id: label.id,
                         value: label.content,
                         tagColor: label.backgroundColor,
                         style: `background-color: ${label.backgroundColor}; color: ${pickTextColorBasedOnBgColor(label.backgroundColor)};`
                     }))}
-                    // [  
-                    //     { value:'apple', tagColor: 'red', style: 'background-color: red;' },
-                    //     { value:'apple2', tagColor: 'blue', style: 'background-color: blue;' },
-                    //     { value:'apple3', tagColor: 'yellow', style: 'background-color: yellow;' }
-                    // ]
                     tagifyRef={tagifyRef}
                     settings={tagifySettings}
-                    defaultValue={""}
+                    value={labelData}
                     onChange={onChange}
                 />
                 <Button variant="primary" size="sm" outline onClick={() => setLabelModal(true)}>

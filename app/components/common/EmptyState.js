@@ -9,7 +9,7 @@ export default function EmptyState({ message = "Belum ada data yang tersedia..",
                 height={320}
                 src={"/images/EmptyState.svg"}
                 alt="Belum ada data yang tersedia.."
-                className="px-4"
+                className="px-4 grayscale"
             />
             <p className="text-xs md:text-sm text-dark-blue/80 text-center">{message}</p>
             {action && (

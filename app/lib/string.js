@@ -16,14 +16,25 @@ export const generateProjectKey = (projectName) => {
 }
 
 export const priorityList = [
-    { label: "Tidak ada", value: 0 },
-    { label: "Rendah", value: 1 },
-    { label: "Sedang", value: 2 },
-    { label: "Tinggi", value: 3 }
+    { label: "Tidak ada", value: 0, color: '#A9A9A9' },
+    { label: "Rendah", value: 1, color: '#006400' },
+    { label: "Sedang", value: 2, color: '#FFBF00' },
+    { label: "Tinggi", value: 3, color: '#D2222D' }
 ]
 
 export const getPriority = (priority) => {
-    return priorityList[priority].label
+    return priorityList[priority]
+}
+
+export const progressList = [
+    { label: "Belum Dimulai", color: '#A9A9A9' },
+    { label: "Dalam Proses", color: '#FFBF00' },
+    { label: "Selesai", color: '#006400' },
+    { label: "Terlambat", color: '#D2222D' }
+]
+
+export const getProgress = (progress) => {
+    return progressList.find(d => d.label === progress)
 }
 
 export const extractUniqueMentionTags = (text) => {

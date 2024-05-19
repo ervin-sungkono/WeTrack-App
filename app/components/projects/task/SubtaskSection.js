@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import CustomTooltip from "../../common/CustomTooltip"
 import UserSelectButton from "../../common/UserSelectButton"
 import SelectButton from "../../common/button/SelectButton"
-import SimpleInputForm from "../../common/SimpleInputField"
+import SimpleInputForm from "../../common/SimpleInputForm"
 import PopUpLoad from "../../common/alert/PopUpLoad"
 import Label from "../../common/Label"
 import Link from "next/link"
@@ -11,15 +11,15 @@ import Link from "next/link"
 import { FiPlus as PlusIcon } from "react-icons/fi"
 import { FaTasks as TaskIcon } from "react-icons/fa";
 import { getPriority } from "@/app/lib/string"
-import { getQueryReferenceOrderBy, getDocumentReference } from "@/app/firebase/util"
-import { onSnapshot, getDoc } from "firebase/firestore"
-import { createNewTask } from "@/app/lib/fetch/task"
+import { getQueryReferenceOrderBy } from "@/app/firebase/util"
+import { onSnapshot } from "firebase/firestore"
+import { createNewTask, updateTask, reorderTask } from "@/app/lib/fetch/task"
 import { useSessionStorage } from "usehooks-ts"
 import { debounce } from "@/app/lib/helper"
 
 const Table = dynamic(() => import("../../common/table/Table"))
 
-export default function SubtaskSection({ projectId, taskId }){
+export default function SubtaskSection({ projectId, taskId, statusOptions, teamOptions }){
     const [subtaskData, setSubtaskData] = useState([])
     const [isCreatingSubtask, setCreatingSubtask] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -37,31 +37,12 @@ export default function SubtaskSection({ projectId, taskId }){
         }
     }
 
-    const updateAssignee = (value) => {
-        console.log(value)
-    }
-
     useEffect(() => {
         if(!taskId) return
 
         const reference = getQueryReferenceOrderBy({ collectionName: 'tasks', field: 'parentId', id: taskId, orderByKey: "createdAt" })
         const unsubscribe = onSnapshot(reference, async(snapshot) => {
             const updatedSubTask = await Promise.all(snapshot.docs.map(async(document) => {
-                const assignedTo = document.data().assignedTo
-                if(assignedTo){
-                    const userRef = getDocumentReference({ collectionName: "users", id: assignedTo })
-                    const userSnap = await getDoc(userRef)
-                    const { fullName, profileImage } = userSnap.data()
-
-                    return({
-                        id: document.id,
-                        ...document.data(),
-                        assignedTo: {
-                            fullName,
-                            profileImage
-                        }
-                    })
-                }
                 return({
                     id: document.id,
                     ...document.data(),
@@ -83,19 +64,17 @@ export default function SubtaskSection({ projectId, taskId }){
             cell: ({ row }) => {
                 const taskId = row.getValue('id')
                 const taskName = row.getValue('taskName')
-                return <Link href={`/project/${projectId}/tasks/${taskId}`}>{taskName}</Link>
+                return <Link href={`/projects/${project.id}/tasks?taskId=${taskId}`} className="text-basic-blue hover:underline">{taskName}</Link>
             }
         },
         {
             accessorKey: 'priority',
             header: 'Prioritas',
             cell: ({ row }) => {
-                const priorityIndex = row.getValue("priority")
-                const priority = getPriority(priorityIndex)
+                const priority = row.getValue("priority")
+                const { label, color } = getPriority(priority)
                 return (
-                    <div className="flex justify-start">
-                        <Label text={priority}/>
-                    </div>
+                    <Label text={label.toUpperCase()} color={color}/>
                 )
             },
             size: 140
@@ -111,27 +90,26 @@ export default function SubtaskSection({ projectId, taskId }){
                     <UserSelectButton 
                         name={`assignee-${id}`}
                         type="button"
-                        placeholder={assignedTo}
-                        options={[]}
-                        onChange={updateAssignee}
+                        defaultValue={teamOptions.find(team => team.user.id === assignedTo)?.user ?? {}}
+                        options={teamOptions}
+                        onChange={(value) => handleAssigneeChange(id, assignedTo, value)}
                     />
                 )
             },
         },
         {
-            accessorKey: 'statusId',
+            accessorKey: 'status',
             header: "Status",
             cell: ({ row }) => {
                 const id = row.getValue("id")
-                const statusId = row.getValue("statusId")
-                // tambah logic untuk get user
+                const statusId = row.getValue("status")
 
                 return (
                     <SelectButton 
                         name={`status-${id}`}
-                        defaultValue={"Todo"}
-                        options={[]}
-                        onChange={(value) => console.log(value)}
+                        defaultValue={statusOptions.find(status => status.value === statusId)}
+                        options={statusOptions}
+                        onChange={(newStatusId) => handleStatusChange(id, statusId, newStatusId)}
                         buttonClass="border-none"
                     />
                 )
@@ -159,6 +137,34 @@ export default function SubtaskSection({ projectId, taskId }){
             }).then(() => {setLoading(false)})
         , 100)
     }
+
+    const handleAssigneeChange = async(taskId, id, value) => {
+        setLoading(true)
+        try{
+            if(value?.id !== id) await updateTask({ taskId: taskId, assignedTo: value?.id ?? null })
+        }catch(e){
+            console.log(e)
+        }finally{
+            setLoading(false)
+        }
+    }
+
+    const handleStatusChange = async(taskId, statusId, newStatusId) => {
+        setLoading(true)
+        try{
+            if(newStatusId !== statusId) {
+                await reorderTask({ 
+                    taskId: taskId,
+                    statusId: statusId,
+                    newStatusId: newStatusId,
+                })
+            }  
+        }catch(e){
+            console.log(e)
+        }finally{
+            setLoading(false)
+        }
+      }
 
     return(
         <div className="flex flex-col gap-1 md:gap-2">

@@ -2,6 +2,7 @@ import { db } from "@/app/firebase/config";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { getUserSession } from "@/app/lib/session";
 import { addDoc, collection, doc, getDoc, serverTimestamp } from "firebase/firestore";
+import { getProjectRole } from "@/app/firebase/util";
 import { NextResponse } from "next/server";
 
 // export async function GET(request, response){
@@ -75,6 +76,14 @@ export async function POST(request, response){
             return NextResponse.json({
                 message: "Project not found"
             }, { status: 404 })
+        }
+
+        const projectRole = await getProjectRole({ projectId, userId})
+        if(projectRole !== 'Owner'){
+            return NextResponse.json({
+                message: "Unauthorized",
+                success: false
+            }, { status: 401 })
         }
         
         const labelCollection = collection(db, "labels")

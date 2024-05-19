@@ -7,8 +7,8 @@ import SearchBar from "../common/SearchBar"
 import SelectButton from "../common/button/SelectButton"
 
 import { IoFilter as FilterIcon } from "react-icons/io5"
-import { onSnapshot } from "firebase/firestore"
-import { getQueryReferenceOrderBy } from "@/app/firebase/util"
+import { onSnapshot, getDoc } from "firebase/firestore"
+import { getQueryReferenceOrderBy, getDocumentReference } from "@/app/firebase/util"
 import EmptyState from "../common/EmptyState"
 
 export default function TaskContent({ projectId, taskId }){
@@ -25,10 +25,17 @@ export default function TaskContent({ projectId, taskId }){
         if(!projectId) return
 
         const reference = getQueryReferenceOrderBy({ collectionName: "tasks", field: "projectId", id: projectId, orderByKey: 'order' })
-        const unsubscribe = onSnapshot(reference, (snapshot) => {
-            const updatedTasks = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
+        const unsubscribe = onSnapshot(reference, async(snapshot) => {
+            const updatedTasks = await Promise.all(snapshot.docs.map(async(doc) => {
+                const assignedToId = doc.data().assignedTo
+                const assignedToDoc = assignedToId && await getDoc(getDocumentReference({ collectionName: "users", id: assignedToId }))
+                const assignedTo = assignedToDoc && {id: assignedToDoc.id, ...assignedToDoc.data()}
+                
+                return {
+                    id: doc.id,
+                    ...doc.data(),
+                    assignedTo: assignedTo
+                }
             }))
             setTasks(updatedTasks)
             setTaskData(updatedTasks[0])
@@ -66,7 +73,7 @@ export default function TaskContent({ projectId, taskId }){
             {
                 tasks.length > 0 ? 
                 <div className="h-full flex flex-col sm:flex-row gap-2 sm:gap-4 overflow-hidden sm:overflow-y-auto">
-                    <TaskList tasks={tasks} taskId={taskId ?? taskData?.id}/>
+                    <TaskList tasks={tasks.filter(task => task.taskName.toLowerCase().includes(query))} taskId={taskId ?? taskData?.id}/>
                     <TaskDetail taskId={taskId ?? taskData?.id}/>
                 </div>
                 :
