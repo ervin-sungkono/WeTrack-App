@@ -31,7 +31,10 @@ export default function DashboardProjectItem({project, selectedProject, setSelec
                             project.tasks.map((task, index) => (
                                 <div key={index}>
                                     <DashboardTaskItem 
+                                        key={index}
                                         title={task.taskName}
+                                        startDate={task.startDate}
+                                        endDate={task.dueDate}
                                         status={task.status.statusName}
                                         priority={task.priority}
                                         projectKey={project.key}
@@ -42,7 +45,7 @@ export default function DashboardProjectItem({project, selectedProject, setSelec
                                 </div>
                             ))
                         ) : (
-                            <div className="text-xs md:text-sm text-dark-blue italic">
+                            <div className="text-xs md:text-sm text-dark-blue">
                                 Belum ada data tugas yang tersedia.
                             </div>
                         )}
