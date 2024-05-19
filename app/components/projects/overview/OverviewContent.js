@@ -61,7 +61,7 @@ export default function OverviewContent({ projectId }){
                     const assignedToRef = getDocumentReference({ collectionName: "users", id: assignedTo });
                     const assignedToSnap = await getDoc(assignedToRef);
                     if (assignedToSnap.exists()) {
-                        task.assignedTo = assignedToSnap.data();
+                        task.assignedToUser = assignedToSnap.data();
                     }
                 }
                 if(status){
@@ -76,33 +76,10 @@ export default function OverviewContent({ projectId }){
             data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
             // setTaskData(data)
             setTaskData(data.slice(0, 5))
-        })
-        return () => unsubscribe()
-    }, [projectId])
-
-    useEffect(() => {
-        if(!projectId || !userId) return
-        const reference = getQueryReferenceOrderBy({collectionName: "tasks", field: "assignedTo", id: userId, orderByKey:"order"})
-        const unsubscribe = onSnapshot(reference, async(snapshot) => {
-            const data = await Promise.all(snapshot.docs.map(async(document) => {
-                const taskData = document.data()
-                const status = taskData.status
-                const task = {
-                    id: document.id,
-                    ...taskData
-                }
-                if(status){
-                    const statusRef = getDocumentReference({ collectionName: "taskStatuses", id: status });
-                    const statusSnap = await getDoc(statusRef);
-                    if (statusSnap.exists()) {
-                        task.status = statusSnap.data();
-                    }
-                }
-                return task
-            }))
-            data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            console.log(data)
+            const filteredData = data.filter((task) => task.assignedTo === userId)
             // setAssignedTaskData(data)
-            setAssignedTaskData(data.slice(0, 5))
+            setAssignedTaskData(filteredData.slice(0, 5))
         })
         return () => unsubscribe()
     }, [projectId, userId])
@@ -197,10 +174,10 @@ export default function OverviewContent({ projectId }){
             }
         },
         {
-            accessorKey: 'assignedTo',
+            accessorKey: 'assignedToUser',
             header: 'Penerima Tugas',
             cell: ({ row }) => {
-                const { fullName, profileImage } = row.getValue('assignedTo') ?? {}
+                const { fullName, profileImage } = row.getValue('assignedToUser') ?? {}
                 return(
                     <>
                         {fullName ? (
@@ -233,7 +210,7 @@ export default function OverviewContent({ projectId }){
         <div className="flex flex-col gap-4">
             {taskData.length === 0 ? (
                 <OverviewCard title="Tugas Terbaru">
-                    <div className="max-h-[300px] md:max-h-[150px] overflow-x-hidden overflow-y-hidden">
+                    <div className="max-h-[300px] md:h-[200px] overflow-hidden">
                         <div className="flex flex-col items-center justify-center">
                             <div className="text-center">
                                 Belum ada data tugas yang tersedia.
@@ -248,19 +225,19 @@ export default function OverviewContent({ projectId }){
                 </OverviewCard>
             ) : (
                 <OverviewCard title="Tugas Terbaru" action={"Lihat semua"} href={`/projects/${projectId}/tasks`}>
-                    <div className="max-h-[300px] md:max-h-[150px] overflow-x-hidden overflow-y-scroll">
+                    <div className="max-h-[300px] md:h-[200px] overflow-hidden">
                         <Table 
                             data={taskData}
                             columns={columns}
                             usePagination={false}
+                            fullWidth={false}
                         />
                     </div>
                 </OverviewCard>
             )}
-            
             <div className="flex flex-col md:flex-row justify-between gap-4">
                 <OverviewCard title="Ditugaskan Kepada Saya">
-                    <div className="flex flex-col gap-2 max-h-[200px] md:h-[150px] overflow-x-hidden overflow-y-scroll">
+                    <div className="flex flex-col gap-2 max-h-[200px] md:h-[175px] overflow-x-hidden overflow-y-scroll">
                         {validateUserRole({ userRole: role, minimumRole: 'Member' }) && assignedTaskData && assignedTaskData.length > 0 ? (
                             <>
                                 {assignedTaskData.map((task, index) => (
@@ -285,7 +262,7 @@ export default function OverviewContent({ projectId }){
                     </div>
                 </OverviewCard>
                 <OverviewCard title="Komentar Terbaru">
-                <div className="flex flex-col gap-2 max-h-[200px] md:h-[150px] overflow-x-hidden overflow-y-scroll">
+                <div className="flex flex-col gap-2 max-h-[200px] md:h-[175px] overflow-x-hidden overflow-y-scroll">
                         {assignedCommentData && assignedCommentData.length > 0 ? (
                             <>
                                 {assignedCommentData.map((comment, index) => (

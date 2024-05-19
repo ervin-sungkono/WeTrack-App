@@ -1,7 +1,7 @@
 import moment from "moment"
 
 export const dateFormat = (date, includeTime = false) => {
-    const formatString = includeTime ? "DD MMM YYYY hh:mm A" : "DD MMM YYYY"
+    const formatString = includeTime ? "DD MMM YYYY hh:mm" : "DD MMM YYYY"
     if(date === null || date === undefined){
         return null
     }else{
