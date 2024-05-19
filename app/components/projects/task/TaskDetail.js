@@ -15,7 +15,7 @@ import Button from "../../common/button/Button"
 import { useSessionStorage } from "usehooks-ts"
 import { getDocumentReference } from "@/app/firebase/util"
 import { onSnapshot, getDoc } from "firebase/firestore"
-import { getPriority, priorityList } from "@/app/lib/string"
+import { priorityList } from "@/app/lib/string"
 import { dateFormat } from "@/app/lib/date"
 
 import { IoIosCloseCircle as CloseIcon } from "react-icons/io";
@@ -25,6 +25,7 @@ import { useRole } from "@/app/lib/context/role"
 import { validateUserRole } from "@/app/lib/helper"
 import SelectButton from "../../common/button/SelectButton"
 import { getAllTaskStatus } from "@/app/lib/fetch/taskStatus"
+import SimpleTextareaForm from "../../common/SimpleTextareaForm"
 
 const AttachmentSection = dynamic(() => import("./AttachmentSection"))
 const SubtaskSection = dynamic(() => import("./SubtaskSection"))
@@ -34,6 +35,7 @@ function TaskDetail({ taskId, closeFn }){
     const [updateLoading, setUpdateLoading] = useState(false)
     const [updateConfirmation, setUpdateConfirmation] = useState(false)
     const [deleteConfirmation, setDeleteConfirmation] = useState(false)
+    const [editDescription, setEditDescription] = useState(false)
     const [teamOptions, setTeamOptions] = useState([])
     const [statusOptions, setStatusOptions] = useState([])
     const [project, _] = useSessionStorage("project")
@@ -144,14 +146,27 @@ function TaskDetail({ taskId, closeFn }){
           setUpdateConfirmation(false)
           setUpdateLoading(false)
         }
-      }
+    }
 
-      const handleStatusChange = async(id) => {
+    const handleUpdateTaskDescription = async(e) => {
+        e.preventDefault()
+        setUpdateLoading(true)
+
+        const formData = new FormData(document.querySelector(`#task-${taskId}-description-form`))
+        const taskDescription = formData.get(`task-${taskId}-description`) || null
+
+        if(taskDescription !== task.description) await updateTask({ taskId, description: taskDescription ? taskDescription : null})
+
+        setUpdateLoading(false)
+        setEditDescription(false)
+    }
+
+    const handleStatusChange = async(id) => {
         setUpdateLoading(true)
         try{
             if(id !== task.status) {
                 await reorderTask({ 
-                    taskId: task.id,
+                    taskId,
                     statusId: task.status,
                     newStatusId: id,
                     oldIndex: task.order
@@ -162,9 +177,9 @@ function TaskDetail({ taskId, closeFn }){
         }finally{
             setUpdateLoading(false)
         }
-      }
+    }
 
-      const handlePriorityChange = async(priority) => {
+    const handlePriorityChange = async(priority) => {
         setUpdateLoading(true)
         try{
             if(priority !== task.priority) {
@@ -175,20 +190,20 @@ function TaskDetail({ taskId, closeFn }){
         }finally{
             setUpdateLoading(false)
         }
-      }
+    }
   
-      const handleDeleteTask = async(e) => {
+    const handleDeleteTask = async(e) => {
         setUpdateLoading(true)
-  
+
         try{
-          await deleteTask({ taskId: item.id })
+            await deleteTask({ taskId: item.id })
         }catch(e){
-          console.log(e)
+            console.log(e)
         }finally{
-          setDeleteConfirmation(false)
-          setUpdateLoading(false)
+            setDeleteConfirmation(false)
+            setUpdateLoading(false)
         }
-      }
+    }
 
     if(!task) return(
         <div className="w-full h-full flex flex-col gap-4 justify-center items-center">
@@ -295,9 +310,20 @@ function TaskDetail({ taskId, closeFn }){
                 <div className="flex flex-col gap-4">
                     <div className="flex flex-col items-start gap-2">
                         <p className="font-semibold text-xs md:text-sm">Deskripsi Tugas</p>
-                        <p className="w-full cursor-pointer text-xs md:text-sm text-dark-blue/80 hover:bg-gray-200 -m-1.5 p-1.5" onClick={() => console.log("test")}>
+                        {!editDescription ? 
+                        <p 
+                            className="w-full cursor-pointer text-xs md:text-sm text-dark-blue/80 hover:bg-gray-200 p-2 rounded transition-colors duration-300"
+                            onClick={() => setEditDescription(true)} 
+                        >
                             {task.description ?? "Tambahkan deskripsi tugas.."}
-                        </p>
+                        </p> :
+                        <SimpleTextareaForm
+                            name={`task-${taskId}-description`}
+                            onSubmit={handleUpdateTaskDescription}
+                            onBlur={() => setEditDescription(false)}
+                            placeholder={"Masukkan deskripsi tugas.."}
+                            defaultValue={task.description}
+                        />}
                     </div>
                     <ChatSection taskId={taskId} title={task.taskName}/>
                     <AttachmentSection taskId={taskId}/>
