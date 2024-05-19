@@ -17,7 +17,7 @@ export const listDateFormat = (date) => {
     const currentDate = moment(new Date())
     let dateDifference = 0
     let formatString = ""
-    if(typeof date === "string" || typeof date === "object"){ //ISO String
+    if(typeof date === "string"){ //ISO String
         dateDifference = currentDate.diff(moment(date), 'days')
         switch(dateDifference){
             case 0:
@@ -31,8 +31,8 @@ export const listDateFormat = (date) => {
                 break
         }
         return moment(date).format(formatString)
-    }else if(typeof date === "number"){ //Timestamp
-        const comparedDate = moment(new Date(date*1000))
+    }else if(typeof date === "object"){ //Timestamp
+        const comparedDate = moment.unix(date.seconds)
         dateDifference = currentDate.dayOfYear() - comparedDate.dayOfYear()
         switch(dateDifference){
             case 0:
@@ -45,6 +45,6 @@ export const listDateFormat = (date) => {
                 formatString = "DD MMM YYYY, HH:mm"
                 break
         }
-        return moment.unix(date).format(formatString)
+        return moment.unix(date.seconds).format(formatString)
     }
 }

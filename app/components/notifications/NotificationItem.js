@@ -57,7 +57,7 @@ export default function NotificationsItem({type, task=null, taskId=null, sender=
                 )}
             </div>
             <div className="w-3/10 md:w-1/4 text-xs md:text-sm text-right">
-                {listDateFormat(createdAt.seconds)}
+                {listDateFormat(createdAt)}
             </div>
         </div>
     )

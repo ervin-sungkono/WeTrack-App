@@ -48,7 +48,7 @@ export default function HistoryItem({eventType, action, task, project, previousV
                 )}
             </div>
             <div className="text-xs md:text-sm text-right whitespace-nowrap">
-                {listDateFormat(createdAt.seconds)}
+                {listDateFormat(createdAt)}
             </div>
         </div>
     )
