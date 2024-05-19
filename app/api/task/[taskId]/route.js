@@ -1,9 +1,10 @@
-import { updateDoc, getDoc, doc, collection, query, where, getDocs, deleteDoc } from 'firebase/firestore';
+import { updateDoc, getDoc, doc, collection, query, where, getDocs, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
 import { createHistory, createNotification, getProjectRole } from '@/app/firebase/util';
+import { getHistoryAction, getHistoryEventType } from '@/app/lib/history';
 
 export async function GET(request, response) {
     try {
@@ -41,10 +42,10 @@ export async function GET(request, response) {
                 taskName: item.data().taskName
         }))
 
-        const labelsData = taskSnap.data().labels ?? []
+        const labelsData = taskSnap.data().labels
         let labels
 
-        if(labelsData) {
+        if(labelsData.length > 0) {
             labels = await Promise.all(labelsData.map(async (label) => {
                 const labelDoc = await getDoc(doc, "labels", label)
 
@@ -116,22 +117,23 @@ export async function PUT(request, response) {
 
         const taskData = taskSnap.data()
 
-        const subTaskSnap = await getDoc(doc(db, "tasks", parentId))
+        if(taskData.type == 'SubTask') {
+            if(!parentId) {
+                return NextResponse.json({
+                    message: "Missing parameter"
+                }, { status: 400 })
+            }
 
-        if(!subTaskSnap.exists()) {
-            return NextResponse.json({
-                message: "Parent Id not found"
-            }, { status: 404 })
+            const parentTaskSnap = await getDoc(doc(db, "tasks", parentId))
+    
+            if(!parentTaskSnap.exists()) {
+                return NextResponse.json({
+                    message: "Parent task not found"
+                }, { status: 404 })
+            }
         }
 
-        if (!projectSnap.exists()) {
-            return NextResponse.json({
-                data: null,
-                message: "No such project found"
-            }, { status: 404 });
-        }
-
-        const projectRole = await getProjectRole({ projectId: taskData.projectId, userId})
+        const projectRole = await getProjectRole({ projectId: taskData.projectId, userId })
         if(projectRole !== 'Owner' && projectRole !== 'Member'){
             return NextResponse.json({
                 message: "Unauthorized",
@@ -166,7 +168,7 @@ export async function PUT(request, response) {
         
         await updateDoc(taskDocRef, {
             parentId: parentId ?? taskData.parentId,
-            assignedTo: assignedTo ?? taskData.assignedTo,
+            assignedTo: assignedTo ? assignedTo : taskData.assignedTo,
             taskName: taskName ?? taskData.taskName,
             priority: priority ?? taskData.priority,
             labels: labels ?? taskData.labels,
@@ -185,8 +187,8 @@ export async function PUT(request, response) {
                     userId: userId,
                     taskId: taskId,
                     projectId: taskData.projectId,
-                    action: "update",
-                    eventType: "Task Name",
+                    action: getHistoryAction.update,
+                    eventType: getHistoryEventType.taskName,
                     previousValue: taskData.taskName,
                     newValue: updatedTaskData.taskName
                 })
@@ -245,12 +247,22 @@ export async function DELETE(request, response) {
 
         await deleteDoc(taskDocRef) 
 
+        if(taskDoc.data().status !== null) {
+            const currentLastOrderDoc = await getDoc(doc(db, "taskOrderCounters", taskDoc.data().status))
+            const currentLastOrder = currentLastOrderDoc.data().lastOrder
+
+            await updateDoc(doc(db, "taskOrderCounters", taskDoc.data().status), {
+                lastOrder: currentLastOrder == 0 ? currentLastOrder : currentLastOrder - 1,
+                updatedAt: serverTimestamp()
+            })
+        }
+
         await createHistory({ 
             userId: userId,
             taskId: taskId,
             projectId: taskDoc.data().projectId,
-            eventType: "Task",
-            action: "delete"
+            eventType: getHistoryEventType.task,
+            action: getHistoryAction.delete
         })
 
         return NextResponse.json({
