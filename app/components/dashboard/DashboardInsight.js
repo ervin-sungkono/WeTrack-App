@@ -10,15 +10,36 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Le
 export default function DashboardInsight({project}){
     let doughnutChartData, doughnutChartOptions, barChartData, barChartOptions;
     if(project !== null){
+        const projectStartStatus = project.startStatus
+        const projectEndStatus = project.endStatus
+
         const statusData = project?.tasks.reduce((value, task) => {
+            let currentDate = new Date()
+            let dueDate = null
+            let dateDifference = 0
+            if(task.dueDate){
+                dueDate = new Date(task.dueDate)
+                dateDifference = Math.round((dueDate - currentDate) / (1000 * 60 * 60 * 24))
+            }
             const statusName = task.status.statusName;
-            if(value[statusName]){
-                value[statusName] += 1;
-            }else {
-                value[statusName] = 1;
+            if(statusName === projectStartStatus){
+                value["Belum Dimulai"] += 1;
+            }else if(statusName === projectEndStatus){
+                value["Selesai"] += 1;
+            }else if(statusName !== projectStartStatus && statusName !== projectEndStatus){
+                if(dueDate && dateDifference < 0){
+                    value["Terlambat"] += 1;
+                }else{
+                    value["Dalam Proses"] += 1;
+                }
             }
             return value;
-        }, {});
+        }, {
+            "Belum Dimulai": 0,
+            "Dalam Proses": 0,
+            "Selesai": 0,
+            "Terlambat": 0
+        });
     
         const statusDataTotal = Object.values(statusData).reduce((total, curr) => total + curr, 0);
         
@@ -185,7 +206,7 @@ export default function DashboardInsight({project}){
                 ) : (
                     <>
                         <div className="h-64 md:h-80 flex flex-col gap-4 md:gap-8">
-                            <div className="font-bold text-sm md:text-base">Status Tugas</div>
+                            <div className="font-bold text-sm md:text-base">Status Pengerjaan Tugas</div>
                             <Doughnut
                                 data={doughnutChartData}
                                 options={doughnutChartOptions}

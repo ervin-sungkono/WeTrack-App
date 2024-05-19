@@ -53,6 +53,8 @@ export async function GET(request, response) {
                 assignedTo: item.data().assignedTo,
                 priority: item.data().priority,
                 createdAt: item.data().createdAt,
+                startDate: item.data().startDate,
+                dueDate: item.data().dueDate,
                 status: taskStatusDetail
             }
         })) 

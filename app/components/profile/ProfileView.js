@@ -10,9 +10,12 @@ import PopUpLoad from "../common/alert/PopUpLoad"
 import { useEffect, useState } from "react"
 import { getUserProfileById } from "@/app/lib/fetch/user"
 import { dateFormat } from "@/app/lib/date"
+import { useRouter } from "next/navigation"
 
 export default function ProfileViewLayout({userId}){
     const { data: session } = useSession()
+    const sessionId = session?.user.uid
+    const router = useRouter()
     const [loading, setLoading] = useState(true)
     const [profileImageURL, setProfileImageURL] = useState(null)
 
@@ -26,6 +29,10 @@ export default function ProfileViewLayout({userId}){
     })
 
     useEffect(() => {
+        if(sessionId === userId){
+            router.push("/profile")
+            return
+        }
         getUserProfileById(userId).then(res => {
             if(res.error){
                 console.log(res.error)
@@ -45,7 +52,7 @@ export default function ProfileViewLayout({userId}){
             }
             setLoading(false)
         })
-    }, [userId])
+    }, [router, sessionId, userId])
 
     const ProfileField = ({icon, label, value, nullValue}) => {
         return (
