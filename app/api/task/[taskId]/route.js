@@ -116,21 +116,6 @@ export async function PUT(request, response) {
 
         const taskData = taskSnap.data()
 
-        const subTaskSnap = await getDoc(doc(db, "tasks", parentId))
-
-        if(!subTaskSnap.exists()) {
-            return NextResponse.json({
-                message: "Parent Id not found"
-            }, { status: 404 })
-        }
-
-        if (!projectSnap.exists()) {
-            return NextResponse.json({
-                data: null,
-                message: "No such project found"
-            }, { status: 404 });
-        }
-
         const projectRole = await getProjectRole({ projectId: taskData.projectId, userId})
         if(projectRole !== 'Owner' && projectRole !== 'Member'){
             return NextResponse.json({
@@ -138,8 +123,18 @@ export async function PUT(request, response) {
                 success: false
             }, { status: 401 })
         }
+
+        if(taskData.type === "SubTask"){
+            // Validate if the given parentId is an existing task
+            const subTaskSnap = await getDoc(doc(db, "tasks", parentId))
+
+            if(!subTaskSnap.exists()) {
+                return NextResponse.json({
+                    message: "Parent Id not found"
+                }, { status: 404 })
+            }
+        }
         
-        let assignedToDetails = null;
         if (assignedTo) {
             const userDocRef = doc(db, 'users', assignedTo);
             const userSnap = await getDoc(userDocRef);

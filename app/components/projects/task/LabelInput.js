@@ -59,7 +59,7 @@ export default function LabelInput({ projectId, labelData, onChange, resetLabel 
             <label htmlFor="label" className="block font-semibold text-xs md:text-sm text-dark-blue">
                 Label
             </label>
-            <div className="w-full flex flex-col md:flex-row gap-2 md:gap-4">
+            <div className="w-full flex flex-col md:flex-row gap-2">
                 <Tags
                     name="label"
                     whitelist={labels.map(label => ({

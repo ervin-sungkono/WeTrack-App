@@ -133,8 +133,7 @@ export async function POST(request, response) {
                     fullName: fullName,
                     profileImage: profileImage
                 }
-                console.log("assigned to detail", assignedToDetails)
-
+                // console.log("assigned to detail", assignedToDetails)
             } else {
                 return NextResponse.json({
                     message: "Assigned user not found"
@@ -274,6 +273,15 @@ export async function POST(request, response) {
             eventType: "Task", 
             action: "create" 
         })
+
+        if(result.assignedTo){
+            await createNotification({
+                userId: result.assignedTo,
+                taskId: result.id,
+                projectId: projectId,
+                type: 'AssignedTask'
+            })
+        }
 
         return NextResponse.json({
             data: {
