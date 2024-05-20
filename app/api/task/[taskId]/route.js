@@ -165,10 +165,6 @@ export async function PUT(request, response) {
             await Promise.all(labels.map(async (label) =>{
                 const labelDoc = await getDoc(doc(db, "labels", label)) 
 
-                if(labelDoc.data()?.projectId != projectId) {
-                    throw new Error("Label is not found in the project")
-                }
-
                 if(labelDoc.exists()){
                     return {
                         id: labelDoc.id,
