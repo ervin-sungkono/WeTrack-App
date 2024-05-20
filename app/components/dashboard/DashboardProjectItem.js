@@ -33,6 +33,7 @@ export default function DashboardProjectItem({project, selectedProject, setSelec
                                     <DashboardTaskItem 
                                         key={index}
                                         title={task.taskName}
+                                        type={task.type}
                                         startDate={task.startDate}
                                         endDate={task.dueDate}
                                         status={task.status.statusName}

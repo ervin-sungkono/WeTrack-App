@@ -244,6 +244,7 @@ export default function OverviewContent({ projectId }){
                                     <AssignedTaskItem 
                                         key={index}
                                         title={task.taskName}
+                                        type={task.type}
                                         startDate={task.startDate}
                                         endDate={task.dueDate}
                                         status={task.status}
