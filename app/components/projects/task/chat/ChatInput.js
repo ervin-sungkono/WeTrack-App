@@ -4,10 +4,17 @@ import { onExpandableTextareaInput } from "@/app/lib/textarea-expandable"
 import CustomTooltip from "@/app/components/common/CustomTooltip"
 
 import { IoMdSend as SendIcon } from "react-icons/io"
+import { useRole } from "@/app/lib/context/role"
+import { validateUserRole } from "@/app/lib/helper"
 
 export default function ChatInput({ name, onSubmit, placeholder, disabled = false }){
     const textAreaRef = useRef()
     const [text, setText] = useState("")
+    const role = useRole()
+
+    if(!validateUserRole({ userRole: role, minimumRole: 'Member' })){
+        return null
+    }
 
     return(
         <div className="absolute bottom-0 left-0 w-full flex gap-4 items-center">

@@ -17,6 +17,7 @@ import { getDocumentReference } from "@/app/firebase/util"
 import { onSnapshot, getDoc } from "firebase/firestore"
 import { priorityList } from "@/app/lib/string"
 import { dateFormat } from "@/app/lib/date"
+import { useRouter } from "next/navigation"
 
 import { IoIosCloseCircle as CloseIcon } from "react-icons/io";
 import { getAllTeamMember } from "@/app/lib/fetch/team"
@@ -45,6 +46,7 @@ function TaskDetail({ taskId, closeFn }){
     const [parentTaskOptions, setParentTaskOptions] = useState([])
     const [project, _] = useSessionStorage("project")
     const role = useRole()
+    const router = useRouter()
 
     const taskActions = [
         {
@@ -260,7 +262,9 @@ function TaskDetail({ taskId, closeFn }){
         setUpdateLoading(true)
 
         try{
-            await deleteTask({ taskId: item.id })
+            const res = await deleteTask({ taskId: taskId })
+
+            if(res.success) router.replace(`/projects/${project.id}/tasks`)
         }catch(e){
             console.log(e)
         }finally{

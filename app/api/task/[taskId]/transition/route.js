@@ -5,6 +5,7 @@ import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
 import { createHistory } from '@/app/firebase/util';
 import { getHistoryAction, getHistoryEventType } from '@/app/lib/history';
+import { getProjectRole } from '@/app/firebase/util';
 
 export async function POST(request, response) {
     try {
@@ -27,6 +28,14 @@ export async function POST(request, response) {
                 message: "Task not found",
                 success: false
             }, { status: 404 });
+        }
+
+        const projectRole = getProjectRole({projectId, userId})
+        if(projectRole !== 'Owner' && projectRole !== 'Member'){
+            return NextResponse.json({
+                message: "Unauthorized",
+                success: false
+            }, { status: 401 });
         }
 
         const {

@@ -29,6 +29,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
     // change background colour if dragging
     background: "white",
     pointerEvents: isDragging ? "none" : "",
+    cursor: "pointer",
 
     display: 'flex',
     flexDirection: 'column',
@@ -96,7 +97,7 @@ export default function BoardItem({ item, index }){
 
     const {label: priorityLabel, color: priorityColor} = getPriority(item.priority)
     return (
-      <Draggable draggableId={item.id} index={index}>
+      <Draggable draggableId={item.id} index={index} isDragDisabled={!validateUserRole({ userRole: role, minimumRole: 'Member'})}>
         {(provided, snapshot) => (
           <div
               ref={provided.innerRef}

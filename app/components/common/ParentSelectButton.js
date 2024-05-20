@@ -5,7 +5,7 @@ import { initDropdowns } from "flowbite"
 import { IoIosArrowDown as DropdownIcon } from 'react-icons/io'
 
 export default function ParentSelectButton({ name, defaultValue, options = [], onChange = null }){ 
-    const [selected, setSelected] = useState(options[0])
+    const [selected, setSelected] = useState({ label: "Belum Ada", value: null })
     const buttonRef = useRef()
 
     useEffect(() => {
@@ -36,7 +36,7 @@ export default function ParentSelectButton({ name, defaultValue, options = [], o
                 <p className="text-start text-xs md:text-sm font-semibold flex-grow">{selected?.label}</p>
                 <DropdownIcon size={16}/>
             </button>
-            <div id={name} className={`z-[100] hidden bg-white divide-y divide-gray-100 rounded-lg border border-dark-blue/30 w-full max-w-60 h-48 overflow-y-auto`}>
+            <div id={name} className={`z-[100] hidden bg-white divide-y divide-gray-100 rounded-lg border border-dark-blue/30 w-full max-w-60 max-h-48 overflow-y-auto`}>
                 <ul className="py-2 text-xs md:text-sm text-gray-700">
                     {options.map(({label, value}) => (
                         <li key={value}>
