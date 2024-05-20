@@ -1,6 +1,7 @@
 import { db } from "@/app/firebase/config";
 import { createHistory, getProjectRole } from "@/app/firebase/util";
 import { nextAuthOptions } from "@/app/lib/auth";
+import { getHistoryAction, getHistoryEventType } from "@/app/lib/history";
 import { getUserSession } from "@/app/lib/session";
 import { addDoc, collection, getDocs, doc, getDoc, orderBy, query, where, serverTimestamp } from "firebase/firestore";
 import { NextResponse } from 'next/server'
@@ -128,8 +129,8 @@ export async function POST(request, response){
         await createHistory({
             userId: userId,
             projectId: projectId,
-            action: "create",
-            eventType: "Task Status"
+            action: getHistoryAction.create,
+            eventType: getHistoryEventType.taskStatus
         })
 
         return NextResponse.json({

@@ -183,9 +183,9 @@ export const handleDeletedUser = async({ userId }) => {
     }
 } 
 
-export const createHistory = async({ userId, taskId, projectId, eventType, action, previousValue, newValue }) => {
+export const createHistory = async({ userId, taskId, projectId, eventType, deletedValue, action, previousValue, newValue }) => {
     try {
-        if(!userId || !projectId) return null
+        if(!userId) return null
 
         const historyDocRef = collection(db, "histories")
         const newHistory =  await addDoc(historyDocRef, {
@@ -193,6 +193,7 @@ export const createHistory = async({ userId, taskId, projectId, eventType, actio
             taskId: taskId ?? null,
             projectId: projectId,
             eventType: eventType,
+            deletedValue: deletedValue ?? null,
             action: action, // create, update, delete
             previousValue: previousValue ?? null,
             newValue: newValue ?? null,

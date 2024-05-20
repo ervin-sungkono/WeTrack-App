@@ -59,7 +59,7 @@ export async function PUT(request, response){
         if(newTaskStatus.exists()) {
             await createHistory({
                 userId: userId,
-                projectId: projectId,
+                projectId: statusSnap.data().projectId,
                 action: "update",
                 eventType: "Task Status",
                 previousValue: statusSnap.data().statusName,

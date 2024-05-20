@@ -207,6 +207,21 @@ export async function PUT(request, response) {
                 })
             }
 
+            if((updatedTaskData.assignedTo != taskData.assignedTo)) {
+                const oldAssignedToValue = await getDoc(doc(db, "users", taskData.assignedTo))
+                const newAssignedToValue = await getDoc(doc(db, "users", updatedTaskData.assignedTo))
+
+                await createHistory({
+                    userId: userId,
+                    taskId: taskId,
+                    projectId: taskData.projectId,
+                    action: getHistoryAction.update,
+                    eventType: getHistoryEventType.assignedTo,
+                    previousValue: taskData.assignedTo == null ? null : {...oldAssignedToValue.data()},
+                    newValue: updatedTaskData.assignedTo == null ? null : {...newAssignedToValue.data()}
+                })
+            }
+
             if(updatedTaskData.assignedTo){
                 await createNotification({
                     userId: updatedTaskData.assignedTo,

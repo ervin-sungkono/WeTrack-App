@@ -51,7 +51,7 @@ export async function POST(request, response) {
             }, { status: 404 });
         }
 
-        const currentTaskStatusDocRef = doc(db, 'taskStatuses', taskStatusSnap.data().status);
+        const currentTaskStatusDocRef = doc(db, 'taskStatuses', taskSnap.data().status);
         const currentTaskStatusSnap = await getDoc(currentTaskStatusDocRef);
 
         if(taskSnap.data().type === 'SubTask'){
