@@ -395,7 +395,7 @@ export default function BoardContent({ projectId }){
           onDragUpdate={onDragUpdate}
           onDragEnd={onDragEnd}
         >
-          <Droppable droppableId="task_status" direction="horizontal" type="ISSUE-STATUS">
+          <Droppable droppableId="task_status" direction="horizontal" type="ISSUE-STATUS" isDropDisabled={!validateUserRole({ userRole: role, minimumRole: 'Owner'})}>
             {(provided, snapshot) => (
               <div
                 ref={provided.innerRef}
@@ -403,7 +403,7 @@ export default function BoardContent({ projectId }){
                 {...provided.droppableProps}
               >
                 {state?.map((el, ind) => (
-                  <Draggable draggableId={el.id} index={ind} key={el.id}>
+                  <Draggable draggableId={el.id} index={ind} key={el.id} isDragDisabled={!validateUserRole({ userRole: role, minimumRole: 'Owner'})}>
                     {(provided, snapshot) => (
                       <div 
                         ref={provided.innerRef}
