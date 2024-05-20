@@ -30,7 +30,7 @@ export async function POST(request, response) {
             }, { status: 404 });
         }
 
-        const projectRole = getProjectRole({projectId, userId})
+        const projectRole = getProjectRole({projectId: taskSnap.data().projectId, userId})
         if(projectRole !== 'Owner' && projectRole !== 'Member'){
             return NextResponse.json({
                 message: "Unauthorized",
