@@ -1,6 +1,6 @@
 "use client"
 import { Draggable } from "@hello-pangea/dnd"
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaCheckSquare as CheckIcon } from "react-icons/fa";
 import { useTaskData } from "@/app/lib/context/task";
 import { useSessionStorage } from "usehooks-ts";
@@ -34,27 +34,18 @@ const getItemStyle = (isDragging, draggableStyle) => ({
     display: 'flex',
     flexDirection: 'column',
     gap: 8,
-  
     // styles we need to apply on draggables
-    ...draggableStyle
+    ...draggableStyle,
 })
 
 export default function BoardItem({ item, index }){
     const { viewTask } = useTaskData()
-    const [assignee, setAssignee] = useState(item.assignedTo)
     const [loading, setLoading] = useState(false)
     const [updateConfirmation, setUpdateConfirmation] = useState(false)
     const [deleteConfirmation, setDeleteConfirmation] = useState(false)
     const [project, _] = useSessionStorage("project")
 
     const role = useRole()
-
-    useEffect(() => {
-      if(assignee){
-        // console.log(assignee)
-        // Logic untuk update assignee
-      }
-    }, [assignee])
 
     const taskActions = [
       {

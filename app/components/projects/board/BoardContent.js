@@ -17,11 +17,14 @@ import UpdateStatusForm from "../../common/form/UpdateStatusForm"
 import DeleteStatusForm from "../../common/form/DeleteStatusForm"
 import { TailSpin } from "react-loader-spinner"
 import { useSessionStorage } from "usehooks-ts"
+import { getAllTeamMember } from "@/app/lib/fetch/team"
+import { getAllLabel } from "@/app/lib/fetch/label"
 
 import { IoFilter as FilterIcon } from "react-icons/io5"
 import { FiPlus as PlusIcon } from "react-icons/fi"
 import { FaCheck as CheckIcon } from "react-icons/fa"
 import { useRole } from "@/app/lib/context/role"
+import { FaFilterCircleXmark as CloseFilterIcon } from "react-icons/fa6";
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -59,6 +62,11 @@ export default function BoardContent({ projectId }){
   const [taskData, setTaskData] = useState()
   const [placeholderProps, setPlaceholderProps] = useState({});
   const [project, _] = useSessionStorage("project")
+
+  const [teamOptions, setTeamOptions] = useState([])
+  const [labelOptions, setLabelOptions] = useState([])
+  const [filterAssignee, setFilterAssignee] = useState(null)
+  const [filterLabel, setFilterLabel] = useState(null)
 
   const queryAttr = "data-rfd-draggable-id";
   const destinationQuertAttr = "data-rfd-droppable-id";
@@ -198,6 +206,35 @@ export default function BoardContent({ projectId }){
       statusUnsubscribe()
       taskUnsubscribe()
     }
+  }, [projectId])
+
+  useEffect(() => {
+    const fetchTeamOptions = async() => {
+      if(!projectId) return
+      const teamData = await getAllTeamMember({ projectId })
+      if(teamData.data){
+          setTeamOptions([
+            ...teamData.data.map(team => ({
+            value: team.userId,
+            label: team.user.fullName
+          }))
+        ])
+      }
+    }
+    const fetchLabelOptions = async() => {
+      if(!projectId) return
+      const labelData = await getAllLabel({ projectId })
+      if(labelData.data){
+          setLabelOptions([
+            ...labelData.data.map(label => ({
+              value: label.id,
+              label: label.content
+            }))
+          ])
+      }
+    }
+    fetchTeamOptions()
+    fetchLabelOptions()
   }, [projectId])
 
   const handleSearch = (query) => {
@@ -347,10 +384,33 @@ export default function BoardContent({ projectId }){
     return destinationDOm;
   };
 
+  const handleAssigneeChange = (val) => {
+    setFilterAssignee(val)
+  }
+
+  const handleLabelChange = (val) => {
+    setFilterLabel(val)
+  }
+
+  const filterTaskData = (taskData) => {
+    const filterBySearch = taskData.filter(task => task.taskName.toLowerCase().includes(query))
+    
+    const filterByAssignee = filterAssignee ? filterBySearch.filter(task => task.assignedTo?.id === filterAssignee) : filterBySearch
+  
+    const filterByLabel = filterLabel ? filterByAssignee.filter(task => (task.labels?.find(label => label.id === filterLabel) != undefined)) : filterByAssignee
+
+    return filterByLabel
+  }
+
+  const resetFilter = () =>{
+    setFilterAssignee(null)
+    setFilterLabel(null)
+  }
+
   return (
     <div className="flex flex-col gap-4 h-full overflow-auto">
       <div className="flex flex-col xs:flex-row justify-between gap-4 items-center">
-        <div className="w-full flex justify-center md:justify-start items-center gap-3 md:gap-6"> 
+        <div className="w-full flex justify-center md:justify-start items-center gap-3 md:gap-6 z-[9990]"> 
           <SearchBar placeholder={"Cari tugas.."} handleSearch={handleSearch}/>
           <div className="relative">
             <button className="block md:hidden text-white bg-basic-blue hover:bg-basic-blue/80 rounded-md p-1.5" onClick={() => setFilterDropdown(!filterDropdown)}>
@@ -358,13 +418,24 @@ export default function BoardContent({ projectId }){
             </button>
             <div className={`${filterDropdown ? "block" : "hidden"} border border-dark-blue/30 md:border-none md:flex z-50 absolute -bottom-2 right-0 translate-y-full md:translate-y-0 px-2 py-3 bg-white rounded-md md:bg-transparent md:p-0 md:static flex flex-col md:flex-row gap-2 md:gap-4`}>
               <SelectButton 
-                  name={"assignee-button"}
-                  placeholder={"Penerima"}
+                  name={"board-assignee-button"}
+                  options={[{label: "Penerima", value: null},...teamOptions]} 
+                  onChange={handleAssigneeChange}
+                  reset={!filterAssignee}
               />
               <SelectButton 
-                  name={"label-button"}
-                  placeholder={"Label"}
+                  name={"board-label-button"}
+                  options={[{label: "Label", value: null},...labelOptions]} 
+                  onChange={handleLabelChange}
+                  reset={!filterAssignee}
               />
+              {(filterAssignee || filterLabel) &&
+              <Button variant="primary" size="sm" onClick={() => resetFilter()}>
+                <div className="flex items-center gap-2">
+                  <CloseFilterIcon size={16}/>
+                  <p>Hapus Filter</p>
+                </div>
+              </Button>}
             </div>
           </div>
         </div>
@@ -413,7 +484,7 @@ export default function BoardContent({ projectId }){
                       >
                         <div className="flex items-center gap-2 px-1 text-dark-blue/80">
                           <div className="uppercase flex-grow text-xs md:text-sm font-semibold flex items-center gap-1 py-1.5"><span>{el.status}</span>
-                            <span className="text-[10.8px] md:text-xs">({el.content.filter(task => task.taskName.toLowerCase().includes(query)).length})</span>
+                            <span className="text-[10.8px] md:text-xs">({filterTaskData(el.content).length})</span>
                            { project && <span>{project.endStatus === el.id && <CheckIcon size={14} className="text-green-700"/>}</span>}
                           </div>
                           {validateUserRole({ userRole: role, minimumRole: 'Owner' }) && 
@@ -435,7 +506,7 @@ export default function BoardContent({ projectId }){
                           }
                         </div>
                         <BoardList 
-                          items={el.content.filter(task => task.taskName.toLowerCase().includes(query))} 
+                          items={filterTaskData(el.content)} 
                           placeholderProps={placeholderProps}
                           droppableId={`${ind}`}
                         >
