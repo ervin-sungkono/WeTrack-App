@@ -1,7 +1,7 @@
 import { db } from "@/app/firebase/config";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { getUserSession } from "@/app/lib/session";
-import { collection, getDoc, getDocs, query, where, doc, orderBy } from "firebase/firestore";
+import { collection, getDoc, getDocs, query, where, doc, orderBy, updateDoc } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
 export async function GET(request, response) {
@@ -29,6 +29,10 @@ export async function GET(request, response) {
             const sender = senderDoc && senderDoc.data()
             const task = taskDoc && taskDoc.data()
             const project = projectDoc && projectDoc.data()
+
+            await updateDoc(doc(db, "notifications", item.id), {
+                status: 'open'
+            });
 
             return {
                 id: item.id,

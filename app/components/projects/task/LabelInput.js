@@ -1,3 +1,4 @@
+"use client"
 import { useEffect, useRef, useState } from "react";
 import Tags from "@/app/lib/tagify";
 import LabelForm from "../../common/form/create-task/LabelForm";
@@ -7,13 +8,16 @@ import { getQueryReference } from "@/app/firebase/util";
 import { onSnapshot } from "firebase/firestore";
 import { pickTextColorBasedOnBgColor } from "@/app/lib/color";
 
-export default function LabelInput({ projectId, labelData, onChange, resetLabel }){
+import { IoMdSettings as SettingsIcon } from "react-icons/io";
+
+export default function LabelInput({ hideLabel = false, projectId, labelData, onChange, resetLabel = null, showButton = true, buttonType = 'default' }){
     const [labelModal, setLabelModal] = useState(false)
     const [labels, setLabels] = useState([])
 
     useEffect(() => {
         if(!projectId) return
-        resetLabel()
+
+        resetLabel && resetLabel()
 
         const reference = getQueryReference({ collectionName: "labels", field: "projectId", id: projectId })
         const unsubscribe = onSnapshot(reference, (snapshot) => {
@@ -29,9 +33,8 @@ export default function LabelInput({ projectId, labelData, onChange, resetLabel 
 
     const tagifyRef = useRef()
     const tagifySettings = {
-        duplicates: false,
+        duplicates: true,
         skipInvalid: true,
-        enforceWhitelist: true,
         userInput: false,
         maxTags: 6,
         placeholder: "Masukkan label..",
@@ -56,10 +59,11 @@ export default function LabelInput({ projectId, labelData, onChange, resetLabel 
 
     return(
         <div className="w-full flex flex-col gap-2">
+            {!hideLabel && 
             <label htmlFor="label" className="block font-semibold text-xs md:text-sm text-dark-blue">
                 Label
-            </label>
-            <div className="w-full flex flex-col md:flex-row gap-2">
+            </label>}
+            <div className="w-full flex flex-col xs:flex-row gap-2">
                 <Tags
                     name="label"
                     whitelist={labels.map(label => ({
@@ -71,11 +75,14 @@ export default function LabelInput({ projectId, labelData, onChange, resetLabel 
                     tagifyRef={tagifyRef}
                     settings={tagifySettings}
                     value={labelData}
+                    defaultValue={labelData}
                     onChange={onChange}
                 />
-                <Button variant="primary" size="sm" outline onClick={() => setLabelModal(true)}>
-                    Kelola Label
-                </Button>
+                {showButton && 
+                <Button variant="primary" size="sm" onClick={() => setLabelModal(true)}>
+                    {buttonType === 'icon' && <SettingsIcon size={20} className="mx-auto"/>}
+                    {buttonType === 'default' && <p>Pengaturan</p>}
+                </Button>}
                 {labelModal && <LabelForm labelData={labels} projectId={projectId} onCancel={() => setLabelModal(false)}/>}
             </div>   
         </div>

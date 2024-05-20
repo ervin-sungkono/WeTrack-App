@@ -16,6 +16,8 @@ import { onSnapshot } from "firebase/firestore"
 import { createNewTask, updateTask, reorderTask } from "@/app/lib/fetch/task"
 import { useSessionStorage } from "usehooks-ts"
 import { debounce } from "@/app/lib/helper"
+import { useRole } from "@/app/lib/context/role"
+import { validateUserRole } from "@/app/lib/helper"
 
 const Table = dynamic(() => import("../../common/table/Table"))
 
@@ -24,6 +26,7 @@ export default function SubtaskSection({ projectId, taskId, statusOptions, teamO
     const [isCreatingSubtask, setCreatingSubtask] = useState(false)
     const [loading, setLoading] = useState(false)
     const [project, _] = useSessionStorage("project")
+    const role = useRole()
 
     const getPercentageCompletedSubTask = () => {
         try{
@@ -92,6 +95,7 @@ export default function SubtaskSection({ projectId, taskId, statusOptions, teamO
                         type="button"
                         defaultValue={teamOptions.find(team => team.user.id === assignedTo)?.user ?? {}}
                         options={teamOptions}
+                        disabled={!validateUserRole({ userRole: role, minimumRole: 'Member' })}
                         onChange={(value) => handleAssigneeChange(id, assignedTo, value)}
                     />
                 )
@@ -110,6 +114,7 @@ export default function SubtaskSection({ projectId, taskId, statusOptions, teamO
                         defaultValue={statusOptions.find(status => status.value === statusId)}
                         options={statusOptions}
                         onChange={(newStatusId) => handleStatusChange(id, statusId, newStatusId)}
+                        disabled={!validateUserRole({ userRole: role, minimumRole: 'Member' })}
                         buttonClass="border-none"
                     />
                 )
@@ -171,7 +176,7 @@ export default function SubtaskSection({ projectId, taskId, statusOptions, teamO
             {loading && <PopUpLoad/>}
             <div className="relative flex items-center">
                 <p className="font-semibold text-xs md:text-sm flex-grow">Subtugas <span>({subtaskData.length})</span></p>
-                <div className="flex gap-1">
+                {validateUserRole({ userRole: role, minimumRole: 'Member' }) && <div className="flex gap-1">
                     <CustomTooltip id="subtask-tooltip" content={"Tambah Subtugas"}>
                         <button
                             onClick={() => setCreatingSubtask(true)}
@@ -180,7 +185,7 @@ export default function SubtaskSection({ projectId, taskId, statusOptions, teamO
                             <PlusIcon size={16}/>
                         </button>
                     </CustomTooltip>
-                </div>
+                </div>}
                 {isCreatingSubtask && <div className="absolute top-0 left-0 translate-y-10 w-full z-50">
                     <SimpleInputForm
                         name={"subTaskName"}

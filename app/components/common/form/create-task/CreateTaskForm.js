@@ -23,6 +23,7 @@ import { newTaskSchema } from "@/app/lib/schema";
 export default function CreateTaskForm({ onCancel }){
     const [labels, setLabels] = useState([])
     const [createSuccess, setCreateSuccess] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const initialValues = {
         projectId: '',
@@ -42,7 +43,8 @@ export default function CreateTaskForm({ onCancel }){
         setLabels(e.detail.value)
     }
 
-    const handleSubmit = async(values, { resetForm }) => {
+    const handleSubmit = async(values, { setSubmitting, resetForm }) => {
+        setLoading(true)
         try{
             const res = await createNewTask({
                 ...values,
@@ -70,6 +72,8 @@ export default function CreateTaskForm({ onCancel }){
                 }
             })
             setLabels([])
+            setLoading(false)
+            setSubmitting(false)
         }
     }
 
@@ -88,6 +92,7 @@ export default function CreateTaskForm({ onCancel }){
             >
                 {(formik) => (
                     <>
+                        {loading && <PopUpLoad/>}
                         {createSuccess && 
                         <PopUpInfo
                             title={"Tugas Berhasil Dibuat"}
@@ -161,7 +166,7 @@ export default function CreateTaskForm({ onCancel }){
                         </div>
                         <div className="flex justify-end gap-2 md:gap-4">
                             <Button variant="secondary" onClick={onCancel}>Batal</Button>
-                            <Button type={"submit"} className="w-24 md:w-32">Buat</Button>
+                            <Button type={"submit"} disabled={formik.isSubmitting} className="w-24 md:w-32">Buat</Button>
                         </div>
                     </>
                 )}

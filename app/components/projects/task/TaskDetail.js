@@ -17,6 +17,8 @@ import { getDocumentReference } from "@/app/firebase/util"
 import { onSnapshot, getDoc } from "firebase/firestore"
 import { priorityList } from "@/app/lib/string"
 import { dateFormat } from "@/app/lib/date"
+import { useRouter } from "next/navigation"
+import { pickTextColorBasedOnBgColor } from "@/app/lib/color"
 
 import { IoIosCloseCircle as CloseIcon } from "react-icons/io";
 import { getAllTeamMember } from "@/app/lib/fetch/team"
@@ -28,6 +30,7 @@ import { getAllTaskStatus } from "@/app/lib/fetch/taskStatus"
 import SimpleTextareaForm from "../../common/SimpleTextareaForm"
 import SimpleDateForm from "../../common/SimpleDateForm"
 import ParentSelectButton from "../../common/ParentSelectButton"
+import LabelInput from "./LabelInput"
 
 const AttachmentSection = dynamic(() => import("./AttachmentSection"))
 const SubtaskSection = dynamic(() => import("./SubtaskSection"))
@@ -38,13 +41,16 @@ function TaskDetail({ taskId, closeFn }){
     const [updateConfirmation, setUpdateConfirmation] = useState(false)
     const [deleteConfirmation, setDeleteConfirmation] = useState(false)
     const [editDescription, setEditDescription] = useState(false)
+    const [editLabels, setEditLabels] = useState(false)
     const [editStartDate, setEditStartDate] = useState(false)
     const [editDueDate, setEditDueDate] = useState(false)
     const [teamOptions, setTeamOptions] = useState([])
     const [statusOptions, setStatusOptions] = useState([])
     const [parentTaskOptions, setParentTaskOptions] = useState([])
+    const [labels, setLabels] = useState([])
     const [project, _] = useSessionStorage("project")
     const role = useRole()
+    const router = useRouter()
 
     const taskActions = [
         {
@@ -68,7 +74,6 @@ function TaskDetail({ taskId, closeFn }){
                                 label: `${project.key}-${t.displayId} ${t.taskName}`,
                                 value: t.id
                             }))
-                        console.log(parentOptions)
                         setParentTaskOptions(parentOptions)
                     }else{
                         setParentTaskOptions([])
@@ -102,6 +107,19 @@ function TaskDetail({ taskId, closeFn }){
             fetchStatusOptions()
         }
     }, [project])
+
+    useEffect(() => {
+        if(task && task.labels){
+            const labels = task.labels.map(label => ({
+                id: label.id,
+                value: label.content,
+                tagColor: label.backgroundColor,
+                style: `--tag-bg:${label.backgroundColor};--tag-text-color:${pickTextColorBasedOnBgColor(label.backgroundColor)};--tag-hover:${label.backgroundColor};--tag-remove-btn-color:${pickTextColorBasedOnBgColor(label.backgroundColor)};--tag-remove-bg:${label.backgroundColor};--tag-remove-btn-bg--hover:${pickTextColorBasedOnBgColor(label.backgroundColor)};--tag-border-radius:99px;`
+            }))
+            const stringified_labels = JSON.stringify(labels)
+            setLabels(stringified_labels)
+        }
+    }, [task])
 
     useEffect(() => {
         if(!taskId) return
@@ -256,12 +274,41 @@ function TaskDetail({ taskId, closeFn }){
             setUpdateLoading(false)
         }
     }
+
+    const handleLabelChange = async() => {
+        const labelArr = labels ? JSON.parse(labels) : []
+        const newLabelLength = labelArr.length
+        const taskLabelLength = task.labels.length
+        let isDiff = true
+
+        if(newLabelLength === taskLabelLength){
+            if(newLabelLength > 0){
+                const result = labelArr.every(label1 => task.labels.find(label2 => label1.id === label2.id))
+                isDiff = !result
+            }
+            else if (newLabelLength <= 0) isDiff = false
+        }
+
+        try{
+            if(isDiff){
+                setUpdateLoading(true)
+                await updateTask({ taskId: taskId, labels: labels === "" ? null : labels})
+            }
+        }catch(e){
+            console.log(e)
+        }finally{
+            setUpdateLoading(false)
+            setEditLabels(false)
+        }
+    }
   
     const handleDeleteTask = async(e) => {
         setUpdateLoading(true)
 
         try{
-            await deleteTask({ taskId: item.id })
+            const res = await deleteTask({ taskId: taskId })
+
+            if(res.success) router.replace(`/projects/${project.id}/tasks`)
         }catch(e){
             console.log(e)
         }finally{
@@ -281,9 +328,31 @@ function TaskDetail({ taskId, closeFn }){
         </div>
     )
 
+    const validateMember = validateUserRole({ userRole: role, minimumRole: 'Member' })
     return(
         <div className={`w-full h-full flex flex-col gap-3 md:gap-6 px-4 py-4 md:px-8 md:py-6 bg-white text-dark-blue rounded-lg shadow-lg overflow-y-auto`}>
             {updateLoading && <PopUpLoad/>}
+            {editLabels &&
+            <PopUpForm
+                title={"Ubah Label"}
+                wrapContent
+            >
+                <div>
+                    <LabelInput 
+                        hideLabel
+                        showButton={validateUserRole({ userRole: role, minimumRole: 'Owner' })}
+                        buttonType="icon"
+                        projectId={project.id} 
+                        labelData={labels}
+                        onChange={(e) => setLabels(e.detail.value)} 
+                    />
+                    <div className="mt-4 flex justify-end gap-2 md:gap-4">
+                        <Button variant="danger" onClick={() => setEditLabels(false)}
+                        >Batal</Button>
+                        <Button variant="primary" onClick={handleLabelChange}>Ubah</Button>
+                    </div>
+                </div>
+            </PopUpForm>}
             {updateConfirmation &&
               <UpdateTaskNameForm 
                 taskName={task.taskName} 
@@ -298,7 +367,7 @@ function TaskDetail({ taskId, closeFn }){
                 wrapContent
               >
                 <>
-                  <div className="mt-4 flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
+                  <div className="mt-4 flex justify-end gap-2 md:gap-4">
                     <Button variant="danger" onClick={handleDeleteTask}>Hapus</Button>
                     <Button variant="secondary" onClick={() => setDeleteConfirmation(false)}
                     >Batal</Button>
@@ -312,7 +381,7 @@ function TaskDetail({ taskId, closeFn }){
                     </div>
                 </div>
                 <div className="flex items-center gap-2.5">
-                    {validateUserRole({ userRole: role, minimumRole: 'Member' }) &&
+                    {validateMember &&
                     <DotButton 
                         name={`task-detail-${taskId}`}
                         actions={taskActions}
@@ -331,24 +400,33 @@ function TaskDetail({ taskId, closeFn }){
                                 defaultValue={task.assignedTo}
                                 options={teamOptions}
                                 onChange={handleAssigneeChange}
+                                disabled={!validateMember}
                             />
                         </div>
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
                         <p className="font-semibold">Label</p>
-                        <div className="flex flex-wrap gap-1 md:gap-2 col-span-2">
-                            {task.labels.length > 0 ? 
-                            task.labels.map(label => (
-                                <Label key={label.id} text={label.content} color={label.backgroundColor}/>
-                            )) :
-                            <div className="text-xs md:text-sm text-dark-blue/80">Belum ada label yang ditambahkan..</div>}
+                        <div className="col-span-2">
+                            <div 
+                                className={`flex flex-wrap gap-1 md:gap-2 w-full p-2 cursor-pointer hover:bg-gray-200 rounded transition-colors duration-300`} 
+                                onClick={validateMember ? () => setEditLabels(true) : null}
+                            >
+                                {task.labels && task.labels.length > 0 ? 
+                                task.labels.map(label => (
+                                    <Label key={label.id} text={label.content} color={label.backgroundColor}/>
+                                )) :
+                                <p className="text-xs md:text-sm text-dark-blue/80">Belum ada label yang ditambahkan..</p>}
+                            </div>
                         </div>
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
                         <p className="font-semibold">Tanggal Mulai</p>
                         <div className="col-span-2">
                             {!editStartDate ? 
-                            <p className="w-full p-2 cursor-pointer text-dark-blue/80 hover:bg-gray-200 rounded transition-colors duration-300" onClick={() => setEditStartDate(true)}>
+                            <p 
+                                className="w-full p-2 cursor-pointer text-dark-blue/80 hover:bg-gray-200 rounded transition-colors duration-300" 
+                                onClick={validateMember ? () => setEditStartDate(true) : null}
+                            >
                                 {dateFormat(task.startDate) ?? "Belum diatur"}
                             </p> :
                             <SimpleDateForm
@@ -363,7 +441,10 @@ function TaskDetail({ taskId, closeFn }){
                         <p className="font-semibold">Tenggat Waktu</p>
                         <div className="col-span-2">
                             {!editDueDate ? 
-                            <p className="w-full p-2 cursor-pointer text-dark-blue/80 hover:bg-gray-200 rounded transition-colors duration-300" onClick={() => setEditDueDate(true)}>
+                            <p 
+                                className="w-full p-2 cursor-pointer text-dark-blue/80 hover:bg-gray-200 rounded transition-colors duration-300" 
+                                onClick={validateMember ? () => setEditDueDate(true) : null}
+                            >
                                 {dateFormat(task.dueDate) ?? "Belum diatur"}
                             </p> :
                             <SimpleDateForm
@@ -383,6 +464,7 @@ function TaskDetail({ taskId, closeFn }){
                                 defaultValue={priorityList.find(priority => priority.value === task.priority)}
                                 options={priorityList} 
                                 onChange={handlePriorityChange}
+                                disabled={!validateMember}
                                 buttonClass={getSelectPriorityClass()}
                             />
                         </div>
@@ -394,6 +476,7 @@ function TaskDetail({ taskId, closeFn }){
                                 name={`task-${taskId}-status`}
                                 defaultValue={statusOptions.find(status => status.value === task.status)}
                                 options={statusOptions} 
+                                disabled={!validateMember}
                                 onChange={handleStatusChange}
                             />
                         </div>
@@ -405,6 +488,7 @@ function TaskDetail({ taskId, closeFn }){
                             <ParentSelectButton
                                 name={`task-${taskId}-parent`}
                                 defaultValue={parentTaskOptions.find(t=> t.value === task.parentId)}
+                                disabled={!validateMember}
                                 options={parentTaskOptions}
                                 onChange={handleParentChange}
                             />
@@ -417,7 +501,7 @@ function TaskDetail({ taskId, closeFn }){
                         {!editDescription ? 
                         <p 
                             className="w-full cursor-pointer text-xs md:text-sm text-dark-blue/80 hover:bg-gray-200 p-2 rounded transition-colors duration-300"
-                            onClick={() => setEditDescription(true)} 
+                            onClick={validateMember ? () => setEditDescription(true) : null} 
                         >
                             {task.description ? task.description : "Tambahkan deskripsi tugas.."}
                         </p> :
