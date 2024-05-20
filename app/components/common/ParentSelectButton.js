@@ -5,7 +5,7 @@ import { initDropdowns } from "flowbite"
 import { IoIosArrowDown as DropdownIcon } from 'react-icons/io'
 
 export default function ParentSelectButton({ name, defaultValue, options = [], onChange = null }){ 
-    const [selected, setSelected] = useState(options[0])
+    const [selected, setSelected] = useState({ label: "Belum Ada", value: null })
     const buttonRef = useRef()
 
     useEffect(() => {
