@@ -13,7 +13,11 @@ export default function ChatInput({ name, onSubmit, placeholder, disabled = fals
     const role = useRole()
 
     if(!validateUserRole({ userRole: role, minimumRole: 'Member' })){
-        return null
+        return (
+            <div className="absolute bottom-0 left-0 w-full text-center text-dark-blue/80 text-xs md:text-sm py-2">
+                Obrolan ini hanya dapat dibaca karena peran anda hanya sebagai <b>Viewer</b>
+            </div>
+        )
     }
 
     return(
