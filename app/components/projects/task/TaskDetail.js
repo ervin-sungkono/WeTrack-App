@@ -260,7 +260,7 @@ function TaskDetail({ taskId, closeFn }){
         setUpdateLoading(true)
 
         try{
-            await deleteTask({ taskId: item.id })
+            await deleteTask({ taskId: taskId })
         }catch(e){
             console.log(e)
         }finally{
