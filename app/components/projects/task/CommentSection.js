@@ -9,6 +9,8 @@ import EmptyState from "../../common/EmptyState"
 import PopUpForm from "../../common/alert/PopUpForm"
 import Button from "../../common/button/Button"
 import PopUpLoad from "../../common/alert/PopUpLoad"
+import { useRole } from "@/app/lib/context/role"
+import { validateUserRole } from "@/app/lib/helper"
 
 const CommentInput  = dynamic(() => import("./comment/CommentInput"))
 const CommentCard = dynamic(() => import("./comment/CommentCard"))
@@ -17,6 +19,7 @@ export default function CommentSection({ taskId, comments }){
     const [deleteFocus, setDeleteFocus] = useState(null)
     const [deleteConfirmation, setDeleteConfirmation] = useState(false)
     const [loading, setLoading] = useState(false)
+    const role = useRole()
 
     const sendComment = async(comment) => {
         const newComment = await addComment({
@@ -81,7 +84,7 @@ export default function CommentSection({ taskId, comments }){
                         </div>
                     </>
                 </PopUpForm>}
-                <CommentInput onSubmit={sendComment}/>
+                {validateUserRole({ userRole: role, minimumRole: 'Member' }) && <CommentInput onSubmit={sendComment}/>}
                 {comments && (comments.length > 0 ? 
                 comments.map(comment => (
                     <CommentCard key={comment.id} comment={comment} deleteComment={showDeleteConfirmation}/>

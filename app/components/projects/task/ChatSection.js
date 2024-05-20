@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Button from "../../common/button/Button";
 import ChatModal from "./chat/ChatModal";
 import ChatBox from "./chat/ChatBox";
@@ -54,7 +54,10 @@ export default function ChatSection({ taskId, title }){
                     <ChatBox {...chatData[chatData.length-1]} fullWidth/>
                 </div>
                  :
-                <div className="text-xs md:text-sm text-dark-blue/80">Belum ada riwayat percakapan dengan AI</div>}
+                <div className="w-full flex flex-col items-center gap-2 py-8">
+                    <ChatIcon size={48} className="text-dark-blue/60"/>
+                    <p className="text-xs md:text-sm text-dark-blue/80 text-center">Belum ada riwayat percakapan dengan AI</p>
+                </div>}
                 <Button size="sm" onClick={() => setChatModal(true)}>
                     <div className="flex gap-2 items-center">
                         <ChatIcon size={16}/>
