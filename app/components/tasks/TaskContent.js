@@ -47,7 +47,7 @@ export default function TaskContent({ projectId, taskId }){
     return(
         <div className="w-full h-full flex flex-col gap-2.5 sm:gap-4 overflow-y-auto">
             <div className="flex flex-col xs:flex-row justify-between gap-4 items-center z-50">
-                <div className="w-full flex justify-center md:justify-start items-center gap-3 md:gap-6"> 
+                <div className="w-full flex justify-center md:justify-start items-center gap-3 md:gap-6 z-fixed"> 
                     <SearchBar placeholder={"Cari tugas.."} handleSearch={handleSearch}/>
                     <div className="relative">
                         <button className="block md:hidden text-white bg-basic-blue hover:bg-basic-blue/80 rounded-md p-1.5" onClick={() => setFilterDropdown(!filterDropdown)}>

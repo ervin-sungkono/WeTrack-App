@@ -292,7 +292,7 @@ function TaskDetail({ taskId, closeFn }){
         try{
             if(isDiff){
                 setUpdateLoading(true)
-                await updateTask({ taskId: taskId, labels: labels})
+                await updateTask({ taskId: taskId, labels: labels === "" ? null : labels})
             }
         }catch(e){
             console.log(e)
@@ -411,7 +411,7 @@ function TaskDetail({ taskId, closeFn }){
                                 className={`flex flex-wrap gap-1 md:gap-2 w-full p-2 cursor-pointer hover:bg-gray-200 rounded transition-colors duration-300`} 
                                 onClick={validateMember ? () => setEditLabels(true) : null}
                             >
-                                {task.labels.length > 0 ? 
+                                {task.labels && task.labels.length > 0 ? 
                                 task.labels.map(label => (
                                     <Label key={label.id} text={label.content} color={label.backgroundColor}/>
                                 )) :
