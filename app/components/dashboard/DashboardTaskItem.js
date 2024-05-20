@@ -1,9 +1,10 @@
 import { dateFormat } from "@/app/lib/date";
 import { getPriority } from "@/app/lib/string";
-import { MdChecklist as TaskIcon } from "react-icons/md";
+import { FaCheckSquare as TaskIcon } from "react-icons/fa";
+import { RiCheckboxMultipleFill as SubTaskIcon } from "react-icons/ri";
 import Label from "../common/Label";
 
-export default function DashboardTaskItem({title, startDate, endDate, status, priority, projectKey, displayId, href, firstItem}){
+export default function DashboardTaskItem({title, type, startDate, endDate, status, priority, projectKey, displayId, href, firstItem}){
     const { label, color } = getPriority(priority)
     return (
         <div>
@@ -37,7 +38,7 @@ export default function DashboardTaskItem({title, startDate, endDate, status, pr
                 </div>
                 <div className="text-right flex flex-col justify-between">
                     <div className="text-xs md:text-sm flex items-center gap-1 justify-end">
-                        <TaskIcon className="text-lg md:text-xl"/>
+                        {type === "Task" ? <TaskIcon className="text-lg md:text-xl"/> : <SubTaskIcon className="text-lg md:text-xl"/>}
                         {projectKey}-{displayId}
                     </div>
                     <a href={href}>

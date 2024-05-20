@@ -61,14 +61,14 @@ export default function OverviewContent({ projectId }){
                     const assignedToRef = getDocumentReference({ collectionName: "users", id: assignedTo });
                     const assignedToSnap = await getDoc(assignedToRef);
                     if (assignedToSnap.exists()) {
-                        task.assignedToUser = assignedToSnap.data();
+                        task.assignedToData = assignedToSnap.data();
                     }
                 }
                 if(status){
                     const statusRef = getDocumentReference({ collectionName: "taskStatuses", id: status });
                     const statusSnap = await getDoc(statusRef);
                     if (statusSnap.exists()) {
-                        task.status = statusSnap.data();
+                        task.statusData = statusSnap.data();
                     }
                 }
                 return task
@@ -174,10 +174,10 @@ export default function OverviewContent({ projectId }){
             }
         },
         {
-            accessorKey: 'assignedToUser',
+            accessorKey: 'assignedToData',
             header: 'Penerima Tugas',
             cell: ({ row }) => {
-                const { fullName, profileImage } = row.getValue('assignedToUser') ?? {}
+                const { fullName, profileImage } = row.getValue('assignedToData') ?? {}
                 return(
                     <>
                         {fullName ? (
@@ -195,10 +195,10 @@ export default function OverviewContent({ projectId }){
             }
         },
         {
-            accessorKey: 'status',
+            accessorKey: 'statusData',
             header: 'Status',
             cell: ({ row }) => {
-                const { statusName } = row.getValue('status') ?? {}
+                const { statusName } = row.getValue('statusData') ?? {}
                 return(
                     <Label text={statusName.toUpperCase()}/>
                 )
@@ -244,6 +244,7 @@ export default function OverviewContent({ projectId }){
                                     <AssignedTaskItem 
                                         key={index}
                                         title={task.taskName}
+                                        type={task.type}
                                         startDate={task.startDate}
                                         endDate={task.dueDate}
                                         status={task.status}
