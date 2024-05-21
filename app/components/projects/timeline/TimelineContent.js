@@ -112,7 +112,10 @@ export default function TimelineContent({ projectId }){
                     const assignedToRef = getDocumentReference({ collectionName: "users", id: assignedTo });
                     const assignedToSnap = await getDoc(assignedToRef);
                     if (assignedToSnap.exists()) {
-                        task.assignedToData = assignedToSnap.data();
+                        task.assignedToData = {
+                            id: assignedTo,
+                            ...assignedToSnap.data()
+                        }
                     }
                 }
                 if(status){
@@ -141,10 +144,6 @@ export default function TimelineContent({ projectId }){
         })
         return () => unsubscribe()
     }, [projectId, query])
-
-    useEffect(() => {
-        console.log(tasks)
-    }, [tasks])
 
     const handleStatusChange = (value) => {
         setStatus(value)
@@ -220,16 +219,16 @@ export default function TimelineContent({ projectId }){
                         </button>
                         <div className={`${filterDropdown ? "block" : "hidden"} border border-dark-blue/30 md:border-none md:flex z-fixed absolute -bottom-2 right-0 translate-y-full md:translate-y-0 px-2 py-3 bg-white rounded-md md:bg-transparent md:p-0 md:static flex flex-col md:flex-row gap-2 md:gap-4`}>
                             <SelectButton 
-                                name={"status-button"}
-                                placeholder={status}
-                                options={statusData}
-                                onChange={handleStatusChange}
-                            />
-                            <SelectButton 
                                 name={"assignee-button"}
                                 placeholder={assignee}
                                 options={assigneesData}
                                 onChange={handleAssigneeChange}
+                            />
+                            <SelectButton 
+                                name={"status-button"}
+                                placeholder={status}
+                                options={statusData}
+                                onChange={handleStatusChange}
                             />
                             <SelectButton 
                                 name={"label-button"}
@@ -242,19 +241,13 @@ export default function TimelineContent({ projectId }){
                 </div>
             </div>
             <div className="z-[0] w-full mt-4">
-                {tasks && tasks.length > 0 ? (
-                    <div className="w-full md:w-9/10">
-                        <Calendar
-                            projectKey={projectKey}
-                            projectId={projectId}
-                            tasks={tasks}
-                        />
-                    </div>
-                ) : (
-                    <div className="text-dark-blue text-center text-sm md:text-base">
-                        Belum ada data tugas yang tersedia.
-                    </div>
-                )}
+                <div className="w-full md:w-9/10">
+                    <Calendar
+                        projectKey={projectKey}
+                        projectId={projectId}
+                        tasks={tasks}
+                    />
+                </div>
             </div>
         </div>
     )

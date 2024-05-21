@@ -15,6 +15,7 @@ import { getUserProfile } from "@/app/lib/fetch/user"
 import AssignedCommentItem from "./AssignedCommentItem"
 import { useRole } from "@/app/lib/context/role"
 import { validateUserRole } from "@/app/lib/helper"
+import Link from "next/link"
 
 export default function OverviewContent({ projectId }){
     const [userId, setUserId] = useState(null)
@@ -61,7 +62,10 @@ export default function OverviewContent({ projectId }){
                     const assignedToRef = getDocumentReference({ collectionName: "users", id: assignedTo });
                     const assignedToSnap = await getDoc(assignedToRef);
                     if (assignedToSnap.exists()) {
-                        task.assignedToData = assignedToSnap.data();
+                        task.assignedToData = {
+                            id: assignedTo,
+                            ...assignedToSnap.data()
+                        }
                     }
                 }
                 if(status){
@@ -74,15 +78,17 @@ export default function OverviewContent({ projectId }){
                 return task
             }))
             data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-            // setTaskData(data)
             setTaskData(data.slice(0, 5))
             console.log(data)
             const filteredData = data.filter((task) => task.assignedTo === userId)
-            // setAssignedTaskData(data)
             setAssignedTaskData(filteredData.slice(0, 5))
         })
         return () => unsubscribe()
     }, [projectId, userId])
+
+    useEffect(() => {
+        console.log(taskData)
+    }, [taskData])
 
     useEffect(() => {
         if(!projectId || !userId) return
@@ -177,14 +183,16 @@ export default function OverviewContent({ projectId }){
             accessorKey: 'assignedToData',
             header: 'Penerima Tugas',
             cell: ({ row }) => {
-                const { fullName, profileImage } = row.getValue('assignedToData') ?? {}
+                const { id, fullName, profileImage } = row.getValue('assignedToData') ?? {}
                 return(
                     <>
                         {fullName ? (
-                            <div className="flex gap-2 items-center">
-                                <UserIcon size="sm" fullName={fullName} src={profileImage?.attachmentStoragePath} alt=""/>
-                                <p>{fullName}</p>
-                            </div>
+                            <Link href={`/profile/${id}`}>
+                                <div className="flex gap-2 items-center">
+                                    <UserIcon size="sm" fullName={fullName} src={profileImage?.attachmentStoragePath} alt=""/>
+                                    <p>{fullName}</p>
+                                </div>
+                            </Link>
                         ) : (
                             <div className="w-full h-full block">
                                 {"Belum ditugaskan"}
@@ -230,6 +238,7 @@ export default function OverviewContent({ projectId }){
                             data={taskData}
                             columns={columns}
                             usePagination={false}
+                            fullWidth={false}
                         />
                     </div>
                 </OverviewCard>
