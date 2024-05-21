@@ -1,4 +1,5 @@
 import TaskHistoryItem from "./history/TaskHistoryItem"
+import EmptyState from "../../common/EmptyState"
 
 export default function HistorySection({ histories }){
     if(!histories){
@@ -8,9 +9,11 @@ export default function HistorySection({ histories }){
     }
     return(
         <div className="flex flex-col gap-2 md:gap-3">
-            {histories.map(history => (
+            {histories && histories.length > 0 ? 
+            histories.map(history => (
                 <TaskHistoryItem key={history.id} history={history}/>
-            ))}
+            )) :
+            <EmptyState message="Belum ada riwayat dalam tugas ini.."/>}
         </div>
     )
 }
