@@ -298,12 +298,12 @@ export async function POST(request, response) {
             taskId: result.id, 
             projectId: projectId, 
             action: getHistoryAction.create,
-            eventType: getHistoryEventType.task 
+            eventType: result.type == 'Task' ? getHistoryEventType.task  : getHistoryEventType.subtask
         })
 
         if(result.assignedTo){
             const newAssignedToValue = await getDoc(doc(db, "users", result.assignedTo))
-            
+
             await createHistory({ 
                 userId: createdBy, 
                 taskId: result.id, 
