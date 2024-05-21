@@ -151,7 +151,7 @@ export async function PUT(request, response) {
         
                     await updateDoc(taskDocRef, {
                         status: startStatus,
-                        finishedDate: startStatus == endStatus ? new Date().toDateString() : null,
+                        finishedDate: startStatus == endStatus ? new Date().toISOString() : null,
                         updatedAt: serverTimestamp()
                     });
         
