@@ -245,6 +245,8 @@ export async function DELETE(request, response) {
             }, { status: 404 })
         }
 
+        const projectName = projectDocSnap.data().projectName
+
         const projectRole = await getProjectRole({ projectId, userId})
         if(projectRole !== 'Owner'){
             return NextResponse.json({
@@ -259,7 +261,8 @@ export async function DELETE(request, response) {
             userId: userId,
             projectId: projectId,
             eventType: getHistoryEventType.project,
-            action: getHistoryAction.delete
+            action: getHistoryAction.delete,
+            deletedValue: projectName
         })
 
         return NextResponse.json({

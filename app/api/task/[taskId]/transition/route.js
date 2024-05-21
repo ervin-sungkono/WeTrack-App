@@ -30,7 +30,8 @@ export async function POST(request, response) {
             }, { status: 404 });
         }
 
-        const projectRole = getProjectRole({projectId: taskSnap.data().projectId, userId})
+        const projectRole = await getProjectRole({projectId: taskSnap.data().projectId, userId})
+        console.log(projectRole)
         if(projectRole !== 'Owner' && projectRole !== 'Member'){
             return NextResponse.json({
                 message: "Unauthorized",
@@ -60,7 +61,7 @@ export async function POST(request, response) {
             }, { status: 404 });
         }
 
-        const currentTaskStatusDocRef = doc(db, 'taskStatuses', taskStatusSnap.data().status);
+        const currentTaskStatusDocRef = doc(db, 'taskStatuses', taskSnap.data().status);
         const currentTaskStatusSnap = await getDoc(currentTaskStatusDocRef);
 
         if(taskSnap.data().type === 'SubTask'){
@@ -69,14 +70,14 @@ export async function POST(request, response) {
                 updatedAt: serverTimestamp()
             })
 
-            createHistory({
+            await createHistory({
                 userId: userId,
                 taskId: taskId,
                 projectId: taskSnap.data().projectId,
                 action: getHistoryAction.update,
                 eventType: getHistoryEventType.taskStatus,
-                previousValue: currentTaskStatusSnap.data().status,
-                newValue: taskStatusSnap.data().status
+                previousValue: currentTaskStatusSnap.data().statusName,
+                newValue: taskStatusSnap.data().statusName
             })
 
             return NextResponse.json({
@@ -164,16 +165,6 @@ export async function POST(request, response) {
                 updatedAt: serverTimestamp()
             })
 
-            createHistory({
-                userId: userId,
-                taskId: taskId,
-                projectId: taskSnap.data().projectId,
-                action: getHistoryAction.update,
-                eventType: getHistoryEventType.taskStatus,
-                previousValue: currentTaskStatusSnap.data().status,
-                newValue: taskStatusSnap.data().status
-            })
-
             // Update the new status order counter
             if(!newStatusCounterSnap.exists()){
                 await addDoc(collection(db, "taskOrderCounters"), {
@@ -186,6 +177,16 @@ export async function POST(request, response) {
                     updatedAt: serverTimestamp()
                 })
             }    
+
+            await createHistory({
+                userId: userId,
+                taskId: taskId,
+                projectId: taskSnap.data().projectId,
+                action: getHistoryAction.update,
+                eventType: getHistoryEventType.taskStatus,
+                previousValue: currentTaskStatusSnap.data().statusName,
+                newValue: taskStatusSnap.data().statusName
+            })
         }
 
         return NextResponse.json({
