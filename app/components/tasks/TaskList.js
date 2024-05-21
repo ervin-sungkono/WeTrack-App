@@ -47,7 +47,7 @@ export default function TaskList({ tasks, taskId }){
                         <SelectButton
                             name={"sort-button"}
                             options={[
-                                {label: "Tanggal Buat", value: "createdAt"},
+                                {label: "Tanggal Pembuatan", value: "createdAt"},
                                 {label: "Prioritas", value: "priority"}
                             ]}
                             onChange={(value) => setSortField(value)}

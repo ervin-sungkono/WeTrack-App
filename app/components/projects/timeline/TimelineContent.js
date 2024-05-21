@@ -20,6 +20,8 @@ export default function TimelineContent({ projectId }){
     const [status, setStatus] = useState("Status")
     const [filterDropdown, setFilterDropdown] = useState(false)
     const [projectKey, setProjectKey] = useState(null)
+    const [taskData, setTaskData] = useState([])
+    const [tasks, setTasks] = useState([]);
 
     useEffect(() => {
         if(!projectId) return
@@ -34,9 +36,6 @@ export default function TimelineContent({ projectId }){
     const handleSearch = (query) => {
         setQuery(query.toLowerCase())
     }
-
-    const [taskData, setTaskData] = useState([])
-    const [tasks, setTasks] = useState([]);
 
     useEffect(() => {
         if(!projectId) return
@@ -112,7 +111,10 @@ export default function TimelineContent({ projectId }){
                     const assignedToRef = getDocumentReference({ collectionName: "users", id: assignedTo });
                     const assignedToSnap = await getDoc(assignedToRef);
                     if (assignedToSnap.exists()) {
-                        task.assignedToData = assignedToSnap.data();
+                        task.assignedToData = {
+                            id: assignedTo,
+                            ...assignedToSnap.data()
+                        }
                     }
                 }
                 if(status){
@@ -143,70 +145,29 @@ export default function TimelineContent({ projectId }){
     }, [projectId, query])
 
     useEffect(() => {
-        console.log(tasks)
-    }, [tasks])
-
-    const handleStatusChange = (value) => {
-        setStatus(value)
-        if(value === "Status"){
-            if(label === "Label" && assignee === "Penerima"){
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query));
-                setTasks(filteredData);
-            }else{
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && (task.labelsData?.includes(label) || label === "Label") && (task.assignedToData?.fullName === assignee || assignee === "Penerima"));
-                setTasks(filteredData);
-            }
-        }else{
-            if(label === "Label" && assignee === "Penerima"){
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.statusData?.statusName === value);
-                setTasks(filteredData);
-            }else{
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.statusData?.statusName === value && (task.labelsData?.includes(label) || label === "Label") && (task.assignedToData?.fullName === assignee || assignee === "Penerima"));
-                setTasks(filteredData);
-            }
+        let filteredData = taskData;
+        if(assignee !== "Penerima"){
+            filteredData = filteredData.filter(item => item.taskName.toLowerCase().includes(query) && item.assignedToData?.fullName === assignee);
         }
-    }
+        if(status !== "Status"){
+            filteredData = filteredData.filter(item => item.taskName.toLowerCase().includes(query) && item.statusData?.statusName === status);
+        }
+        if(label !== "Label"){
+            filteredData = filteredData.filter(item => item.taskName.toLowerCase().includes(query) && item.labelsData?.includes(label));
+        }
+        setTasks(filteredData);
+    }, [taskData, assignee, status, label, query]);
 
     const handleAssigneeChange = (value) => {
         setAssignee(value)
-        if(value === "Penerima"){
-            if(label === "Label" && status === "Status"){
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query));
-                setTasks(filteredData);
-            }else{
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && (task.labelsData?.includes(label) || label === "Label") && (task.statusData.statusName === status || status === "Status"));
-                setTasks(filteredData);
-            }
-        }else{
-            if(label === "Label" && status === "Status"){
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.assignedToData?.fullName === value);
-                setTasks(filteredData);
-            }else{
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.assignedToData?.fullName === value && (task.labelsData?.includes(label) || label === "Label") && (task.statusData?.statusName === status || status === "Status"));
-                setTasks(filteredData);
-            }
-        }
+    }
+
+    const handleStatusChange = (value) => {
+        setStatus(value)
     }
 
     const handleLabelChange = (value) => {
         setLabel(value)
-        if(value === "Label"){
-            if(assignee === "Penerima" && status === "Status"){
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query));
-                setTasks(filteredData);
-            }else{
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && (task.assignedToData?.fullName === assignee || assignee === "Penerima") && (task.statusData?.statusName === status || status === "Status"));
-                setTasks(filteredData);
-            }
-        }else{
-            if(assignee === "Penerima" && status === "Status"){
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.labelsData?.includes(value));
-                setTasks(filteredData);
-            }else{
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.labelsData?.includes(value) && (task.assignedToData?.fullName === assignee || assignee === "Penerima") && (task.statusData?.statusName === status || status === "Status"));
-                setTasks(filteredData);
-            }
-        }
     }
 
     return (
@@ -220,16 +181,16 @@ export default function TimelineContent({ projectId }){
                         </button>
                         <div className={`${filterDropdown ? "block" : "hidden"} border border-dark-blue/30 md:border-none md:flex z-fixed absolute -bottom-2 right-0 translate-y-full md:translate-y-0 px-2 py-3 bg-white rounded-md md:bg-transparent md:p-0 md:static flex flex-col md:flex-row gap-2 md:gap-4`}>
                             <SelectButton 
-                                name={"status-button"}
-                                placeholder={status}
-                                options={statusData}
-                                onChange={handleStatusChange}
-                            />
-                            <SelectButton 
                                 name={"assignee-button"}
                                 placeholder={assignee}
                                 options={assigneesData}
                                 onChange={handleAssigneeChange}
+                            />
+                            <SelectButton 
+                                name={"status-button"}
+                                placeholder={status}
+                                options={statusData}
+                                onChange={handleStatusChange}
                             />
                             <SelectButton 
                                 name={"label-button"}
@@ -242,19 +203,13 @@ export default function TimelineContent({ projectId }){
                 </div>
             </div>
             <div className="z-[0] w-full mt-4">
-                {tasks && tasks.length > 0 ? (
-                    <div className="w-full md:w-9/10">
-                        <Calendar
-                            projectKey={projectKey}
-                            projectId={projectId}
-                            tasks={tasks}
-                        />
-                    </div>
-                ) : (
-                    <div className="text-dark-blue text-center text-sm md:text-base">
-                        Belum ada data tugas yang tersedia.
-                    </div>
-                )}
+                <div className="w-full md:w-9/10">
+                    <Calendar
+                        projectKey={projectKey}
+                        projectId={projectId}
+                        tasks={tasks}
+                    />
+                </div>
             </div>
         </div>
     )

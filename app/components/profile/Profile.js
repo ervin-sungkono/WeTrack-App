@@ -229,7 +229,7 @@ export default function ProfileLayout(){
                         <div className="flex items-center justify-center pt-12 md:pt-16">
                             {updateProfile ? (
                                 <div className="group relative">
-                                    <div className="group-hover:brightness-50 cursor-pointer" onClick={openImageUpload}>
+                                    <div className="group-hover:brightness-75 cursor-pointer" onClick={openImageUpload}>
                                         <UserIcon
                                             fullName={initialValues.fullName}
                                             src={profileImageUploadedURL}
