@@ -3,8 +3,9 @@ import UserIcon from "../../common/UserIcon";
 import SelectButton from "../../common/button/SelectButton";
 import { IoIosCloseCircle as CloseCircle } from "react-icons/io";
 import Button from "../../common/button/Button";
+import Link from "next/link";
 
-export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, setSelectDelete, editMode=false, id, user, role, status, pending=false, setAddMode}){
+export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, setSelectDelete, editMode=false, id, user, userId, role, pending=false, setAddMode}){
 
     const [roleSelected, setRoleSelected] = useState(role)
     const [deleteSelected, setDeleteSelected] = useState(false)
@@ -89,14 +90,34 @@ export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, s
             )}
             <div className={`h-full flex flex-col justify-between items-center m-auto px-3 md:px-6 py-2.5 md:py-4 rounded-xl shadow-md ${pending ? 'bg-light-blue' : (editMode && deleteSelected) ? 'bg-danger-red' : 'bg-white'} w-48 md:w-64`}>
                 {!pending ? (
-                    <UserIcon fullName={user?.fullName} size="team" src={profileImage}/>
+                    <>
+                        {editMode ? (
+                            <UserIcon fullName={user?.fullName} size="team" src={profileImage}/>
+                        ) : (
+                            <Link href={`/profile/${userId}`}>
+                                <div className="hover:brightness-75">
+                                    <UserIcon fullName={user?.fullName} size="team" src={profileImage}/>
+                                </div>
+                            </Link>
+                        )}
+                    </>
                 ) : (
                     <UserIcon size="team" src={profileImagePending}/>
                 )}
                 {!pending && (
-                    <div className={`mt-4 font-semibold ${pending || (editMode && deleteSelected) ? 'text-white' : 'text-dark-blue'} text-center text-sm md:text-base leading-4 md:leading-5`}>
-                        {user?.fullName}
-                    </div>
+                    <>
+                        {editMode ? (
+                            <div className={`mt-4 font-semibold ${pending || (editMode && deleteSelected) ? 'text-white' : 'text-dark-blue'} text-center text-sm md:text-base leading-4 md:leading-5`}>
+                                {user?.fullName}
+                            </div>
+                        ) : (
+                            <Link href={`/profile/${userId}`}>
+                                <div className={`mt-4 font-semibold ${pending || (editMode && deleteSelected) ? 'text-white' : 'text-dark-blue'} text-center text-sm md:text-base leading-4 md:leading-5`}>
+                                    {user?.fullName}
+                                </div>
+                            </Link>
+                        )}
+                    </>
                 )}
                 {
                     (editMode && role != 'Owner') ? (
@@ -111,7 +132,7 @@ export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, s
                             />
                         </div>
                     ) : (
-                        <button className={`mt-4 mb-6 text-xs md:text-sm px-3 md:px-4 py-2 md:py-1.5 rounded-full font-medium ${getRoleClass()}`}>
+                        <button className={`cursor-default mt-4 mb-6 text-xs md:text-sm px-3 md:px-4 py-2 md:py-1.5 rounded-full font-medium ${getRoleClass()}`}>
                             {role}
                         </button>
                     )

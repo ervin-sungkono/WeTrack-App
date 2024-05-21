@@ -22,7 +22,7 @@ export default function TeamList({list, listType, selectUpdate, setSelectUpdate,
             )}
             <div className="flex flex-row gap-2 md:gap-4">
                 {list.map((item, index) => (
-                    <TeamItem key={index} selectUpdate={selectUpdate} setSelectUpdate={setSelectUpdate} selectDelete={selectDelete} setSelectDelete={setSelectDelete} editMode={edit} {...item} />
+                    <TeamItem key={index} selectUpdate={selectUpdate} setSelectUpdate={setSelectUpdate} selectDelete={selectDelete} setSelectDelete={setSelectDelete} editMode={edit} userId={item.userId} {...item} />
                 ))}
             </div>
         </>
