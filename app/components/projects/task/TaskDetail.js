@@ -340,7 +340,6 @@ function TaskDetail({ taskId, closeFn }){
                 <div>
                     <LabelInput 
                         hideLabel
-                        showButton={validateUserRole({ userRole: role, minimumRole: 'Owner' })}
                         buttonType="icon"
                         projectId={project.id} 
                         labelData={labels}

@@ -225,12 +225,11 @@ export default function OverviewContent({ projectId }){
                 </OverviewCard>
             ) : (
                 <OverviewCard title="Tugas Terbaru" action={"Lihat semua"} href={`/projects/${projectId}/tasks`}>
-                    <div className="max-h-[300px] md:h-[200px] overflow-hidden">
+                    <div className="max-h-[300px] md:h-[200px]">
                         <Table 
                             data={taskData}
                             columns={columns}
                             usePagination={false}
-                            fullWidth={false}
                         />
                     </div>
                 </OverviewCard>
