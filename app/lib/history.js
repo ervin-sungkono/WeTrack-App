@@ -6,6 +6,7 @@ export const getHistoryAction = {
 
 export const getHistoryEventType = {
     task: "Tugas",
+    subtask: "Subtugas",
     taskName: "Nama Tugas",
     taskStatus: "Status Tugas",
     project: "Proyek",
