@@ -16,6 +16,8 @@ import { getQueryReference } from "@/app/firebase/util"
 import { addAttachment, deleteAttachment } from "@/app/lib/fetch/attachment"
 import { saveAs } from "file-saver"
 import JSZip from "jszip"
+import { useRole } from "@/app/lib/context/role"
+import { validateUserRole } from "@/app/lib/helper"
 
 const Table = dynamic(() => import("../../common/table/Table"))
 
@@ -26,6 +28,7 @@ export default function AttachmentSection({ taskId }){
     const [deleteMode, setDeleteMode] = useState(null)
     const [fileFocus, setFileFocus] = useState(null)
     const [attachmentData, setAttachmentData] = useState([])
+    const role = useRole()
 
     const handleDeleteAttachment = async() => {
         // Tambahin popup Konfirmasi
@@ -123,19 +126,24 @@ export default function AttachmentSection({ taskId }){
         }, 
         {
             accessorKey: 'attachmentStoragePath',
-            header: "",
+            header: "Pilihan",
             cell: ({ row }) => {
                 const id = row.getValue("id")
                 const filename = row.getValue("originalFileName")
                 const attachmentLocation = row.getValue("attachmentStoragePath")
                 return (
                     <div className="flex gap-1">
-                        <button onClick={() => saveAs(attachmentLocation, filename)} className="hover:bg-gray-200 p-1.5 rounded transition-colors duration-300">
-                            <DownloadIcon size={20}/>
-                        </button>
-                        <button className="hover:bg-gray-200 p-1.5 rounded transition-colors duration-300">
-                            <DeleteIcon className="text-danger-red" size={20} onClick={() => showDeleteConfirmation("single", id)}/>
-                        </button>
+                        <CustomTooltip id={`download-file-${id}`} content={"Unduh Lampiran"}>
+                            <button onClick={() => saveAs(attachmentLocation, filename)} className="hover:bg-gray-200 p-1.5 rounded transition-colors duration-300">
+                                <DownloadIcon size={20}/>
+                            </button>
+                        </CustomTooltip>
+                        {validateUserRole({ userRole: role, minimumRole: 'Member' }) && 
+                         <CustomTooltip id={`delete-file-${id}`} content={"Hapus Lampiran"}>
+                            <button className="hover:bg-gray-200 p-1.5 rounded transition-colors duration-300">
+                                <DeleteIcon className="text-danger-red" size={20} onClick={() => showDeleteConfirmation("single", id)}/>
+                            </button>
+                         </CustomTooltip>}
                     </div>
                 )
             },
@@ -191,6 +199,7 @@ export default function AttachmentSection({ taskId }){
                     <p className="font-semibold text-xs md:text-sm text-dark-blue">Lampiran <span>({attachmentData.length})</span> <span className="text-[10.8px] md:text-xs">maksimal 10</span></p>
                     <p className="text-[10.8px] md:text-xs text-dark-blue/80">Batas ukuran dari satu lampiran adalah 2MB.</p>
                 </div>
+                {validateUserRole({ userRole: role, minimumRole: 'Member' }) && 
                 <div className="flex gap-1">
                     <DotButton name={"attachments-action"} actions={attachmentsAction}/>
                     <CustomTooltip id="attachment-tooltip" content={"Tambah Lampiran"}>
@@ -201,7 +210,7 @@ export default function AttachmentSection({ taskId }){
                             <PlusIcon size={16}/>
                         </button>
                     </CustomTooltip>
-                </div>
+                </div>}
             </div>
             {attachmentData.length > 0 ? 
             <div className="max-h-[400px] overflow-y-auto">

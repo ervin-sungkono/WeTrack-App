@@ -1,6 +1,8 @@
 import { auth, db } from "@/app/firebase/config";
+import { createHistory } from "@/app/firebase/util";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { deleteExistingFile, uploadSingleFile } from "@/app/lib/file";
+import { getHistoryAction, getHistoryEventType } from "@/app/lib/history";
 import { getUserSession } from "@/app/lib/session";
 import { deleteUser, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, getDoc, updateDoc, runTransaction, serverTimestamp } from "firebase/firestore";
@@ -134,6 +136,12 @@ export async function PUT(request, response){
         });
 
         const newUserDoc = await getDoc(userDocRef);
+
+        await createHistory({
+            userId: userId,
+            action: getHistoryAction.update,
+            eventType: getHistoryEventType.profile
+        })
 
         return NextResponse.json({
             data: {

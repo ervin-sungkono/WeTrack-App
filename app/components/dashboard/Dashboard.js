@@ -9,8 +9,8 @@ import { getAllProject } from "@/app/lib/fetch/project"
 import { getAllTask } from "@/app/lib/fetch/task"
 import PopUpLoad from "../common/alert/PopUpLoad"
 import EmptyState from "../common/EmptyState"
-import { getDocumentReference } from "@/app/firebase/util"
-import { getDoc } from "firebase/firestore"
+import { getDocumentReference, getQueryReference } from "@/app/firebase/util"
+import { getDoc, onSnapshot } from "firebase/firestore"
 import { getUserProfile } from "@/app/lib/fetch/user"
 
 export default function Dashboard(){
@@ -36,6 +36,7 @@ export default function Dashboard(){
     const [selectedProject, setSelectedProject] = useState([])
 
     useEffect(() => {
+        if(!userId) return
         getAllProject().then(projects => {
             if(projects.data){
                 const tasks = projects.data.map(project => {

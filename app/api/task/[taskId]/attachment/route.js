@@ -1,7 +1,8 @@
 import { db } from "@/app/firebase/config";
-import { getProjectRole } from "@/app/firebase/util";
+import { createHistory, getProjectRole } from "@/app/firebase/util";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { uploadSingleFile } from "@/app/lib/file";
+import { getHistoryAction, getHistoryEventType } from "@/app/lib/history";
 import { getUserSession } from "@/app/lib/session";
 import { collection, getDoc, getDocs, doc, query, serverTimestamp, where, runTransaction } from "firebase/firestore";
 import { NextResponse } from "next/server";
@@ -127,6 +128,14 @@ export async function POST(request, response) {
             }
 
             return result
+        })
+
+        await createHistory({
+            userId: userId,
+            taskId: taskId,
+            projectId: projectId,
+            action: getHistoryAction.create,
+            eventType: getHistoryEventType.attachment
         })
            
         return NextResponse.json({

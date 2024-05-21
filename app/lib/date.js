@@ -1,7 +1,9 @@
 import moment from "moment"
+import "moment/locale/id"
+moment.locale("id")
 
 export const dateFormat = (date, includeTime = false) => {
-    const formatString = includeTime ? "DD MMM YYYY hh:mm A" : "DD MMM YYYY"
+    const formatString = includeTime ? "D MMMM YYYY hh:mm" : "D MMMM YYYY"
     if(date === null || date === undefined){
         return null
     }else{
@@ -15,36 +17,33 @@ export const dateFormat = (date, includeTime = false) => {
 
 export const listDateFormat = (date) => {
     const currentDate = moment(new Date())
-    let dateDifference = 0
     let formatString = ""
-    if(typeof date === "string"){ //ISO String
-        dateDifference = currentDate.diff(moment(date), 'days')
-        switch(dateDifference){
-            case 0:
-                formatString = "[Hari ini], HH:mm"
-                break
-            case 1:
-                formatString = "[Kemarin], HH:mm"
-                break
-            default:
-                formatString = "DD MMM YYYY, HH:mm"
-                break
+
+    const getDateType = (date) => {
+        if (typeof date === "string") {
+            return moment(date);
+        } else if (typeof date === "object" && date.seconds) {
+            return moment.unix(date.seconds);
+        } else {
+            return null;
         }
-        return moment(date).format(formatString)
-    }else if(typeof date === "object"){ //Timestamp
-        const comparedDate = moment.unix(date.seconds)
-        dateDifference = currentDate.dayOfYear() - comparedDate.dayOfYear()
-        switch(dateDifference){
-            case 0:
-                formatString = "[Hari ini], HH:mm"
-                break
-            case 1:
-                formatString = "[Kemarin], HH:mm"
-                break
-            default:
-                formatString = "DD MMM YYYY, HH:mm"
-                break
-        }
-        return moment.unix(date.seconds).format(formatString)
+    };
+
+    const momentDate = getDateType(date);
+    if (!momentDate || !momentDate.isValid()) {
+        return "Invalid date";
     }
+
+    const startOfToday = currentDate.clone().startOf('day');
+    const startOfYesterday = startOfToday.clone().subtract(1, 'days');
+
+    if (momentDate.isSameOrAfter(startOfToday)) {
+        formatString = "[Hari ini], HH:mm";
+    } else if (momentDate.isSameOrAfter(startOfYesterday) && momentDate.isBefore(startOfToday)) {
+        formatString = "[Kemarin], HH:mm";
+    } else {
+        formatString = "D MMM YYYY, HH:mm";
+    }
+
+    return momentDate.format(formatString);
 }

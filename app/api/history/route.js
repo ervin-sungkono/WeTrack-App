@@ -48,6 +48,7 @@ export async function GET(request, response) {
                 action: item.data().action,
                 previousValue: item.data()?.previousValue,
                 newValue: item.data()?.newValue,
+                deletedValue: item.data()?.deletedValue,
                 createdAt: item.data().createdAt
             };
         }));

@@ -3,8 +3,9 @@ import { nextAuthOptions } from "@/app/lib/auth";
 import { deleteExistingFile } from "@/app/lib/file";
 import { getUserSession } from "@/app/lib/session";
 import { deleteDoc, doc, getDoc } from "firebase/firestore";
-import { getProjectRole } from "@/app/firebase/util";
+import { createHistory, getProjectRole } from "@/app/firebase/util";
 import { NextResponse } from "next/server";
+import { getHistoryAction, getHistoryEventType } from "@/app/lib/history";
 
 export async function DELETE(request, response) {
     try {
@@ -45,9 +46,27 @@ export async function DELETE(request, response) {
         }
 
         if (attachmentData && attachmentData.attachmentStoragePath) {
+            const fileNameToDelete = attachmentData.originalFileName
+            const taskDoc = await getDoc(doc(db, "tasks", attachmentData.taskId))
+
+            if(!taskDoc.exists()) {
+                return NextResponse.json({
+                    message: "Can't find task reference"
+                }, { status: 404 })
+            }
+
             await deleteExistingFile(attachmentData.attachmentStoragePath);
 
             await deleteDoc(attachmentDocRef)
+
+            await createHistory({
+                userId: userId,
+                taskId: attachmentData.taskId,
+                projectId: taskDoc.data().projectId,
+                action: getHistoryAction.delete,
+                eventType: getHistoryEventType.attachment,
+                deletedValue: fileNameToDelete
+            })
 
             return NextResponse.json({
                 success: true,

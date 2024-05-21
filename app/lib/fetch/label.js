@@ -1,12 +1,12 @@
-// export const getAllLabel = ({ projectId }) => {
-//     const response = fetch(`/api/task/${projectId}/label`,{
-//         method: 'GET',
-//     })
-//     .then(res => res.json())
-//     .catch(err => console.log(err))
+export const getAllLabel = ({ projectId }) => {
+    const response = fetch(`/api/project/${projectId}/label`,{
+        method: 'GET',
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err))
 
-//     return response
-// }
+    return response
+}
 
 export const addLabel = ({ content, backgroundColor, projectId }) => {
     const response = fetch(`/api/project/${projectId}/label`, {
