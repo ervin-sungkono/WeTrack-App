@@ -247,7 +247,7 @@ export default function OverviewContent({ projectId }){
                                         type={task.type}
                                         startDate={task.startDate}
                                         endDate={task.dueDate}
-                                        status={task.status}
+                                        status={task.statusData}
                                         priority={task.priority}
                                         projectKey={projectKey}
                                         displayId={task.displayId}
