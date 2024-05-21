@@ -6,7 +6,7 @@ import UserIcon from "../common/UserIcon"
 
 export default function HistoryItem({eventType, action, task=null, taskId=null, project=null, projectId=null, previousValue=null, newValue=null, deletedValue=null, createdAt}){    
     const LinkText = ({link, children}) => {
-        if(link !== null){
+        if(link != null){
             return <Link href={link} className="text-xs md:text-sm font-bold text-basic-blue">{children}</Link>
         }else{
             return <span className="text-xs md:text-sm font-bold text-basic-blue">{children}</span>
