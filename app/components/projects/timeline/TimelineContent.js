@@ -103,6 +103,7 @@ export default function TimelineContent({ projectId }){
                 const assignedTo = taskData.assignedTo
                 const status = taskData.status
                 const labels = taskData.labels
+                const parentId = taskData.parentId
                 const task = {
                     id: document.id,
                     ...taskData
@@ -133,6 +134,13 @@ export default function TimelineContent({ projectId }){
                         }
                     }))
                     task.labelsData = labelsData.join(", ");
+                }
+                if(parentId){
+                    const parentRef = getDocumentReference({ collectionName: "tasks", id: parentId });
+                    const parentSnap = await getDoc(parentRef);
+                    if (parentSnap.exists()) {
+                        task.parentTaskData = parentSnap.data();
+                    }
                 }
                 return task
             }))

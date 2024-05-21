@@ -220,17 +220,13 @@ export async function POST(request, response) {
             labelDetails = await Promise.all(labels.map(async (label) =>{
                 const labelDoc = await getDoc(doc(db, "labels", label)) 
 
+                if(!labelDoc.exists()) {
+                    throw new Error("Label doesn't exists")
+                }
+
                 if(labelDoc.data()?.projectId != projectId) {
                     throw new Error("Label is not found in the project")
                 }
-
-                if(labelDoc.exists()){
-                    return {
-                        id: labelDoc.id,
-                        ...labelDoc.data()
-                    }
-                }
-                return null
             }))
         }
 
@@ -306,6 +302,18 @@ export async function POST(request, response) {
         })
 
         if(result.assignedTo){
+            const newAssignedToValue = await getDoc(doc(db, "users", result.assignedTo))
+            
+            await createHistory({ 
+                userId: createdBy, 
+                taskId: result.id, 
+                projectId: projectId, 
+                action: getHistoryAction.update,
+                eventType: getHistoryEventType.assignedTo,
+                previousValue: null,
+                newValue: {...newAssignedToValue.data()}
+            })
+
             await createNotification({
                 userId: result.assignedTo,
                 taskId: result.id,

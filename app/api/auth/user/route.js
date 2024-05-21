@@ -1,5 +1,5 @@
 import { auth, db } from "@/app/firebase/config";
-import { createHistory } from "@/app/firebase/util";
+import { createHistory, handleDeletedUser } from "@/app/firebase/util";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { deleteExistingFile, uploadSingleFile } from "@/app/lib/file";
 import { getHistoryAction, getHistoryEventType } from "@/app/lib/history";
@@ -187,6 +187,8 @@ export async function DELETE(request, response){
         }
 
         await deleteUser(auth.currentUser)
+
+        // await handleDeletedUser({ userId: userId })
 
         return NextResponse.json({
             success: true,
