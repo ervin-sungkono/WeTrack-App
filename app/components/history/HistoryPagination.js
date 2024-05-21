@@ -38,7 +38,7 @@ export default function HistoryPagination({
                     <ArrowLeft className="text-xl md:text-2xl"/>
                 </button>
             </div>
-            <p className="text-xs md:text-sm px-4">{startIndex} hingga {endIndex} dari {dataCount} total data</p>
+            <p className="text-xs md:text-sm px-4">{startIndex}-{endIndex} dari {dataCount}</p>
             <div className="flex items-center">
                 <button 
                     className="hover:text-basic-blue p-1 disabled:text-dark-blue/60" 

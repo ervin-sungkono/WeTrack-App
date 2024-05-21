@@ -36,6 +36,11 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                         Anda membuat tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
                     </>   
                 )}
+                {(eventType === getHistoryEventType.task) && (action === getHistoryAction.update) && (
+                    <>
+                        Anda melakukan perubahan data pada tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
+                    </>  
+                )}
                 {(eventType === getHistoryEventType.task) && (action === getHistoryAction.delete) && (
                     <>
                         Anda menghapus tugas <LinkText>{deletedValue}</LinkText> dalam proyek <LinkText href={`/projects/${projectId}`}>{project.projectName}</LinkText>.
@@ -68,41 +73,81 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                 {(eventType === getHistoryEventType.assignedTo) && (action === getHistoryAction.update) && (
                     <div className="flex flex-col gap-1.5">
                         <div>
-                            Anda mengubah <b>Penerima Tugas</b> pada tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
+                            Anda mengubah <b>Penerima</b> pada tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
                         </div>
                         <div className="flex items-center gap-1.5 text-xs md:text-sm text-dark-blue">
                             <div className="flex items-center gap-1.5">
-                                <UserIcon fullName={previousValue?.fullName} src={previousValue?.profileImage?.attachmentStoragePath} />
-                                <Label color="#47389F" text={previousValue?.fullName || "Belum Ditugaskan"}/>
+                                {previousValue === null ? (
+                                    <>
+                                        <UserIcon src={'/images/user-placeholder.png'} />
+                                        <LinkText>{`Belum Ditugaskan`}</LinkText>
+                                    </>
+                                ) : (
+                                    <>
+                                        <UserIcon fullName={previousValue?.fullName} src={previousValue?.profileImage?.attachmentStoragePath} />
+                                        <LinkText>{previousValue?.fullName}</LinkText>
+                                    </>
+                                )}
                             </div>
                             <div>
                                 {"-->"}
                             </div>
                             <div className="flex items-center gap-1.5">
-                                <UserIcon fullName={newValue?.fullName} src={newValue.profileImage?.attachmentStoragePath} />
-                                <Label color="#47389F" text={newValue?.fullName || "Belum Ditugaskan"}/>
+                                {newValue === null ? (
+                                    <>
+                                        <UserIcon src={'/images/user-placeholder.png'} />
+                                        <LinkText>{`Belum Ditugaskan`}</LinkText>
+                                    </>
+                                ) : (
+                                    <>
+                                        <UserIcon fullName={newValue?.fullName} src={newValue?.profileImage?.attachmentStoragePath} />
+                                        <LinkText>{newValue?.fullName}</LinkText>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
                 )}
+                {(eventType === getHistoryEventType.status) && (action === getHistoryAction.create) && (
+                    <>
+                        Anda membuat <b>Status Tugas</b> <Label color="#47389F" text={newValue.toUpperCase()}/> dalam proyek <LinkText link={`/projects/${projectId}/board`}>{project.projectName}</LinkText>.
+                    </>
+                )}
+                {(eventType === getHistoryEventType.status) && (action === getHistoryAction.update) && (
+                    <div className="flex flex-col gap-1.5">
+                        <div>
+                            Anda mengubah <b>Status Tugas</b> dalam proyek <LinkText link={`/projects/${projectId}/board`}>{project.projectName}</LinkText>.
+                        </div>
+                        <div className="flex flex-col gap-1.5 text-xs md:text-sm text-dark-blue">
+                            <div className="flex items-center gap-1.5">
+                                <Label color="#47389F" text={previousValue.toUpperCase()}/> {"-->"} <Label color="#47389F" text={newValue.toUpperCase()}/>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {(eventType === getHistoryEventType.status) && (action === getHistoryAction.delete) && (
+                    <>
+                        Anda menghapus <b>Status Tugas</b> <Label color="#47389F" text={deletedValue.toUpperCase()}/> dalam proyek <LinkText link={`/projects/${projectId}/board`}>{project.projectName}</LinkText>.
+                    </>
+                )}
                 {(eventType === getHistoryEventType.comment) && (action === getHistoryAction.create) && (
                     <>
-                        Anda membuat komentar pada tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
+                        Anda membuat <b>Komentar</b> pada tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
                     </>
                 )}
                 {(eventType === getHistoryEventType.comment) && (action === getHistoryAction.delete) && (
                     <>
-                        Anda menghapus komentar pada tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
+                        Anda menghapus <b>Komentar</b> pada tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
                     </>
                 )}
                 {(eventType === getHistoryEventType.attachment) && (action === getHistoryAction.create) && (
                     <>
-                        Anda menambahkan lampiran pada tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
+                        Anda menambahkan <b>Lampiran</b> pada tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
                     </>
                 )}
                 {(eventType === getHistoryEventType.attachment) && (action === getHistoryAction.delete) && (
                     <>
-                        Anda menghapus lampiran pada tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
+                        Anda menghapus <b>Lampiran</b> pada tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
                     </>
                 )}
                 {(eventType === getHistoryEventType.profile) && (action === getHistoryAction.update) && (

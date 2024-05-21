@@ -73,7 +73,7 @@ export default function History(){
         {label: "Tugas", value: getHistoryEventType.task},
         {label: "Nama Tugas", value: getHistoryEventType.taskName},
         {label: "Status Tugas", value: getHistoryEventType.taskStatus},
-        {label: "Penerima Tugas", value: getHistoryEventType.assignedTo},
+        {label: "Penerima", value: getHistoryEventType.assignedTo},
         {label: "Komentar", value: getHistoryEventType.comment},
         {label: "Lampiran", value: getHistoryEventType.attachment},
         {label: "Profil", value: getHistoryEventType.profile}

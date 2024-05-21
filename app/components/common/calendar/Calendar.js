@@ -58,7 +58,7 @@ export default function Calendar({projectKey, projectId, tasks}){
                                         <Label text={getPriority(priority).label.toUpperCase()} color={getPriority(priority).color}/>
                                     </div>
                                     <div className="mt-1 flex gap-1 items-center font-semibold text-xs md:text-sm w-fit">
-                                        Penerima Tugas:
+                                        Penerima:
                                         <div className="flex gap-1 items-center">
                                             {assignedTo && (
                                                 <UserIcon fullName={assignedTo} src={assignedToImage} size="sm"/>
@@ -114,7 +114,6 @@ export default function Calendar({projectKey, projectId, tasks}){
                 buttonText={{
                     today: 'Ke Tanggal Hari Ini',
                 }}
-                height={900}
                 showNonCurrentDates={false}
                 fixedWeekCount={false}
                 weekNumbers={true}

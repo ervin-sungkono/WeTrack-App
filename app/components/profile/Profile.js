@@ -1,7 +1,7 @@
 /* eslint-disable react/no-children-prop */
 "use client"
 
-import { useSession } from "next-auth/react"
+import { useSession, signOut } from "next-auth/react"
 import { IoIosInformationCircle, IoMdPin } from "react-icons/io"
 import { CgProfile } from "react-icons/cg";
 import { MdEmail } from "react-icons/md"
@@ -207,7 +207,7 @@ export default function ProfileLayout(){
                 setError(true);
                 console.log(res.error)
             }else{
-                router.push("/")
+                signOut()
             }
         }catch (error){
             setError(true);
