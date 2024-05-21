@@ -6,10 +6,7 @@ export default function HistoryList({historyData, pageSize, pageIndex, setPageIn
     return (
         <div className="flex flex-col gap-2 md:gap-4 mb-8">
             {historyData.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize).map((item, index) => (
-                <HistoryItem 
-                    key={index}
-                    {...item}
-                />
+                <HistoryItem key={index} {...item} />
             ))}
             <HistoryPagination
                 pageIndex={pageIndex}
