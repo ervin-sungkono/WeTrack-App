@@ -201,7 +201,7 @@ export async function PUT(request, response) {
                 })
             }
 
-            if((updatedTaskData.assignedTo != taskData.assignedTo)) {
+            else if((updatedTaskData.assignedTo != taskData.assignedTo)) {
                 const oldAssignedToValue = taskData.assignedTo == null ? null : await getDoc(doc(db, "users", taskData.assignedTo))
                 const newAssignedToValue = updatedTaskData.assignedTo == null ? null : await getDoc(doc(db, "users", updatedTaskData.assignedTo))
 
@@ -213,6 +213,16 @@ export async function PUT(request, response) {
                     eventType: getHistoryEventType.assignedTo,
                     previousValue: taskData.assignedTo == null ? null : {...oldAssignedToValue.data()},
                     newValue: updatedTaskData.assignedTo == null ? null : {...newAssignedToValue.data()}
+                })
+            }
+
+            else {
+                await createHistory({
+                    userId: userId,
+                    taskId: taskId,
+                    projectId: taskData.projectId,
+                    action: getHistoryAction.update,
+                    eventType: updatedTaskData.type == 'Task' ? getHistoryEventType.task  : getHistoryEventType.subtask
                 })
             }
 
@@ -275,7 +285,7 @@ export async function DELETE(request, response) {
             userId: userId,
             taskId: taskId,
             projectId: taskDoc.data().projectId,
-            eventType: getHistoryEventType.task,
+            eventType: taskDoc.data().type == 'Task' ? getHistoryEventType.task : getHistoryEventType.subtask,
             action: getHistoryAction.delete,
             deletedValue: taskName
         })
