@@ -14,7 +14,7 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
     }
 
     return (
-        <div className="w-full bg-white flex flex-col md:flex-row items-end md:items-center px-4 py-2 rounded shadow-sm gap-3">
+        <div className="w-full bg-white flex flex-col md:flex-row items-end md:items-center px-4 py-3 rounded shadow-md">
             <div className="w-full text-xs md:text-sm">
                 {(eventType === getHistoryEventType.project) && (action === getHistoryAction.create) && (
                     <>
@@ -44,12 +44,11 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                 {(eventType === getHistoryEventType.taskName) && (action === getHistoryAction.update) && (
                     <div className="flex flex-col gap-1.5">
                         <div>
-                            Anda melakukan perubahan data pada tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
+                            Anda mengubah <b>Nama Tugas</b> untuk tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
                         </div>
                         <div className="flex flex-col gap-1.5 text-xs md:text-sm text-dark-blue">
-                            Nama tugas baru:
                             <div className="flex items-center gap-1.5">
-                                {previousValue} {"-->"} <LinkText>{newValue}</LinkText>
+                                <Label color="#47389F" text={previousValue}/> {"-->"} <Label color="#47389F" text={newValue}/>
                             </div>
                         </div>
                     </div>
@@ -57,12 +56,11 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                 {(eventType === getHistoryEventType.taskStatus) && (action === getHistoryAction.update) && (
                     <div className="flex flex-col gap-1.5">
                         <div>
-                            Anda melakukan perubahan data pada tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
+                            Anda mengubah <b>Status Tugas</b> pada tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
                         </div>
                         <div className="flex flex-col gap-1.5 text-xs md:text-sm text-dark-blue">
-                            Status tugas baru:
                             <div className="flex items-center gap-1.5">
-                                <Label color="#47389F" text={previousValue}/> {"-->"} <Label color="#47389F" text={newValue}/>
+                                <Label color="#47389F" text={previousValue.toUpperCase()}/> {"-->"} <Label color="#47389F" text={newValue.toUpperCase()}/>
                             </div>
                         </div>
                     </div>
@@ -70,13 +68,19 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                 {(eventType === getHistoryEventType.assignedTo) && (action === getHistoryAction.update) && (
                     <div className="flex flex-col gap-1.5">
                         <div>
-                            Anda melakukan perubahan data pada tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
+                            Anda mengubah <b>Penerima Tugas</b> pada tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
                         </div>
-                        <div className="flex flex-col gap-1.5 text-xs md:text-sm text-dark-blue">
-                            Penerima tugas baru:
+                        <div className="flex items-center gap-1.5 text-xs md:text-sm text-dark-blue">
                             <div className="flex items-center gap-1.5">
-                                <UserIcon fullName={newValue.fullName} profileImage={newValue.profileImage} />
-                                <span>{newValue.fullName}</span>
+                                <UserIcon fullName={previousValue?.fullName} src={previousValue?.profileImage?.attachmentStoragePath} />
+                                <Label color="#47389F" text={previousValue?.fullName || "Belum Ditugaskan"}/>
+                            </div>
+                            <div>
+                                {"-->"}
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                                <UserIcon fullName={newValue?.fullName} src={newValue.profileImage?.attachmentStoragePath} />
+                                <Label color="#47389F" text={newValue?.fullName || "Belum Ditugaskan"}/>
                             </div>
                         </div>
                     </div>
