@@ -151,20 +151,20 @@ export async function PUT(request, response) {
                     }
         
                     await updateDoc(taskDocRef, {
-                        status: startStatus,
+                        // status: startStatus,
                         finishedDate: startStatus == endStatus ? new Date().toISOString() : null,
                         updatedAt: serverTimestamp()
                     });
         
-                    await createHistory({
-                        userId: userId,
-                        taskId: item.id,
-                        projectId: taskDoc.data().projectId,
-                        action: getHistoryAction.update,
-                        eventType: getHistoryEventType.taskStatus,
-                        previousValue: previousStartStatus.data().statusName,
-                        newValue: startStatusDoc.data().statusName
-                    });
+                    // await createHistory({
+                    //     userId: userId,
+                    //     taskId: item.id,
+                    //     projectId: taskDoc.data().projectId,
+                    //     action: getHistoryAction.update,
+                    //     eventType: getHistoryEventType.taskStatus,
+                    //     previousValue: previousStartStatus.data().statusName,
+                    //     newValue: startStatusDoc.data().statusName
+                    // });
                 });
         
                 await Promise.all(updateTasks);
@@ -189,20 +189,20 @@ export async function PUT(request, response) {
                 }
         
                 await updateDoc(taskDocRef, {
-                    status: endStatus,
+                    // status: endStatus,
                     finishedDate: null,
                     updatedAt: serverTimestamp()
                 });
         
-                await createHistory({
-                    userId: userId,
-                    taskId: item.id,
-                    projectId: taskDoc.data().projectId,
-                    action: getHistoryAction.update,
-                    eventType: getHistoryEventType.taskStatus,
-                    previousValue: previousEndStatus.data().statusName,
-                    newValue: endStatusDoc.data().statusName
-                });
+                // await createHistory({
+                //     userId: userId,
+                //     taskId: item.id,
+                //     projectId: taskDoc.data().projectId,
+                //     action: getHistoryAction.update,
+                //     eventType: getHistoryEventType.taskStatus,
+                //     previousValue: previousEndStatus.data().statusName,
+                //     newValue: endStatusDoc.data().statusName
+                // });
             });
         
             await Promise.all(updateTasks);

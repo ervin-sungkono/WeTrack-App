@@ -8,8 +8,9 @@ export const getHistoryEventType = {
     task: "Tugas",
     subtask: "Subtugas",
     taskName: "Nama Tugas",
-    taskStatus: "Status Tugas",
+    taskStatus: "Status Tugas", //status dalam tugas
     project: "Proyek",
+    status: "Status",   //status di kanban board
     comment: "Komentar",
     attachment: "Lampiran",
     assignedTo: "Penerima",
