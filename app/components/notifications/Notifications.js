@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react"
 import { sortDateTimestampFn } from "@/app/lib/helper"
 import { getUserNotification } from "@/app/lib/fetch/user"
+import { IoFilter as FilterIcon } from "react-icons/io5"
 
 import Header from "../common/Header"
 import SelectButton from "../common/button/SelectButton"
@@ -16,12 +17,13 @@ export default function Notifications(){
         {label: "Notifikasi", url: "/notifications"},
     ]
 
-    const [type, setType] = useState("Semua")
+    const [type, setType] = useState("Semua Jenis")
     const [pageIndex, setPageIndex] = useState(0)
     const [pageSize, setPageSize] = useState(10)
     const [pageCount, setPageCount] = useState(0)
     const [notificationsData, setNotificationsData] = useState([])
     const [sorting, setSorting] = useState('desc')
+    const [filterDropdown, setFilterDropdown] = useState(false)
 
     const [dataFetched, setDataFetched] = useState([])
 
@@ -43,7 +45,7 @@ export default function Notifications(){
     }, [notificationsData, pageSize])
 
     const typeOptions = [
-        {label: "Semua", value: "Semua"},
+        {label: "Semua Jenis", value: "Semua Jenis"},
         {label: "Penugasan", value: "AssignedTask"},
         {label: "Komentar Baru", value: "AddedComment"},
         {label: "Penyebutan", value: "Mention"},
@@ -58,7 +60,7 @@ export default function Notifications(){
 
     const handleTypeChange = (value) => {
         setType(value)
-        if(value === "Semua"){
+        if(value === "Semua Jenis"){
             setNotificationsData(dataFetched)
         }else{
             setNotificationsData(dataFetched.filter(item => item.type === value))
@@ -80,24 +82,29 @@ export default function Notifications(){
                 {notificationsData && (
                     <div className="flex flex-col md:flex-row justify-between items-center gap-2">
                         <div className="w-full flex justify-between items-center gap-3 md:gap-6">
-                            <div className="flex items-center gap-2 md:gap-4">
-                                <div className="flex items-center gap-2">
-                                    <b className="hidden xs:block text-xs md:text-sm">Jenis:</b>
-                                    <SelectButton 
-                                        name={"type-button"}
-                                        placeholder={type} 
-                                        options={typeOptions} 
-                                        onChange={handleTypeChange}
-                                    />
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <b className="hidden xs:block text-xs md:text-sm">Tampilkan:</b>
-                                    <SelectButton 
-                                        name={"page-size-button"}
-                                        placeholder={pageSize} 
-                                        options={pageSizeOptions} 
-                                        onChange={handlePageSizeChange}
-                                    />
+                            <div className="relative">
+                                <button className="block md:hidden text-white bg-basic-blue hover:bg-basic-blue/80 rounded-md p-1.5" onClick={() => setFilterDropdown(!filterDropdown)}>
+                                    <FilterIcon size={20}/>
+                                </button>
+                                <div className={`${filterDropdown ? "block" : "hidden"} border border-dark-blue/30 md:border-none md:flex z-50 absolute -bottom-2 left-0 translate-y-full md:translate-y-0 px-2 py-3 bg-white rounded-md md:bg-transparent md:p-0 md:static flex flex-col md:flex-row gap-2 md:gap-4`}>
+                                    <div className="flex items-center gap-2">
+                                        <b className="hidden xs:block text-xs md:text-sm">Jenis:</b>
+                                        <SelectButton 
+                                            name={"type-button"}
+                                            placeholder={type} 
+                                            options={typeOptions} 
+                                            onChange={handleTypeChange}
+                                        />
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <b className="hidden xs:block text-xs md:text-sm">Tampilkan:</b>
+                                        <SelectButton 
+                                            name={"page-size-button"}
+                                            placeholder={pageSize} 
+                                            options={pageSizeOptions} 
+                                            onChange={handlePageSizeChange}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                             <SortButton sorting={sorting} setSorting={setSorting}/>
