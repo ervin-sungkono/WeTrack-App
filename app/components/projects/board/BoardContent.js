@@ -427,7 +427,7 @@ export default function BoardContent({ projectId }){
                   name={"board-label-button"}
                   options={[{label: "Label", value: null},...labelOptions]} 
                   onChange={handleLabelChange}
-                  reset={!filterAssignee}
+                  reset={!filterLabel}
               />
               {(filterAssignee || filterLabel) &&
               <Button variant="primary" size="sm" onClick={() => resetFilter()}>

@@ -5,8 +5,6 @@ import idLocale from "@fullcalendar/core/locales/id";
 
 export default function Calendar({projectKey, projectId, tasks}){
 
-    console.log(tasks)
-
     const formattedTasks = tasks.map(task => {
         return {
             id: task.id,

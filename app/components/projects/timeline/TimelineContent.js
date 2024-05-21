@@ -142,6 +142,10 @@ export default function TimelineContent({ projectId }){
         return () => unsubscribe()
     }, [projectId, query])
 
+    useEffect(() => {
+        console.log(tasks)
+    }, [tasks])
+
     const handleStatusChange = (value) => {
         setStatus(value)
         if(value === "Status"){
@@ -149,15 +153,15 @@ export default function TimelineContent({ projectId }){
                 const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query));
                 setTasks(filteredData);
             }else{
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && (task.label === label || label === "Label") && (task.assignedToData.fullName === assignee || assignee === "Penerima"));
+                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && (task.labelsData?.includes(label) || label === "Label") && (task.assignedToData?.fullName === assignee || assignee === "Penerima"));
                 setTasks(filteredData);
             }
         }else{
             if(label === "Label" && assignee === "Penerima"){
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.statusData.statusName === value);
+                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.statusData?.statusName === value);
                 setTasks(filteredData);
             }else{
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.statusData.statusName === value && (task.label === label || label === "Label") && (task.assignedToData.fullName === assignee || assignee === "Penerima"));
+                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.statusData?.statusName === value && (task.labelsData?.includes(label) || label === "Label") && (task.assignedToData?.fullName === assignee || assignee === "Penerima"));
                 setTasks(filteredData);
             }
         }
@@ -170,15 +174,15 @@ export default function TimelineContent({ projectId }){
                 const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query));
                 setTasks(filteredData);
             }else{
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && (task.label === label || label === "Label") && (task.statusData.statusName === status || status === "Status"));
+                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && (task.labelsData?.includes(label) || label === "Label") && (task.statusData.statusName === status || status === "Status"));
                 setTasks(filteredData);
             }
         }else{
             if(label === "Label" && status === "Status"){
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.assignedToData.fullName === value);
+                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.assignedToData?.fullName === value);
                 setTasks(filteredData);
             }else{
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.assignedToData.fullName === value && (task.label === label || label === "Label") && (task.statusData.statusName === status || status === "Status"));
+                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.assignedToData?.fullName === value && (task.labelsData?.includes(label) || label === "Label") && (task.statusData?.statusName === status || status === "Status"));
                 setTasks(filteredData);
             }
         }
@@ -191,15 +195,15 @@ export default function TimelineContent({ projectId }){
                 const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query));
                 setTasks(filteredData);
             }else{
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && (task.assignedToData.fullName === assignee || assignee === "Penerima") && (task.statusData.statusName === status || status === "Status"));
+                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && (task.assignedToData?.fullName === assignee || assignee === "Penerima") && (task.statusData?.statusName === status || status === "Status"));
                 setTasks(filteredData);
             }
         }else{
             if(assignee === "Penerima" && status === "Status"){
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.assignedToData.fullName === value);
+                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.labelsData?.includes(value));
                 setTasks(filteredData);
             }else{
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.assignedToData.fullName === value && (task.assignedToData.fullName === assignee || assignee === "Penerima") && (task.statusData.statusName === status || status === "Status"));
+                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.labelsData?.includes(value) && (task.assignedToData?.fullName === assignee || assignee === "Penerima") && (task.statusData?.statusName === status || status === "Status"));
                 setTasks(filteredData);
             }
         }
@@ -207,7 +211,7 @@ export default function TimelineContent({ projectId }){
 
     return (
         <div className="flex flex-col gap-4">
-            <div className="z-fixed flex flex-col xs:flex-row justify-between gap-4 items-center">
+            <div className="z-[2] flex flex-col xs:flex-row justify-between gap-4 items-center">
                 <div className="w-full flex justify-center xs:justify-start items-center gap-3 md:gap-6">
                     <SearchBar placeholder={"Cari jadwal.."} handleSearch={handleSearch}/>
                     <div className="relative">
