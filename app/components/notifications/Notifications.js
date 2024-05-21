@@ -43,7 +43,7 @@ export default function Notifications(){
     }, [notificationsData, pageSize])
 
     const typeOptions = [
-        {label: "Semua", value: 0},
+        {label: "Semua", value: "Semua"},
         {label: "Penugasan", value: "AssignedTask"},
         {label: "Komentar Baru", value: "AddedComment"},
         {label: "Penyebutan", value: "Mention"},
@@ -58,7 +58,7 @@ export default function Notifications(){
 
     const handleTypeChange = (value) => {
         setType(value)
-        if(value === 0){
+        if(value === "Semua"){
             setNotificationsData(dataFetched)
         }else{
             setNotificationsData(dataFetched.filter(item => item.type === value))
@@ -77,7 +77,7 @@ export default function Notifications(){
                 <Header title={"Notifikasi"} links={links}/>
             </div>
             <div className="h-full flex flex-col mt-4 md:mt-6 gap-4">
-                {notificationsData && notificationsData.length > 0 && (
+                {notificationsData && (
                     <div className="flex flex-col md:flex-row justify-between items-center gap-2">
                         <div className="w-full flex justify-between items-center gap-3 md:gap-6">
                             <div className="flex items-center gap-2 md:gap-4">
@@ -113,7 +113,7 @@ export default function Notifications(){
                         pageCount={pageCount}
                         dataCount={notificationsData.length}
                     /> :
-                    <EmptyState message={"Belum ada data notifikasi yang tersedia."}/>
+                    <EmptyState message="Belum ada data notifikasi yang tersedia."/>
                 }
             </div>
         </DashboardLayout>
