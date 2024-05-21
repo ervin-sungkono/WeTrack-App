@@ -130,7 +130,7 @@ export async function POST(request, response){
             userId: userId,
             projectId: projectId,
             action: getHistoryAction.create,
-            eventType: getHistoryEventType.taskStatus
+            eventType: getHistoryEventType.status
         })
 
         return NextResponse.json({
