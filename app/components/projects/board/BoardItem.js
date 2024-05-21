@@ -156,7 +156,7 @@ export default function BoardItem({ item, index }){
                 <CustomTooltip id={`task-${item.id}-priority-tooltip`} content={`Prioritas: ${priorityLabel}`}>
                   <div className="w-4 h-4 rounded-full" style={{backgroundColor: priorityColor}}></div>
                 </CustomTooltip>}
-                <CustomTooltip id={`task-${item.id}-tooltip`} content={item.assignedTo?.fullName ?? "Belum ditugaskan"}>
+                <CustomTooltip id={`task-${item.id}-tooltip`} content={item.assignedTo?.fullName ?? "Belum Ditugaskan"}>
                   <UserIcon 
                     size="sm"
                     src={item.assignedTo ? item.assignedTo.profileImage : '/images/user-placeholder.png'}

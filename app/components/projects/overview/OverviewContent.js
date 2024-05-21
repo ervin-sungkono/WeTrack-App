@@ -181,7 +181,7 @@ export default function OverviewContent({ projectId }){
         },
         {
             accessorKey: 'assignedToData',
-            header: 'Penerima Tugas',
+            header: 'Penerima',
             cell: ({ row }) => {
                 const { id, fullName, profileImage } = row.getValue('assignedToData') ?? {}
                 return(
@@ -195,7 +195,7 @@ export default function OverviewContent({ projectId }){
                             </Link>
                         ) : (
                             <div className="w-full h-full block">
-                                {"Belum ditugaskan"}
+                                {"Belum Ditugaskan"}
                             </div>
                         )}
                     </>
