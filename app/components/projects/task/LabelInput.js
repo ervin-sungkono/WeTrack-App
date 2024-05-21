@@ -9,10 +9,12 @@ import { onSnapshot } from "firebase/firestore";
 import { pickTextColorBasedOnBgColor } from "@/app/lib/color";
 
 import { IoMdSettings as SettingsIcon } from "react-icons/io";
+import { validateUserRole } from "@/app/lib/helper";
 
-export default function LabelInput({ hideLabel = false, projectId, labelData, onChange, resetLabel = null, showButton = true, buttonType = 'default' }){
+export default function LabelInput({ hideLabel = false, projectId, labelData, onChange, resetLabel = null, buttonType = 'default' }){
     const [labelModal, setLabelModal] = useState(false)
     const [labels, setLabels] = useState([])
+    const [role, setRole] = useState()
 
     useEffect(() => {
         if(!projectId) return
@@ -29,6 +31,24 @@ export default function LabelInput({ hideLabel = false, projectId, labelData, on
         })
 
         return () => unsubscribe()
+    }, [projectId])
+
+    useEffect(() => {
+        try{
+            if(projectId){
+                getSession()
+                .then(session => {
+                    if(session){
+                        getProjectRole({ projectId, userId: session.user.uid})
+                        .then(role => setRole(role))
+                    }
+                })
+            }
+        }
+        catch(e){
+            console.log(e)
+            setRole(null)
+        }
     }, [projectId])
 
     const tagifyRef = useRef()
@@ -78,7 +98,7 @@ export default function LabelInput({ hideLabel = false, projectId, labelData, on
                     defaultValue={labelData}
                     onChange={onChange}
                 />
-                {showButton && 
+                {validateUserRole({ userRole: role, minimumRole: 'Owner' }) && 
                 <Button variant="primary" size="sm" onClick={() => setLabelModal(true)}>
                     {buttonType === 'icon' && <SettingsIcon size={20} className="mx-auto"/>}
                     {buttonType === 'default' && <p>Pengaturan</p>}
