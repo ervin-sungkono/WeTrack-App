@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
+import { getProjectRole } from '@/app/firebase/util';
 
 export async function POST(request, response) {
     try {
@@ -37,6 +38,14 @@ export async function POST(request, response) {
                 message: "Project not found",
                 success: false
             }, { status: 404 });
+        }
+
+        const projectRole = await getProjectRole({projectId, userId})
+        if(projectRole !== 'Owner'){
+            return NextResponse.json({
+                message: "Unauthorized",
+                success: false
+            }, { status: 401 });
         }
 
         const taskStatusDocRef = doc(db, 'taskStatuses', statusId);

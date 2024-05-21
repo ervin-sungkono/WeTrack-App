@@ -165,10 +165,6 @@ export async function PUT(request, response) {
             await Promise.all(labels.map(async (label) =>{
                 const labelDoc = await getDoc(doc(db, "labels", label)) 
 
-                if(labelDoc.data()?.projectId != projectId) {
-                    throw new Error("Label is not found in the project")
-                }
-
                 if(labelDoc.exists()){
                     return {
                         id: labelDoc.id,
@@ -204,6 +200,21 @@ export async function PUT(request, response) {
                     eventType: getHistoryEventType.taskName,
                     previousValue: taskData.taskName,
                     newValue: updatedTaskData.taskName
+                })
+            }
+
+            if((updatedTaskData.assignedTo != taskData.assignedTo)) {
+                const oldAssignedToValue = taskData.assignedTo == null ? null : await getDoc(doc(db, "users", taskData.assignedTo))
+                const newAssignedToValue = updatedTaskData.assignedTo == null ? null : await getDoc(doc(db, "users", updatedTaskData.assignedTo))
+
+                await createHistory({
+                    userId: userId,
+                    taskId: taskId,
+                    projectId: taskData.projectId,
+                    action: getHistoryAction.update,
+                    eventType: getHistoryEventType.assignedTo,
+                    previousValue: taskData.assignedTo == null ? null : {...oldAssignedToValue.data()},
+                    newValue: updatedTaskData.assignedTo == null ? null : {...newAssignedToValue.data()}
                 })
             }
 
@@ -250,6 +261,8 @@ export async function DELETE(request, response) {
             }, { status: 404 })
         }
 
+        const taskName = taskDoc.data().taskName
+
         const projectRole = await getProjectRole({ projectId: taskDoc.data().projectId, userId})
         if(projectRole !== 'Owner' && projectRole !== 'Member'){
             return NextResponse.json({
@@ -260,6 +273,15 @@ export async function DELETE(request, response) {
 
         await deleteDoc(taskDocRef) 
 
+        await createHistory({ 
+            userId: userId,
+            taskId: taskId,
+            projectId: taskDoc.data().projectId,
+            eventType: getHistoryEventType.task,
+            action: getHistoryAction.delete,
+            deletedValue: taskName
+        })
+
         if(taskDoc.data().status !== null && taskDoc.data().type == "Task") {
             const currentLastOrderDoc = await getDoc(doc(db, "taskOrderCounters", taskDoc.data().status))
             const currentLastOrder = currentLastOrderDoc.data().lastOrder
@@ -269,14 +291,6 @@ export async function DELETE(request, response) {
                 updatedAt: serverTimestamp()
             })
         }
-
-        await createHistory({ 
-            userId: userId,
-            taskId: taskId,
-            projectId: taskDoc.data().projectId,
-            eventType: getHistoryEventType.task,
-            action: getHistoryAction.delete
-        })
 
         return NextResponse.json({
             success: true,

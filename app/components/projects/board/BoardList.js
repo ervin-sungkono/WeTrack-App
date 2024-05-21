@@ -2,6 +2,8 @@
 import { memo } from "react"
 import { Droppable } from "@hello-pangea/dnd"
 import BoardItem from "./BoardItem"
+import { useRole } from "@/app/lib/context/role"
+import { validateUserRole } from "@/app/lib/helper"
 
 const getListStyle = isDraggingOver => ({
     position: 'relative',
@@ -14,8 +16,9 @@ const getListStyle = isDraggingOver => ({
 })
 
 function BoardList({ items, placeholderProps, droppableId, children }){
+    const role = useRole()
     return(
-        <Droppable droppableId={droppableId} type="ISSUE">
+        <Droppable droppableId={droppableId} type="ISSUE" isDropDisabled={!validateUserRole({ userRole: role, minimumRole: 'Member'})}>
             {(provided, snapshot) => (
                 <div 
                     ref={provided.innerRef} 

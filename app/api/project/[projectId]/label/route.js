@@ -1,49 +1,44 @@
 import { db } from "@/app/firebase/config";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { getUserSession } from "@/app/lib/session";
-import { addDoc, collection, doc, getDoc, serverTimestamp } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, serverTimestamp, query, where } from "firebase/firestore";
 import { getProjectRole } from "@/app/firebase/util";
 import { NextResponse } from "next/server";
 
-// export async function GET(request, response){
-//     try {
-//         const session = await getUserSession(request, response, nextAuthOptions);
-//         if (!session.user) {
-//             return NextResponse.json({ 
-//                 message: "Unauthorized, must login first" 
-//             }, { status: 401 });
-//         }
+export async function GET(request, response){
+    try {
+        const session = await getUserSession(request, response, nextAuthOptions);
 
-//         const userId = session.user.uid;
-//         if (!userId) {
-//             return NextResponse.json({ 
-//                 message: "User not found" 
-//             }, { status: 404 });
-//         }
+        const userId = session?.user.uid;
+        if (!userId) {
+            return NextResponse.json({ 
+                message: "User not found" 
+            }, { status: 404 });
+        }
 
-//         const { projectId } = response.params
+        const { projectId } = response.params
 
-//         const labelColRef = collection(db, 'labels')
-//         const q = query(labelColRef, where("projectId", '==', projectId))
-//         const querySnapshot = await getDocs(q)
+        const labelColRef = collection(db, 'labels')
+        const q = query(labelColRef, where("projectId", '==', projectId))
+        const querySnapshot = await getDocs(q)
 
-//         const labels = querySnapshot.docs.map(document => ({
-//             id: document.id,
-//             ...document.data()
-//         }))
+        const labels = querySnapshot.docs.map(document => ({
+            id: document.id,
+            ...document.data()
+        }))
 
-//         return NextResponse.json({
-//             data: labels,
-//             message: "Successfully get all label"
-//         }, { status: 200 })
+        return NextResponse.json({
+            data: labels,
+            message: "Successfully get all label"
+        }, { status: 200 })
 
-//     } catch (error) {
-//         return NextResponse.json({
-//             data: null,
-//             message: error.message
-//         }, { status: 500 });
-//     }
-// }
+    } catch (error) {
+        return NextResponse.json({
+            data: null,
+            message: error.message
+        }, { status: 500 });
+    }
+}
 
 export async function POST(request, response){
     try {       

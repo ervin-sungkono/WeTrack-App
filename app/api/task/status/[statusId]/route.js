@@ -4,6 +4,7 @@ import { getUserSession } from "@/app/lib/session";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { createHistory, getProjectRole } from "@/app/firebase/util";
 import { collection, updateDoc, deleteDoc, getDoc, doc, serverTimestamp, query, where, getDocs } from "firebase/firestore";
+import { getHistoryAction, getHistoryEventType } from "@/app/lib/history";
 
 export async function PUT(request, response){
     try {
@@ -59,7 +60,7 @@ export async function PUT(request, response){
         if(newTaskStatus.exists()) {
             await createHistory({
                 userId: userId,
-                projectId: projectId,
+                projectId: statusSnap.data().projectId,
                 action: "update",
                 eventType: "Task Status",
                 previousValue: statusSnap.data().statusName,
@@ -127,6 +128,8 @@ export async function DELETE(request, response){
             }, { status: 404 })
         }
 
+        const statusName = statusSnap.data().statusName
+
         const taskStatusColRef = collection(db, "status")
         const q = query(taskStatusColRef, where("projectId", '==', projectId))
         const querySnapshot = await getDocs(q)
@@ -192,8 +195,9 @@ export async function DELETE(request, response){
         await createHistory({
             userId: userId,
             projectId: projectId,
-            action: "delete",
-            eventType: "Task Status"
+            action: getHistoryAction.delete,
+            eventType: getHistoryEventType.taskStatus,
+            deletedValue: statusName
         })
 
         return NextResponse.json({
