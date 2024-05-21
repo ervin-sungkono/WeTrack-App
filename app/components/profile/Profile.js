@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import PopUpInfo from "../common/alert/PopUpInfo";
 
 export default function ProfileLayout(){
-    const { data: session } = useSession()
+    const { data: session, update } = useSession()
     const router = useRouter()
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
@@ -183,6 +183,10 @@ export default function ProfileLayout(){
                 }else{
                     setSuccessUpdateProfile(true)
                 }
+                await update({ 
+                    fullName: res.data.fullName, 
+                    profileImage: profileImageDeleted ? null : res.data.profileImage 
+                })
             }
         }catch(error){
             setError(true);

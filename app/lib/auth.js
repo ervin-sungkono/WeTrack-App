@@ -39,8 +39,16 @@ export const nextAuthOptions = {
     }),
   ],
   callbacks: {
-    jwt: async ({ token, user }) => {
+    jwt: async ({ token, user, trigger, session }) => {
         user && (token.user = user)
+        if(trigger === "update"){
+          if(session?.fullName){
+            token.user.fullName = session.fullName
+          }
+          if(session?.profileImage !== undefined){
+            token.user.profileImage = session.profileImage
+          }
+        }
         if (Date.now() > token.user.expires) {
           return null; // Return null to invalidate the session
         }
