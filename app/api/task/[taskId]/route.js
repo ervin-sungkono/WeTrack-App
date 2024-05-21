@@ -119,17 +119,17 @@ export async function PUT(request, response) {
 
         if(taskData.type == 'SubTask' && parentId) {
             const parentTaskSnap = await getDoc(doc(db, "tasks", parentId))
-
-            if(parentTaskSnap.data()?.projectId != taskData.projectId) {
-                return NextResponse.json({
-                    message: "Parent id is not found in the project"
-                }, { status: 400 })
-            }
     
             if(!parentTaskSnap.exists()) {
                 return NextResponse.json({
                     message: "Parent task not found"
                 }, { status: 404 })
+            }
+
+            if(parentTaskSnap.data()?.projectId != taskData.projectId) {
+                return NextResponse.json({
+                    message: "Parent id is not found in the project"
+                }, { status: 400 })
             }
         }
 
@@ -164,14 +164,12 @@ export async function PUT(request, response) {
         if(labels && labels.length > 0){
             await Promise.all(labels.map(async (label) =>{
                 const labelDoc = await getDoc(doc(db, "labels", label)) 
-
-                if(labelDoc.exists()){
-                    return {
-                        id: labelDoc.id,
-                        ...labelDoc.data()
-                    }
+                if(!labelDoc.exists()){
+                    throw new Error("Label doesn't exists")
                 }
-                return null
+                if(labelDoc.data()?.projectId != taskData.projectId) {
+                    throw new Error("Label doesn't exist in the project")
+                }
             }))
         }
         

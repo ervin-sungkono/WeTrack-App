@@ -1,6 +1,7 @@
 import { db } from "@/app/firebase/config"
 import { query, orderBy, where, collection, doc, and, getDocs, getDoc, updateDoc, serverTimestamp, addDoc, limit, deleteDoc } from "firebase/firestore"
 import { getSession } from "next-auth/react"
+import { deleteExistingFile } from "../lib/file"
 
 export const getTaskReferenceOrderBy = ({ field, id, orderByKey }) => {
     const q = query(collection(db, 'tasks'), and(where(field, '==', id), where('type', '==', 'Task')), orderBy(orderByKey))
@@ -55,7 +56,9 @@ export const deleteProject = async({ projectId }) => {
     
         const projectDocRef = doc(db, "projects", projectId)
     
-        await deleteDoc(projectDocRef)
+        await updateDoc(projectDocRef, {
+            deletedAt: serverTimestamp()
+        })
 
     } catch (error) {
         throw new Error("Something went wrong when deleting project")
@@ -104,6 +107,37 @@ export const deleteTasks = async({ projectId }) => {
     }
 }
 
+export const deleteTask = async({ taskId }) => {
+    try {   
+        if(!taskId) return null
+    
+        const taskDocRef = doc(db, "tasks", taskId)
+        const taskDoc = await getDoc(taskDocRef)
+
+        if(!taskDoc.exists()) {
+            throw new Error("Task not found")
+        }
+
+        const subTaskDocRef = collection(db, "tasks")
+        const q = query(subTaskDocRef, where("parentId", "==", taskId))
+        const subTaskSnapShot = await getDocs(q)
+
+        if(!subTaskSnapShot.empty) {
+            await Promise.all(subTaskSnapShot.docs.map(async(item) => {
+                updateDoc(doc(db, "tasks", item.id), {
+                    parentId: null,
+                    updatedAt: serverTimestamp()
+                })
+            }))
+        }
+        
+        await deleteDoc(taskDocRef)
+
+    } catch (error) {
+        throw new Error("Something went wrong when deleting tasks")
+    }
+}
+
 export const deleteLabels = async({ taskId }) => {
     try {   
         if(!taskId) return null
@@ -142,6 +176,7 @@ export const deleteAttachments = async({ taskId }) => {
                     throw new Error('Document does not exists')
                 }
 
+                await deleteExistingFile(attachmentDoc.data().attachmentStoragePath)
             }))
         }
 
@@ -164,20 +199,20 @@ export const handleDeletedUser = async({ userId }) => {
         const teamDocs = await getDocs(q)
     
         if(!teamDocs.empty()) {
+            //list project id if project owner
+            const projects = teamDocs.docs.filter((item) => { item.data().role == "Owner" })
+
+            if(projects.length > 0) {
+                for(const project of projects) {
+                    await deleteProject({ projectId: project.projectId })
+                }
+            }
+            
             teamDocs.docs.forEach(async (item) => {
                 await deleteDoc(doc(db, "teams", item.id))
             })
-
-            //list project id if project owner
-            const projectIds = teamDocs.docs.filter((item) => { 
-                item.data().role == "Owner" 
-
-                return item.data().projectId
-            })
         }
 
-
-        
     } catch (error) {
         throw new Error("Something went wrong when handling deleted user")
     }

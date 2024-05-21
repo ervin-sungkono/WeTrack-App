@@ -3,9 +3,10 @@ import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
-import { createHistory } from '@/app/firebase/util';
+import { createHistory, deleteTasks, deleteTaskStatuses } from '@/app/firebase/util';
 import { getProjectRole } from '@/app/firebase/util';
 import { getHistoryAction, getHistoryEventType } from '@/app/lib/history';
+import { deleteProject } from '@/app/firebase/util';
 
 export async function GET(request, response) {
     try {
@@ -245,8 +246,6 @@ export async function DELETE(request, response) {
             }, { status: 404 })
         }
 
-        const projectName = projectDocSnap.data().projectName
-
         const projectRole = await getProjectRole({ projectId, userId})
         if(projectRole !== 'Owner'){
             return NextResponse.json({
@@ -255,8 +254,11 @@ export async function DELETE(request, response) {
             }, { status: 401 })
         }
 
-        await deleteDoc(projectDocRef);
+        const projectName = projectDocSnap.data().projectName
 
+        await deleteDoc(projectDocRef);
+        // await deleteProject({ projectId: projectId })
+        
         await createHistory({
             userId: userId,
             projectId: projectId,
