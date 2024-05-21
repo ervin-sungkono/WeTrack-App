@@ -125,30 +125,30 @@ export const deleteLabels = async({ taskId }) => {
     }
 }
 
-// export const deleteAttachments = async({ taskId }) => {
-//     try {   
-//         if(!taskId) return null
+export const deleteAttachments = async({ taskId }) => {
+    try {   
+        if(!taskId) return null
     
-//         const attachmentCollectionRef = collection(db, "attachments")
-//         const q = query(attachmentCollectionRef, where("taskId", "==", taskId))
-//         const attachmentDocSnapShot = await getDocs(q)
+        const attachmentCollectionRef = collection(db, "attachments")
+        const q = query(attachmentCollectionRef, where("taskId", "==", taskId))
+        const attachmentDocSnapShot = await getDocs(q)
 
-//         if(!attachmentDocSnapShot.empty) {
-//             await Promise.all(attachmentDocSnapShot.docs.map(async (item) => {
-//                 const attachmentDocRef = doc(db, "attachments", item.id)
-//                 const attachmentDoc = await getDoc(attachmentDocRef)
+        if(!attachmentDocSnapShot.empty) {
+            await Promise.all(attachmentDocSnapShot.docs.map(async (item) => {
+                const attachmentDocRef = doc(db, "attachments", item.id)
+                const attachmentDoc = await getDoc(attachmentDocRef)
 
-//                 if(!attachmentDoc.exists()) {
+                if(!attachmentDoc.exists()) {
+                    throw new Error('Document does not exists')
+                }
 
-//                 }
+            }))
+        }
 
-//             }))
-//         }
-
-//     } catch (error) {
-//         throw new Error("Something went wrong when deleting label")
-//     }
-// }
+    } catch (error) {
+        throw new Error("Something went wrong when deleting label")
+    }
+}
 
 export const handleDeletedUser = async({ userId }) => {
     try {
@@ -191,7 +191,7 @@ export const createHistory = async({ userId, taskId, projectId, eventType, delet
         const newHistory =  await addDoc(historyDocRef, {
             userId: userId,
             taskId: taskId ?? null,
-            projectId: projectId,
+            projectId: projectId ?? null,
             eventType: eventType,
             deletedValue: deletedValue ?? null,
             action: action, // create, update, delete
