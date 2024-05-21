@@ -4,7 +4,8 @@ import Tags from "@/app/lib/tagify";
 import LabelForm from "../../common/form/create-task/LabelForm";
 import Button from "../../common/button/Button";
 
-import { getQueryReference } from "@/app/firebase/util";
+import { getQueryReference, getProjectRole } from "@/app/firebase/util";
+import { getSession } from "next-auth/react";
 import { onSnapshot } from "firebase/firestore";
 import { pickTextColorBasedOnBgColor } from "@/app/lib/color";
 
