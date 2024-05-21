@@ -10,6 +10,7 @@ import SortButton from "../common/button/SortButton"
 import DashboardLayout from "../layout/DashboardLayout"
 import EmptyState from "../common/EmptyState"
 import { getUserHistory } from "@/app/lib/fetch/user"
+import { getHistoryAction, getHistoryEventType } from "@/app/lib/history"
 
 const HistoryList = dynamic(() => import("../history/HistoryList"))
 
@@ -21,6 +22,7 @@ export default function History(){
 
     const [project, setProject] = useState("Semua")
     const [type, setType] = useState("Semua")
+    const [action, setAction] = useState("Semua")
     const [pageIndex, setPageIndex] = useState(0)
     const [pageSize, setPageSize] = useState(10)
     const [pageCount, setPageCount] = useState(0)
@@ -57,19 +59,31 @@ export default function History(){
                     value: project.projectName
                 }));
                 setProjectOptions([
-                    {label: "Semua", value: 0},
+                    {label: "Semua", value: "Semua"},
                     ...options
                 ])
             }
             else alert("Gagal memperoleh data proyek")
         })
     }, [])
-    
+
     const typeOptions = [
-        {label: "Semua", value: 0},
-        {label: "Proyek", value: "Project"},
-        {label: "Tugas", value: "Task"},
-        {label: "Komentar", value: "Comment"}
+        {label: "Semua", value: "Semua"},
+        {label: "Proyek", value: getHistoryEventType.project},
+        {label: "Tugas", value: getHistoryEventType.task},
+        {label: "Nama Tugas", value: getHistoryEventType.taskName},
+        {label: "Status Tugas", value: getHistoryEventType.taskStatus},
+        {label: "Penerima Tugas", value: getHistoryEventType.assignedTo},
+        {label: "Komentar", value: getHistoryEventType.comment},
+        {label: "Lampiran", value: getHistoryEventType.attachment},
+        {label: "Profil", value: getHistoryEventType.profile}
+    ]
+    
+    const actionOptions = [
+        {label: "Semua", value: "Semua"},
+        {label: "Pembuatan", value: getHistoryAction.create},
+        {label: "Perubahan", value: getHistoryAction.update},
+        {label: "Penghapusan", value: getHistoryAction.delete}
     ]
 
     const pageSizeOptions = [
@@ -78,32 +92,31 @@ export default function History(){
         {label: "50", value: 50}
     ]
 
+    useEffect(() => {
+        let filteredData = dataFetched;
+        if(project !== "Semua"){
+            filteredData = filteredData.filter(item => item.project?.projectName === project);
+        }
+        if(type !== "Semua"){
+            filteredData = filteredData.filter(item => item.eventType === type);
+        }
+        if(action !== "Semua"){
+            filteredData = filteredData.filter(item => item.action === action);
+        }
+        setHistoryData(filteredData);
+        setPageIndex(0);
+    }, [dataFetched, project, type, action]);
+    
     const handleProjectChange = (value) => {
         setProject(value)
-        if(value === 0){
-            if(type !== 0){
-                setHistoryData(dataFetched.filter(item => item.eventType === type))
-            }else{
-                setHistoryData(dataFetched)
-            }
-        }else{
-            setHistoryData(dataFetched.filter(item => item.project.projectName === value))
-        }
-        setPageIndex(0)
     }
     
     const handleTypeChange = (value) => {
         setType(value)
-        if(value === 0){
-            if(project !== "Semua"){
-                setHistoryData(dataFetched.filter(item => item.project.projectName === project))
-            }else{
-                setHistoryData(dataFetched)
-            }
-        }else{
-            setHistoryData(dataFetched.filter(item => item.eventType === value))
-        }
-        setPageIndex(0)
+    }
+
+    const handleActionChange = (value) => {
+        setAction(value)
     }
 
     const handlePageSizeChange = (value) => {
@@ -117,7 +130,7 @@ export default function History(){
                 <Header title={"Riwayat"} links={links}/>
             </div>
             <div className="h-full flex flex-col mt-4 md:mt-6 gap-4">
-                {historyData && historyData?.length > 0 && (
+                {historyData && (
                     <div className="flex flex-col md:flex-row justify-between items-center gap-2">
                         <div className="w-full flex justify-between items-center gap-3 md:gap-6">
                             <div className="flex items-center gap-2 md:gap-4">
@@ -140,6 +153,15 @@ export default function History(){
                                     />
                                 </div>
                                 <div className="flex items-center gap-2">
+                                    <b className="hidden xs:block text-xs md:text-sm">Aksi:</b>
+                                    <SelectButton 
+                                        name={"action-button"}
+                                        placeholder={action} 
+                                        options={actionOptions} 
+                                        onChange={handleActionChange}
+                                    />
+                                </div>
+                                <div className="flex items-center gap-2">
                                     <b className="hidden xs:block text-xs md:text-sm">Tampilkan:</b>
                                     <SelectButton 
                                         name={"page-size-button"}
@@ -153,15 +175,17 @@ export default function History(){
                         </div>
                     </div>
                 )}
-                {historyData && historyData?.length > 0 ? <HistoryList
-                    historyData={sortDateTimestampFn({data: historyData, sortDirection: sorting, key: 'createdAt'})}
-                    pageSize={pageSize}
-                    pageIndex={pageIndex}
-                    setPageIndex={setPageIndex}
-                    pageCount={pageCount}
-                    dataCount={historyData.length}
-                /> :
-                <EmptyState message="Belum ada data riwayat yang tersedia."/>}
+                {historyData && historyData?.length > 0 ? 
+                    <HistoryList
+                        historyData={sortDateTimestampFn({data: historyData, sortDirection: sorting, key: 'createdAt'})}
+                        pageSize={pageSize}
+                        pageIndex={pageIndex}
+                        setPageIndex={setPageIndex}
+                        pageCount={pageCount}
+                        dataCount={historyData.length}
+                    /> :
+                    <EmptyState message="Belum ada data riwayat yang tersedia."/>
+                }
             </div>
         </DashboardLayout>
     )

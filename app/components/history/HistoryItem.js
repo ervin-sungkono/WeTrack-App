@@ -46,8 +46,11 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                         <div>
                             Anda melakukan perubahan data pada tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
                         </div>
-                        <div className="flex items-center gap-1 text-xs md:text-sm text-dark-blue">
-                            <Label color="#47389F" text={previousValue}/> {"-->"} <Label color="#47389F" text={newValue}/>
+                        <div className="flex flex-col gap-1.5 text-xs md:text-sm text-dark-blue">
+                            Nama tugas baru:
+                            <div className="flex items-center gap-1.5">
+                                {previousValue} {"-->"} <LinkText>{newValue}</LinkText>
+                            </div>
                         </div>
                     </div>
                 )}
@@ -56,8 +59,11 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                         <div>
                             Anda melakukan perubahan data pada tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
                         </div>
-                        <div className="flex items-center gap-1 text-xs md:text-sm text-dark-blue">
-                            <Label color="#47389F" text={previousValue}/> {"-->"} <Label color="#47389F" text={newValue}/>
+                        <div className="flex flex-col gap-1.5 text-xs md:text-sm text-dark-blue">
+                            Status tugas baru:
+                            <div className="flex items-center gap-1.5">
+                                <Label color="#47389F" text={previousValue}/> {"-->"} <Label color="#47389F" text={newValue}/>
+                            </div>
                         </div>
                     </div>
                 )}

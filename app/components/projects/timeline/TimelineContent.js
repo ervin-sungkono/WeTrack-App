@@ -20,6 +20,8 @@ export default function TimelineContent({ projectId }){
     const [status, setStatus] = useState("Status")
     const [filterDropdown, setFilterDropdown] = useState(false)
     const [projectKey, setProjectKey] = useState(null)
+    const [taskData, setTaskData] = useState([])
+    const [tasks, setTasks] = useState([]);
 
     useEffect(() => {
         if(!projectId) return
@@ -34,9 +36,6 @@ export default function TimelineContent({ projectId }){
     const handleSearch = (query) => {
         setQuery(query.toLowerCase())
     }
-
-    const [taskData, setTaskData] = useState([])
-    const [tasks, setTasks] = useState([]);
 
     useEffect(() => {
         if(!projectId) return
@@ -145,67 +144,30 @@ export default function TimelineContent({ projectId }){
         return () => unsubscribe()
     }, [projectId, query])
 
-    const handleStatusChange = (value) => {
-        setStatus(value)
-        if(value === "Status"){
-            if(label === "Label" && assignee === "Penerima"){
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query));
-                setTasks(filteredData);
-            }else{
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && (task.labelsData?.includes(label) || label === "Label") && (task.assignedToData?.fullName === assignee || assignee === "Penerima"));
-                setTasks(filteredData);
-            }
-        }else{
-            if(label === "Label" && assignee === "Penerima"){
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.statusData?.statusName === value);
-                setTasks(filteredData);
-            }else{
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.statusData?.statusName === value && (task.labelsData?.includes(label) || label === "Label") && (task.assignedToData?.fullName === assignee || assignee === "Penerima"));
-                setTasks(filteredData);
-            }
+    useEffect(() => {
+        let filteredData = taskData;
+        if(assignee !== "Penerima"){
+            filteredData = filteredData.filter(item => item.taskName.toLowerCase().includes(query) && item.assignedToData?.fullName === assignee);
         }
-    }
+        if(status !== "Status"){
+            filteredData = filteredData.filter(item => item.taskName.toLowerCase().includes(query) && item.statusData?.statusName === status);
+        }
+        if(label !== "Label"){
+            filteredData = filteredData.filter(item => item.taskName.toLowerCase().includes(query) && item.labelsData?.includes(label));
+        }
+        setTasks(filteredData);
+    }, [taskData, assignee, status, label, query]);
 
     const handleAssigneeChange = (value) => {
         setAssignee(value)
-        if(value === "Penerima"){
-            if(label === "Label" && status === "Status"){
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query));
-                setTasks(filteredData);
-            }else{
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && (task.labelsData?.includes(label) || label === "Label") && (task.statusData.statusName === status || status === "Status"));
-                setTasks(filteredData);
-            }
-        }else{
-            if(label === "Label" && status === "Status"){
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.assignedToData?.fullName === value);
-                setTasks(filteredData);
-            }else{
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.assignedToData?.fullName === value && (task.labelsData?.includes(label) || label === "Label") && (task.statusData?.statusName === status || status === "Status"));
-                setTasks(filteredData);
-            }
-        }
+    }
+
+    const handleStatusChange = (value) => {
+        setStatus(value)
     }
 
     const handleLabelChange = (value) => {
         setLabel(value)
-        if(value === "Label"){
-            if(assignee === "Penerima" && status === "Status"){
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query));
-                setTasks(filteredData);
-            }else{
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && (task.assignedToData?.fullName === assignee || assignee === "Penerima") && (task.statusData?.statusName === status || status === "Status"));
-                setTasks(filteredData);
-            }
-        }else{
-            if(assignee === "Penerima" && status === "Status"){
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.labelsData?.includes(value));
-                setTasks(filteredData);
-            }else{
-                const filteredData = taskData.filter((task) => task.taskName.toLowerCase().includes(query) && task.labelsData?.includes(value) && (task.assignedToData?.fullName === assignee || assignee === "Penerima") && (task.statusData?.statusName === status || status === "Status"));
-                setTasks(filteredData);
-            }
-        }
     }
 
     return (
