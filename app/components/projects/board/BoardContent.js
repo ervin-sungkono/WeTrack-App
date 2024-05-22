@@ -428,7 +428,7 @@ export default function BoardContent({ projectId }){
       {loading && <PopUpLoad/>}
       <div className="flex flex-col xs:flex-row justify-between gap-4 items-center">
         <div className="w-full flex justify-center md:justify-start items-center gap-3 md:gap-6 z-[9990]"> 
-          <SearchBar placeholder={"Cari tugas.."} handleSearch={handleSearch}/>
+          <SearchBar placeholder={"Cari tugas..."} handleSearch={handleSearch}/>
           <div className="relative">
             <button className="block md:hidden text-white bg-basic-blue hover:bg-basic-blue/80 rounded-md p-1.5" onClick={() => setFilterDropdown(!filterDropdown)}>
               <FilterIcon size={20}/>
@@ -571,7 +571,7 @@ export default function BoardContent({ projectId }){
         (<div className="w-[278px] flex-shrink-0">
           <SimpleInputForm
             name={"taskStatusName"}
-            placeholder="Nama status.."
+            placeholder="Nama status..."
             onSubmit={createTaskStatus}
             onBlur={() => setCreatingList(false)}
           />

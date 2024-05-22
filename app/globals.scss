@@ -208,3 +208,112 @@ input::-ms-clear {
     text-indent: -20px;
     border: 0;
 }
+
+// FullCalendar Styling
+
+// General
+.fc a,
+.fc .fc-button,
+.fc .fc-daygrid-week-number,
+.fc .fc-col-header-cell-cushion,
+.fc .fc-daygrid-day-number,
+.fc .fc-event-title,
+.fc .fc-daygrid-day-top {
+    font-size: 1em; 
+}
+
+// Tablets
+@media screen and (max-width: 768px) {
+
+    .fc a,
+    .fc .fc-button,
+    .fc .fc-daygrid-week-number,
+    .fc .fc-col-header-cell-cushion,
+    .fc .fc-toolbar-title,
+    .fc .fc-daygrid-day-number,
+    .fc .fc-event-title,
+    .fc .fc-daygrid-day-top {
+        font-size: 0.75em; 
+    }
+
+    .fc a {
+        font-size: 0.75em; 
+    }
+
+    .fc .fc-button {
+        font-size: 0.75em; 
+    }
+
+    .fc .fc-daygrid-week-number {
+        font-size: 0.75em; 
+    }
+
+    .fc .fc-col-header-cell-cushion {
+        font-size: 0.75em;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 1.5em;
+    }
+
+    .fc .fc-daygrid-day-number {
+        font-size: 0.75em;
+    }
+
+    .fc .fc-event-title {
+        font-size: 0.75em;
+    }
+
+    .fc .fc-daygrid-day-top {
+        font-size: 0.75em;
+    }
+}
+
+// Smartphones
+@media screen and (max-width: 480px) {
+    .fc a,
+    .fc .fc-button,
+    .fc .fc-daygrid-week-number,
+    .fc .fc-col-header-cell-cushion,
+    .fc .fc-toolbar-title,
+    .fc .fc-daygrid-day-number,
+    .fc .fc-event-title,
+    .fc .fc-daygrid-day-top {
+        font-size: 0.5em;
+    }
+
+    .fc a {
+        font-size: 0.5em;
+    }
+
+    .fc .fc-button {
+        font-size: 0.75em;
+    }
+
+    .fc .fc-daygrid-week-number {
+        font-size: 0.5em;
+    }
+
+    .fc .fc-col-header-cell-cushion {
+        font-size: 0.6em;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 1.5em;
+    }
+
+    .fc .fc-daygrid-day-number {
+        font-size: 0.8em;
+    }
+
+    .fc .fc-event-title {
+        font-size: 0.5em;
+    }
+
+    .fc .fc-daygrid-day-top {
+        font-size: 0.8em;
+    }
+}
+
+
+

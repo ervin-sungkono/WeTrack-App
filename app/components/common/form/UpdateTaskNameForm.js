@@ -27,7 +27,7 @@ export default function UpdateTaskNameForm({ taskName, onClose, onSubmit }){
                                 name="taskName"
                                 type={"text"}
                                 label="Nama Tugas" 
-                                placeholder={"Masukkan nama tugas.."}
+                                placeholder={"Masukkan nama tugas..."}
                             />
                         </div>
                         <div className="flex gap-2 md:gap-4 items-center justify-end mt-4 md:mt-8">

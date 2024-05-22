@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import dynamic from "next/dynamic"
 import { getAllProject } from "@/app/lib/fetch/project"
 import { sortDateTimestampFn } from "@/app/lib/helper"
+import { IoFilter as FilterIcon } from "react-icons/io5"
 
 import Header from "../common/Header"
 import SelectButton from "../common/button/SelectButton"
@@ -20,14 +21,15 @@ export default function History(){
         {label: "Riwayat", url: "/history"},
     ]
 
-    const [project, setProject] = useState("Semua")
-    const [type, setType] = useState("Semua")
-    const [action, setAction] = useState("Semua")
+    const [project, setProject] = useState("Semua Proyek")
+    const [type, setType] = useState("Semua Jenis")
+    const [action, setAction] = useState("Semua Aksi")
     const [pageIndex, setPageIndex] = useState(0)
     const [pageSize, setPageSize] = useState(10)
     const [pageCount, setPageCount] = useState(0)
     const [historyData, setHistoryData] = useState([])
     const [sorting, setSorting] = useState('desc')
+    const [filterDropdown, setFilterDropdown] = useState(false)
 
     const [dataFetched, setDataFetched] = useState([])
 
@@ -59,7 +61,7 @@ export default function History(){
                     value: project.projectName
                 }));
                 setProjectOptions([
-                    {label: "Semua", value: "Semua"},
+                    {label: "Semua Proyek", value: "Semua Proyek"},
                     ...options
                 ])
             }
@@ -68,9 +70,10 @@ export default function History(){
     }, [])
 
     const typeOptions = [
-        {label: "Semua", value: "Semua"},
+        {label: "Semua Jenis", value: "Semua Jenis"},
         {label: "Proyek", value: getHistoryEventType.project},
         {label: "Tugas", value: getHistoryEventType.task},
+        {label: "Subtugas", value: getHistoryEventType.subtask},
         {label: "Nama Tugas", value: getHistoryEventType.taskName},
         {label: "Status Tugas", value: getHistoryEventType.taskStatus},
         {label: "Penerima", value: getHistoryEventType.assignedTo},
@@ -80,7 +83,7 @@ export default function History(){
     ]
     
     const actionOptions = [
-        {label: "Semua", value: "Semua"},
+        {label: "Semua Aksi", value: "Semua Aksi"},
         {label: "Pembuatan", value: getHistoryAction.create},
         {label: "Perubahan", value: getHistoryAction.update},
         {label: "Penghapusan", value: getHistoryAction.delete}
@@ -94,13 +97,13 @@ export default function History(){
 
     useEffect(() => {
         let filteredData = dataFetched;
-        if(project !== "Semua"){
+        if(project !== "Semua Proyek"){
             filteredData = filteredData.filter(item => item.project?.projectName === project);
         }
-        if(type !== "Semua"){
+        if(type !== "Semua Jenis"){
             filteredData = filteredData.filter(item => item.eventType === type);
         }
-        if(action !== "Semua"){
+        if(action !== "Semua Aksi"){
             filteredData = filteredData.filter(item => item.action === action);
         }
         setHistoryData(filteredData);
@@ -132,43 +135,48 @@ export default function History(){
             <div className="h-full flex flex-col mt-4 md:mt-6 gap-4">
                 {historyData && (
                     <div className="flex flex-col md:flex-row justify-between items-center gap-2">
-                        <div className="w-full flex justify-between items-center gap-3 md:gap-6">
-                            <div className="flex items-center gap-2 md:gap-4">
-                                <div className="flex items-center gap-2">
-                                    <b className="hidden xs:block text-xs md:text-sm">Proyek:</b>
-                                    <SelectButton 
-                                        name={"project-button"}
-                                        placeholder={project} 
-                                        options={projectOptions} 
-                                        onChange={handleProjectChange}
-                                    />
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <b className="hidden xs:block text-xs md:text-sm">Jenis:</b>
-                                    <SelectButton 
-                                        name={"type-button"}
-                                        placeholder={type} 
-                                        options={typeOptions} 
-                                        onChange={handleTypeChange}
-                                    />
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <b className="hidden xs:block text-xs md:text-sm">Aksi:</b>
-                                    <SelectButton 
-                                        name={"action-button"}
-                                        placeholder={action} 
-                                        options={actionOptions} 
-                                        onChange={handleActionChange}
-                                    />
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <b className="hidden xs:block text-xs md:text-sm">Tampilkan:</b>
-                                    <SelectButton 
-                                        name={"page-size-button"}
-                                        placeholder={pageSize} 
-                                        options={pageSizeOptions} 
-                                        onChange={handlePageSizeChange}
-                                    />
+                        <div className="w-full flex justify-between items-center gap-3 md:gap-6 z-almostFixed">
+                            <div className="relative">
+                                <button className="block md:hidden text-white bg-basic-blue hover:bg-basic-blue/80 rounded-md p-1.5" onClick={() => setFilterDropdown(!filterDropdown)}>
+                                    <FilterIcon size={20}/>
+                                </button>
+                                <div className={`${filterDropdown ? "block" : "hidden"} border border-dark-blue/30 md:border-none md:flex z-50 absolute -bottom-2 left-0 translate-y-full md:translate-y-0 px-2 py-3 bg-white rounded-md md:bg-transparent md:p-0 md:static flex flex-col md:flex-row gap-2 md:gap-4`}>
+                                    <div className="flex items-center gap-2">
+                                        <b className="hidden xs:block text-xs md:text-sm">Proyek:</b>
+                                        <SelectButton 
+                                            name={"project-button"}
+                                            placeholder={project} 
+                                            options={projectOptions} 
+                                            onChange={handleProjectChange}
+                                        />
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <b className="hidden xs:block text-xs md:text-sm">Jenis:</b>
+                                        <SelectButton 
+                                            name={"type-button"}
+                                            placeholder={type} 
+                                            options={typeOptions} 
+                                            onChange={handleTypeChange}
+                                        />
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <b className="hidden xs:block text-xs md:text-sm">Aksi:</b>
+                                        <SelectButton 
+                                            name={"action-button"}
+                                            placeholder={action} 
+                                            options={actionOptions} 
+                                            onChange={handleActionChange}
+                                        />
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <b className="hidden xs:block text-xs md:text-sm">Tampilkan:</b>
+                                        <SelectButton 
+                                            name={"page-size-button"}
+                                            placeholder={pageSize} 
+                                            options={pageSizeOptions} 
+                                            onChange={handlePageSizeChange}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                             <SortButton sorting={sorting} setSorting={setSorting}/>

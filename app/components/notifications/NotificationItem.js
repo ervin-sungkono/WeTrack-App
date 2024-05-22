@@ -1,6 +1,7 @@
 import Link from "next/link"
 import UserIcon from "../common/UserIcon"
 import { listDateFormat } from "@/app/lib/date"
+import { GoArrowRight as ArrowIcon } from "react-icons/go";
 
 export default function NotificationsItem({type, task=null, taskId=null, sender=null, senderId=null, project, projectId, newValue, createdAt}){
     let oldValue
@@ -13,7 +14,7 @@ export default function NotificationsItem({type, task=null, taskId=null, sender=
     }
 
     const LinkText = ({link, children}) => {
-        if(link !== null){
+        if(link != null){
             return <Link href={link} className="text-xs md:text-sm font-bold text-basic-blue">{children}</Link>
         }else{
             return <span className="text-xs md:text-sm font-bold text-basic-blue">{children}</span>
@@ -31,7 +32,7 @@ export default function NotificationsItem({type, task=null, taskId=null, sender=
                 {type === "AddedComment" && (
                     <div className="flex items-center gap-2">
                         <Link href={`/profile/${senderId}`}>
-                            <UserIcon fullName={sender.fullName} profileImage={sender.profileImage?.attachmentStoragePath} />
+                            <UserIcon fullName={sender.fullName} profileImage={sender.profileImage?.attachmentStoragePath} size="xs"/>
                         </Link>
                         <div>
                             <div>
@@ -46,7 +47,7 @@ export default function NotificationsItem({type, task=null, taskId=null, sender=
                 {type === "Mention" && (
                     <div className="flex items-center gap-2">
                         <Link href={`/profile/${senderId}`}>
-                            <UserIcon fullName={sender.fullName} profileImage={sender.profileImage?.attachmentStoragePath} />
+                            <UserIcon fullName={sender.fullName} profileImage={sender.profileImage?.attachmentStoragePath} size="xs"/>
                         </Link>
                         <div>
                             <div>
@@ -60,7 +61,7 @@ export default function NotificationsItem({type, task=null, taskId=null, sender=
                 )}
                 {type === "RoleChange" && (
                     <>
-                        Peran Anda dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText> telah diubah dari <LinkText>{oldValue}</LinkText> menjadi <LinkText>{newValue}</LinkText>.
+                        Peran Anda dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText> telah diubah dari <LinkText>{oldValue}</LinkText> <ArrowIcon size={16} className="flex-shrink-0"/> <LinkText>{newValue}</LinkText>.
                     </>
                 )}
             </div>

@@ -32,6 +32,7 @@ const config = {
         'dark-gray': '#ECECEC'
       },
       zIndex:{
+        'almostFixed': 9998,
         'fixed': 9999
       },
       fontSize: {

@@ -16,6 +16,8 @@ import AssignedCommentItem from "./AssignedCommentItem"
 import { useRole } from "@/app/lib/context/role"
 import { validateUserRole } from "@/app/lib/helper"
 import Link from "next/link"
+import { FaCommentDots as CommentIcon, FaTasks as TaskListIcon } from "react-icons/fa";
+import { MdTask as TaskIcon } from "react-icons/md";
 
 export default function OverviewContent({ projectId }){
     const [userId, setUserId] = useState(null)
@@ -218,13 +220,14 @@ export default function OverviewContent({ projectId }){
         <div className="flex flex-col gap-4">
             {taskData.length === 0 ? (
                 <OverviewCard title="Tugas Terbaru">
-                    <div className="max-h-[300px] md:h-[200px] overflow-hidden">
-                        <div className="flex flex-col items-center justify-center">
-                            <div className="text-center">
-                                Belum ada data tugas yang tersedia.
+                    <div className="max-h-[300px] md:min-h-[200px] overflow-hidden flex flex-col justify-center items-center">
+                        <div className="flex flex-col justify-center items-center">
+                            <div className="flex flex-col justify-center items-center gap-2">
+                                <TaskListIcon size={48} className="text-dark-blue/60"/>
+                                <p className="text-xs md:text-sm text-dark-blue/80 text-center">Belum ada data tugas yang tersedia.</p>
                             </div>
                             {validateUserRole({ userRole: role, minimumRole: 'Member' }) && (
-                                <LinkButton href={`/projects/${projectId}/board`} variant="primary" size={`md`} className="mt-2 md:mt-4 px-2 xl:px-4">
+                                <LinkButton href={`/projects/${projectId}/board`} variant="primary" size={`md`} className="mt-1 md:mt-2 py-1 xl:py-2">
                                     Buat Tugas Baru Sekarang
                                 </LinkButton>
                             )}
@@ -245,7 +248,7 @@ export default function OverviewContent({ projectId }){
             )}
             <div className="flex flex-col md:flex-row justify-between gap-4">
                 <OverviewCard title="Ditugaskan Kepada Saya">
-                    <div className="flex flex-col gap-2 max-h-[200px] md:h-[175px] overflow-x-hidden overflow-y-scroll">
+                    <div className="flex flex-col justify-center items-center gap-2 max-h-[200px] md:h-[175px] overflow-x-hidden overflow-y-auto">
                         {validateUserRole({ userRole: role, minimumRole: 'Member' }) && assignedTaskData && assignedTaskData.length > 0 ? (
                             <>
                                 {assignedTaskData.map((task, index) => (
@@ -264,14 +267,15 @@ export default function OverviewContent({ projectId }){
                                 ))}
                             </>
                         ) : (
-                            <div className="text-center">
-                                Belum ada tugas yang ditugaskan kepada Anda.
+                            <div className="flex flex-col justify-center items-center gap-2">
+                                <TaskIcon size={48} className="text-dark-blue/60"/>
+                                <p className="text-xs md:text-sm text-dark-blue/80 text-center">Belum ada tugas yang ditugaskan kepada Anda.</p>
                             </div>
                         )}
                     </div>
                 </OverviewCard>
                 <OverviewCard title="Komentar Terbaru">
-                <div className="flex flex-col gap-2 max-h-[200px] md:h-[175px] overflow-x-hidden overflow-y-scroll">
+                    <div className="flex flex-col justify-center items-center gap-2 max-h-[200px] md:h-[175px] overflow-x-hidden overflow-y-auto">
                         {assignedCommentData && assignedCommentData.length > 0 ? (
                             <>
                                 {assignedCommentData.map((comment, index) => (
@@ -287,8 +291,9 @@ export default function OverviewContent({ projectId }){
                                 ))}
                             </>
                         ) : (
-                            <div className="text-center">
-                                Belum ada komentar yang menyebut Anda.
+                            <div className="flex flex-col justify-center items-center gap-2">
+                                <CommentIcon size={48} className="text-dark-blue/60"/>
+                                <p className="text-xs md:text-sm text-dark-blue/80 text-center">Belum ada komentar yang menyebut Anda.</p>
                             </div>
                         )}
                     </div>
