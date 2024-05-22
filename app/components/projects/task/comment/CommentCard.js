@@ -39,7 +39,7 @@ export default function CommentCard({ comment, deleteComment }){
     if(!comment) return null
     return(
         <div key={comment.id} className="w-full flex gap-2 md:gap-3 pl-2 py-2">
-            <UserIcon size="sm" fullName={comment.user?.fullName} src={comment.user?.profileImage}/>
+            <UserIcon size="sm" fullName={comment.user?.fullName} src={comment.user?.profileImage?.attachmentStoragePath}/>
             <div className="w-full flex flex-col items-start gap-2.5">
                 <div className="w-full flex flex-col gap-1">
                     <div className="flex gap-2 items-center">

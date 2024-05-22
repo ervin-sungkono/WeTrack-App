@@ -31,7 +31,7 @@ export default function AssignedCommentItem({text, user, createdAt, projectKey, 
     return (
         <div className="bg-white flex justify-between p-4">
             <div className="flex justify-start items-center gap-2.5">
-                <UserIcon size="sm" fullName={user.fullName} src={user.profileImage}/>
+                <UserIcon size="sm" fullName={user.fullName} src={user.profileImage?.attachmentStoragePath}/>
                 <div className="w-full flex flex-col gap-1">
                     <div className="flex gap-2 items-center">
                         <p className="text-xs md:text-sm text-dark-blue font-semibold">{user.fullName}</p>
