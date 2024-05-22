@@ -91,7 +91,7 @@ export default function CommentSection({ taskId, comments }){
                 ))
                 : 
                 <div className="py-4 md:py-2">
-                    <EmptyState message="Belum ada komentar yang tersedia.."/>
+                    <EmptyState message="Belum ada komentar yang tersedia."/>
                 </div>)}
             </div>
         </SessionProvider>

@@ -27,7 +27,7 @@ export default function InviteForm({ onConfirm, onClose, team, setTeams, setRole
         delimiters: " ",
         keepInvalidTags: true,
         pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-        placeholder: "Ketik email anggota tim Anda, dipisahkan dengan spasi atau enter.."
+        placeholder: "Ketik email anggota tim Anda, dipisahkan dengan spasi atau enter..."
     }
 
     const handleTagifyChange = (e) => {

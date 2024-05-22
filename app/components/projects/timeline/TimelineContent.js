@@ -181,8 +181,8 @@ export default function TimelineContent({ projectId }){
     return (
         <div className="flex flex-col gap-4">
             <div className="z-[2] flex flex-col xs:flex-row justify-between gap-4 items-center">
-                <div className="w-full flex justify-center xs:justify-start items-center gap-3 md:gap-6">
-                    <SearchBar placeholder={"Cari jadwal.."} handleSearch={handleSearch}/>
+                <div className="w-full flex justify-center xs:justify-start items-center gap-3 md:gap-6 z-almostFixed">
+                    <SearchBar placeholder={"Cari jadwal..."} handleSearch={handleSearch}/>
                     <div className="relative">
                         <button className="block md:hidden text-white bg-basic-blue hover:bg-basic-blue/80 rounded-md p-1.5" onClick={() => setFilterDropdown(!filterDropdown)}>
                             <FilterIcon size={20}/>

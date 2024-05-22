@@ -71,7 +71,7 @@ export default function ChatModal({ title, taskId, chats, onClose }){
                         <div ref={bottomRef} className="w-full h-0"></div>
                     </div> :
                     <div className="w-full h-full pb-12">
-                        <EmptyState message="Belum ada riwayat percakapan, kirim sebuah pesan untuk memulai"/>
+                        <EmptyState message="Belum ada riwayat percakapan, kirim sebuah pesan untuk memulai."/>
                     </div>}
                     { !isBottom && 
                     <button onClick={scrollToBottom} className="absolute bottom-16 right-2 p-2 bg-white border text-dark-blue hover:text-basic-blue hover:border-basic-blue/60 border-dark-blue/20 rounded-full transition-colors duration-300">
@@ -80,7 +80,7 @@ export default function ChatModal({ title, taskId, chats, onClose }){
                     <ChatInput 
                         name={`chat-${taskId}`} 
                         onSubmit={addChat}
-                        placeholder={"Kirim sebuah pesan.."}
+                        placeholder={"Kirim sebuah pesan..."}
                     />
                 </div>
             </div>

@@ -32,7 +32,7 @@ export default function NotificationsItem({type, task=null, taskId=null, sender=
                 {type === "AddedComment" && (
                     <div className="flex items-center gap-2">
                         <Link href={`/profile/${senderId}`}>
-                            <UserIcon fullName={sender.fullName} profileImage={sender.profileImage?.attachmentStoragePath} />
+                            <UserIcon fullName={sender.fullName} profileImage={sender.profileImage?.attachmentStoragePath} size="xs"/>
                         </Link>
                         <div>
                             <div>
@@ -47,7 +47,7 @@ export default function NotificationsItem({type, task=null, taskId=null, sender=
                 {type === "Mention" && (
                     <div className="flex items-center gap-2">
                         <Link href={`/profile/${senderId}`}>
-                            <UserIcon fullName={sender.fullName} profileImage={sender.profileImage?.attachmentStoragePath} />
+                            <UserIcon fullName={sender.fullName} profileImage={sender.profileImage?.attachmentStoragePath} size="xs"/>
                         </Link>
                         <div>
                             <div>
