@@ -81,7 +81,7 @@ export default function Notifications(){
             <div className="h-full flex flex-col mt-4 md:mt-6 gap-4">
                 {notificationsData && (
                     <div className="flex flex-col md:flex-row justify-between items-center gap-2">
-                        <div className="w-full flex justify-between items-center gap-3 md:gap-6">
+                        <div className="w-full flex justify-between items-center gap-3 md:gap-6 z-almostFixed">
                             <div className="relative">
                                 <button className="block md:hidden text-white bg-basic-blue hover:bg-basic-blue/80 rounded-md p-1.5" onClick={() => setFilterDropdown(!filterDropdown)}>
                                     <FilterIcon size={20}/>

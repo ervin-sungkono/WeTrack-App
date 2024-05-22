@@ -47,6 +47,21 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                         Anda menghapus tugas <LinkText>{deletedValue}</LinkText> dalam proyek <LinkText href={`/projects/${projectId}`}>{project.projectName}</LinkText>.
                     </>   
                 )}
+                {(eventType === getHistoryEventType.subtask) && (action === getHistoryAction.create) && (
+                    <>
+                        Anda membuat subtugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
+                    </>   
+                )}
+                {(eventType === getHistoryEventType.subtask) && (action === getHistoryAction.update) && (
+                    <>
+                        Anda melakukan perubahan data pada subtugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
+                    </>  
+                )}
+                {(eventType === getHistoryEventType.subtask) && (action === getHistoryAction.delete) && (
+                    <>
+                        Anda menghapus subtugas <LinkText>{deletedValue}</LinkText> dalam proyek <LinkText href={`/projects/${projectId}`}>{project.projectName}</LinkText>.
+                    </>   
+                )}
                 {(eventType === getHistoryEventType.taskName) && (action === getHistoryAction.update) && (
                     <div className="flex flex-col gap-1.5">
                         <div>
@@ -80,12 +95,12 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                             <div className="flex items-center gap-1.5">
                                 {previousValue === null ? (
                                     <>
-                                        <UserIcon src={'/images/user-placeholder.png'} />
+                                        <UserIcon src={'/images/user-placeholder.png'} size="xs"/>
                                         <LinkText>{`Belum Ditugaskan`}</LinkText>
                                     </>
                                 ) : (
                                     <>
-                                        <UserIcon fullName={previousValue?.fullName} src={previousValue?.profileImage?.attachmentStoragePath} />
+                                        <UserIcon fullName={previousValue?.fullName} src={previousValue?.profileImage?.attachmentStoragePath} size="xs"/>
                                         <LinkText>{previousValue?.fullName}</LinkText>
                                     </>
                                 )}
@@ -96,12 +111,12 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                             <div className="flex items-center gap-1.5">
                                 {newValue === null ? (
                                     <>
-                                        <UserIcon src={'/images/user-placeholder.png'} />
+                                        <UserIcon src={'/images/user-placeholder.png'} size="xs"/>
                                         <LinkText>{`Belum Ditugaskan`}</LinkText>
                                     </>
                                 ) : (
                                     <>
-                                        <UserIcon fullName={newValue?.fullName} src={newValue?.profileImage?.attachmentStoragePath} />
+                                        <UserIcon fullName={newValue?.fullName} src={newValue?.profileImage?.attachmentStoragePath} size="xs"/>
                                         <LinkText>{newValue?.fullName}</LinkText>
                                     </>
                                 )}

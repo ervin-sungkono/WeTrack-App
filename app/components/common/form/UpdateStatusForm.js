@@ -27,7 +27,7 @@ export default function UpdateStatusForm({ id, status, onClose, onSubmit }){
                                 name="statusName"
                                 type={"text"}
                                 label="Status Tugas" 
-                                placeholder={"Masukkan nama status.."}
+                                placeholder={"Masukkan nama status..."}
                             />
                         </div>
                         <div className="flex gap-2 md:gap-4 items-center justify-end mt-4 md:mt-8">

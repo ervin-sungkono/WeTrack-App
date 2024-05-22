@@ -25,7 +25,7 @@ export default function KeyFormikField({disabled}){
 
     return(
         <div className="flex flex-col gap-1">
-            <FormikField label="Kunci Proyek" disabled={disabled} required name="key" type="text" placeholder={"Masukkan kunci.."}/>
+            <FormikField label="Kunci Proyek" disabled={disabled} required name="key" type="text" placeholder={"Masukkan kunci..."}/>
             {!disabled && 
                 <p className="text-xs text-dark-blue">Kunci proyek akan digunakan sebagai awalan untuk tugas proyek Anda, dapat dihasilkan secara otomatis.</p>
             }

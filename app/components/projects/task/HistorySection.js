@@ -13,7 +13,7 @@ export default function HistorySection({ histories }){
             histories.map(history => (
                 <TaskHistoryItem key={history.id} history={history}/>
             )) :
-            <EmptyState message="Belum ada riwayat dalam tugas ini.."/>}
+            <EmptyState message="Belum ada riwayat dalam tugas ini."/>}
         </div>
     )
 }
