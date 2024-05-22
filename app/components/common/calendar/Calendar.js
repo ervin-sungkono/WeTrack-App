@@ -118,9 +118,11 @@ export default function Calendar({projectKey, projectId, tasks}){
                 fixedWeekCount={false}
                 weekNumbers={true}
                 weekNumberFormat={{
-                    week: 'short',
+                    week: 'narrow',
                 }}
-                weekText="Minggu"
+                weekText="M-"
+                height="auto"
+                // aspectRatio={1}
                 events={formattedTasks}
                 eventContent={renderEventContent}
             />

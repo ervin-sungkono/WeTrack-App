@@ -238,7 +238,7 @@ export const createHistory = async({ userId, taskId, projectId, eventType, delet
         return newHistory.id
 
     } catch (error) {
-        throw new Error("Something went wrong when adding to history")
+        throw new Error("Something went wrong when adding to history: ", + error)
     }
 }
 

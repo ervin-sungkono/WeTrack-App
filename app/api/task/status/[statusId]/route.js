@@ -176,20 +176,25 @@ export async function DELETE(request, response){
         const newStatusCounterRef = doc(db, "taskOrderCounters", newStatusId)
         const newStatusCounterSnap = await getDoc(newStatusCounterRef)
 
-        taskSnapshot.docs.forEach(async(doc, index) => {
-            await updateDoc(doc.ref, {
+        await Promise.all(taskSnapshot.docs.map(async(doc, index) => {
+            return await updateDoc(doc.ref, {
                 status: newStatusId,
                 order: newStatusCounterSnap.data().lastOrder + index,
                 updatedAt: serverTimestamp(),
             })
+        }))
 
-            await createHistory({
+        await Promise.all(taskSnapshot.docs.map(async(doc) => {
+            return await createHistory({
                 userId: userId,
+                taskId: doc.id,
                 projectId: projectId,
+                eventType: getHistoryEventType.taskStatus,
+                action: getHistoryAction.update,
                 previousValue: statusSnap.data().statusName,
                 newValue: newStatusSnap.data().statusName,
             })
-        })
+        }))
 
         await updateDoc(newStatusCounterRef, {
             lastOrder: statusCounterSnap.data().lastOrder + newStatusCounterSnap.data().lastOrder,
