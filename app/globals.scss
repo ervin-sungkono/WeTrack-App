@@ -222,6 +222,21 @@ input::-ms-clear {
     font-size: 1em; 
 }
 
+.fc .fc-toolbar-title {
+    font-weight: 600; //semibold
+}
+
+.fc .fc-button {
+    color: $white;
+    background-color: $basic-blue;
+}
+
+.fc .fc-button:hover {
+    color: $basic-blue;
+    background-color: $white;
+    border-color: $basic-blue;
+}
+
 // Tablets
 @media screen and (max-width: 768px) {
 
