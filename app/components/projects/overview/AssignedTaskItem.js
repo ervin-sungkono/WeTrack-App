@@ -8,7 +8,7 @@ export default function AssignedTaskItem({title, type, startDate, endDate, statu
     const { label, color } = getPriority(priority)
 
     return (
-        <div className="bg-white flex justify-between p-4">
+        <div className="bg-white flex justify-between p-4 w-full gap-2 rounded-md">
             <div className="flex flex-col justify-between">
                 <div className="text-sm md:text-base font-semibold">{title}</div>
                 {!startDate && !endDate ? (
@@ -37,7 +37,7 @@ export default function AssignedTaskItem({title, type, startDate, endDate, statu
                     {projectKey}-{displayId}
                 </div>
                 <a href={href}>
-                    <div className="text-xs md:text-sm text-basic-blue cursor-pointer font-semibold">{`Lihat Rincian ->`}</div>
+                    <div className="text-xs md:text-sm text-basic-blue cursor-pointer font-semibold hover:underline">{`Lihat Rincian`}</div>
                 </a>
             </div>
         </div>
