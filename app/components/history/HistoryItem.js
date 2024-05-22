@@ -3,6 +3,7 @@ import { listDateFormat } from "@/app/lib/date"
 import Label from "../common/Label"
 import { getHistoryAction, getHistoryEventType } from "@/app/lib/history"
 import UserIcon from "../common/UserIcon"
+import { GoArrowRight as ArrowIcon } from "react-icons/go";
 
 export default function HistoryItem({eventType, action, task=null, taskId=null, project=null, projectId=null, previousValue=null, newValue=null, deletedValue=null, createdAt}){    
     const LinkText = ({link, children}) => {
@@ -53,7 +54,7 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                         </div>
                         <div className="flex flex-col gap-1.5 text-xs md:text-sm text-dark-blue">
                             <div className="flex items-center gap-1.5">
-                                <Label color="#47389F" text={previousValue}/> {"-->"} <Label color="#47389F" text={newValue}/>
+                                <Label color="#47389F" text={previousValue}/> <ArrowIcon size={16} className="flex-shrink-0"/> <Label color="#47389F" text={newValue}/>
                             </div>
                         </div>
                     </div>
@@ -65,7 +66,7 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                         </div>
                         <div className="flex flex-col gap-1.5 text-xs md:text-sm text-dark-blue">
                             <div className="flex items-center gap-1.5">
-                                <Label color="#47389F" text={previousValue.toUpperCase()}/> {"-->"} <Label color="#47389F" text={newValue.toUpperCase()}/>
+                                <Label color="#47389F" text={previousValue.toUpperCase()}/> <ArrowIcon size={16} className="flex-shrink-0"/> <Label color="#47389F" text={newValue.toUpperCase()}/>
                             </div>
                         </div>
                     </div>
@@ -90,7 +91,7 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                                 )}
                             </div>
                             <div>
-                                {"-->"}
+                                <ArrowIcon size={16} className="flex-shrink-0"/>
                             </div>
                             <div className="flex items-center gap-1.5">
                                 {newValue === null ? (
@@ -109,9 +110,9 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                     </div>
                 )}
                 {(eventType === getHistoryEventType.status) && (action === getHistoryAction.create) && (
-                    <>
+                    <div className="flex gap-1.5">
                         Anda membuat <b>Status Tugas</b> <Label color="#47389F" text={newValue.toUpperCase()}/> dalam proyek <LinkText link={`/projects/${projectId}/board`}>{project.projectName}</LinkText>.
-                    </>
+                    </div>
                 )}
                 {(eventType === getHistoryEventType.status) && (action === getHistoryAction.update) && (
                     <div className="flex flex-col gap-1.5">
@@ -120,15 +121,15 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                         </div>
                         <div className="flex flex-col gap-1.5 text-xs md:text-sm text-dark-blue">
                             <div className="flex items-center gap-1.5">
-                                <Label color="#47389F" text={previousValue.toUpperCase()}/> {"-->"} <Label color="#47389F" text={newValue.toUpperCase()}/>
+                                <Label color="#47389F" text={previousValue.toUpperCase()}/> <ArrowIcon size={16} className="flex-shrink-0"/> <Label color="#47389F" text={newValue.toUpperCase()}/>
                             </div>
                         </div>
                     </div>
                 )}
                 {(eventType === getHistoryEventType.status) && (action === getHistoryAction.delete) && (
-                    <>
+                    <div className="flex gap-1.5">
                         Anda menghapus <b>Status Tugas</b> <Label color="#47389F" text={deletedValue.toUpperCase()}/> dalam proyek <LinkText link={`/projects/${projectId}/board`}>{project.projectName}</LinkText>.
-                    </>
+                    </div>
                 )}
                 {(eventType === getHistoryEventType.comment) && (action === getHistoryAction.create) && (
                     <>
