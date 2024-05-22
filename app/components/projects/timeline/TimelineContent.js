@@ -210,8 +210,8 @@ export default function TimelineContent({ projectId }){
                     </div>
                 </div>
             </div>
-            <div className="z-[0] w-full mt-4">
-                <div className="w-full lg:w-9/10">
+            <div className="z-[0] w-full mt-4 flex justify-center items-center">
+                <div className="w-9/10">
                     <Calendar
                         projectKey={projectKey}
                         projectId={projectId}
