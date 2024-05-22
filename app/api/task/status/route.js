@@ -3,7 +3,7 @@ import { createHistory, getProjectRole } from "@/app/firebase/util";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { getHistoryAction, getHistoryEventType } from "@/app/lib/history";
 import { getUserSession } from "@/app/lib/session";
-import { addDoc, collection, getDocs, doc, getDoc, orderBy, query, where, serverTimestamp } from "firebase/firestore";
+import { addDoc, collection, getDocs, doc, getDoc, orderBy, query, where, serverTimestamp, setDoc } from "firebase/firestore";
 import { NextResponse } from 'next/server'
 
 export async function GET(request, response) {
@@ -118,6 +118,11 @@ export async function POST(request, response){
             updatedAt: serverTimestamp(),
             deletedAt: null
         });
+
+        await setDoc(doc(db, 'taskOrderCounters', newTaskStatus.id), {
+            lastOrder: 0,
+            updatedAt: serverTimestamp()
+        })
 
         if(!newTaskStatus){
             return NextResponse.json({

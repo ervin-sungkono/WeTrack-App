@@ -96,7 +96,7 @@ export default function NavbarMenu({ showForm, hideMenu }){
                                 </div>
                             </NavDropdown>
                             <NavLink label={"Riwayat"} href={"/history"}/>
-                            <Button variant="primary" size="md" className={"w-full mt-2 lg:mt-0 lg:ml-4"} onClick={showForm}>Buat</Button>
+                            <Button variant="primary" size="md" className={"w-full mt-2 lg:mt-0 lg:ml-4"} onClick={showForm}>Buat Tugas</Button>
                         </div> 
                         : 
                         null
