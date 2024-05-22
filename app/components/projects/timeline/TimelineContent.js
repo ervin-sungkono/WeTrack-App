@@ -8,6 +8,7 @@ import { useRole } from "@/app/lib/context/role";
 import { getDocumentReference, getQueryReference, getQueryReferenceOrderBy } from "@/app/firebase/util";
 import { getDoc, onSnapshot } from "firebase/firestore";
 import Calendar from "../../common/calendar/Calendar";
+import { validateUserRole } from "@/app/lib/helper";
 
 export default function TimelineContent({ projectId }){
     const role = useRole()
@@ -216,6 +217,7 @@ export default function TimelineContent({ projectId }){
                         projectKey={projectKey}
                         projectId={projectId}
                         tasks={tasks}
+                        isEditable={validateUserRole({ userRole: role, minimumRole: 'Member' }) ? true : false}
                     />
                 </div>
             </div>

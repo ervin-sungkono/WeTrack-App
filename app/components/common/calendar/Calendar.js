@@ -15,7 +15,7 @@ import UserIcon from "../UserIcon";
 import CustomPopover from "../CustomPopover";
 import { updateTask } from "@/app/lib/fetch/task";
 
-export default function Calendar({projectKey, projectId, tasks}){
+export default function Calendar({projectKey, projectId, tasks, isEditable}){
     const [formattedTasks, setFormattedTasks] = useState([])
 
     useEffect(() => {
@@ -174,9 +174,9 @@ export default function Calendar({projectKey, projectId, tasks}){
             height="auto"
             events={formattedTasks}
             eventContent={renderEventContent}
-            editable={true}
-            droppable={true}
-            eventResizableFromStart={true}
+            editable={isEditable}
+            droppable={isEditable}
+            eventResizableFromStart={isEditable}
             eventDrop={handleEventDrop}
             eventResize={handleEventResize}
         />
