@@ -129,58 +129,50 @@ export default function Calendar({projectKey, projectId, tasks}){
     };
 
     return(
-        <div className="flex flex-col gap-6">
-            <FullCalendar
-                locale={idLocale}
-                timeZone="local"
-                plugins={[ dayGridPlugin ]}
-                initialView="dayGridMonth"
-                firstDay={0}
-                titleFormat={{
-                    year: 'numeric', 
-                    month: 'long',
-                }}
-                headerToolbar={{
-                    left: 'prev',
-                    center: 'title',
-                    right: 'next'
-                }}
-                dayHeaderFormat={{ 
-                    weekday: 'long',
-                }}
-                footerToolbar={{
-                    left: '',
-                    center: 'today',
-                    right: ''
-                }}
-                buttonText={{
-                    today: 'Ke Tanggal Hari Ini',
-                }}
-                showNonCurrentDates={false}
-                fixedWeekCount={false}
-                weekNumbers={true}
-                weekNumberFormat={{
-                    week: 'narrow',
-                }}
-                weekText="M-"
-                height="auto"
-                // aspectRatio={1}
-                events={formattedTasks}
-                eventClick={(clickInfo) => {
-                    clickInfo.jsEvent.preventDefault();
-                    setSelectedEvent(clickInfo.event);
-                }}
-                eventContent={renderEventContent}
-                editable={true}
-                eventDrop={handleEventDrop}
-                eventResize={handleEventResize}
-            />
-
-            {selectedEvent && (
-                <div className="mb-6">
-                    <SelectedTaskCard event={selectedEvent} />
-                </div>
-            )}
-        </div>
+        <FullCalendar
+            locale={idLocale}
+            timeZone="local"
+            plugins={[ dayGridPlugin ]}
+            initialView="dayGridMonth"
+            firstDay={0}
+            titleFormat={{
+                year: 'numeric', 
+                month: 'long',
+            }}
+            headerToolbar={{
+                left: 'prev,next title',
+                center: '',
+                right: 'today'
+            }}
+            dayHeaderFormat={{ 
+                weekday: 'long',
+            }}
+            buttonText={{
+                today: 'Hari Ini',
+            }}
+            showNonCurrentDates={false}
+            fixedWeekCount={false}
+            weekNumbers={true}
+            weekNumberFormat={{
+                week: 'narrow',
+            }}
+            weekText="M-"
+            height="auto"
+            // aspectRatio={1}
+            events={formattedTasks}
+            eventClick={(clickInfo) => {
+                clickInfo.jsEvent.preventDefault();
+                setSelectedEvent(clickInfo.event);
+            }}
+            eventContent={renderEventContent}
+            editable={true}
+            eventDrop={handleEventDrop}
+            eventResize={handleEventResize}
+        />
+            // {selectedEvent && (
+            //     <div className="mb-6">
+            //         <SelectedTaskCard event={selectedEvent} />
+            //     </div>
+            // )}
     )
 }
