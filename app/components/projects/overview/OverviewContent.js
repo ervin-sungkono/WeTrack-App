@@ -248,7 +248,7 @@ export default function OverviewContent({ projectId }){
             )}
             <div className="flex flex-col md:flex-row justify-between gap-4">
                 <OverviewCard title="Ditugaskan Kepada Saya">
-                    <div className="flex flex-col justify-center items-center gap-2 max-h-[200px] md:h-[175px] overflow-x-hidden overflow-y-auto">
+                    <div className="flex flex-col gap-2 max-h-[200px] md:h-[175px] overflow-x-hidden overflow-y-auto">
                         {validateUserRole({ userRole: role, minimumRole: 'Member' }) && assignedTaskData && assignedTaskData.length > 0 ? (
                             <>
                                 {assignedTaskData.map((task, index) => (
@@ -267,7 +267,7 @@ export default function OverviewContent({ projectId }){
                                 ))}
                             </>
                         ) : (
-                            <div className="flex flex-col justify-center items-center gap-2">
+                            <div className="flex flex-col justify-center items-center gap-2 mt-8">
                                 <TaskIcon size={48} className="text-dark-blue/60"/>
                                 <p className="text-xs md:text-sm text-dark-blue/80 text-center">Belum ada tugas yang ditugaskan kepada Anda.</p>
                             </div>
@@ -275,7 +275,7 @@ export default function OverviewContent({ projectId }){
                     </div>
                 </OverviewCard>
                 <OverviewCard title="Komentar Terbaru">
-                    <div className="flex flex-col justify-center items-center gap-2 max-h-[200px] md:h-[175px] overflow-x-hidden overflow-y-auto">
+                    <div className="flex flex-col gap-2 max-h-[200px] md:h-[175px] overflow-x-hidden overflow-y-auto">
                         {assignedCommentData && assignedCommentData.length > 0 ? (
                             <>
                                 {assignedCommentData.map((comment, index) => (
@@ -291,7 +291,7 @@ export default function OverviewContent({ projectId }){
                                 ))}
                             </>
                         ) : (
-                            <div className="flex flex-col justify-center items-center gap-2">
+                            <div className="flex flex-col justify-center items-center gap-2 mt-8">
                                 <CommentIcon size={48} className="text-dark-blue/60"/>
                                 <p className="text-xs md:text-sm text-dark-blue/80 text-center">Belum ada komentar yang menyebut Anda.</p>
                             </div>

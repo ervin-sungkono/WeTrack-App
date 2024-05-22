@@ -13,7 +13,7 @@ export default function DashboardTaskItem({title, type, startDate, endDate, stat
                     <hr className="mb-4 border border-dark-gray"/>
                 </div>
             )}
-            <div className="bg-white flex justify-between">
+            <div className="bg-white flex justify-between rounded-md">
                 <div className="flex flex-col justify-between">
                     <div className="text-sm md:text-base font-semibold">{title}</div>
                     {!startDate && !endDate ? (
@@ -42,7 +42,7 @@ export default function DashboardTaskItem({title, type, startDate, endDate, stat
                         {projectKey}-{displayId}
                     </div>
                     <a href={href}>
-                        <div className="text-xs md:text-sm text-basic-blue cursor-pointer font-semibold">{`Lihat Rincian ->`}</div>
+                        <div className="text-xs md:text-sm text-basic-blue cursor-pointer font-semibold hover:underline">{`Lihat Rincian`}</div>
                     </a>
                 </div>
             </div>
