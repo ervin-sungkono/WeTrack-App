@@ -17,7 +17,7 @@ export default function TaskListPagination({
             <button className="p-1 hover:bg-gray-300 disabled:text-gray-400 rounded disabled:pointer-events-none transition-colors" onClick={prevPage} disabled={!hasPrevPage}>
                 <ArrowLeft size={24}/>
             </button>
-            <p className="text-xs md:text-sm">{startIndex} to {endIndex} of {dataLength}</p>
+            <p className="text-xs md:text-sm">{startIndex}-{endIndex} dari {dataLength}</p>
             <button className="p-1 hover:bg-gray-300 disabled:text-gray-400 rounded disabled:pointer-events-none transition-colors" onClick={nextPage} disabled={!hasNextPage}>
                 <ArrowRight size={24}/>
             </button>

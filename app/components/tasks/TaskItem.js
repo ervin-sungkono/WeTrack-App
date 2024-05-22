@@ -25,7 +25,7 @@ export default function TaskItem({ task, active }){
                   <div className="w-3 h-3 rounded-full" style={{backgroundColor: priorityColor}}></div>
                 </CustomTooltip>}
                 <CustomTooltip id={`task-${task.id}-tooltip`} content={"Belum Ditugaskan"}>
-                  <UserIcon fullName={task.assignedTo?.fullName} src={task.assignedTo ? task.assignedTo.profileImage : '/images/user-placeholder.png'} size="xs"/>
+                  <UserIcon fullName={task.assignedTo?.fullName} src={task.assignedTo ? task.assignedTo.profileImage?.attachmentStoragePath : '/images/user-placeholder.png'} size="xs"/>
                 </CustomTooltip>
             </div>
         </Link>
