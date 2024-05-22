@@ -340,7 +340,6 @@ function TaskDetail({ taskId, closeFn }){
                 <div>
                     <LabelInput 
                         hideLabel
-                        buttonType="icon"
                         projectId={project.id} 
                         labelData={labels}
                         onChange={(e) => setLabels(e.detail.value)} 
@@ -483,6 +482,7 @@ function TaskDetail({ taskId, closeFn }){
                     {task.type === "SubTask" &&
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
                         <p className="font-semibold pt-2">Induk Tugas</p>
+                        {validateMember}
                         <div className="col-span-2">
                             <ParentSelectButton
                                 name={`task-${taskId}-parent`}
