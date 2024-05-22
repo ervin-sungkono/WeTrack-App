@@ -16,7 +16,7 @@ export default function TaskHistoryItem({history}){
                             <UserIcon 
                                 size="xs" 
                                 fullName={history.previousValue?.fullName} 
-                                src={history.previousValue ? history.previousValue.profileImage : '/images/user-placeholder.png'}
+                                src={history.previousValue ? history.previousValue.profileImage?.attachmentStoragePath : '/images/user-placeholder.png'}
                             />
                         </div>
                         <p className="font-semibold text-dark-blue/80">{history.previousValue?.fullName ?? "Belum Ditugaskan"}</p>
@@ -27,7 +27,7 @@ export default function TaskHistoryItem({history}){
                             <UserIcon 
                                 size="xs" 
                                 fullName={history.newValue?.fullName} 
-                                src={history.newValue ? history.newValue.profileImage : '/images/user-placeholder.png'}
+                                src={history.newValue ? history.newValue.profileImage?.attachmentStoragePath : '/images/user-placeholder.png'}
                             />
                         </div>
                         <p className="font-semibold text-dark-blue/80">{history.newValue?.fullName ?? "Belum Ditugaskan"}</p>
@@ -47,7 +47,7 @@ export default function TaskHistoryItem({history}){
     
     return(
         <div key={history.id} className="flex items-start gap-2 md:gap-3">
-            <div><UserIcon size="sm" fullName={history.user.fullName} src={history.user.profileImage}/></div>
+            <div><UserIcon size="sm" fullName={history.user.fullName} src={history.user.profileImage?.attachmentStoragePath}/></div>
             <div className="flex flex-col gap-1.5">
                 <div className="flex gap-2 items-center">
                     <p className="text-xs md:text-sm text-dark-blue">

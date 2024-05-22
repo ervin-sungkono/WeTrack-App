@@ -37,7 +37,7 @@ export default function CommentInput({ onSubmit }){
     return(
         <div className="flex gap-2.5 pl-2 py-2">
             <div>
-                <UserIcon fullName={session?.user.fullName} src={session?.user.profileImage} alt="" size="sm"/>
+                <UserIcon fullName={session?.user.fullName} src={session?.user.profileImage?.attachmentStoragePath} alt="" size="sm"/>
             </div>
             <div className="relative w-full flex flex-col items-end gap-1">
                 <MentionsInput
