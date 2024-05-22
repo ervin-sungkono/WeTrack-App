@@ -44,7 +44,7 @@ export default function UserDropdown({ fullName, email, profileImage }){
                         <Link
                             href={"#signout"}
                             className="block px-4 py-2 hover:bg-gray-100"
-                            onClick={() => signOut()}
+                            onClick={() => signOut({ callbackUrl: '/dashboard' })}
                         >
                             Keluar
                         </Link>

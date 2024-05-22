@@ -1,4 +1,4 @@
-import { addDoc, collection, updateDoc, serverTimestamp, getDoc, query, where, getDocs, doc } from 'firebase/firestore';
+import { addDoc, collection, updateDoc, serverTimestamp, getDoc, query, where, getDocs, setDoc, doc } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
@@ -107,6 +107,11 @@ export async function POST(request, response) {
                 updatedAt: serverTimestamp(),
                 deletedAt: null
             });
+
+            await setDoc(doc(db, 'taskOrderCounters', statusDocRef.id), {
+                lastOrder: 0,
+                updatedAt: serverTimestamp()
+            })
 
             if (statuses[i] === 'To Do') {
                 startStatusId = statusDocRef.id;

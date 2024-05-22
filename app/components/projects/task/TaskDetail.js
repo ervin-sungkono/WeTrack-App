@@ -391,7 +391,7 @@ function TaskDetail({ taskId, closeFn }){
             <div className="h-full flex flex-col overflow-x-hidden overflow-y-auto gap-4 md:gap-6 pr-4 -mr-4 md:pr-8 md:-mr-8 custom-scrollbar">
                 <div className="flex flex-col gap-3">
                     <div className="grid grid-cols-3 gap-2">
-                        <p className="font-semibold text-xs md:text-sm">Penerima</p>
+                        <p className="font-semibold text-xs md:text-sm pt-2">Penerima</p>
                         <div className="col-span-2">
                             <UserSelectButton 
                                 name={`assignedToDetail-${taskId}`}
@@ -404,7 +404,7 @@ function TaskDetail({ taskId, closeFn }){
                         </div>
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
-                        <p className="font-semibold">Label</p>
+                        <p className="font-semibold pt-2">Label</p>
                         <div className="col-span-2">
                             <div 
                                 className={`flex flex-wrap gap-1 md:gap-2 w-full p-2 cursor-pointer hover:bg-gray-200 rounded transition-colors duration-300`} 
@@ -419,7 +419,7 @@ function TaskDetail({ taskId, closeFn }){
                         </div>
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
-                        <p className="font-semibold">Tanggal Mulai</p>
+                        <p className="font-semibold pt-2">Tanggal Mulai</p>
                         <div className="col-span-2">
                             {!editStartDate ? 
                             <p 
@@ -437,7 +437,7 @@ function TaskDetail({ taskId, closeFn }){
                         </div>
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
-                        <p className="font-semibold">Tenggat Waktu</p>
+                        <p className="font-semibold pt-2">Tenggat Waktu</p>
                         <div className="col-span-2">
                             {!editDueDate ? 
                             <p 
@@ -456,7 +456,7 @@ function TaskDetail({ taskId, closeFn }){
                         </div>
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
-                        <p className="font-semibold">Prioritas</p>
+                        <p className="font-semibold pt-2">Prioritas</p>
                         <div className="col-span-2">
                             <SelectButton
                                 name={`task-${taskId}-priority`}
@@ -469,7 +469,7 @@ function TaskDetail({ taskId, closeFn }){
                         </div>
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
-                        <p className="font-semibold">Status</p>
+                        <p className="font-semibold pt-2">Status</p>
                         <div className="col-span-2">
                             <SelectButton
                                 name={`task-${taskId}-status`}
@@ -482,7 +482,7 @@ function TaskDetail({ taskId, closeFn }){
                     </div>
                     {task.type === "SubTask" &&
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
-                        <p className="font-semibold">Induk Tugas</p>
+                        <p className="font-semibold pt-2">Induk Tugas</p>
                         <div className="col-span-2">
                             <ParentSelectButton
                                 name={`task-${taskId}-parent`}
