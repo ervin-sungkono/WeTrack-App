@@ -1,4 +1,4 @@
-import { addDoc, updateDoc, getDoc, doc, collection, where, orderBy, getDocs, query, serverTimestamp, and } from 'firebase/firestore';
+import { addDoc, updateDoc, getDoc, doc, collection, where, orderBy, getDocs, query, serverTimestamp, and, setDoc } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
@@ -147,7 +147,7 @@ export async function POST(request, response) {
 
             // Update the old status order counter
             if(!statusCounterSnap.exists()){
-                await addDoc(collection(db, "taskOrderCounters"), {
+                await setDoc(statusCounterRef, {
                     lastOrder: 0,
                     updatedAt: serverTimestamp()
                 })
@@ -167,8 +167,8 @@ export async function POST(request, response) {
 
             // Update the new status order counter
             if(!newStatusCounterSnap.exists()){
-                await addDoc(collection(db, "taskOrderCounters"), {
-                    lastOrder: 1,
+                await setDoc(newStatusCounterRef, {
+                    lastOrder: 0,
                     updatedAt: serverTimestamp()
                 })
             }else{
