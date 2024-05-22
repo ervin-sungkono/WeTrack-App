@@ -163,7 +163,7 @@ export default function OverviewContent({ projectId }){
                 const dueDate = row.getValue('dueDate')
                 return(
                     <div className="w-full h-full block">
-                        {dateFormat(dueDate) || "Belum ditetapkan"}
+                        {dateFormat(dueDate) || "Belum Ditetapkan"}
                     </div>
                 )
             }

@@ -1,138 +1,152 @@
 "use client"
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from '@fullcalendar/interaction';
 import idLocale from "@fullcalendar/core/locales/id";
-import { createElement, useRef, useState, useEffect } from "react";
+import { useState, useEffect, createElement } from "react";
 import { dateFormat } from "@/app/lib/date";
 import { getPriority } from "@/app/lib/string";
 import { FaCheckSquare as TaskIcon } from "react-icons/fa";
 import { RiCheckboxMultipleFill as SubTaskIcon } from "react-icons/ri";
+import { GoArrowRight as ArrowIcon } from "react-icons/go";
+import { FaCalendarAlt as CalendarIcon } from "react-icons/fa"
 import Label from "../Label";
 import UserIcon from "../UserIcon";
-import { IoIosCloseCircle as CloseCircle } from "react-icons/io";
+import CustomPopover from "../CustomPopover";
+import { updateTask } from "@/app/lib/fetch/task";
 
-export default function Calendar({projectKey, projectId, tasks}){
-    const [selectedEvent, setSelectedEvent] = useState(null);
-    const taskCardRef = useRef(null);
+export default function Calendar({projectKey, projectId, tasks, isEditable}){
+    const [formattedTasks, setFormattedTasks] = useState([])
 
     useEffect(() => {
-        if (selectedEvent && taskCardRef.current) {
-            taskCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    }, [selectedEvent]);
+        setFormattedTasks(tasks.map(task => {
+            return {
+                id: task.id,
+                href: `/projects/${projectId}/tasks?taskId=${task.id}`,
+                displayId: `${projectKey}-${task.displayId}`,
+                title: `${projectKey}-${task.displayId}: ${task.taskName}`,
+                displayTitle: task.taskName,
+                start: task.startDate,
+                end: task.dueDate,
+                allDay: true,
+                type: task.type,
+                assignedTo: task.assignedToData?.fullName || null,
+                assignedToImage: task.assignedToData?.profileImage?.attachmentStoragePath || null,
+                status: task.statusData?.statusName,
+                priority: task.priority,
+                backgroundColor: task.type === "Task" ? "#47389F" : "#E3D55B",
+                textColor: task.type === "Task" ? "#FFFFFF" : "#000000",
+            };
+        }));
+    }, [tasks, projectKey, projectId])
 
-    const formattedTasks = tasks.map(task => {
-        return {
-            id: task.id,
-            href: `/projects/${projectId}/tasks?taskId=${task.id}`,
-            displayId: `${projectKey}-${task.displayId}`,
-            title: `${projectKey}-${task.displayId}: ${task.taskName}`,
-            displayTitle: task.taskName,
-            start: task.startDate,
-            end: task.dueDate,
-            allDay: true,
-            type: task.type,
-            assignedTo: task.assignedToData?.fullName,
-            assignedToImage: task.assignedToData?.profileImage?.attachmentStoragePath || null,
-            status: task.statusData?.statusName,
-            priority: task.priority,
-            backgroundColor: task.type === "Task" ? "#47389F" : "#E3D55B",
-            textColor: task.type === "Task" ? "#FFFFFF" : "#000000",
-            editable: true,
-        }
-    })
-
-    const SelectedTaskCard = ({ event }) => {
-        const {
-            href,
-            displayTitle,
-            status,
-            priority,
-            assignedTo,
-            assignedToImage,
-            type,
-            displayId,
-        } = event.extendedProps;
-        
-        return (
-            <div className="relative" ref={taskCardRef}>
-                <CloseCircle onClick={() => setSelectedEvent(null)} className="absolute -top-2 md:-top-3 -right-3 text-xl md:text-3xl text-danger-red cursor-pointer"/>
-                <div className={`bg-white text-basic-blue p-3 md:p-6 rounded-xl shadow-lg flex gap-6 justify-between`}>
-                    <div className="flex flex-col justify-between w-3/5">
-                        <div className="text-sm md:text-base font-semibold md:font-bold">{displayTitle}</div>
-                        <div className="text-xs md:text-sm">{dateFormat(event.start)} - {dateFormat(event.end)}</div>
-                            <div className="mt-4 flex flex-col gap-1">
-                                <div className="flex gap-1 font-semibold md:font-bold text-xs md:text-sm w-fit items-center">
-                                    Status: <Label text={status.toUpperCase()} />
-                                </div>
-                                <div className="flex gap-1 font-semibold md:font-bold text-xs md:text-sm w-fit items-center">
-                                    Prioritas: <Label text={getPriority(priority).label.toUpperCase()} color={getPriority(priority).color} />
-                                </div>
-                                <div className="mt-1 flex gap-1 font-semibold md:font-bold text-xs md:text-sm w-fit items-center">
-                                    Penerima:
-                                <div className="flex gap-1 items-center">
-                                    {assignedTo && <UserIcon fullName={assignedTo} src={assignedToImage} size="xs" />}
-                                    {assignedTo || "Belum Ditugaskan"}
+    const renderEventContent = (eventInfo) => {
+        const { href, type, displayId, displayTitle, assignedTo, assignedToImage, status, priority } = eventInfo.event.extendedProps
+        return createElement(
+            CustomPopover,
+            { 
+                id: `popover-${eventInfo.event.id}`, 
+                type: type,
+                content: 
+                    <>
+                        <div className="flex flex-col justify-between w-full p-1 gap-4 rounded-md">
+                            <div className="flex flex-col justify-between">
+                                <div className="text-sm md:text-base font-semibold">{displayTitle}</div>
+                                <div className="flex flex-col gap-2">
+                                    <div className="flex flex-col gap-1">
+                                        <div className="flex items-center gap-1 text-xs md:text-sm w-fit">
+                                            <CalendarIcon className="text-base md:text-lg"/>
+                                            Tanggal Mulai: {dateFormat(eventInfo.event.start)}
+                                        </div>
+                                        <div className="flex items-center gap-1 text-xs md:text-sm w-fit">
+                                            <CalendarIcon className="text-base md:text-lg"/>
+                                            Tenggat Waktu: {dateFormat(eventInfo.event.end)}
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <div className="flex items-center gap-1 font-semibold text-xs md:text-sm w-fit">
+                                            Status:
+                                            <Label text={status.toUpperCase()}/>
+                                        </div>
+                                        <div className="flex items-center gap-1 font-semibold text-xs md:text-sm w-fit">
+                                            Prioritas: 
+                                            <Label text={getPriority(priority).label.toUpperCase()} color={getPriority(priority).color}/>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center gap-1 font-semibold text-xs md:text-sm w-fit">
+                                            Penerima:
+                                            {assignedTo === null ? (
+                                                <>
+                                                    <UserIcon src={'/images/user-placeholder.png'} size="xs"/>
+                                                    {"Belum Ditugaskan"}
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <UserIcon fullName={assignedTo} src={assignedToImage} size="xs"/>
+                                                    {assignedTo}
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            <div className="flex items-center justify-between">
+                                <div className="text-xs md:text-sm flex items-center gap-1 justify-end">
+                                    {type === "Task" ? <TaskIcon className="text-lg md:text-xl"/> : <SubTaskIcon className="text-lg md:text-xl"/>}
+                                    {displayId}
+                                </div>
+                                <a href={href}>
+                                    <div className="flex items-center gap-1 text-basic-blue hover:text-basic-blue/80">
+                                        <div className="text-xs md:text-sm cursor-pointer font-semibold">{`Lihat Rincian`}</div>
+                                        <ArrowIcon className="text-base md:text-lg"/>
+                                    </div>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                    <div className="text-right flex flex-col justify-between w-2/5">
-                        <div className="text-xs md:text-sm flex items-center justify-end gap-1">
-                            {type === "Task" ? <TaskIcon className="text-base md:text-xl" /> : <SubTaskIcon className="text-base md:text-xl" />}
-                            {displayId}
-                        </div>
-                        <a href={href}>
-                            <div className="text-xs md:text-sm hover:brightness-75 cursor-pointer font-semibold md:font-bold">{`Lihat Rincian ->`}</div>
-                        </a>
-                    </div>
-                </div>
-            </div>
+                    </>
+            },
+            createElement('a', {
+                style: { 
+                    color: eventInfo.event.textColor, 
+                    overflow: "hidden",
+                    padding: "0 0.25rem",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                    display: "inline-block",
+                    maxWidth: "100%",
+                },
+            }, eventInfo.event.title)
         );
     };
 
-    const renderEventContent = (eventInfo) => (
-        createElement('a', {
-            style: { 
-                color: eventInfo.event.textColor, 
-                cursor: "pointer",
-                overflow: "hidden",
-                padding: "0 0.25rem",
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis",
-                display: "inline-block",
-                maxWidth: "100%"
-            },
-            onClick: (e) => {
-                e.preventDefault();
-                setSelectedEvent(eventInfo.event);
-            }
-        }, eventInfo.event.title)
-    );
-
-    const handleEventDrop = (dropInfo) => {
+    const handleEventDrop = async (dropInfo) => {
         const updatedEvent = {
-            ...dropInfo.event,
+            ...dropInfo.event.extendedProps,
+            id: dropInfo.event.id,
             start: dropInfo.event.startStr,
             end: dropInfo.event.endStr,
         };
-        console.log(updatedEvent)
+        setFormattedTasks(prevTasks => prevTasks.map(task => task.id === updatedEvent.id ? updatedEvent : task));
+        await updateTask({ taskId: updatedEvent.id, startDate: updatedEvent.start, dueDate: updatedEvent.end });
     };
 
-    const handleEventResize = (resizeInfo) => {
+    const handleEventResize = async (resizeInfo) => {
         const updatedEvent = {
-            ...resizeInfo.event,
+            ...resizeInfo.event.extendedProps,
+            id: resizeInfo.event.id,
             start: resizeInfo.event.startStr,
             end: resizeInfo.event.endStr,
         };
-        console.log(updatedEvent)
+        setFormattedTasks(prevTasks => prevTasks.map(task => task.id === updatedEvent.id ? updatedEvent : task));
+        await updateTask({ taskId: updatedEvent.id, startDate: updatedEvent.start, dueDate: updatedEvent.end });
     };
 
     return(
         <FullCalendar
             locale={idLocale}
             timeZone="local"
-            plugins={[ dayGridPlugin ]}
+            plugins={[ dayGridPlugin, interactionPlugin ]}
             initialView="dayGridMonth"
             firstDay={0}
             titleFormat={{
@@ -156,23 +170,15 @@ export default function Calendar({projectKey, projectId, tasks}){
             weekNumberFormat={{
                 week: 'narrow',
             }}
-            weekText="M-"
+            weekText="Mg-"
             height="auto"
-            // aspectRatio={1}
             events={formattedTasks}
-            eventClick={(clickInfo) => {
-                clickInfo.jsEvent.preventDefault();
-                setSelectedEvent(clickInfo.event);
-            }}
             eventContent={renderEventContent}
-            editable={true}
+            editable={isEditable}
+            droppable={isEditable}
+            eventResizableFromStart={isEditable}
             eventDrop={handleEventDrop}
             eventResize={handleEventResize}
         />
-            // {selectedEvent && (
-            //     <div className="mb-6">
-            //         <SelectedTaskCard event={selectedEvent} />
-            //     </div>
-            // )}
     )
 }
