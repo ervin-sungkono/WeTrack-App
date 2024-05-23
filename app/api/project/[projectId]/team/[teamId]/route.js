@@ -25,11 +25,25 @@ export async function GET(request, response){
             }, { status: 404 });
         }
 
-        const { teamId } = response.params
+        const { projectId, teamId } = response.params
+
+        const projectDocRef = doc(db, 'projects', projectId)
+        const projectDocSnap = await getDoc(projectDocRef)
+        if(!projectDocSnap.exists()){
+            return NextResponse.json({ 
+                message: "Project data not found",
+                success: false 
+            }, { status: 404 });
+        }
+        if(projectDocSnap.data().deletedAt != null){
+            return NextResponse.json({ 
+                message: "Project has been deleted",
+                success: false 
+            }, { status: 404 });
+        }
 
         const teamDocRef = doc(db, 'teams', teamId)
         const teamDocSnap = await getDoc(teamDocRef)
-
         if(!teamDocSnap.exists()){
             return NextResponse.json({ 
                 message: "Team data not found",

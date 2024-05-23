@@ -26,6 +26,7 @@ export default function ProjectLayout({ children, hideSidebar, projectId }){
                     }
                     else {
                         console.log("Gagal mendapatkan rincian proyek")
+                        router.replace('/projects')
                     }
                     setLoading(false)
                 }else{
