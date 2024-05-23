@@ -123,6 +123,9 @@ export default function Calendar({projectKey, projectId, tasks, isEditable}){
     const handleEventDrop = async (dropInfo) => {
         const updatedEvent = {
             ...dropInfo.event.extendedProps,
+            title: dropInfo.event.title,
+            backgroundColor: dropInfo.event.backgroundColor,
+            textColor: dropInfo.event.textColor,
             id: dropInfo.event.id,
             start: dropInfo.event.startStr,
             end: dropInfo.event.endStr,
@@ -134,6 +137,9 @@ export default function Calendar({projectKey, projectId, tasks, isEditable}){
     const handleEventResize = async (resizeInfo) => {
         const updatedEvent = {
             ...resizeInfo.event.extendedProps,
+            title: resizeInfo.event.title,
+            backgroundColor: resizeInfo.event.backgroundColor,
+            textColor: resizeInfo.event.textColor,
             id: resizeInfo.event.id,
             start: resizeInfo.event.startStr,
             end: resizeInfo.event.endStr,
