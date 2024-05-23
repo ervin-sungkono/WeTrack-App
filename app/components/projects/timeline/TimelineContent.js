@@ -212,7 +212,7 @@ export default function TimelineContent({ projectId }){
                 </div>
             </div>
             <div className="w-full h-full flex-grow overflow-auto flex justify-start items-center">
-                <div className="min-w-[900px] h-full px-2.5 pt-2 pb-4">
+                <div className="min-w-[900px] max-w-[1200px] h-full px-2.5 pt-2 pb-4">
                     <Calendar
                         projectKey={projectKey}
                         projectId={projectId}

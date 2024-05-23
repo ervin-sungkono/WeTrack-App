@@ -28,12 +28,13 @@ export default function Calendar({projectKey, projectId, tasks, isEditable}){
                 displayTitle: task.taskName,
                 start: task.startDate,
                 end: task.dueDate,
+                finish: task.finishedDate || null,
                 allDay: true,
                 type: task.type,
-                assignedTo: task.assignedToData?.fullName || null,
-                assignedToImage: task.assignedToData?.profileImage?.attachmentStoragePath || null,
-                status: task.statusData?.statusName,
-                priority: task.priority,
+                // assignedTo: task.assignedToData?.fullName || null,
+                // assignedToImage: task.assignedToData?.profileImage?.attachmentStoragePath || null,
+                // status: task.statusData?.statusName,
+                // priority: task.priority,
                 backgroundColor: task.type === "Task" ? "#47389F" : "#E3D55B",
                 textColor: task.type === "Task" ? "#FFFFFF" : "#000000",
             };
@@ -41,15 +42,14 @@ export default function Calendar({projectKey, projectId, tasks, isEditable}){
     }, [tasks, projectKey, projectId])
 
     const renderEventContent = (eventInfo) => {
-        const { href, type, displayId, displayTitle, assignedTo, assignedToImage, status, priority } = eventInfo.event.extendedProps
+        const { href, type, displayId, displayTitle, finish } = eventInfo.event.extendedProps
         return createElement(
             CustomPopover,
             { 
-                id: `popover-${eventInfo.event.id}`, 
-                type: type,
+                id: `popover-${eventInfo.event.id}`,
                 content: 
-                    <>
-                        <div className="flex flex-col justify-between w-full p-1 gap-4 rounded-md">
+                    <div className="z-fixed">
+                        <div className="flex flex-col justify-between p-1 gap-4 rounded-md">
                             <div className="flex flex-col justify-between">
                                 <div className="text-sm md:text-base font-semibold">{displayTitle}</div>
                                 <div className="flex flex-col gap-2">
@@ -58,12 +58,19 @@ export default function Calendar({projectKey, projectId, tasks, isEditable}){
                                             <CalendarIcon className="text-base md:text-lg"/>
                                             Tanggal Mulai: {dateFormat(eventInfo.event.start)}
                                         </div>
-                                        <div className="flex items-center gap-1 text-xs md:text-sm w-fit">
-                                            <CalendarIcon className="text-base md:text-lg"/>
-                                            Tenggat Waktu: {dateFormat(eventInfo.event.end)}
-                                        </div>
+                                        {finish === null ? (
+                                            <div className="flex items-center gap-1 text-xs md:text-sm w-fit">
+                                                <CalendarIcon className="text-base md:text-lg"/>
+                                                Tenggat Waktu: {dateFormat(eventInfo.event.end)}
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center gap-1 text-xs md:text-sm w-fit">
+                                                <CalendarIcon className="text-base md:text-lg"/>
+                                                Tanggal Selesai: {dateFormat(finish)}
+                                            </div>
+                                        )}
                                     </div>
-                                    <div className="flex flex-col gap-1">
+                                    {/* <div className="flex flex-col gap-1">
                                         <div className="flex items-center gap-1 font-semibold text-xs md:text-sm w-fit">
                                             Status:
                                             <Label text={status.toUpperCase()}/>
@@ -88,7 +95,7 @@ export default function Calendar({projectKey, projectId, tasks, isEditable}){
                                                 </>
                                             )}
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                             <div className="flex items-center justify-between">
@@ -104,7 +111,7 @@ export default function Calendar({projectKey, projectId, tasks, isEditable}){
                                 </a>
                             </div>
                         </div>
-                    </>
+                    </div>
             },
             createElement('a', {
                 style: { 
@@ -115,6 +122,7 @@ export default function Calendar({projectKey, projectId, tasks, isEditable}){
                     textOverflow: "ellipsis",
                     display: "inline-block",
                     maxWidth: "100%",
+                    zIndex: 9998,
                 },
             }, eventInfo.event.title)
         );
@@ -180,6 +188,7 @@ export default function Calendar({projectKey, projectId, tasks, isEditable}){
             height="auto"
             events={formattedTasks}
             eventContent={renderEventContent}
+            stickyHeaderDates={false}
             editable={isEditable}
             droppable={isEditable}
             eventResizableFromStart={isEditable}

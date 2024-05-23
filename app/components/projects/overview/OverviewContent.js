@@ -18,6 +18,8 @@ import { validateUserRole } from "@/app/lib/helper"
 import Link from "next/link"
 import { FaCommentDots as CommentIcon, FaTasks as TaskListIcon } from "react-icons/fa";
 import { MdTask as TaskIcon } from "react-icons/md";
+import UserSelectButton from "../../common/UserSelectButton"
+import SelectButton from "../../common/button/SelectButton"
 
 export default function OverviewContent({ projectId }){
     const [userId, setUserId] = useState(null)
@@ -81,7 +83,6 @@ export default function OverviewContent({ projectId }){
             }))
             data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
             setTaskData(data.slice(0, 5))
-            console.log(data)
             const filteredData = data.filter((task) => task.assignedTo === userId)
             setAssignedTaskData(filteredData.slice(0, 5))
         })
@@ -133,26 +134,15 @@ export default function OverviewContent({ projectId }){
             accessorKey: 'id',
         },
         {
-            accessorKey: 'displayId',
-            header: 'ID Tugas',
-            cell: ({ row }) => {
-                const displayId = row.getValue('displayId')
-                return(
-                    <div className="w-full h-full block">
-                        {projectKey}-{displayId}
-                    </div>
-                )
-            }
-        },
-        {
             accessorKey: 'taskName',
             header: 'Nama Tugas',
             cell: ({ row }) => {
                 const taskName = row.getValue('taskName')
+                const id = row.getValue('id')
                 return(
-                    <div className="w-full h-full block">
+                    <Link className="w-full h-full block text-basic-blue hover:text-basic-blue/75" href={`/projects/${projectId}/tasks?taskId=${id}`}>
                         {taskName}
-                    </div>
+                    </Link>
                 )
             }
         },
@@ -173,10 +163,14 @@ export default function OverviewContent({ projectId }){
             header: 'Prioritas',
             cell: ({ row }) => {
                 const priority = row.getValue('priority')
-                const { label, color } = getPriority(priority)
+                const { label } = getPriority(priority)
                 return(
-                    <div className="w-fit h-full block font-semibold">
-                        <Label text={label.toUpperCase()}color={color}/>
+                    <div className="w-full h-full flex justify-start">
+                        {/* <Label text={label.toUpperCase()} color={color}/> */}
+                        <SelectButton
+                            placeholder={label.toUpperCase()}
+                            disabled={true}
+                        />
                     </div>
                 )
             }
@@ -185,10 +179,10 @@ export default function OverviewContent({ projectId }){
             accessorKey: 'assignedToData',
             header: 'Penerima',
             cell: ({ row }) => {
-                const { id, fullName, profileImage } = row.getValue('assignedToData') ?? {}
+                const user = row.getValue('assignedToData') ?? {}
                 return(
-                    <>
-                        {fullName ? (
+                    <div className="w-full h-full block">
+                        {/* {fullName ? (
                             <Link href={`/profile/${id}`}>
                                 <div className="flex gap-2 items-center">
                                     <UserIcon size="sm" fullName={fullName} src={profileImage?.attachmentStoragePath} alt=""/>
@@ -199,8 +193,13 @@ export default function OverviewContent({ projectId }){
                             <div className="w-full h-full block">
                                 {"Belum Ditugaskan"}
                             </div>
-                        )}
-                    </>
+                        )} */}
+                        <UserSelectButton
+                            type="button"
+                            defaultValue={user}
+                            disabled={true}
+                        />
+                    </div>
                 )
             }
         },
@@ -210,7 +209,13 @@ export default function OverviewContent({ projectId }){
             cell: ({ row }) => {
                 const { statusName } = row.getValue('statusData') ?? {}
                 return(
-                    <Label text={statusName.toUpperCase()}/>
+                    <div className="w-full h-full block">
+                        {/* <Label text={statusName.toUpperCase()}/> */}
+                        <SelectButton
+                            placeholder={statusName.toUpperCase()}
+                            disabled={true}
+                        />
+                    </div>
                 )
             }
         },
@@ -258,6 +263,7 @@ export default function OverviewContent({ projectId }){
                                         type={task.type}
                                         startDate={task.startDate}
                                         endDate={task.dueDate}
+                                        finishedDate={task.finishedDate}
                                         status={task.statusData}
                                         priority={task.priority}
                                         projectKey={projectKey}
