@@ -6,7 +6,7 @@ import Label from "../../common/Label";
 import { GoArrowRight as ArrowIcon } from "react-icons/go";
 import { FaCalendarAlt as CalendarIcon } from "react-icons/fa";
 
-export default function AssignedTaskItem({title, type, startDate, endDate, status, priority, projectKey, displayId, href}){
+export default function AssignedTaskItem({title, type, startDate, endDate, finishedDate, status, priority, projectKey, displayId, href}){
     const { label, color } = getPriority(priority)
 
     return (
@@ -21,10 +21,16 @@ export default function AssignedTaskItem({title, type, startDate, endDate, statu
                                 Tanggal Mulai: {dateFormat(startDate) || "Belum Ditetapkan"}
                             </div>
                         )}
-                        {endDate && (
+                        {(endDate && finishedDate === null) && (
                             <div className="flex items-center gap-1 text-xs md:text-sm w-fit">
                                 <CalendarIcon className="text-base md:text-lg"/>
-                                Tenggat Waktu: {dateFormat(endDate) || "Belum Ditetapkan"}
+                                Tenggat Waktu: {dateFormat(endDate)}
+                            </div>
+                        )}
+                        {finishedDate && (
+                            <div className="flex items-center gap-1 text-xs md:text-sm w-fit">
+                                <CalendarIcon className="text-base md:text-lg"/>
+                                Tanggal Selesai: {dateFormat(finishedDate)}
                             </div>
                         )}
                     </div>

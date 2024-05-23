@@ -6,7 +6,7 @@ import Label from "../common/Label";
 import { GoArrowRight as ArrowIcon } from "react-icons/go";
 import { FaCalendarAlt as CalendarIcon } from "react-icons/fa"
 
-export default function DashboardTaskItem({title, type, startDate, endDate, status, priority, projectKey, displayId, href, firstItem}){
+export default function DashboardTaskItem({title, type, startDate, endDate, finishedDate, status, priority, projectKey, displayId, href, firstItem}){
     const { label, color } = getPriority(priority)
     return (
         <div>
@@ -23,13 +23,19 @@ export default function DashboardTaskItem({title, type, startDate, endDate, stat
                             {startDate && (
                                 <div className="flex items-center gap-1 text-xs md:text-sm w-fit">
                                     <CalendarIcon className="text-base md:text-lg"/>
-                                    Tanggal Mulai: {dateFormat(startDate) || "Belum Ditetapkan"}
+                                    Tanggal Mulai: {dateFormat(startDate)}
                                 </div>
                             )}
-                            {endDate && (
+                            {(endDate && finishedDate === null) && (
                                 <div className="flex items-center gap-1 text-xs md:text-sm w-fit">
                                     <CalendarIcon className="text-base md:text-lg"/>
-                                    Tenggat Waktu: {dateFormat(endDate) || "Belum Ditetapkan"}
+                                    Tenggat Waktu: {dateFormat(endDate)}
+                                </div>
+                            )}
+                            {finishedDate && (
+                                <div className="flex items-center gap-1 text-xs md:text-sm w-fit">
+                                    <CalendarIcon className="text-base md:text-lg"/>
+                                    Tanggal Selesai: {dateFormat(finishedDate)}
                                 </div>
                             )}
                         </div>

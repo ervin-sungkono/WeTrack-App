@@ -39,7 +39,8 @@ export default function SelectButton({ name, placeholder, defaultValue, options 
                 type="button"
             >
                 <p className="truncate whitespace-nowrap">{selected?.label ?? placeholder} </p>
-                <DropdownIcon size={16}/>
+                {/* <DropdownIcon size={16}/> */}
+                {!disabled && <DropdownIcon size={16}/>}
             </button>
             
             <div id={name} className={`z-[100] hidden bg-white divide-y divide-gray-100 rounded-lg border border-dark-blue/30 min-w-40 max-h-48 overflow-y-auto`}>
