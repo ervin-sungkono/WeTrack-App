@@ -35,6 +35,13 @@ export async function GET(request, response) {
             }, { status: 404 });
         }
 
+        if(projectSnap.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
+            }, { status: 404 })
+        }
+
         const taskStatusColRef = collection(db, 'taskStatuses')
         const q = query(taskStatusColRef, where('projectId', '==', projectId), orderBy('order'))
         const querySnapshot = await getDocs(q)
@@ -85,6 +92,13 @@ export async function POST(request, response){
             return NextResponse.json({
                 message: "Project not found",
                 success: false
+            }, { status: 404 })
+        }
+
+        if(projectSnap.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
             }, { status: 404 })
         }
 

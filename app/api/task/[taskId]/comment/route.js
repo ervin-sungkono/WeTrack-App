@@ -27,6 +27,30 @@ export async function GET(request, response){
             }, { status: 404 })
         }
 
+        const taskDoc = await getDoc(doc(db, "tasks", taskId))
+
+        if(!taskDoc.exists()) {
+            return NextResponse.json({
+                success: false,
+                message: "Task not found"
+            }, { status: 404})
+        }
+
+        const projectData = await getDoc(doc(db, "projects", taskDoc.data().projectId))
+        if(!projectData.exists()) {
+            return NextResponse.json({
+                success: false,
+                message: "Project doesn't exists"
+            }, { status: 404 })
+        }
+
+        if(projectData.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
+            }, { status: 404 })
+        }
+
         const commentsColRef = collection(db, 'comments')
         const q = query(commentsColRef, where('taskId', '==', taskId))
         const querySnapshot = await getDocs(q)
@@ -68,6 +92,21 @@ export async function POST(request, response){
         if(!taskSnap.exists()){
             return NextResponse.json({
                 message: "Task id is invalid or not found"
+            }, { status: 404 })
+        }
+
+        const projectData = await getDoc(doc(db, "projects", taskSnap.data().projectId))
+        if(!projectData.exists()) {
+            return NextResponse.json({
+                success: false,
+                message: "Project doesn't exists"
+            }, { status: 404 })
+        }
+
+        if(projectData.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
             }, { status: 404 })
         }
 

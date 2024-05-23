@@ -40,6 +40,13 @@ export async function POST(request, response) {
             }, { status: 404 });
         }
 
+        if(projectSnap.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
+            }, { status: 404 })
+        }
+
         const projectRole = await getProjectRole({projectId, userId})
         if(projectRole !== 'Owner'){
             return NextResponse.json({
