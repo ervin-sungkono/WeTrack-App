@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
-import { createHistory, createNotification, getProjectRole } from '@/app/firebase/util';
+import { createHistory, createNotification, deleteAttachments, deleteTask, getProjectRole } from '@/app/firebase/util';
 import { getHistoryAction, getHistoryEventType } from '@/app/lib/history';
 
 export async function GET(request, response) {
@@ -30,6 +30,21 @@ export async function GET(request, response) {
         if(!taskSnap.exists()) {
             return NextResponse.json({
                 message: "Task not found"
+            }, { status: 404 })
+        }
+
+        const projectData = await getDoc(doc(db, "projects", taskSnap.data().projectId))
+        if(!projectData.exists()) {
+            return NextResponse.json({
+                success: false,
+                message: "Project doesn't exists"
+            }, { status: 404 })
+        }
+
+        if(projectData.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
             }, { status: 404 })
         }
 
@@ -116,6 +131,21 @@ export async function PUT(request, response) {
         }
 
         const taskData = taskSnap.data()
+
+        const projectData = await getDoc(doc(db, "projects", taskData.projectId))
+        if(!projectData.exists()) {
+            return NextResponse.json({
+                success: false,
+                message: "Project doesn't exists"
+            }, { status: 404 })
+        }
+
+        if(projectData.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
+            }, { status: 404 })
+        }
 
         if(taskData.type == 'SubTask' && parentId) {
             const parentTaskSnap = await getDoc(doc(db, "tasks", parentId))
@@ -269,6 +299,21 @@ export async function DELETE(request, response) {
             }, { status: 404 })
         }
 
+        const projectData = await getDoc(doc(db, "projects", taskDoc.data().projectId))
+        if(!projectData.exists()) {
+            return NextResponse.json({
+                success: false,
+                message: "Project doesn't exists"
+            }, { status: 404 })
+        }
+
+        if(projectData.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
+            }, { status: 404 })
+        }
+
         const taskName = taskDoc.data().taskName
 
         const projectRole = await getProjectRole({ projectId: taskDoc.data().projectId, userId})
@@ -279,7 +324,8 @@ export async function DELETE(request, response) {
             }, { status: 401 })
         }
 
-        await deleteDoc(taskDocRef) 
+        await deleteTask({ taskId: taskId, userId: userId }) 
+        await deleteAttachments({ taskId: taskId })
 
         await createHistory({ 
             userId: userId,

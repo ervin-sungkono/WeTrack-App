@@ -30,6 +30,21 @@ export async function POST(request, response) {
             }, { status: 404 });
         }
 
+        const projectData = await getDoc(doc(db, "projects", taskSnap.data().projectId))
+        if(!projectData.exists()) {
+            return NextResponse.json({
+                success: false,
+                message: "Project doesn't exists"
+            }, { status: 404 })
+        }
+
+        if(projectData.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
+            }, { status: 404 })
+        }
+
         const projectRole = await getProjectRole({projectId: taskSnap.data().projectId, userId})
         console.log(projectRole)
         if(projectRole !== 'Owner' && projectRole !== 'Member'){

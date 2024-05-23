@@ -37,6 +37,21 @@ export async function GET(request, response){
             }, { status: 404 });
         }
 
+        const projectData = await getDoc(doc(db, "projects", teamDocSnap.data().projectId))
+        if(!projectData.exists()) {
+            return NextResponse.json({
+                success: false,
+                message: "Project doesn't exists"
+            }, { status: 404 })
+        }
+
+        if(projectData.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
+            }, { status: 404 })
+        }
+
         if(teamDocSnap.data().userId !== userId){
             return NextResponse.json({ 
                 message: "Unauthorized to join the team",
@@ -93,6 +108,21 @@ export async function PUT(request, response){
             }, { status: 404 })
         }
         const teamData = teamDoc.data()
+
+        const projectData = await getDoc(doc(db, "projects", teamData.projectId))
+        if(!projectData.exists()) {
+            return NextResponse.json({
+                success: false,
+                message: "Project doesn't exists"
+            }, { status: 404 })
+        }
+
+        if(projectData.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
+            }, { status: 404 })
+        }
 
         const projectRole = await getProjectRole({ projectId: teamData.projectId, userId})
         if(projectRole !== 'Owner'){
@@ -172,6 +202,21 @@ export async function DELETE(request, response){
             return NextResponse.json({
                 message: "Team not found",
                 success: false
+            }, { status: 404 })
+        }
+
+        const projectData = await getDoc(doc(db, "projects", teamDoc.data().projectId))
+        if(!projectData.exists()) {
+            return NextResponse.json({
+                success: false,
+                message: "Project doesn't exists"
+            }, { status: 404 })
+        }
+
+        if(projectData.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
             }, { status: 404 })
         }
 

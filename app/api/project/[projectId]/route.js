@@ -38,6 +38,12 @@ export async function GET(request, response) {
             }, { status: 404 });
         }
 
+        if(projectData.deletedAt != null) {
+            return NextResponse.json({
+                message: "Project is no longer exists"
+            }, { status: 404 })
+        }
+
         return  NextResponse.json({
             data: {
                 id: projectSnap.id,
@@ -93,6 +99,12 @@ export async function PUT(request, response) {
                 message: "Project not found"
             }, { status: 404 })
         }
+
+        if(projectData.deletedAt != null) {
+            return NextResponse.json({
+                message: "Project is no longer exists"
+            }, { status: 404})
+        }
         
         const startStatusDoc = await getDoc(doc(db, "taskStatuses", startStatus))
         if(!startStatusDoc.exists()) {
@@ -132,82 +144,34 @@ export async function PUT(request, response) {
             }, { status: 404 });
         } 
 
-        if (startStatus != updatedProjectSnap.data().startStatus) {
-            const q = query(collection(db, "tasks"), where("status", "==", projectData.startStatus));
-            const taskSnapShot = await getDocs(q);
-        
-            if (!taskSnapShot.empty) {
-                const updateTasks = taskSnapShot.docs.map(async (item) => {
-                    const taskDocRef = doc(db, "tasks", item.id);
-                    const taskDoc = await getDoc(taskDocRef);
-        
-                    if (!taskDoc.exists()) {
-                        throw new Error("Something went wrong when updating task");
-                    }
-        
-                    const previousStartStatus = await getDoc(doc(db, "taskStatuses", taskDoc.data().status));
-                    if (!previousStartStatus.exists) {
-                        throw new Error("The task doesn't have a previous task status");
-                    }
-        
-                    await updateDoc(taskDocRef, {
-                        // status: startStatus,
-                        finishedDate: startStatus == endStatus ? new Date().toISOString() : null,
-                        updatedAt: serverTimestamp()
-                    });
-        
-                    // await createHistory({
-                    //     userId: userId,
-                    //     taskId: item.id,
-                    //     projectId: taskDoc.data().projectId,
-                    //     action: getHistoryAction.update,
-                    //     eventType: getHistoryEventType.taskStatus,
-                    //     previousValue: previousStartStatus.data().statusName,
-                    //     newValue: startStatusDoc.data().statusName
-                    // });
-                });
-        
-                await Promise.all(updateTasks);
+        const q = query(collection(db, "tasks"), where("status", "==", projectData.endStatus));
+        const currentTaskSnapShotInEndStatus = await getDocs(q);
+    
+        const updateTasks = await Promise.all(currentTaskSnapShotInEndStatus.docs.map(async (item) => {
+            const taskDocRef = doc(db, "tasks", item.id);
+            const taskDoc = await getDoc(taskDocRef);
+    
+            if (!taskDoc.exists()) {
+                throw new Error("Something went wrong when updating task");
             }
-        }        
-
-        if (endStatus != updatedProjectSnap.data().endStatus) {
-            const q = query(collection(db, "tasks"), where("status", "==", projectData.endStatus));
-            const taskSnapShot = await getDocs(q);
-        
-            const updateTasks = taskSnapShot.docs.map(async (item) => {
-                const taskDocRef = doc(db, "tasks", item.id);
-                const taskDoc = await getDoc(taskDocRef);
-        
-                if (!taskDoc.exists()) {
-                    throw new Error("Something went wrong when updating task");
-                }
-        
-                const previousEndStatus = await getDoc(doc(db, "taskStatuses", taskDoc.data().status));
-                if (!previousEndStatus.exists) {
-                    throw new Error("The task doesn't have a previous task status");
-                }
-        
+    
+            if(projectData.endStatus != updatedProjectSnap.data().endStatus) {
                 await updateDoc(taskDocRef, {
-                    // status: endStatus,
-                    finishedDate: null,
+                    finishedDate: null, 
                     updatedAt: serverTimestamp()
                 });
-        
-                // await createHistory({
-                //     userId: userId,
-                //     taskId: item.id,
-                //     projectId: taskDoc.data().projectId,
-                //     action: getHistoryAction.update,
-                //     eventType: getHistoryEventType.taskStatus,
-                //     previousValue: previousEndStatus.data().statusName,
-                //     newValue: endStatusDoc.data().statusName
-                // });
-            });
-        
-            await Promise.all(updateTasks);
-        }        
 
+                await createHistory({
+                    userId: userId,
+                    taskId: taskDoc.id,
+                    projectId: taskDoc.data().projectId,
+                    action: getHistoryAction.update,
+                    eventType: getHistoryEventType.task
+                });
+            }
+    
+        }));
+                 
         return NextResponse.json({
             data: {
                 id: updatedProjectSnap.id,
@@ -246,6 +210,13 @@ export async function DELETE(request, response) {
             }, { status: 404 })
         }
 
+        if(projectDocSnap.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
+            }, { status: 404 })
+        }
+
         const projectRole = await getProjectRole({ projectId, userId})
         if(projectRole !== 'Owner'){
             return NextResponse.json({
@@ -256,8 +227,8 @@ export async function DELETE(request, response) {
 
         const projectName = projectDocSnap.data().projectName
 
-        await deleteDoc(projectDocRef);
-        // await deleteProject({ projectId: projectId })
+        // await deleteDoc(projectDocRef);
+        await deleteProject({ projectId: projectId })
         
         await createHistory({
             userId: userId,
