@@ -19,6 +19,29 @@ export async function GET(request, response) {
         }
 
         const { taskId } = response.params
+        const taskDoc = await getDoc(doc(db, "tasks", taskId))
+
+        if(!taskDoc.exists()) {
+            return NextResponse.json({
+                success: false,
+                message: "Task not found"
+            }, { status: 404})
+        }
+
+        const projectData = await getDoc(doc(db, "projects", taskDoc.data().projectId))
+        if(!projectData.exists()) {
+            return NextResponse.json({
+                success: false,
+                message: "Project doesn't exists"
+            }, { status: 404 })
+        }
+
+        if(projectData.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
+            }, { status: 404 })
+        }
 
         const q = query(collection(db, "attachments"), where("taskId", "==", taskId))
         const attachmentDocsRef = await getDocs(q)
@@ -77,6 +100,21 @@ export async function POST(request, response) {
             }, { status: 400 })
         }
         const projectId = taskDoc.data().projectId
+
+        const projectData = await getDoc(doc(db, "projects", projectId))
+        if(!projectData.exists()) {
+            return NextResponse.json({
+                success: false,
+                message: "Project doesn't exists"
+            }, { status: 404 })
+        }
+
+        if(projectData.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
+            }, { status: 404 })
+        }
 
         const projectRole = await getProjectRole({ projectId, userId})
         if(projectRole !== 'Owner' && projectRole !== 'Member'){

@@ -2,6 +2,7 @@ import { db } from "@/app/firebase/config"
 import { query, orderBy, where, collection, doc, and, getDocs, getDoc, updateDoc, serverTimestamp, addDoc, limit, deleteDoc } from "firebase/firestore"
 import { getSession } from "next-auth/react"
 import { deleteExistingFile } from "../lib/file"
+import { getHistoryAction, getHistoryEventType } from "../lib/history"
 
 export const getTaskReferenceOrderBy = ({ field, id, orderByKey }) => {
     const q = query(collection(db, 'tasks'), and(where(field, '==', id), where('type', '==', 'Task')), orderBy(orderByKey))
@@ -107,7 +108,7 @@ export const deleteTasks = async({ projectId }) => {
     }
 }
 
-export const deleteTask = async({ taskId }) => {
+export const deleteTask = async({ taskId, userId }) => {
     try {   
         if(!taskId) return null
     
@@ -124,9 +125,20 @@ export const deleteTask = async({ taskId }) => {
 
         if(!subTaskSnapShot.empty) {
             await Promise.all(subTaskSnapShot.docs.map(async(item) => {
-                updateDoc(doc(db, "tasks", item.id), {
+                const subTaskDocRef = doc(db, "tasks", item.id)
+                const subTaskDoc = await getDoc(subTaskDocRef)
+                
+                await updateDoc(subTaskDocRef, {
                     parentId: null,
                     updatedAt: serverTimestamp()
+                });
+
+                await createHistory({ 
+                    userId: userId,
+                    taskId: taskId,
+                    projectId: subTaskDoc.data().projectId,
+                    eventType: getHistoryEventType.subtask,
+                    action: getHistoryAction.update
                 })
             }))
         }

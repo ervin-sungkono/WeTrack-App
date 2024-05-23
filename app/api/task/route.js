@@ -20,6 +20,21 @@ export async function GET(request, response) {
 
         const projectId = request.nextUrl.searchParams.get("projectId")
 
+        const projectData = await getDoc(doc(db, "projects", projectId))
+        if(!projectData.exists()) {
+            return NextResponse.json({
+                success: false,
+                message: "Project doesn't exists"
+            }, { status: 404 })
+        }
+
+        if(projectData.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
+            }, { status: 404 })
+        }
+
         const taskRef = collection(db, 'tasks');
 
         if (!taskRef) {
@@ -106,6 +121,13 @@ export async function POST(request, response) {
         if(!projectDocSnap.exists()){
             return NextResponse.json({
                 message: "The referred project is not found"
+            }, { status: 404 })
+        }
+
+        if(projectDocSnap.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
             }, { status: 404 })
         }
 

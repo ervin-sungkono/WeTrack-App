@@ -43,6 +43,21 @@ export async function PUT(request, response){
                 success: false
             }, { status: 401 })
         }
+
+        const projectData = await getDoc(doc(db, "projects", projectId))
+        if(!projectData.exists()) {
+            return NextResponse.json({
+                success: false,
+                message: "Project doesn't exists"
+            }, { status: 404 })
+        }
+
+        if(projectData.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
+            }, { status: 404 })
+        }
         
         await updateDoc(docRef, {
             content: content,
@@ -98,6 +113,21 @@ export async function DELETE(request, response){
                 message: "Unauthorized",
                 success: false
             }, { status: 401 })
+        }
+
+        const projectData = await getDoc(doc(db, "projects", docSnap.data().projectId))
+        if(!projectData.exists()) {
+            return NextResponse.json({
+                success: false,
+                message: "Project doesn't exists"
+            }, { status: 404 })
+        }
+
+        if(projectData.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
+            }, { status: 404 })
         }
 
         await deleteDoc(doc(db, "labels", labelId))
