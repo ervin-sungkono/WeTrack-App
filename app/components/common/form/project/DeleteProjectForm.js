@@ -5,7 +5,7 @@ import Button from "../../button/Button"
 import FormikField from "../formik/FormikField"
 import FormikWrapper from "../formik/FormikWrapper"
 
-export default function DeleteProjectForm({onConfirm, onClose, error, errorMessage}){
+export default function DeleteProjectForm({onConfirm, onClose, error, errorMessage, projectName}){
     const initialValues = {
         projectName: ""
     }
@@ -15,7 +15,11 @@ export default function DeleteProjectForm({onConfirm, onClose, error, errorMessa
             variant="secondary"
             title={"Hapus Proyek"}
             titleSize={"large"}
-            message={"Masukkan nama proyek ini untuk menghapus proyek."}
+            message={
+                <span>
+                    Ketik nama proyek pada kolom di bawah untuk menghapus proyek: <b>{projectName}</b>
+                </span>
+            }
             wrapContent
         >
             <FormikWrapper

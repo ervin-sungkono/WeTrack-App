@@ -47,7 +47,7 @@ export default function Sidebar({ project, projectId }){
             icon: <TimelineIcon size={16}/>
         },
         { 
-            label: 'Papan',
+            label: 'Papan Kanban',
             url: '/board', 
             icon: <BoardIcon size={16}/>
         },

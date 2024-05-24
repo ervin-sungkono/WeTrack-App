@@ -26,6 +26,7 @@ export default function SettingForm({projectId}){
     const [loading, setLoading] = useState(true)
     const router = useRouter()
     const role = useRole()
+    const [projectName, setProjectName] = useState("")
 
     const [projectSettings, setProjectSettings] = useState({
         projectName: "",
@@ -121,6 +122,7 @@ export default function SettingForm({projectId}){
                     startStatus: data.startStatus,
                     endStatus: data.endStatus
                 })
+                setProjectName(data.projectName)
                 setLoading(false)
             }else{
                 setError(true)
@@ -240,6 +242,7 @@ export default function SettingForm({projectId}){
                         onClose={() => setDeleteProjectMode(false)}
                         error={errorDelete}
                         errorMessage={errorDeleteMessage}
+                        projectName={projectName}
                     />
                 )}
                 {successUpdateProject &&
