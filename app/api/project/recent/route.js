@@ -27,6 +27,11 @@ export async function GET(request, response) {
             if(projectDoc.exists()) {
                 const projectData = projectDoc.data()
                 const userDoc = await getDoc(doc(db, 'users', projectData.createdBy));
+                
+                if(projectData.deletedAt != null) {
+                    return null
+                }
+
                 return {
                     id: projectDoc.id,
                     ...projectData,

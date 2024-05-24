@@ -25,6 +25,21 @@ export async function GET(request, response){
 
         const { projectId } = response.params
 
+        const projectData = await getDoc(doc(db, "projects", projectId))
+        if(!projectData.exists()) {
+            return NextResponse.json({
+                success: false,
+                message: "Project doesn't exists"
+            }, { status: 404 })
+        }
+
+        if(projectData.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
+            }, { status: 404 })
+        }
+
         const teamCollection = collection(db, 'teams')
         const q = query(teamCollection, where("projectId", '==', projectId))
         const teamSnapshots = await getDocs(q)
@@ -100,6 +115,13 @@ export async function POST(request, response){
             return NextResponse.json({
                 message: "Project not found",
                 success: false
+            }, { status: 404 })
+        }
+
+        if(docRef.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
             }, { status: 404 })
         }
 

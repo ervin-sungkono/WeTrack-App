@@ -159,7 +159,7 @@ export default function BoardItem({ item, index }){
                 <CustomTooltip id={`task-${item.id}-tooltip`} content={item.assignedTo?.fullName ?? "Belum Ditugaskan"}>
                   <UserIcon 
                     size="sm"
-                    src={item.assignedTo ? item.assignedTo.profileImage : '/images/user-placeholder.png'}
+                    src={item.assignedTo ? item.assignedTo.profileImage?.attachmentStoragePath : '/images/user-placeholder.png'}
                     fullName={item.assignedTo?.fullName}
                   />
                 </CustomTooltip>

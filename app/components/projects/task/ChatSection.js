@@ -56,7 +56,7 @@ export default function ChatSection({ taskId, title }){
                  :
                 <div className="w-full flex flex-col items-center gap-2 py-8">
                     <ChatIcon size={48} className="text-dark-blue/60"/>
-                    <p className="text-xs md:text-sm text-dark-blue/80 text-center">Belum ada riwayat percakapan dengan AI</p>
+                    <p className="text-xs md:text-sm text-dark-blue/80 text-center">Belum ada riwayat percakapan dengan AI.</p>
                 </div>}
                 <Button size="sm" onClick={() => setChatModal(true)}>
                     <div className="flex gap-2 items-center">

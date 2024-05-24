@@ -191,7 +191,7 @@ export default function SubtaskSection({ projectId, taskId, statusOptions, teamO
                         name={"subTaskName"}
                         onSubmit={createSubtask}
                         onBlur={() => setCreatingSubtask(false)}
-                        placeholder={"Masukkan nama subtugas.."}
+                        placeholder={"Masukkan nama subtugas..."}
                     />
                 </div>}
             </div>

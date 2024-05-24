@@ -25,16 +25,45 @@ export async function GET(request, response){
             }, { status: 404 });
         }
 
-        const { teamId } = response.params
+        const { projectId, teamId } = response.params
+
+        const projectDocRef = doc(db, 'projects', projectId)
+        const projectDocSnap = await getDoc(projectDocRef)
+        if(!projectDocSnap.exists()){
+            return NextResponse.json({ 
+                message: "Project data not found",
+                success: false 
+            }, { status: 404 });
+        }
+        if(projectDocSnap.data().deletedAt != null){
+            return NextResponse.json({ 
+                message: "Project has been deleted",
+                success: false 
+            }, { status: 404 });
+        }
 
         const teamDocRef = doc(db, 'teams', teamId)
         const teamDocSnap = await getDoc(teamDocRef)
-
         if(!teamDocSnap.exists()){
             return NextResponse.json({ 
                 message: "Team data not found",
                 success: false 
             }, { status: 404 });
+        }
+
+        const projectData = await getDoc(doc(db, "projects", teamDocSnap.data().projectId))
+        if(!projectData.exists()) {
+            return NextResponse.json({
+                success: false,
+                message: "Project doesn't exists"
+            }, { status: 404 })
+        }
+
+        if(projectData.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
+            }, { status: 404 })
         }
 
         if(teamDocSnap.data().userId !== userId){
@@ -93,6 +122,21 @@ export async function PUT(request, response){
             }, { status: 404 })
         }
         const teamData = teamDoc.data()
+
+        const projectData = await getDoc(doc(db, "projects", teamData.projectId))
+        if(!projectData.exists()) {
+            return NextResponse.json({
+                success: false,
+                message: "Project doesn't exists"
+            }, { status: 404 })
+        }
+
+        if(projectData.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
+            }, { status: 404 })
+        }
 
         const projectRole = await getProjectRole({ projectId: teamData.projectId, userId})
         if(projectRole !== 'Owner'){
@@ -172,6 +216,21 @@ export async function DELETE(request, response){
             return NextResponse.json({
                 message: "Team not found",
                 success: false
+            }, { status: 404 })
+        }
+
+        const projectData = await getDoc(doc(db, "projects", teamDoc.data().projectId))
+        if(!projectData.exists()) {
+            return NextResponse.json({
+                success: false,
+                message: "Project doesn't exists"
+            }, { status: 404 })
+        }
+
+        if(projectData.data().deletedAt != null) {
+            return NextResponse.json({
+                success: false,
+                message: "Project no longer exists"
             }, { status: 404 })
         }
 

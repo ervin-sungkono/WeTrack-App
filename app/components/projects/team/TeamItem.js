@@ -84,13 +84,13 @@ export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, s
     }
 
     return (
-        <div className="relative mt-4 mb-12">
+        <div className="relative my-4">
             {(editMode && role != 'Owner') && (
                 <CloseCircle onClick={handleUserDelete} className="absolute -top-4 -right-4 text-3xl text-danger-red cursor-pointer"/>
             )}
             <div className={`h-full flex flex-col justify-between items-center m-auto px-3 md:px-6 py-2.5 md:py-4 rounded-xl shadow-md ${pending ? 'bg-light-blue' : (editMode && deleteSelected) ? 'bg-danger-red' : 'bg-white'} w-48 md:w-64`}>
                 {!pending ? (
-                    <>
+                    <div className="mt-4">
                         {editMode ? (
                             <UserIcon fullName={user?.fullName} size="team" src={profileImage}/>
                         ) : (
@@ -100,9 +100,11 @@ export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, s
                                 </div>
                             </Link>
                         )}
-                    </>
+                    </div>
                 ) : (
-                    <UserIcon size="team" src={profileImagePending}/>
+                    <div className="mt-4">
+                        <UserIcon size="team" src={profileImagePending}/>
+                    </div>
                 )}
                 {!pending && (
                     <>
@@ -132,7 +134,7 @@ export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, s
                             />
                         </div>
                     ) : (
-                        <button className={`cursor-default mt-4 mb-6 text-xs md:text-sm px-3 md:px-4 py-2 md:py-1.5 rounded-full font-medium ${getRoleClass()}`}>
+                        <button className={`cursor-default my-4 text-xs md:text-sm px-3 md:px-4 py-2 md:py-1.5 rounded-full font-medium ${getRoleClass()}`}>
                             {role}
                         </button>
                     )

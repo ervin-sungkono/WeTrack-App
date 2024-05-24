@@ -4,6 +4,7 @@ import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
 import { createHistory } from '@/app/firebase/util';
+import { getHistoryAction, getHistoryEventType } from '@/app/lib/history';
 
 export async function GET(request, response) {
     try {
@@ -30,6 +31,10 @@ export async function GET(request, response) {
             if(projectDoc.exists()) {
                 const projectData = projectDoc.data()
                 const userDoc = await getDoc(doc(db, 'users', projectData.createdBy));
+
+                if(projectData.deletedAt != null) {
+                    return null
+                }
 
                 return {
                     id: projectDoc.id,
@@ -152,8 +157,8 @@ export async function POST(request, response) {
             await createHistory({
                 userId: createdBy, 
                 projectId: docRef.id, 
-                eventType: "Project", 
-                action: "create" 
+                eventType: getHistoryEventType.project, 
+                action: getHistoryAction.create, 
             })
 
             return NextResponse.json({

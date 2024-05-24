@@ -340,7 +340,6 @@ function TaskDetail({ taskId, closeFn }){
                 <div>
                     <LabelInput 
                         hideLabel
-                        buttonType="icon"
                         projectId={project.id} 
                         labelData={labels}
                         onChange={(e) => setLabels(e.detail.value)} 
@@ -483,6 +482,7 @@ function TaskDetail({ taskId, closeFn }){
                     {task.type === "SubTask" &&
                     <div className="grid grid-cols-3 gap-2 text-xs md:text-sm">
                         <p className="font-semibold pt-2">Induk Tugas</p>
+                        {validateMember}
                         <div className="col-span-2">
                             <ParentSelectButton
                                 name={`task-${taskId}-parent`}
@@ -502,13 +502,13 @@ function TaskDetail({ taskId, closeFn }){
                             className="w-full cursor-pointer text-xs md:text-sm text-dark-blue/80 hover:bg-gray-200 p-2 rounded transition-colors duration-300"
                             onClick={validateMember ? () => setEditDescription(true) : null} 
                         >
-                            {task.description ? task.description : "Tambahkan deskripsi tugas.."}
+                            {task.description ? task.description : "Tambahkan deskripsi tugas..."}
                         </p> :
                         <SimpleTextareaForm
                             name={`task-${taskId}-description`}
                             onSubmit={handleUpdateTaskDescription}
                             onBlur={() => setEditDescription(false)}
-                            placeholder={"Masukkan deskripsi tugas.."}
+                            placeholder={"Masukkan deskripsi tugas..."}
                             defaultValue={task.description}
                         />}
                     </div>
