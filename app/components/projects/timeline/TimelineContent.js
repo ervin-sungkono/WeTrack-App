@@ -8,6 +8,7 @@ import { useRole } from "@/app/lib/context/role";
 import { getDocumentReference, getQueryReference, getQueryReferenceOrderBy } from "@/app/firebase/util";
 import { getDoc, onSnapshot } from "firebase/firestore";
 import Calendar from "../../common/calendar/Calendar";
+import { validateUserRole } from "@/app/lib/helper";
 
 export default function TimelineContent({ projectId }){
     const role = useRole()
@@ -179,10 +180,10 @@ export default function TimelineContent({ projectId }){
     }
 
     return (
-        <div className="flex flex-col gap-4">
-            <div className="z-[2] flex flex-col xs:flex-row justify-between gap-4 items-center">
-                <div className="w-full flex justify-center xs:justify-start items-center gap-3 md:gap-6">
-                    <SearchBar placeholder={"Cari jadwal.."} handleSearch={handleSearch}/>
+        <div className="h-full overflow-y-auto flex flex-col gap-4">
+            <div className="flex flex-col md:flex-row justify-between gap-4 items-center">
+                <div className="w-full flex justify-center md:justify-start items-center gap-3 md:gap-6 z-almostFixed">
+                    <SearchBar placeholder={"Cari jadwal..."} handleSearch={handleSearch}/>
                     <div className="relative">
                         <button className="block md:hidden text-white bg-basic-blue hover:bg-basic-blue/80 rounded-md p-1.5" onClick={() => setFilterDropdown(!filterDropdown)}>
                             <FilterIcon size={20}/>
@@ -210,12 +211,13 @@ export default function TimelineContent({ projectId }){
                     </div>
                 </div>
             </div>
-            <div className="z-[0] w-full mt-4">
-                <div className="w-full lg:w-9/10">
+            <div className="w-full h-full flex-grow overflow-auto flex justify-start items-center">
+                <div className="min-w-[900px] max-w-[1200px] h-full px-2.5 pt-2 pb-4">
                     <Calendar
                         projectKey={projectKey}
                         projectId={projectId}
                         tasks={tasks}
+                        isEditable={validateUserRole({ userRole: role, minimumRole: 'Member' }) ? true : false}
                     />
                 </div>
             </div>

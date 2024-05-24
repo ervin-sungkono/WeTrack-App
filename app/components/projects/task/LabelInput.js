@@ -12,7 +12,7 @@ import { pickTextColorBasedOnBgColor } from "@/app/lib/color";
 import { IoMdSettings as SettingsIcon } from "react-icons/io";
 import { validateUserRole } from "@/app/lib/helper";
 
-export default function LabelInput({ hideLabel = false, projectId, labelData, onChange, resetLabel = null, buttonType = 'default' }){
+export default function LabelInput({ hideLabel = false, projectId, labelData, onChange, resetLabel = null }){
     const [labelModal, setLabelModal] = useState(false)
     const [labels, setLabels] = useState([])
     const [role, setRole] = useState()
@@ -58,9 +58,9 @@ export default function LabelInput({ hideLabel = false, projectId, labelData, on
         skipInvalid: true,
         userInput: false,
         maxTags: 6,
-        placeholder: "Masukkan label..",
+        placeholder: "Masukkan label...",
         dropdown: {
-            maxItems: 20,           // <- mixumum allowed rendered suggestions
+            maxItems: 20,           // <- maximum allowed rendered suggestions
             classname: "tags-look", // <- custom classname for this dropdown, so it could be targeted
             enabled: 0,             // <- show suggestions on focus
             closeOnSelect: false,   // <- do not hide the suggestions dropdown once an item has been selected
@@ -101,8 +101,7 @@ export default function LabelInput({ hideLabel = false, projectId, labelData, on
                 />
                 {validateUserRole({ userRole: role, minimumRole: 'Owner' }) && 
                 <Button variant="primary" size="sm" onClick={() => setLabelModal(true)}>
-                    {buttonType === 'icon' && <SettingsIcon size={20} className="mx-auto"/>}
-                    {buttonType === 'default' && <p>Pengaturan</p>}
+                    <p>Pengaturan</p>
                 </Button>}
                 {labelModal && <LabelForm labelData={labels} projectId={projectId} onCancel={() => setLabelModal(false)}/>}
             </div>   

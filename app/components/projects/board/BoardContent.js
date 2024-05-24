@@ -15,6 +15,7 @@ import Button from "../../common/button/Button"
 import DotButton from "../../common/button/DotButton"
 import UpdateStatusForm from "../../common/form/UpdateStatusForm"
 import DeleteStatusForm from "../../common/form/DeleteStatusForm"
+import PopUpLoad from "../../common/alert/PopUpLoad"
 import { TailSpin } from "react-loader-spinner"
 import { useSessionStorage } from "usehooks-ts"
 import { getAllTeamMember } from "@/app/lib/fetch/team"
@@ -62,6 +63,7 @@ export default function BoardContent({ projectId }){
   const [taskData, setTaskData] = useState()
   const [placeholderProps, setPlaceholderProps] = useState({});
   const [project, _] = useSessionStorage("project")
+  const [loading, setLoading] = useState(false)
 
   const [teamOptions, setTeamOptions] = useState([])
   const [labelOptions, setLabelOptions] = useState([])
@@ -131,25 +133,39 @@ export default function BoardContent({ projectId }){
   }
 
   const handleUpdateStatus = async(values) => {
-    const res = await updateTaskStatus({ statusId: activeStatus.id, statusName: values.statusName })
+    setLoading(true)
+    try{
+      const res = await updateTaskStatus({ statusId: activeStatus.id, statusName: values.statusName })
     
-    if(!res.success){
-      alert("Gagal mengubah status tugas")
+      if(!res.success){
+        alert("Gagal mengubah status tugas")
+      }
+    }catch(e){
+      console.log(e)
+    }finally{
+      setLoading(false)
+      setActiveStatus(null)
+      setUpdateConfirmation(false)
     }
-
-    setActiveStatus(null)
-    setUpdateConfirmation(false)
   }
 
   const handleDeleteStatus = async(values) => {
-    const res = await deleteTaskStatus({ statusId: activeStatus.id, projectId, newStatusId: values.newStatusId })
+    setLoading(true)
 
-    if(!res.success){
-      alert("Gagal menghapus status tugas")
+    try{
+      const res = await deleteTaskStatus({ statusId: activeStatus.id, projectId, newStatusId: values.newStatusId })
+
+      if(!res.success){
+        alert("Gagal menghapus status tugas")
+      }
     }
-
-    setActiveStatus(null)
-    setDeleteConfirmation(false)
+    catch(e){
+      console.log(e)
+    }finally{
+      setLoading(false)
+      setActiveStatus(null)
+      setDeleteConfirmation(false)
+    }
   }
 
   const updateState = useCallback(
@@ -409,9 +425,10 @@ export default function BoardContent({ projectId }){
 
   return (
     <div className="flex flex-col gap-4 h-full overflow-auto">
+      {loading && <PopUpLoad/>}
       <div className="flex flex-col xs:flex-row justify-between gap-4 items-center">
         <div className="w-full flex justify-center md:justify-start items-center gap-3 md:gap-6 z-[9990]"> 
-          <SearchBar placeholder={"Cari tugas.."} handleSearch={handleSearch}/>
+          <SearchBar placeholder={"Cari tugas..."} handleSearch={handleSearch}/>
           <div className="relative">
             <button className="block md:hidden text-white bg-basic-blue hover:bg-basic-blue/80 rounded-md p-1.5" onClick={() => setFilterDropdown(!filterDropdown)}>
               <FilterIcon size={20}/>
@@ -554,7 +571,7 @@ export default function BoardContent({ projectId }){
         (<div className="w-[278px] flex-shrink-0">
           <SimpleInputForm
             name={"taskStatusName"}
-            placeholder="Nama status.."
+            placeholder="Nama status..."
             onSubmit={createTaskStatus}
             onBlur={() => setCreatingList(false)}
           />

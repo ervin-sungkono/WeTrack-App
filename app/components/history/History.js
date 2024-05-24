@@ -61,7 +61,7 @@ export default function History(){
                     value: project.projectName
                 }));
                 setProjectOptions([
-                    {label: "Semua Proyek", value: "Semua Proyek"},
+                    {label: "Semua", value: "Semua Proyek"},
                     ...options
                 ])
             }
@@ -70,7 +70,7 @@ export default function History(){
     }, [])
 
     const typeOptions = [
-        {label: "Semua Jenis", value: "Semua Jenis"},
+        {label: "Semua", value: "Semua Jenis"},
         {label: "Proyek", value: getHistoryEventType.project},
         {label: "Tugas", value: getHistoryEventType.task},
         {label: "Subtugas", value: getHistoryEventType.subtask},
@@ -83,7 +83,7 @@ export default function History(){
     ]
     
     const actionOptions = [
-        {label: "Semua Aksi", value: "Semua Aksi"},
+        {label: "Semua", value: "Semua Aksi"},
         {label: "Pembuatan", value: getHistoryAction.create},
         {label: "Perubahan", value: getHistoryAction.update},
         {label: "Penghapusan", value: getHistoryAction.delete}
@@ -135,18 +135,19 @@ export default function History(){
             <div className="h-full flex flex-col mt-4 md:mt-6 gap-4">
                 {historyData && (
                     <div className="flex flex-col md:flex-row justify-between items-center gap-2">
-                        <div className="w-full flex justify-between items-center gap-3 md:gap-6">
+                        <div className="w-full flex justify-between items-center gap-3 md:gap-6 z-almostFixed">
                             <div className="relative">
                                 <button className="block md:hidden text-white bg-basic-blue hover:bg-basic-blue/80 rounded-md p-1.5" onClick={() => setFilterDropdown(!filterDropdown)}>
                                     <FilterIcon size={20}/>
                                 </button>
-                                <div className={`${filterDropdown ? "block" : "hidden"} border border-dark-blue/30 md:border-none md:flex z-50 absolute -bottom-2 left-0 translate-y-full md:translate-y-0 px-2 py-3 bg-white rounded-md md:bg-transparent md:p-0 md:static flex flex-col md:flex-row gap-2 md:gap-4`}>
+                                <div className={`${filterDropdown ? "block" : "hidden"} border border-dark-blue/30 md:border-none md:flex z-50 absolute -bottom-2 left-0 translate-y-full md:translate-y-0 px-2 py-3 bg-white rounded-md md:bg-transparent md:p-0 md:static flex flex-col md:flex-row flex-wrap gap-2 md:gap-4`}>
                                     <div className="flex items-center gap-2">
                                         <b className="hidden xs:block text-xs md:text-sm">Proyek:</b>
                                         <SelectButton 
                                             name={"project-button"}
-                                            placeholder={project} 
+                                            placeholder={"Semua"}
                                             options={projectOptions} 
+                                            defaultValue={projectOptions[0]}
                                             onChange={handleProjectChange}
                                         />
                                     </div>
@@ -154,8 +155,8 @@ export default function History(){
                                         <b className="hidden xs:block text-xs md:text-sm">Jenis:</b>
                                         <SelectButton 
                                             name={"type-button"}
-                                            placeholder={type} 
                                             options={typeOptions} 
+                                            defaultValue={typeOptions[0]}
                                             onChange={handleTypeChange}
                                         />
                                     </div>
@@ -163,8 +164,8 @@ export default function History(){
                                         <b className="hidden xs:block text-xs md:text-sm">Aksi:</b>
                                         <SelectButton 
                                             name={"action-button"}
-                                            placeholder={action} 
                                             options={actionOptions} 
+                                            defaultValue={actionOptions[0]}
                                             onChange={handleActionChange}
                                         />
                                     </div>

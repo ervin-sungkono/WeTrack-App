@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation"
 import { getUserProfile } from "@/app/lib/fetch/user"
 import { useRole } from "@/app/lib/context/role"
 import { validateUserRole } from "@/app/lib/helper"
+import { IoMdPeople as TeamsIcon } from "react-icons/io";
 
 export default function TeamContent({ projectId }){
     const [query, setQuery] = useState("")
@@ -223,7 +224,7 @@ export default function TeamContent({ projectId }){
         <div className="flex flex-col gap-4">
             <div className="flex flex-col xs:flex-row justify-between gap-4 items-center">
                 <div className="flex justify-center xs:justify-start items-center">
-                    <SearchBar placeholder={"Cari anggota.."} handleSearch={handleSearch}/>
+                    <SearchBar placeholder={"Cari anggota..."} handleSearch={handleSearch}/>
                 </div>
                 <div className="flex flex-col md:flex-row flex-wrap justify-center gap-2 md:gap-4">
                     {validateUserRole({ userRole: userRole, minimumRole: 'Owner' }) && (
@@ -262,7 +263,7 @@ export default function TeamContent({ projectId }){
             </div>
             <div>
                 <div>
-                    <div className="flex items-baseline mb-2">
+                    <div className="flex items-baseline justify-center md:justify-start">
                         <div className="font-semibold text-lg">
                             Anggota
                         </div>
@@ -270,18 +271,19 @@ export default function TeamContent({ projectId }){
                             ({acceptedTeam.length})
                         </div>
                     </div>
-                    <div className="min-h-[100px] overflow-x-auto">
+                    <div className="overflow-x-auto">
                         {acceptedTeam.length > 0 ? (
                             <TeamList list={acceptedTeam} listType="accepted" edit={editMode} selectUpdate={selectUpdate} setSelectUpdate={setSelectUpdate} selectDelete={selectDelete} setSelectDelete={setSelectDelete}/>
                         ) : (
-                            <div className="">
+                            <div className="min-h-[100px] flex flex-col justify-center items-center gap-2">
+                                <TeamsIcon size={48} className="text-dark-blue/60"/>
                                 Tidak ada data anggota yang ditemukan.
                             </div>
                         )}
                     </div>
                 </div>
-                <div className="mt-6">
-                    <div className="flex items-baseline mb-2">
+                <div>
+                    <div className="flex items-baseline justify-center md:justify-start mt-4 md:mt-0">
                         <div className="font-semibold text-lg">
                             Menunggu Persetujuan
                         </div>

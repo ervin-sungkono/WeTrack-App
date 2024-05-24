@@ -1,4 +1,5 @@
 import TeamItem from "./TeamItem";
+import { IoMdPeople as TeamsIcon } from "react-icons/io";
 
 export default function TeamList({list, listType, selectUpdate, setSelectUpdate, selectDelete, setSelectDelete, setAddMode, query, owner=false, edit=false}){
     return (
@@ -10,12 +11,14 @@ export default function TeamList({list, listType, selectUpdate, setSelectUpdate,
                             <TeamItem pending setAddMode={setAddMode}/>
                         </div>
                     ) : (
-                        <div>
+                        <div className="min-h-[100px] flex flex-col justify-center items-center gap-2">
+                            <TeamsIcon size={48} className="text-dark-blue/60"/>
                             Tidak ada data anggota yang ditemukan.
                         </div>
                     )
                 ) : (
-                    <div>
+                    <div className="min-h-[100px] flex flex-col justify-center items-center gap-2">
+                        <TeamsIcon size={48} className="text-dark-blue/60"/>
                         Tidak ada data anggota yang ditemukan.
                     </div>
                 )

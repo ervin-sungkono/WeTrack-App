@@ -30,11 +30,11 @@ export default function ParentSelectButton({ name, defaultValue, options = [], o
                 data-dropdown-placement="bottom-start"
                 data-dropdown-delay="0"
                 data-dropdown-offset-distance="4"
-                disabled
+                disabled={disabled}
                 className="w-full flex gap-2 cursor-pointer text-dark-blue/80  hover:bg-gray-200 p-2 rounded transition-colors duration-300"
                 type="button"
             >
-                <p className="text-start text-xs md:text-sm font-semibold flex-grow">{selected?.label}</p>
+                <p className="text-start text-xs md:text-sm font-semibold flex-grow whitespace-nowrap truncate">{selected?.label}</p>
                 <DropdownIcon size={16}/>
             </button>
              

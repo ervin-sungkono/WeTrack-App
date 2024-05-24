@@ -21,7 +21,7 @@ export default function TeamMember({ prevFormStep, nextFormStep }){
         delimiters: " ",
         keepInvalidTags: true,
         pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-        placeholder: "Ketik email anggota tim Anda, dipisahkan dengan spasi atau enter.."
+        placeholder: "Ketik email anggota tim Anda, dipisahkan dengan spasi atau enter."
     }
 
     const handleTagifyChange = (e) => {
@@ -54,7 +54,7 @@ export default function TeamMember({ prevFormStep, nextFormStep }){
                                     autoFocus
                                     onChange={handleTagifyChange}
                                 />
-                                <p className="text-[10.8px] md:text-xs text-dark-blue/80">Pengguna harus memiliki akun WeTrack untuk diundang ke dalam tim.</p>
+                                <p className="text-[10.8px] md:text-xs text-dark-blue/80">Undangan Anda hanya akan terkirim apabila email yang Anda masukkan terdaftar di WeTrack.</p>
                             </div>
                         </div>
                         <div className="flex justify-end gap-2 md:gap-4">

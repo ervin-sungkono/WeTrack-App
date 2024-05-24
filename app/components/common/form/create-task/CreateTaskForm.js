@@ -140,12 +140,12 @@ export default function CreateTaskForm({ onCancel }){
                                 required
                                 name="taskName" 
                                 type="text" 
-                                placeholder={"Masukkan judul tugas.."}
+                                placeholder={"Masukkan judul tugas..."}
                             />
                             <FormikTextarea
                                 label="Deskripsi"
                                 name="description"
-                                placeholder={"Masukkan deskripsi tugas.."}
+                                placeholder={"Masukkan deskripsi tugas..."}
                                 rows={5}
                             />
                             <div className="flex flex-col md:flex-row gap-2.5 md:gap-4">

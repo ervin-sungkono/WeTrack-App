@@ -36,6 +36,7 @@ export default function DashboardProjectItem({project, selectedProject, setSelec
                                         type={task.type}
                                         startDate={task.startDate}
                                         endDate={task.dueDate}
+                                        finishedDate={task.finishedDate}
                                         status={task.status.statusName}
                                         priority={task.priority}
                                         projectKey={project.key}

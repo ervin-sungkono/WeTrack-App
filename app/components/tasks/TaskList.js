@@ -43,7 +43,7 @@ export default function TaskList({ tasks, taskId }){
             <div className={`${taskListVisibility ? "flex" : "hidden sm:flex"} absolute top-10 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:static w-full h-64 sm:h-full bg-gray-200 rounded-md flex-col gap-2 p-2.5 z-50 sm:z-0`}>
                 <div className="flex items-center">
                     <div className="flex flex-grow items-center gap-2">
-                        {/* <p className="text-xs md:text-sm font-semibold">Urut dari</p> */}
+                        {/* <p className="text-xs md:text-sm font-semibold">Urutan:</p> */}
                         <SelectButton
                             name={"sort-button"}
                             options={[
