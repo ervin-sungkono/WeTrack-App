@@ -16,7 +16,7 @@ export default function DashboardTaskItem({title, type, startDate, endDate, fini
                 </div>
             )}
             <div className="bg-white flex flex-col justify-between w-full gap-4 rounded-md">
-                <div className="flex flex-col justify-between">
+                <div className="flex flex-col justify-between gap-1">
                     <div className="text-sm md:text-base font-semibold">{title}</div>
                     <div className="flex flex-col gap-2">
                         <div className="flex flex-col gap-1">

@@ -18,6 +18,7 @@ export default function Table({
     pageSize = 10,
     usePagination = true,
     fullWidth = true,
+    sortable = true,
 }){
     const memoizedData = useMemo(() => data, [data])
     const memoizedColumns = useMemo(() => columns, [columns])
@@ -88,13 +89,13 @@ export default function Table({
                                         {header.isPlaceholder ? 
                                         null : 
                                         (<div  {...{
-                                            className: `${header.column.getCanSort()
+                                            className: `${sortable && header.column.getCanSort()
                                               ? "w-full select-none cursor-pointer"
                                               : ""} px-2.5 py-2 text-xs md:text-sm flex justify-between items-center gap-1.5 z-fixed`,
-                                            onClick: header.column.getToggleSortingHandler(),
+                                            onClick: sortable ? header.column.getToggleSortingHandler() : undefined,
                                           }}>
                                            {flexRender(header.column.columnDef.header, header.getContext())}
-                                            {header.column.getCanSort() ? {
+                                            {sortable && header.column.getCanSort() ? {
                                                 asc: <SortIconUp className='text-dark-blue/80' size={16}/>,
                                                 desc: <SortIconDown className='text-dark-blue/80' size={16}/>,
                                             }[header.column.getIsSorted()] ?? <SortIcon size={16} className='text-dark-blue/60'/> : null}

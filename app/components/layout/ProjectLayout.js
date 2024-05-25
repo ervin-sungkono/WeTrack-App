@@ -14,17 +14,40 @@ export default function ProjectLayout({ children, hideSidebar, projectId }){
     const [loading, setLoading] = useState(false)
     const router = useRouter()
 
+    const comapareObject = (newObj, oldObj) => {
+        if(!oldObj || Object.keys(oldObj).length == 0) return true
+
+        let diff = {}
+        for (const key in oldObj) {
+            if (newObj[key] && oldObj[key] != newObj[key] ) {
+                diff[key] = newObj[key]; 
+            }
+        }
+
+        if (Object.keys(diff).length > 0) 
+            return true;
+
+        return false
+    }
+
     useEffect(() => {
         const fetchProjectDetail = async() => {
             setLoading(true)
             try{
                 const authorized = await getContentAuthorization({ projectId })
                 if(authorized){
-                    const project = await getProjectByID(projectId)
-                    if(project.data){
-                        setProject(project.data)
+                    const projectData = await getProjectByID(projectId)
+                    if(projectData.data && comapareObject(projectData.data, project)){
+                        const { id, key, projectName, startStatus, endStatus } = projectData.data
+                        setProject({
+                            id,
+                            key,
+                            projectName,
+                            startStatus,
+                            endStatus
+                        })
                     }
-                    else {
+                    else if(!projectData.data) {
                         console.log("Gagal mendapatkan rincian proyek")
                         router.replace('/projects')
                     }
@@ -37,10 +60,10 @@ export default function ProjectLayout({ children, hideSidebar, projectId }){
                 setLoading(false)
             }
         }
-        if(projectId && (!project || project.id != projectId)){
+        if(projectId){
             fetchProjectDetail()
         }
-    }, [project, projectId])
+    }, [projectId])
 
     if(loading){
         return (

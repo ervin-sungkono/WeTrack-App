@@ -222,7 +222,7 @@ export default function OverviewContent({ projectId }){
     ]
 
     return(
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 pr-4">
             {taskData.length === 0 ? (
                 <OverviewCard title="Tugas Terbaru">
                     <div className="max-h-[300px] md:min-h-[200px] overflow-hidden flex flex-col justify-center items-center">
@@ -241,12 +241,13 @@ export default function OverviewContent({ projectId }){
                 </OverviewCard>
             ) : (
                 <OverviewCard title="Tugas Terbaru" action={"Lihat semua"} href={`/projects/${projectId}/tasks`}>
-                    <div className="max-h-[300px] md:h-[200px]">
+                    <div className="max-h-[300px] md:h-[250px]">
                         <Table 
                             data={taskData}
                             columns={columns}
                             usePagination={false}
                             fullWidth={false}
+                            sortable={false}
                         />
                     </div>
                 </OverviewCard>
