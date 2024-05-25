@@ -90,10 +90,6 @@ export default function OverviewContent({ projectId }){
     }, [projectId, userId])
 
     useEffect(() => {
-        console.log(taskData)
-    }, [taskData])
-
-    useEffect(() => {
         if(!projectId || !userId) return
         const reference = getQueryReference({collectionName: "comments", field: "projectId", id: projectId})
         const unsubscribe = onSnapshot(reference, async(snapshot) => {

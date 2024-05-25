@@ -4,7 +4,7 @@ import moment from "moment"
 import Link from "next/link"
 import WeTrackLogo from "../Logo"
 import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
+// import { useSession } from "next-auth/react"
 import { getRecentProjects } from "@/app/lib/fetch/project"
 import SkeletonText from "../../skeleton/SkeletonText"
 import Button from "../button/Button"
@@ -14,6 +14,7 @@ import { onSnapshot } from "firebase/firestore"
 import { 
     IoMdNotifications as NotificationIcon, 
 } from "react-icons/io"
+import { getSession } from "next-auth/react"
 
 const NavLink = dynamic(() => import("./NavLink"))
 const NavDropdown = dynamic(() => import("./NavDropdown"))
@@ -21,7 +22,7 @@ const UserDropdown = dynamic(() => import("./UserDropdown"))
 const LinkButton = dynamic(() => import("../button/LinkButton"))
 
 export default function NavbarMenu({ showForm, hideMenu }){
-    const { data: session, status } = useSession()
+    const [session, setSession] = useState()
     const [hamburgerState, setHamburgerState] = useState(false)
     const [recentProjects, setRecentProjects] = useState(null)
     const [newNotifications, setNewNotifications] = useState(false)
@@ -30,6 +31,15 @@ export default function NavbarMenu({ showForm, hideMenu }){
         { label: 'Buat proyek baru', url: '/projects/create' },
         { label: 'Lihat semua proyek', url: '/projects' },
     ]
+
+    useEffect(() => {
+        const fetchSession = async() => {
+            const session = await getSession()
+            console.log(session)
+            setSession(session)
+        }
+        fetchSession()
+    }, [])
 
     useEffect(() => {
         if(!session) return
@@ -54,16 +64,16 @@ export default function NavbarMenu({ showForm, hideMenu }){
         }
     }, [session])
 
-    if(status == 'loading'){
-        return (
-            <div className="w-full flex items-center gap-12">
-                <SkeletonText width={150} height={32} rounded/>
-                <div className="hidden md:block ml-auto">
-                    <SkeletonText width={160} height={40} rounded/>
-                </div>
-            </div>
-        )
-    }
+    // if(session === undefined){
+    //     return (
+    //         <div className="w-full flex items-center gap-12">
+    //             <SkeletonText width={150} height={32} rounded/>
+    //             <div className="hidden md:block ml-auto">
+    //                 <SkeletonText width={160} height={40} rounded/>
+    //             </div>
+    //         </div>
+    //     )
+    // }
 
     return(
         <>
