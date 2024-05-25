@@ -55,11 +55,23 @@ export const deleteProject = async({ projectId }) => {
     try {   
         if(!projectId) return null
     
+        // Get project reference to soft delete
         const projectDocRef = doc(db, "projects", projectId)
-    
+
+        // Get team reference to soft delete
+        const teamQuery = query(collection(db, "teams"), where('projectId', '==', projectId))
+        const teamSnapshot = await getDocs(teamQuery)
+        
+        // Perform soft delete
         await updateDoc(projectDocRef, {
             deletedAt: serverTimestamp()
         })
+
+        await Promise.all(teamSnapshot.docs.map(async(doc) => {
+            updateDoc(doc.ref, {
+                deletedAt: serverTimestamp()
+            })
+        }))
 
     } catch (error) {
         throw new Error("Something went wrong when deleting project")

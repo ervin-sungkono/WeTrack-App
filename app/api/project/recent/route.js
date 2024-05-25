@@ -1,4 +1,4 @@
-import { collection, query, where, orderBy, limit, getDocs, FieldPath, getDoc, doc } from 'firebase/firestore';
+import { collection, query, where, getDocs, getDoc, doc, and, limit } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
@@ -16,21 +16,15 @@ export async function GET(request, response) {
         }
 
         const teamsRef = collection(db, 'teams');    
-        const teamQuery = query(teamsRef, where('userId', "==", userId));
+        const teamQuery = query(teamsRef, and(where('userId', "==", userId), where('status', '==', 'accepted'), where('deletedAt', '==', null)), limit(3));
         const teamSnapshots = await getDocs(teamQuery);
-        const projectIds = teamSnapshots.docs.filter(team => (team.data().status == 'accepted'))
-                                .slice(0,3)
-                                .map(project => project.data().projectId)
+        const projectIds = teamSnapshots.docs.map(project => project.data().projectId)
 
         const allProjects = await Promise.all(projectIds.map(async (item) => {
             const projectDoc = await getDoc(doc(db, "projects", item))
             if(projectDoc.exists()) {
                 const projectData = projectDoc.data()
                 const userDoc = await getDoc(doc(db, 'users', projectData.createdBy));
-                
-                if(projectData.deletedAt != null) {
-                    return null
-                }
 
                 return {
                     id: projectDoc.id,
@@ -47,7 +41,7 @@ export async function GET(request, response) {
         }))
 
         return NextResponse.json({
-            data: allProjects.filter((item) => item != null),
+            data: allProjects.slice(0,3),
             message: "Projects retrieved successfully"
         }, { status: 200 });
         

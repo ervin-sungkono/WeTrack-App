@@ -1,4 +1,4 @@
-import { addDoc, collection, updateDoc, serverTimestamp, getDoc, query, where, getDocs, setDoc, doc } from 'firebase/firestore';
+import { addDoc, collection, updateDoc, serverTimestamp, getDoc, query, where, getDocs, setDoc, doc, and } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
@@ -18,23 +18,18 @@ export async function GET(request, response) {
         }
 
         const teamsRef = collection(db, 'teams');    
-        const teamQuery = query(teamsRef, where('userId', "==", userId));
+        const teamQuery = query(teamsRef, and(where('userId', "==", userId), where('status', '==', 'accepted'),where('deletedAt', '==', null)));
         const teamSnapshots = await getDocs(teamQuery);
-        const projectIds = teamSnapshots.docs.filter(team => (team.data().status == 'accepted'))
-                                .map(team => ({ 
-                                    id: team.data().projectId,
-                                    role: team.data().role
-                                }))
+        const projectIds = teamSnapshots.docs.map(team => ({ 
+                                id: team.data().projectId,
+                                role: team.data().role
+                            }))
 
         const allProjects = await Promise.all(projectIds.map(async ({ id, role }) => {
             const projectDoc = await getDoc(doc(db, "projects", id))
             if(projectDoc.exists()) {
                 const projectData = projectDoc.data()
                 const userDoc = await getDoc(doc(db, 'users', projectData.createdBy));
-
-                if(projectData.deletedAt != null) {
-                    return null
-                }
 
                 return {
                     id: projectDoc.id,
@@ -54,7 +49,7 @@ export async function GET(request, response) {
         }))
 
         return NextResponse.json({
-            data: allProjects.filter((item) => item != null),
+            data: allProjects,
             message: "Projects retrieved successfully"
         }, { status: 200 });
         
