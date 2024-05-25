@@ -1,4 +1,4 @@
-import { updateDoc, serverTimestamp, getDoc, deleteDoc, doc, query, where, getDocs } from 'firebase/firestore';
+import { updateDoc, serverTimestamp, getDoc, deleteDoc, doc, query, where, getDocs, collection } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
@@ -144,19 +144,14 @@ export async function PUT(request, response) {
             }, { status: 404 });
         } 
 
-        const q = query(collection(db, "tasks"), where("status", "==", projectData.endStatus));
-        const currentTaskSnapShotInEndStatus = await getDocs(q);
-    
-        const updateTasks = await Promise.all(currentTaskSnapShotInEndStatus.docs.map(async (item) => {
-            const taskDocRef = doc(db, "tasks", item.id);
-            const taskDoc = await getDoc(taskDocRef);
-    
-            if (!taskDoc.exists()) {
-                throw new Error("Something went wrong when updating task");
-            }
-    
-            if(projectData.endStatus != updatedProjectSnap.data().endStatus) {
-                await updateDoc(taskDocRef, {
+        if(projectData.endStatus !== updatedProjectSnap.data().endStatus) {
+            const q = query(collection(db, "tasks"), where("status", "==", projectData.endStatus));
+            const currentTaskSnapShotInEndStatus = await getDocs(q);
+        
+            await Promise.all(currentTaskSnapShotInEndStatus.docs.map(async (taskDoc) => {
+                if(!taskDoc.exists())return
+                
+                await updateDoc(taskDoc.ref, {
                     finishedDate: null, 
                     updatedAt: serverTimestamp()
                 });
@@ -164,13 +159,13 @@ export async function PUT(request, response) {
                 await createHistory({
                     userId: userId,
                     taskId: taskDoc.id,
-                    projectId: taskDoc.data().projectId,
+                    projectId: projectId,
                     action: getHistoryAction.update,
                     eventType: getHistoryEventType.task
                 });
-            }
-    
-        }));
+        
+            }));
+        }
                  
         return NextResponse.json({
             data: {
