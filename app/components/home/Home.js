@@ -65,11 +65,10 @@ export default function HomeLayout(){
     return (
         <div className="pt-2 xl:pt-8">
             <div className="py-4 md:py-6 xl:py-8 container flex flex-col lg:flex-row items-center justify-center lg:justify-between text-center lg:text-left">
-                <div>
+                <div className="w-full md:w-1/2">
                     <h1 className="text-2xl md:text-3xl lg:text-4xl lg:leading-tight font-bold">
-                        Selesaikan tugas secara efisien, <br />
-                        berkolaborasi dengan peralatan<br /> 
-                        <span className="italic">Artificial Intelligence</span> (AI) yang canggih.
+                        Selesaikan tugas secara efisien.
+                        Kolaborasi bersama <span className="italic">Artificial Intelligence</span> (AI).
                     </h1>
                     <p className="mt-1 lg:mt-2 text-sm lg:text-md">
                         WeTrack menawarkan solusi terbaik dalam manajemen tugas Anda.
