@@ -13,7 +13,6 @@ import { updateProject, deleteProject } from "@/app/lib/fetch/project";
 import PopUpInfo from "../../alert/PopUpInfo";
 import DeleteProjectForm from "./DeleteProjectForm";
 import { useRouter } from "next/navigation";
-import KeyFormikField from "./KeyFormikField";
 import { useRole } from "@/app/lib/context/role";
 import { validateUserRole } from "@/app/lib/helper";
 
@@ -174,7 +173,12 @@ export default function SettingForm({projectId}){
                                 {error && <p className="text-xs md:text-sm text-danger-red font-medium">{errorMessage}</p>}
                             </div>
                             <div className="mb-4">
-                                <KeyFormikField 
+                                <FormikField
+                                    name="key"
+                                    required
+                                    type="text"
+                                    label="Kunci Proyek"
+                                    placeholder="Masukkan kunci proyek..."
                                     disabled={validateUserRole({ userRole: role, minimumRole: 'Owner' }) ? false : true}
                                 />
                                 {error && <p className="text-xs md:text-sm text-danger-red font-medium">{errorMessage}</p>}
@@ -229,6 +233,9 @@ export default function SettingForm({projectId}){
                                         }} variant="danger">Hapus Proyek</Button>
                                     </div>
                                     <div className="flex gap-2 md:gap-4">
+                                        {formik.dirty && (
+                                            <Button onClick={() => formik.resetForm()} variant="primary" outline>Batalkan Pembaruan</Button>
+                                        )}
                                         <Button type="submit" variant="primary">Perbarui Proyek</Button>
                                     </div>
                                 </div>
