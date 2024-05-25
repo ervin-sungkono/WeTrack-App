@@ -34,7 +34,7 @@ export default function TaskHistoryItem({history}){
                     </div> 
                 </div>
             )
-        }else{
+        }else if(history.eventType === getHistoryEventType.taskName || history.eventType === getHistoryEventType.taskStatus){
             return(
                 <div className="flex gap-1.5 items-center text-xs md:text-sm text-dark-blue">
                     <Label color="#47389F" text={history.previousValue}/>
@@ -48,7 +48,7 @@ export default function TaskHistoryItem({history}){
     return(
         <div key={history.id} className="flex items-start gap-2 md:gap-3">
             <div><UserIcon size="sm" fullName={history.user.fullName} src={history.user.profileImage?.attachmentStoragePath}/></div>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1.5 pt-1">
                 <div className="flex gap-2 items-center">
                     <p className="text-xs md:text-sm text-dark-blue">
                         <span className="font-semibold">{history.user.fullName}</span> {history.action} <span className="font-semibold">{history.eventType}</span>
