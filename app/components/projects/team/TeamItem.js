@@ -15,7 +15,7 @@ export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, s
         {label: "Viewer", value: "Viewer"},
     ]
 
-    const profileImage = user?.profileImage !== null ? user?.profileImage.attachmentStoragePath : null
+    const profileImage = user?.profileImage != null ? user?.profileImage.attachmentStoragePath : null
     const profileImagePending = `/images/user-placeholder.png`
 
     const handleRoleChange = (value) => {
