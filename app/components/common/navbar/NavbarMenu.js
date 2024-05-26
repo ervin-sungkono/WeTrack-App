@@ -35,7 +35,7 @@ export default function NavbarMenu({ showForm, hideMenu }){
     useEffect(() => {
         const fetchSession = async() => {
             const session = await getSession()
-            console.log(session)
+            // console.log(session)
             setSession(session)
         }
         fetchSession()
