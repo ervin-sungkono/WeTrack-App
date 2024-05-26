@@ -111,7 +111,7 @@ export default function NavbarMenu({ showForm, hideMenu }){
                         : 
                         null
                     }
-                    <div className="lg:h-full flex items-center ml-auto">
+                    <div className="lg:h-full flex items-center lg:ml-auto">
                         {   
                             session ?
                             <div className="h-full flex items-center gap-2">
