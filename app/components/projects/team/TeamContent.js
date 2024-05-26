@@ -250,7 +250,7 @@ export default function TeamContent({ projectId }){
                     {validateUserRole({ userRole: userRole, minimumRole: 'Owner' }) && !editMode && (
                         <Button onClick={() => setAddMode(true)} className="flex items-center">
                             <FaUserPlus className="mr-2"/>
-                            Tambah Anggota
+                            Undang Anggota
                         </Button>
                     )}
                     {(userRole === "Member" || userRole === "Viewer") && (
