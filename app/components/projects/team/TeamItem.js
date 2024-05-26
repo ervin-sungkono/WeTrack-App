@@ -141,7 +141,7 @@ export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, s
                 }
                 {pending && (
                     <Button variant="primary" onClick={setAddMode}>
-                        Tambah Anggota
+                        Undang Anggota
                     </Button>
                 )}
             </div>
