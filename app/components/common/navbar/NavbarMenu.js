@@ -26,6 +26,7 @@ export default function NavbarMenu({ showForm, hideMenu }){
     const [hamburgerState, setHamburgerState] = useState(false)
     const [recentProjects, setRecentProjects] = useState(null)
     const [newNotifications, setNewNotifications] = useState(false)
+    const [loadingRecent, setLoadingRecent] = useState(false)
 
     const projectLinks = [
         { label: 'Buat proyek baru', url: '/projects/create' },
@@ -56,10 +57,12 @@ export default function NavbarMenu({ showForm, hideMenu }){
 
     useEffect(() => {
         if(session){
+            setLoadingRecent(true)
             getRecentProjects()
             .then(projects => {
                 if(projects.data) setRecentProjects(projects.data)
                 else alert("Gagal memperoleh data proyek")
+                setLoadingRecent(false)
             })
         }
     }, [session])
@@ -91,8 +94,9 @@ export default function NavbarMenu({ showForm, hideMenu }){
                             <NavDropdown label={"Proyek"} baseLink={'/projects'} dropdownLinks={projectLinks}>
                                 <div className="py-2 flex flex-col gap-1">
                                     <p className="px-4 text-sm font-bold uppercase">Terbaru</p>
+                                    {loadingRecent && <p className="px-4 text-xs text-dark-blue/80">Memuat data proyek terbaru..</p>}
                                     {
-                                        (recentProjects && recentProjects.length > 0) ? 
+                                        (!loadingRecent && recentProjects && recentProjects.length > 0) ? 
                                         recentProjects.map(project => (
                                             <Link href={`/projects/${project.id}`} key={project.id}>
                                                 <div className="px-4 py-2 hover:bg-gray-100 flex flex-col gap-0.5">
