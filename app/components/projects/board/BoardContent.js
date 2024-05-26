@@ -227,7 +227,7 @@ export default function BoardContent({ projectId }){
   useEffect(() => {
     const fetchTeamOptions = async() => {
       if(!projectId) return
-      const teamData = await getAllTeamMember({ projectId })
+      const teamData = await getAllTeamMember({ projectId, excludeViewer: true })
       if(teamData.data){
           setTeamOptions([
             ...teamData.data.map(team => ({

@@ -8,8 +8,8 @@ export const validateTeamMember = ({ projectId, teamId }) => {
     return response
 }
 
-export const getAllTeamMember = ({ projectId }) => {
-    const response = fetch(`/api/project/${projectId}/team`,{
+export const getAllTeamMember = ({ projectId, excludeViewer = false }) => {
+    const response = fetch(`/api/project/${projectId}/team?excludeViewer=${excludeViewer}`,{
         method: 'GET',
     })
     .then(res => res.json())
