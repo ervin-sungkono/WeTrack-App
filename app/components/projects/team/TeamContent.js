@@ -108,12 +108,12 @@ export default function TeamContent({ projectId }){
         setAddMode(false)
         setError(false)
         setLoading(true)
-        if(teams === null){
+        if(teams == null){
             setError(true)
             setErrorMessage("Anggota tim harus diisi.")
             setLoading(false)
             return
-        }else if(role === null){
+        }else if(role == null){
             setError(true)
             setErrorMessage("Peran anggota tim harus dipilih.")
             setLoading(false)

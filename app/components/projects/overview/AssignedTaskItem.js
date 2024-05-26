@@ -21,7 +21,7 @@ export default function AssignedTaskItem({title, type, startDate, endDate, finis
                                 Tanggal Mulai: {dateFormat(startDate) || "Belum Ditetapkan"}
                             </div>
                         )}
-                        {(endDate && finishedDate === null) && (
+                        {(endDate && finishedDate == null) && (
                             <div className="flex items-center gap-1 text-xs md:text-sm w-fit">
                                 <CalendarIcon className="text-base md:text-lg"/>
                                 Tenggat Waktu: {dateFormat(endDate)}

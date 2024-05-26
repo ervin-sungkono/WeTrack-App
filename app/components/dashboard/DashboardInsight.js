@@ -2,14 +2,33 @@
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut, Bar } from "react-chartjs-2";
 import EmptyState from "../common/EmptyState";
-import { generateColors } from "@/app/lib/color";
 import { getPriority, getProgress } from "@/app/lib/string";
+import { useEffect, useState } from "react";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
 export default function DashboardInsight({project}){
+    const [position, setPosition] = useState('right');
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.matchMedia("(min-width: 1280px)").matches) {
+                setPosition('right');
+            } else {
+                setPosition('bottom');
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        handleResize();
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     let doughnutChartData, doughnutChartOptions, barChartData, barChartOptions;
-    if(project !== null){
+    if(project != null && project.startStatus != null && project.endStatus != null){
         const projectStartStatus = project.startStatus
         const projectEndStatus = project.endStatus
 
@@ -73,7 +92,7 @@ export default function DashboardInsight({project}){
             plugins: {
                 legend: {
                     display: true,
-                    position: 'right',
+                    position: position,
                     labels: {
                         font: {
                             size: 14,
@@ -199,7 +218,7 @@ export default function DashboardInsight({project}){
                             href={`/projects/${project?.id}/board`}
                         />
                     </div>
-                ) : project === null ? (
+                ) : project == null ? (
                     <>
                         <EmptyState
                             message={"Belum ada proyek yang dipilih."}
