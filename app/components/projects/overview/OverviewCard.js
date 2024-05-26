@@ -5,7 +5,7 @@ export default function OverviewCard({title, action, href, children}){
             <div className={`flex justify-between items-center`}>
                 <div className="font-bold text-base md:text-lg">{title}</div>
                 <a href={href}>
-                    <div className="text-basic-blue text-sm md:text-base cursor-pointer">{action}</div>
+                    <div className="text-basic-blue font-medium text-xs md:text-sm cursor-pointer hover:underline">{action}</div>
                 </a>
             </div>
             <div className={`mt-2`}>
