@@ -240,7 +240,6 @@ export default function TeamContent({ projectId }){
                                         </Button>
                                     )}
                                 </div>
-                                
                             ) : (
                                 <Button onClick={() => setEditMode(true)} outline>
                                     Kelola Anggota
@@ -254,7 +253,7 @@ export default function TeamContent({ projectId }){
                             Tambah Anggota
                         </Button>
                     )}
-                    {userRole !== "Owner" && !editMode && (
+                    {(userRole === "Member" || userRole === "Viewer") && (
                         <Button variant="danger" onClick={() => setLeaveMode(true)}>
                             Tinggalkan Proyek
                         </Button>

@@ -142,7 +142,7 @@ export const newTaskSchema = yup.object().shape({
         .when('startDate', {
             is: (startDate) => !!startDate,
             then: (s) => s.min(yup.ref('startDate'),
-                'Tanggal selesai harus sesudah tanggal mulai'
+                'Tenggat waktu harus sesudah tanggal mulai'
             ),
             otherwise: (s) => s
         }),

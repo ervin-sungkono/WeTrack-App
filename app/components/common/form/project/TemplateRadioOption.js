@@ -35,7 +35,7 @@ export default function TemplateRadioOption({ name }){
                             />
                             <RadioButton 
                                 title={"AI Generated"}
-                                description={"Hasilkan tugas untuk proyek Anda dengan AI sesuai cerita pengguna yang diberikan"}
+                                description={"Hasilkan tugas untuk proyek Anda dengan AI sesuai deskripsi yang diberikan"}
                                 value={"ai-generated"}
                                 field={field}
                             />
