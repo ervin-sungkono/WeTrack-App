@@ -149,7 +149,7 @@ export default function RegisterForm(){
             {success &&
                 <PopUpInfo
                     title={"Pendaftaran Berhasil"}
-                    titleSize={"large"}
+                    titleSize={"default"}
                     message={"Silakan cek email Anda untuk verifikasi email terlebih dahulu."}
                 >
                     <div className="flex justify-end gap-2 md:gap-4">
