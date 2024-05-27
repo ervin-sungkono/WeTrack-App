@@ -360,7 +360,7 @@ export default function TeamContent({ projectId }){
             {successAdd &&
                 <PopUpInfo
                     title={"Undangan Dikirim"}
-                    titleSize={"large"}
+                    titleSize={"default"}
                     message={"Email undangan telah dikirimkan kepada pengguna-pengguna yang dituju."}
                 >
                     <div className="flex justify-end gap-2 md:gap-4">
@@ -377,7 +377,7 @@ export default function TeamContent({ projectId }){
             {successManage &&
                 <PopUpInfo
                     title={"Data Anggota Diperbarui"}
-                    titleSize={"large"}
+                    titleSize={"default"}
                     message={"Data anggota-anggota dalam proyek ini telah diperbarui."}
                 >
                     <div className="flex justify-end gap-2 md:gap-4">
@@ -394,7 +394,7 @@ export default function TeamContent({ projectId }){
             {successLeave && 
                 <PopUpInfo
                     title={"Anda Telah Meninggalkan Proyek"}
-                    titleSize={"large"}
+                    titleSize={"default"}
                     message={"Anda akan dialihkan ke halaman daftar proyek."}
                 >
                     <div className="flex justify-end gap-2 md:gap-4">

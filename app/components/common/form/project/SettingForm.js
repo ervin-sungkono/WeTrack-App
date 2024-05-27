@@ -255,7 +255,7 @@ export default function SettingForm({projectId}){
                 {successUpdateProject &&
                     <PopUpInfo
                         title={"Proyek Diperbarui"}
-                        titleSize={"large"}
+                        titleSize={"default"}
                         message={"Data proyek telah berhasil diperbarui."}
                     >
                         <div className="flex justify-end gap-2 md:gap-4">
@@ -269,7 +269,7 @@ export default function SettingForm({projectId}){
                 {successDeleteProject &&
                     <PopUpInfo
                         title={"Proyek Dihapus"}
-                        titleSize={"large"}
+                        titleSize={"default"}
                         message={"Proyek telah dihapus. Anda akan dialihkan ke halaman daftar proyek."}
                     >
                         <div className="flex justify-end gap-2 md:gap-4">
