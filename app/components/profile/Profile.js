@@ -354,7 +354,7 @@ export default function ProfileLayout(){
                 {successUpdateProfile &&
                     <PopUpInfo
                         title={"Profil Diperbarui"}
-                        titleSize={"large"}
+                        titleSize={"default"}
                         message={"Profil Anda telah berhasil diperbarui."}
                     >
                         <div className="flex justify-end gap-2 md:gap-4">
