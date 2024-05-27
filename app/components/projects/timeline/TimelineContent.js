@@ -146,7 +146,7 @@ export default function TimelineContent({ projectId }){
                 return task
             }))
             data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-            const filteredData = data.filter((task) => (task.startDate !== null && task.dueDate !== null) && task.taskName.toLowerCase().includes(query));
+            const filteredData = data.filter((task) => (task.startDate != null && task.dueDate != null) && task.taskName.toLowerCase().includes(query));
             setTaskData(filteredData)
             setTasks(filteredData);
         })

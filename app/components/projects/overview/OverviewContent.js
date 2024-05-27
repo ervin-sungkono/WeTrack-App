@@ -6,7 +6,6 @@ import OverviewCard from "./OverviewCard"
 import { getDocumentReference, getQueryReference, getQueryReferenceOrderBy } from "@/app/firebase/util"
 import { getDoc, onSnapshot } from "firebase/firestore"
 import Table from "../../common/table/Table"
-import UserIcon from "../../common/UserIcon"
 import LinkButton from "../../common/button/LinkButton"
 import { getPriority } from "@/app/lib/string"
 import Label from "../../common/Label"
@@ -20,10 +19,15 @@ import { FaCommentDots as CommentIcon, FaTasks as TaskListIcon } from "react-ico
 import { MdTask as TaskIcon } from "react-icons/md";
 import UserSelectButton from "../../common/UserSelectButton"
 import SelectButton from "../../common/button/SelectButton"
+import { getAllTeamMember } from "@/app/lib/fetch/team"
+import { getAllTaskStatus } from "@/app/lib/fetch/taskStatus"
+import { reorderTask, updateTask } from "@/app/lib/fetch/task"
+import PopUpLoad from "../../common/alert/PopUpLoad"
 
 export default function OverviewContent({ projectId }){
     const [userId, setUserId] = useState(null)
     const [projectKey, setProjectKey] = useState(null)
+    const [loading, setLoading] = useState(false)
     const role = useRole()
 
     useEffect(() => {
@@ -39,6 +43,8 @@ export default function OverviewContent({ projectId }){
     const [taskData, setTaskData] = useState([])
     const [assignedTaskData, setAssignedTaskData] = useState([])
     const [assignedCommentData, setAssignedCommentData] = useState([])
+    const [assigneesData, setAssigneesData] = useState([])
+    const [statusData, setStatusData] = useState([])
 
     useEffect(() => {
         if(!projectId) return
@@ -52,8 +58,8 @@ export default function OverviewContent({ projectId }){
 
     useEffect(() => {
         if(!projectId) return
-        const reference = getQueryReferenceOrderBy({collectionName: "tasks", field: "projectId", id: projectId, orderByKey:"order"})
-        const unsubscribe = onSnapshot(reference, async(snapshot) => {
+        const taskReference = getQueryReferenceOrderBy({collectionName: "tasks", field: "projectId", id: projectId, orderByKey:"order"})
+        const taskUnsubscribe = onSnapshot(taskReference, async(snapshot) => {
             const data = await Promise.all(snapshot.docs.map(async(document) => {
                 const taskData = document.data()
                 const assignedTo = taskData.assignedTo
@@ -86,13 +92,8 @@ export default function OverviewContent({ projectId }){
             const filteredData = data.filter((task) => task.assignedTo === userId)
             setAssignedTaskData(filteredData.slice(0, 5))
         })
-        return () => unsubscribe()
-    }, [projectId, userId])
-
-    useEffect(() => {
-        if(!projectId || !userId) return
-        const reference = getQueryReference({collectionName: "comments", field: "projectId", id: projectId})
-        const unsubscribe = onSnapshot(reference, async(snapshot) => {
+        const commentReference = getQueryReference({collectionName: "comments", field: "projectId", id: projectId})
+        const commentUnsubscribe = onSnapshot(commentReference, async(snapshot) => {
             const data = await Promise.all(snapshot.docs.map(async(document) => {
                 const commentData = document.data()
                 const commentTaskId = commentData.taskId
@@ -119,15 +120,68 @@ export default function OverviewContent({ projectId }){
             }))
             data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
             const filteredComments = data.filter((comment) => comment.commentText.includes(userId))
-            // setAssignedCommentData(data)
             setAssignedCommentData(filteredComments.slice(0, 5))
         })
-        return () => unsubscribe()
+
+        return () => {
+            taskUnsubscribe()
+            commentUnsubscribe()
+        }
     }, [projectId, userId])
+
+    useEffect(() => {
+        const fetchAssigneesData = async() => {
+            getAllTeamMember({ projectId: projectId, excludeViewer: true })
+                .then(res => {
+                    if(res.data) setAssigneesData(res.data)
+                    else setAssigneesData([])
+                })
+        }
+        const fetchStatusData = async() => {
+            getAllTaskStatus(projectId)
+                .then(res => {
+                    if(res.data){
+                        setStatusData(res.data.map(status => ({
+                            label: status.status,
+                            value: status.id
+                        })))
+                    }else setStatusData([])
+                })
+        }
+        if(projectId) {
+            fetchAssigneesData()
+            fetchStatusData()
+        }
+    }, [projectId])
+
+    const handleAssigneeChange = async(taskId, id, value) => {
+        setLoading(true)
+        try{
+            if(value?.id !== id) await updateTask({ taskId: taskId, assignedTo: value?.id ?? null })
+        }catch(e){
+            console.log(e)
+        }finally{
+            setLoading(false)
+        }
+    }
+
+    const handleStatusChange = async(taskId, statusId, newStatusId, order) => {
+        setLoading(true)
+        try{
+            if(newStatusId !== statusId) await reorderTask({ taskId: taskId, statusId: statusId, newStatusId: newStatusId, oldIndex: order ?? null })
+        }catch(e){
+            console.log(e)
+        }finally{
+            setLoading(false)
+        }
+    }
 
     const columns = [
         {
             accessorKey: 'id',
+        },
+        {
+            accessorKey: 'order',
         },
         {
             accessorKey: 'taskName',
@@ -159,57 +213,50 @@ export default function OverviewContent({ projectId }){
             header: 'Prioritas',
             cell: ({ row }) => {
                 const priority = row.getValue('priority')
-                const { label } = getPriority(priority)
+                const { label, color } = getPriority(priority)
                 return(
                     <div className="w-full h-full flex justify-start">
-                        {/* <Label text={label.toUpperCase()} color={color}/> */}
-                        <SelectButton
-                            placeholder={label.toUpperCase()}
-                            disabled={true}
-                        />
+                        <Label text={label.toUpperCase()} color={color}/>
                     </div>
                 )
             }
         },
         {
-            accessorKey: 'assignedToData',
+            accessorKey: 'assignedTo',
             header: 'Penerima',
             cell: ({ row }) => {
-                const user = row.getValue('assignedToData') ?? {}
+                const id = row.getValue('id')
+                const assignedTo = row.getValue("assignedTo")
                 return(
                     <div className="w-full h-full block">
-                        {/* {fullName ? (
-                            <Link href={`/profile/${id}`}>
-                                <div className="flex gap-2 items-center">
-                                    <UserIcon size="sm" fullName={fullName} src={profileImage?.attachmentStoragePath} alt=""/>
-                                    <p>{fullName}</p>
-                                </div>
-                            </Link>
-                        ) : (
-                            <div className="w-full h-full block">
-                                {"Belum Ditugaskan"}
-                            </div>
-                        )} */}
-                        <UserSelectButton
+                        <UserSelectButton 
+                            name={`assignee-${id}`}
                             type="button"
-                            defaultValue={user}
-                            disabled={true}
+                            defaultValue={assigneesData.find(team => team.user.id === assignedTo)?.user ?? {}}
+                            options={assigneesData}
+                            disabled={!validateUserRole({ userRole: role, minimumRole: 'Member' })}
+                            onChange={(value) => handleAssigneeChange(id, assignedTo, value)}
                         />
                     </div>
                 )
             }
         },
         {
-            accessorKey: 'statusData',
+            accessorKey: 'status',
             header: 'Status',
             cell: ({ row }) => {
-                const { statusName } = row.getValue('statusData') ?? {}
+                const id = row.getValue("id")
+                const order = row.getValue('order')
+                const statusId = row.getValue('status')
                 return(
                     <div className="w-full h-full block">
-                        {/* <Label text={statusName.toUpperCase()}/> */}
-                        <SelectButton
-                            placeholder={statusName.toUpperCase()}
-                            disabled={true}
+                        <SelectButton 
+                            name={`status-${id}`}
+                            defaultValue={statusData.find(status => status.value === statusId)}
+                            options={statusData}
+                            disabled={!validateUserRole({ userRole: role, minimumRole: 'Member' })}
+                            onChange={(newStatusId) => handleStatusChange(id, statusId, newStatusId, order)}
+                            buttonClass="border-none"
                         />
                     </div>
                 )
@@ -219,6 +266,7 @@ export default function OverviewContent({ projectId }){
 
     return(
         <div className="flex flex-col gap-4 pr-4">
+            {loading && <PopUpLoad />}
             {taskData.length === 0 ? (
                 <OverviewCard title="Tugas Terbaru">
                     <div className="max-h-[300px] md:min-h-[200px] overflow-hidden flex flex-col justify-center items-center">

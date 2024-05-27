@@ -129,7 +129,7 @@ export default function ProjectInformation({prevFormStep}){
                             <div className="flex flex-col gap-4">
                                 <FormikField label="Nama Proyek" required name="projectName" type="text" placeholder={"Masukkan nama proyek..."}/>
                                 <KeyFormikField settingMode={true}/>
-                                {projectData.templateType === 'ai-generated' && <FormikTextarea label="Deskripsi Proyek" name="projectDescription" placeholder={"Masukkan deskripsi proyek..."} rows={4}/>}
+                                {projectData.templateType === 'ai-generated' && <FormikTextarea label="Deskripsi Proyek (minimal 30 karakter)" required name="projectDescription" placeholder={"Masukkan deskripsi proyek, contoh: Saya ingin membuat aplikasi belajar hitung dasar"} rows={4}/>}
                             </div>
                             <div className="flex justify-end gap-2 md:gap-4">
                                 <Button variant="secondary" onClick={prevFormStep} className="w-24 md:w-32">Kembali</Button>

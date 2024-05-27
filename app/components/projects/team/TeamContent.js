@@ -108,12 +108,12 @@ export default function TeamContent({ projectId }){
         setAddMode(false)
         setError(false)
         setLoading(true)
-        if(teams === null){
+        if(teams == null){
             setError(true)
             setErrorMessage("Anggota tim harus diisi.")
             setLoading(false)
             return
-        }else if(role === null){
+        }else if(role == null){
             setError(true)
             setErrorMessage("Peran anggota tim harus dipilih.")
             setLoading(false)
@@ -240,7 +240,6 @@ export default function TeamContent({ projectId }){
                                         </Button>
                                     )}
                                 </div>
-                                
                             ) : (
                                 <Button onClick={() => setEditMode(true)} outline>
                                     Kelola Anggota
@@ -251,10 +250,10 @@ export default function TeamContent({ projectId }){
                     {validateUserRole({ userRole: userRole, minimumRole: 'Owner' }) && !editMode && (
                         <Button onClick={() => setAddMode(true)} className="flex items-center">
                             <FaUserPlus className="mr-2"/>
-                            Tambah Anggota
+                            Undang Anggota
                         </Button>
                     )}
-                    {userRole !== "Owner" && !editMode && (
+                    {(userRole === "Member" || userRole === "Viewer") && (
                         <Button variant="danger" onClick={() => setLeaveMode(true)}>
                             Tinggalkan Proyek
                         </Button>

@@ -234,9 +234,9 @@ export default function SettingForm({projectId}){
                                     </div>
                                     <div className="flex gap-2 md:gap-4">
                                         {formik.dirty && (
-                                            <Button onClick={() => formik.resetForm()} variant="primary" outline>Batalkan Pembaruan</Button>
+                                            <Button onClick={() => formik.resetForm()} variant="secondary">Batalkan</Button>
                                         )}
-                                        <Button type="submit" variant="primary">Perbarui Proyek</Button>
+                                        <Button type="submit" variant="primary">Perbarui</Button>
                                     </div>
                                 </div>
                             )}

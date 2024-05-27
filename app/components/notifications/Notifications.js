@@ -10,6 +10,7 @@ import SortButton from "../common/button/SortButton"
 import NotificationsList from "../notifications/NotificationList"
 import DashboardLayout from "../layout/DashboardLayout"
 import EmptyState from "../common/EmptyState"
+import { getAllProject } from "@/app/lib/fetch/project"
 
 export default function Notifications(){
     const links = [
@@ -17,6 +18,7 @@ export default function Notifications(){
         {label: "Notifikasi", url: "/notifications"},
     ]
 
+    const [project, setProject] = useState("Semua Proyek")
     const [type, setType] = useState("Semua Jenis")
     const [pageIndex, setPageIndex] = useState(0)
     const [pageSize, setPageSize] = useState(10)
@@ -44,6 +46,25 @@ export default function Notifications(){
         setPageCount(totalPageCount)
     }, [notificationsData, pageSize])
 
+    const [projectOptions, setProjectOptions] = useState([])
+
+    useEffect(() => {
+        getAllProject()
+        .then(projects => {
+            if(projects.data){
+                const options = projects.data.map(project => ({
+                    label: project.projectName,
+                    value: project.projectName
+                }));
+                setProjectOptions([
+                    {label: "Semua", value: "Semua Proyek"},
+                    ...options
+                ])
+            }
+            else alert("Gagal memperoleh data proyek")
+        })
+    }, [])
+
     const typeOptions = [
         {label: "Semua Jenis", value: "Semua Jenis"},
         {label: "Penugasan", value: "AssignedTask"},
@@ -58,14 +79,24 @@ export default function Notifications(){
         {label: "50", value: 50}
     ]
 
+    useEffect(() => {
+        let filteredData = dataFetched;
+        if(project !== "Semua Proyek"){
+            filteredData = filteredData.filter(item => item.project?.projectName === project);
+        }
+        if(type !== "Semua Jenis"){
+            filteredData = filteredData.filter(item => item.type === type);
+        }
+        setNotificationsData(filteredData);
+        setPageIndex(0);
+    }, [dataFetched, project, type]);
+
+    const handleProjectChange = (value) => {
+        setProject(value)
+    }
+
     const handleTypeChange = (value) => {
         setType(value)
-        if(value === "Semua Jenis"){
-            setNotificationsData(dataFetched)
-        }else{
-            setNotificationsData(dataFetched.filter(item => item.type === value))
-        }
-        setPageIndex(0)
     }
 
     const handlePageSizeChange = (value) => {
@@ -88,6 +119,15 @@ export default function Notifications(){
                                 </button>
                                 <div className={`${filterDropdown ? "block" : "hidden"} border border-dark-blue/30 md:border-none md:flex z-50 absolute -bottom-2 left-0 translate-y-full md:translate-y-0 px-2 py-3 bg-white rounded-md md:bg-transparent md:p-0 md:static flex flex-col md:flex-row gap-2 md:gap-4`}>
                                     <div className="flex items-center gap-2">
+                                        <b className="hidden xs:block text-xs md:text-sm">Proyek:</b>
+                                        <SelectButton 
+                                            name={"project-button"}
+                                            placeholder={"Semua"}
+                                            options={projectOptions} 
+                                            defaultValue={projectOptions[0]}
+                                            onChange={handleProjectChange}
+                                        />
+                                    </div><div className="flex items-center gap-2">
                                         <b className="hidden xs:block text-xs md:text-sm">Jenis:</b>
                                         <SelectButton 
                                             name={"type-button"}

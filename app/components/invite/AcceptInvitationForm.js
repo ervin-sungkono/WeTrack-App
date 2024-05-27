@@ -18,13 +18,21 @@ export default function AcceptInvitationForm({ teamId }){
     const projectId = searchParams.get('projectId')
 
     useEffect(() => {
-        setLoading(true)
-        if(projectId && teamId){
-            validateTeamMember({ projectId: projectId, teamId: teamId})
-            .then(res => {
-                if(!res.success) setAuthorized(false)
+        const validate = async() => {
+            setLoading(true)
+            try{
+                const res = await validateTeamMember({ projectId: projectId, teamId: teamId})
+
+                if(res.success) setAuthorized(true)
+                else setAuthorized(false)
+            }catch(e){
+                console.log(e)
+            }finally{
                 setLoading(false)
-            })
+            } 
+        }
+        if(projectId && teamId){
+            validate()
         }
     }, [projectId, teamId])
 
@@ -34,25 +42,35 @@ export default function AcceptInvitationForm({ teamId }){
 
     const rejectInvitation = async() => {
         setLoading(true)
-        const res = await rejectInvite({ projectId: projectId })
+        try{
+            const res = await rejectInvite({ projectId: projectId })
 
-        if(res.success){
-            setRejected(true)
+            if(res.success){
+                setRejected(true)
+            }
+        }catch(e){
+            console.log(e)
+        }finally{
+            setLoading(false)
         }
-        setLoading(false)
     }
 
     const acceptInvitation = async() => {
         setLoading(true)
-        const res = await acceptInvite({ projectId: projectId })
+        try{
+            const res = await acceptInvite({ projectId: projectId })
 
-        if(res.success){
-            setAccepted(true)
+            if(res.success){
+                setAccepted(true)
+            }
+        }catch(e){
+            console.log(e)
+        }finally{
+            setLoading(false)
         }
-        setLoading(false)
     }
 
-    if(!authorized) return(
+    if(!authorized && !loading) return(
         <div className="w-full h-full flex flex-col justify-center items-center px-6 pb-8">
             <IoClose size={128} className="text-danger-red"/>
             <p className="text-sm md:text-base text-dark-blue/80 text-center">Link undangan tidak dapat digunakan.</p>

@@ -118,7 +118,7 @@ export default function ProfileLayout(){
                         Foto Profil
                     </label>
                     <div className="relative flex items-center">
-                        <Button variant="danger" outline onClick={deleteImageUpload} disabled={profileImageUploadedURL === null || originalProfileImageFile === null}>
+                        <Button variant="danger" outline onClick={deleteImageUpload} disabled={profileImageUploadedURL == null || originalProfileImageFile == null}>
                             Hapus Foto Profil
                         </Button>
                     </div>
@@ -156,7 +156,7 @@ export default function ProfileLayout(){
         formData.enctype = "multipart/form-data"
         formData.append("fullName", values.fullName)
         formData.append("email", values.email)
-        if(profileImageUploaded !== null){
+        if(profileImageUploaded != null){
             formData.append("profileImage", profileImageUploaded)
         }
         formData.append("description", values.description)

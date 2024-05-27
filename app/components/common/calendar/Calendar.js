@@ -58,7 +58,7 @@ export default function Calendar({projectKey, projectId, tasks, isEditable}){
                                             <CalendarIcon className="text-base md:text-lg"/>
                                             Tanggal Mulai: {dateFormat(eventInfo.event.start)}
                                         </div>
-                                        {finish === null ? (
+                                        {finish == null ? (
                                             <div className="flex items-center gap-1 text-xs md:text-sm w-fit">
                                                 <CalendarIcon className="text-base md:text-lg"/>
                                                 Tenggat Waktu: {dateFormat(eventInfo.event.end)}
@@ -83,7 +83,7 @@ export default function Calendar({projectKey, projectId, tasks, isEditable}){
                                     <div>
                                         <div className="flex items-center gap-1 font-semibold text-xs md:text-sm w-fit">
                                             Penerima:
-                                            {assignedTo === null ? (
+                                            {assignedTo == null ? (
                                                 <>
                                                     <UserIcon src={'/images/user-placeholder.png'} size="xs"/>
                                                     {"Belum Ditugaskan"}

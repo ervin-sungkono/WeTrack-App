@@ -45,7 +45,8 @@ export default function Table({
         },
         state: {
             columnVisibility: {
-                id: false
+                id: false,
+                order: false,
             }
         },
         getCoreRowModel: getCoreRowModel(),
