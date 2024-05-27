@@ -2,17 +2,25 @@
 import UserIcon from "../UserIcon"
 import Link from "next/link"
 import { IoMdArrowDropdown as DropdownIcon } from 'react-icons/io'
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { initDropdowns } from "flowbite"
 import { signOut } from "next-auth/react"
 
 export default function UserDropdown({ fullName, email, profileImage }){
+    const buttonRef = useRef()
     useEffect(() => {
         initDropdowns()
     })
+
+    const handleSignOut = async() => {
+        buttonRef.current.click()
+        await signOut({ callbackUrl: '/dashboard' })
+    }
+
     return(
         <>
             <button 
+                ref={buttonRef}
                 className="h-full flex items-center gap-1 px-2 py-4 lg:py-0"
                 data-dropdown-toggle="user-dropdown"
                 data-dropdown-placement="bottom-end"
@@ -44,7 +52,7 @@ export default function UserDropdown({ fullName, email, profileImage }){
                         <Link
                             href={"#signout"}
                             className="block px-4 py-2 hover:bg-gray-100"
-                            onClick={() => signOut({ callbackUrl: '/dashboard' })}
+                            onClick={handleSignOut}
                         >
                             Keluar
                         </Link>
