@@ -126,7 +126,7 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                 )}
                 {(eventType === getHistoryEventType.status) && (action === getHistoryAction.create) && (
                     <div className="flex gap-1.5">
-                        Anda membuat <b>Status Tugas</b> <Label color="#47389F" text={newValue.toUpperCase()}/> dalam proyek <LinkText link={`/projects/${projectId}/board`}>{project.projectName}</LinkText>.
+                        Anda membuat <b>Status Tugas</b> baru dalam proyek <LinkText link={`/projects/${projectId}/board`}>{project.projectName}</LinkText>.
                     </div>
                 )}
                 {(eventType === getHistoryEventType.status) && (action === getHistoryAction.update) && (

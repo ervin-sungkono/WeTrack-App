@@ -57,7 +57,7 @@ export default function Notifications(){
                     value: project.projectName
                 }));
                 setProjectOptions([
-                    {label: "Semua", value: "Semua Proyek"},
+                    {label: "Semua Proyek", value: "Semua Proyek"},
                     ...options
                 ])
             }
@@ -122,17 +122,17 @@ export default function Notifications(){
                                         <b className="hidden xs:block text-xs md:text-sm">Proyek:</b>
                                         <SelectButton 
                                             name={"project-button"}
-                                            placeholder={"Semua"}
-                                            options={projectOptions} 
-                                            defaultValue={projectOptions[0]}
+                                            placeholder={project}
+                                            options={projectOptions}
                                             onChange={handleProjectChange}
                                         />
-                                    </div><div className="flex items-center gap-2">
+                                    </div>
+                                    <div className="flex items-center gap-2">
                                         <b className="hidden xs:block text-xs md:text-sm">Jenis:</b>
                                         <SelectButton 
                                             name={"type-button"}
                                             placeholder={type} 
-                                            options={typeOptions} 
+                                            options={typeOptions}
                                             onChange={handleTypeChange}
                                         />
                                     </div>
@@ -141,7 +141,7 @@ export default function Notifications(){
                                         <SelectButton 
                                             name={"page-size-button"}
                                             placeholder={pageSize} 
-                                            options={pageSizeOptions} 
+                                            options={pageSizeOptions}
                                             onChange={handlePageSizeChange}
                                         />
                                     </div>
