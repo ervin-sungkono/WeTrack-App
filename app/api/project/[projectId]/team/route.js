@@ -2,7 +2,7 @@ import { db } from "@/app/firebase/config";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { sendMail } from "@/app/lib/mail";
 import { getUserSession } from "@/app/lib/session";
-import { addDoc, collection, doc, getDoc, getDocs, query, serverTimestamp, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, query, serverTimestamp, where, and } from "firebase/firestore";
 import { getProjectRole } from "@/app/firebase/util";
 import { NextResponse } from "next/server";
 
@@ -40,8 +40,12 @@ export async function GET(request, response){
             }, { status: 404 })
         }
 
+        const excludeViewer = request.nextUrl.searchParams.get("excludeViewer")
+
         const teamCollection = collection(db, 'teams')
-        const q = query(teamCollection, where("projectId", '==', projectId))
+        const q = excludeViewer ? 
+            query(teamCollection, and(where("projectId", '==', projectId), where("role", '!=', 'Viewer'))) :
+            query(teamCollection, where("projectId", '==', projectId))
         const teamSnapshots = await getDocs(q)
 
         const teams = await Promise.all(teamSnapshots.docs.map(async (item) => {

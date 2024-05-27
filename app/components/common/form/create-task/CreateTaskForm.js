@@ -81,7 +81,6 @@ export default function CreateTaskForm({ onCancel }){
     return(
         <PopUpForm
             title={"Buat Tugas"}
-            message={"Buat tugas baru"}
             titleSize={"large"}
         >
             <FormikWrapper
@@ -122,7 +121,7 @@ export default function CreateTaskForm({ onCancel }){
                                     type="date" 
                                 />
                                 <FormikField 
-                                    label="Tanggal Selesai" 
+                                    label="Tenggat Waktu" 
                                     name="dueDate" 
                                     type="date" 
                                 />

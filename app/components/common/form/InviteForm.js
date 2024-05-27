@@ -41,7 +41,7 @@ export default function InviteForm({ onConfirm, onClose, team, setTeams, setRole
     return(
         <PopUpForm
             variant="secondary"
-            title={"Tambah Anggota"}
+            title={"Undang Anggota"}
             titleSize={"large"}
             wrapContent
         >

@@ -85,7 +85,7 @@ function TaskDetail({ taskId, closeFn }){
 
     useEffect(() => {
         const fetchTeamOptions = async() => {
-            getAllTeamMember({ projectId: project.id })
+            getAllTeamMember({ projectId: project.id, excludeViewer: true })
                 .then(res => {
                     if(res.data) setTeamOptions(res.data)
                     else setTeamOptions([])

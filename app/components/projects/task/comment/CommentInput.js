@@ -17,7 +17,7 @@ export default function CommentInput({ onSubmit }){
 
     useEffect(() => {
         if(project && project.id){
-            getAllTeamMember({ projectId: project.id})
+            getAllTeamMember({ projectId: project.id, excludeViewer: true })
                 .then(res => {
                     if(res.data) setUsers(res.data.filter(user => user.status === "accepted").map(d => ({
                         id: d.userId,

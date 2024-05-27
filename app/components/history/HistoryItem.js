@@ -93,7 +93,7 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                         </div>
                         <div className="flex items-center gap-1.5 text-xs md:text-sm text-dark-blue">
                             <div className="flex items-center gap-1.5">
-                                {previousValue === null ? (
+                                {previousValue == null ? (
                                     <>
                                         <UserIcon src={'/images/user-placeholder.png'} size="xs"/>
                                         <LinkText>{`Belum Ditugaskan`}</LinkText>
@@ -109,7 +109,7 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                                 <ArrowIcon size={16} className="flex-shrink-0"/>
                             </div>
                             <div className="flex items-center gap-1.5">
-                                {newValue === null ? (
+                                {newValue == null ? (
                                     <>
                                         <UserIcon src={'/images/user-placeholder.png'} size="xs"/>
                                         <LinkText>{`Belum Ditugaskan`}</LinkText>

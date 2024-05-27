@@ -4,7 +4,7 @@ moment.locale("id")
 
 export const dateFormat = (date, includeTime = false) => {
     const formatString = includeTime ? "D MMMM YYYY hh:mm" : "D MMMM YYYY"
-    if(date === null || date === undefined){
+    if(date == null){
         return null
     }else{
         if(typeof date === "string" || typeof date === "object"){ //ISO String

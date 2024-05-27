@@ -26,7 +26,7 @@ export default function DashboardTaskItem({title, type, startDate, endDate, fini
                                     Tanggal Mulai: {dateFormat(startDate)}
                                 </div>
                             )}
-                            {(endDate && finishedDate === null) && (
+                            {(endDate && finishedDate == null) && (
                                 <div className="flex items-center gap-1 text-xs md:text-sm w-fit">
                                     <CalendarIcon className="text-base md:text-lg"/>
                                     Tenggat Waktu: {dateFormat(endDate)}
