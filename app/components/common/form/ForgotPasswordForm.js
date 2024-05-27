@@ -14,6 +14,7 @@ import FormikWrapper from "./formik/FormikWrapper";
 import Button from "../button/Button";
 import PopUpLoad from "../alert/PopUpLoad";
 import { resetUserPassword } from "@/app/lib/fetch/user";
+import PopUpInfo from "../alert/PopUpInfo";
 
 export default function ForgotPasswordForm(){
     const initialValues = {
@@ -22,6 +23,7 @@ export default function ForgotPasswordForm(){
     
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
+    const [success, setSuccess] = useState(false)
     const [loading, setLoading] = useState(false)
     const router = useRouter()
     const { status } = useSession()
@@ -39,11 +41,11 @@ export default function ForgotPasswordForm(){
             const res = await resetUserPassword({
                 email: values.email
             })
-            if(res.success){
-                router.push('/login')
+            if (res.error) {
+                setError(true);
+                console.log(JSON.parse(res.error).errors)
             } else {
-                setError(true)
-                setErrorMessage(res.message)
+                setSuccess(true);
             }
         }catch(error){
             setError(true)
@@ -57,7 +59,7 @@ export default function ForgotPasswordForm(){
         <div className="flex min-h-screen flex-col items-center justify-center text-dark-blue py-8">
             <div className="flex flex-col justify-center items-center text-center w-5/6">
                 <h1 className="text-2xl font-bold">
-                    Lupa Kata Sandi
+                    Lupa Kata Sandi?
                 </h1>
                 <p className="text-sm mt-1">
                     Masukkan email terdaftar untuk mengatur ulang kata sandi.
@@ -103,6 +105,20 @@ export default function ForgotPasswordForm(){
                 </p>
             </div>
             {loading && <PopUpLoad />}
+            {success &&
+                <PopUpInfo
+                    title={"Tautan Terkirim"}
+                    titleSize={"default"}
+                    message={"Silakan cek email Anda untuk memperoleh tautan pengaturan ulang kata sandi yang telah dikirimkan."}
+                >
+                    <div className="flex justify-end gap-2 md:gap-4">
+                        <Button onClick={() => {
+                            setSuccess(false)
+                            router.push("/login")
+                        }} className="w-24 md:w-32">OK</Button>
+                    </div>
+                </PopUpInfo>
+            }
         </div>
     )
 }
