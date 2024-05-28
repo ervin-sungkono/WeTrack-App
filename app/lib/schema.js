@@ -119,7 +119,7 @@ export const updateStatusSchema = yup.object().shape({
     statusName: yup
         .string()
         .required("Nama status tugas wajib diisi")
-        .max(20, "Nama status harus memiliki paling banyak 25 karakter"),
+        .max(20, "Nama status harus memiliki paling banyak 20 karakter"),
 })
 
 export const deleteStatusSchema = yup.object().shape({
