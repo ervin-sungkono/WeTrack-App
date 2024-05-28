@@ -9,7 +9,7 @@ import { getSession } from "next-auth/react";
 import { onSnapshot } from "firebase/firestore";
 import { pickTextColorBasedOnBgColor } from "@/app/lib/color";
 
-import { IoMdSettings as SettingsIcon } from "react-icons/io";
+// import { IoMdSettings as SettingsIcon } from "react-icons/io";
 import { validateUserRole } from "@/app/lib/helper";
 
 export default function LabelInput({ hideLabel = false, projectId, labelData, onChange, resetLabel = null }){
