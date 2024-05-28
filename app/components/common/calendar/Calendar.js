@@ -5,15 +5,16 @@ import interactionPlugin from '@fullcalendar/interaction';
 import idLocale from "@fullcalendar/core/locales/id";
 import { useState, useEffect, createElement } from "react";
 import { dateFormat } from "@/app/lib/date";
-import { getPriority } from "@/app/lib/string";
+// import { getPriority } from "@/app/lib/string";
 import { FaCheckSquare as TaskIcon } from "react-icons/fa";
 import { RiCheckboxMultipleFill as SubTaskIcon } from "react-icons/ri";
 import { GoArrowRight as ArrowIcon } from "react-icons/go";
 import { FaCalendarAlt as CalendarIcon } from "react-icons/fa"
-import Label from "../Label";
-import UserIcon from "../UserIcon";
+// import Label from "../Label";
+// import UserIcon from "../UserIcon";
 import CustomPopover from "../CustomPopover";
 import { updateTask } from "@/app/lib/fetch/task";
+import { v4 as uuidv4 } from 'uuid'
 
 export default function Calendar({projectKey, projectId, tasks, isEditable}){
     const [formattedTasks, setFormattedTasks] = useState([])
@@ -46,7 +47,7 @@ export default function Calendar({projectKey, projectId, tasks, isEditable}){
         return createElement(
             CustomPopover,
             { 
-                id: `popover-${eventInfo.event.id}`,
+                id: `popover-${uuidv4()}`,
                 content: 
                     <div className="z-fixed">
                         <div className="flex flex-col justify-between p-1 gap-4 rounded-md">
@@ -122,7 +123,7 @@ export default function Calendar({projectKey, projectId, tasks, isEditable}){
                     textOverflow: "ellipsis",
                     display: "inline-block",
                     maxWidth: "100%",
-                    zIndex: 9998,
+                    zIndex: 100,
                 },
             }, eventInfo.event.title)
         );
@@ -178,7 +179,7 @@ export default function Calendar({projectKey, projectId, tasks, isEditable}){
             buttonText={{
                 today: 'Hari Ini',
             }}
-            showNonCurrentDates={false}
+            // showNonCurrentDates={false}
             fixedWeekCount={false}
             weekNumbers={true}
             weekNumberFormat={{

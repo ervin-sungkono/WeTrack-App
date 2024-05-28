@@ -4,6 +4,7 @@
 
 @import "@yaireo/tagify/dist/tagify.css";
 @import "./mention.scss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
 $black: #2B2B2B;
 $dark-blue: #1A1B36;
@@ -259,12 +260,12 @@ input::-ms-clear {
     color: white !important;
 }
 
-.fc-event .fc-event-main, .fc .fc-daygrid-event{
-    transition: z-index 0.5s ease-in-out;
-}
+// .fc-event .fc-event-main, .fc .fc-daygrid-event{
+//     transition: z-index ease-in-out;
+// }
 
 .fc-event .fc-event-main:hover, .fc .fc-daygrid-event:hover{
-    z-index: 9997 !important;
+    z-index: 500 !important;
 }
 
 .fc .fc-daygrid-body{
