@@ -25,8 +25,11 @@ export default function ProfileLayout(){
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
     const [changePassword, setChangePassword] = useState(false)
+    const [successChangePassword, setSuccessChangePassword] = useState(false)
     const [updateProfile, setUpdateProfile] = useState(false)
+    const [successUpdateProfile, setSuccessUpdateProfile] = useState(false)
     const [deleteAccount, setDeleteAccount] = useState(false)
+    const [successDeleteAccount, setSuccessDeleteAccount] = useState(false)
 
     const [initialValues, setInitialValues] = useState({
         fullName: "",
@@ -90,8 +93,6 @@ export default function ProfileLayout(){
     const [profileImageUploadedURL, setProfileImageUploadedURL] = useState(null)
     const [profileImageDeleted, setProfileImageDeleted] = useState(false)
 
-    const [successUpdateProfile, setSuccessUpdateProfile] = useState(false)
-
     const openImageUpload = () => {
         imageUploaderRef.current.click()
     }
@@ -139,7 +140,7 @@ export default function ProfileLayout(){
                 setError(true);
                 console.log(res.error)
             }else{
-                setChangePassword(false)
+                setSuccessChangePassword(true)
             }
         }catch(error){
             setError(true);
@@ -207,7 +208,7 @@ export default function ProfileLayout(){
                 setError(true);
                 console.log(res.error)
             }else{
-                signOut()
+                setSuccessDeleteAccount(true)
             }
         }catch (error){
             setError(true);
@@ -343,6 +344,20 @@ export default function ProfileLayout(){
                         errorMessage={errorMessage}
                     />
                 )}
+                {successChangePassword &&
+                    <PopUpInfo
+                        title={"Kata Sandi Diperbarui"}
+                        titleSize={"default"}
+                        message={"Kata sandi Anda telah berhasil diperbarui."}
+                    >
+                        <div className="flex justify-end gap-2 md:gap-4">
+                            <Button onClick={() => {
+                                setSuccessChangePassword(false)
+                                location.reload()
+                            }} className="w-24 md:w-32">OK</Button>
+                        </div>
+                    </PopUpInfo>
+                }
                 {deleteAccount && (
                     <DeleteAccountForm
                         onConfirm={handleDeleteAccount}
@@ -351,6 +366,20 @@ export default function ProfileLayout(){
                         errorMessage={errorMessage}
                     />
                 )}
+                {successDeleteAccount &&
+                    <PopUpInfo
+                        title={"Akun Dihapus"}
+                        titleSize={"default"}
+                        message={"Akun Anda telah dihapus. Anda akan dialihkan ke halaman masuk."}
+                    >
+                        <div className="flex justify-end gap-2 md:gap-4">
+                            <Button onClick={() => {
+                                setSuccessDeleteAccount(false)
+                                signOut()
+                            }} className="w-24 md:w-32">OK</Button>
+                        </div>
+                    </PopUpInfo>
+                }
                 {successUpdateProfile &&
                     <PopUpInfo
                         title={"Profil Diperbarui"}

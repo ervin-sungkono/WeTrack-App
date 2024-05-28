@@ -72,7 +72,7 @@ export default function ForgotPasswordForm(){
                     validationSchema={forgotPasswordSchema}
                     children={(formik) => (
                         <div>
-                            <div className="mb-4">
+                            <div className="mb-2">
                                 <FormikField
                                     name="email"
                                     required
@@ -81,6 +81,7 @@ export default function ForgotPasswordForm(){
                                     placeholder="Masukkan email..."
                                 />
                             </div>
+                            <p className="mb-2 text-[10.8px] md:text-xs text-dark-blue/80">Tautan pengaturan ulang kata sandi hanya akan terkirim apabila email yang Anda masukkan terdaftar di WeTrack.</p>
                             {error && <p className="text-xs md:text-sm text-center text-danger-red font-medium">{errorMessage}</p>}
                             <div className="flex justify-center">
                                 <Button variant="primary" type="submit" className="mt-2 w-full">

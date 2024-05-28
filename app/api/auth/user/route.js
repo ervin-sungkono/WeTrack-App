@@ -188,7 +188,7 @@ export async function DELETE(request, response){
 
         await deleteUser(auth.currentUser)
 
-        // await handleDeletedUser({ userId: userId })
+        await handleDeletedUser({ userId: userId })
 
         return NextResponse.json({
             success: true,

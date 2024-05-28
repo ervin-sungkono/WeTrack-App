@@ -285,7 +285,7 @@ export default function OverviewContent({ projectId }){
                 </OverviewCard>
             ) : (
                 <OverviewCard title="Tugas Terbaru" action={"Lihat semua"} href={`/projects/${projectId}/tasks`}>
-                    <div className="max-h-[300px] md:h-[250px]">
+                    <div className="max-h-[350px] md:h-[250px]">
                         <Table 
                             data={taskData}
                             columns={columns}

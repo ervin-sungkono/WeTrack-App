@@ -37,7 +37,7 @@ export default function TablePagination({
                     <ArrowLeft className="text-xl md:text-2xl"/>
                 </button>
             </div>
-            <p className="text-xs md:text-sm px-4">{startIndex} to {endIndex} of {totalCount}</p>
+            <p className="text-xs md:text-sm px-4">{startIndex} - {endIndex} dari {totalCount}</p>
             <div className="flex items-center">
                 <button 
                     className="hover:text-basic-blue p-1 disabled:text-dark-blue/60" 

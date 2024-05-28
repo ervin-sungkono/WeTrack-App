@@ -11,7 +11,7 @@ import SortButton from "../common/button/SortButton"
 import DashboardLayout from "../layout/DashboardLayout"
 import EmptyState from "../common/EmptyState"
 import { getUserHistory } from "@/app/lib/fetch/user"
-import { getHistoryAction, getHistoryEventType } from "@/app/lib/history"
+import { getHistoryEventType } from "@/app/lib/history"
 
 const HistoryList = dynamic(() => import("../history/HistoryList"))
 
@@ -23,7 +23,6 @@ export default function History(){
 
     const [project, setProject] = useState("Semua Proyek")
     const [type, setType] = useState("Semua Jenis")
-    const [action, setAction] = useState("Semua Aksi")
     const [pageIndex, setPageIndex] = useState(0)
     const [pageSize, setPageSize] = useState(10)
     const [pageCount, setPageCount] = useState(0)
@@ -61,7 +60,7 @@ export default function History(){
                     value: project.projectName
                 }));
                 setProjectOptions([
-                    {label: "Semua", value: "Semua Proyek"},
+                    {label: "Semua Proyek", value: "Semua Proyek"},
                     ...options
                 ])
             }
@@ -70,7 +69,7 @@ export default function History(){
     }, [])
 
     const typeOptions = [
-        {label: "Semua", value: "Semua Jenis"},
+        {label: "Semua Jenis", value: "Semua Jenis"},
         {label: "Proyek", value: getHistoryEventType.project},
         {label: "Tugas", value: getHistoryEventType.task},
         {label: "Subtugas", value: getHistoryEventType.subtask},
@@ -81,14 +80,6 @@ export default function History(){
         {label: "Lampiran", value: getHistoryEventType.attachment},
         {label: "Profil", value: getHistoryEventType.profile}
     ]
-    
-    const actionOptions = [
-        {label: "Semua", value: "Semua Aksi"},
-        {label: "Pembuatan", value: getHistoryAction.create},
-        {label: "Perubahan", value: getHistoryAction.update},
-        {label: "Penghapusan", value: getHistoryAction.delete}
-    ]
-
     const pageSizeOptions = [
         {label: "10", value: 10},
         {label: "25", value: 25},
@@ -103,12 +94,9 @@ export default function History(){
         if(type !== "Semua Jenis"){
             filteredData = filteredData.filter(item => item.eventType === type);
         }
-        if(action !== "Semua Aksi"){
-            filteredData = filteredData.filter(item => item.action === action);
-        }
         setHistoryData(filteredData);
         setPageIndex(0);
-    }, [dataFetched, project, type, action]);
+    }, [dataFetched, project, type]);
     
     const handleProjectChange = (value) => {
         setProject(value)
@@ -116,10 +104,6 @@ export default function History(){
     
     const handleTypeChange = (value) => {
         setType(value)
-    }
-
-    const handleActionChange = (value) => {
-        setAction(value)
     }
 
     const handlePageSizeChange = (value) => {
@@ -145,9 +129,8 @@ export default function History(){
                                         <b className="hidden xs:block text-xs md:text-sm">Proyek:</b>
                                         <SelectButton 
                                             name={"project-button"}
-                                            placeholder={"Semua"}
-                                            options={projectOptions} 
-                                            defaultValue={projectOptions[0]}
+                                            placeholder={project}
+                                            options={projectOptions}
                                             onChange={handleProjectChange}
                                         />
                                     </div>
@@ -155,18 +138,9 @@ export default function History(){
                                         <b className="hidden xs:block text-xs md:text-sm">Jenis:</b>
                                         <SelectButton 
                                             name={"type-button"}
-                                            options={typeOptions} 
-                                            defaultValue={typeOptions[0]}
+                                            placeholder={type}
+                                            options={typeOptions}
                                             onChange={handleTypeChange}
-                                        />
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <b className="hidden xs:block text-xs md:text-sm">Aksi:</b>
-                                        <SelectButton 
-                                            name={"action-button"}
-                                            options={actionOptions} 
-                                            defaultValue={actionOptions[0]}
-                                            onChange={handleActionChange}
                                         />
                                     </div>
                                     <div className="flex items-center gap-2">
@@ -174,7 +148,7 @@ export default function History(){
                                         <SelectButton 
                                             name={"page-size-button"}
                                             placeholder={pageSize} 
-                                            options={pageSizeOptions} 
+                                            options={pageSizeOptions}
                                             onChange={handlePageSizeChange}
                                         />
                                     </div>
