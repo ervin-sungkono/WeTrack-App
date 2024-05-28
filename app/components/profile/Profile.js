@@ -272,8 +272,11 @@ export default function ProfileLayout(){
                                 <UpdateProfileForm 
                                     initialValues={initialValues} 
                                     setUpdateProfile={setUpdateProfile}
+                                    profileImageUploaded={profileImageUploaded}
                                     setProfileImageUploaded={setProfileImageUploaded}
-                                    setProfileImageUploadedURL={setProfileImageUploadedURL} 
+                                    setProfileImageUploadedURL={setProfileImageUploadedURL}
+                                    profileImageDeleted={profileImageDeleted}
+                                    setProfileImageDeleted={setProfileImageDeleted}
                                     originalProfileImage={originalProfileImage}
                                     handleUpdateProfile={handleUpdateProfile} 
                                 />

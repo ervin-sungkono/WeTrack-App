@@ -7,7 +7,7 @@ import { TbBriefcaseFilled } from "react-icons/tb";
 import Button from "../../button/Button";
 import { updateProfileSchema } from "@/app/lib/schema";
 
-export default function UpdateProfileForm({initialValues, setUpdateProfile, setProfileImageUploaded, setProfileImageUploadedURL, originalProfileImage, handleUpdateProfile}) {
+export default function UpdateProfileForm({initialValues, setUpdateProfile, profileImageUploaded, setProfileImageUploaded, setProfileImageUploadedURL, profileImageDeleted, setProfileImageDeleted, originalProfileImage, handleUpdateProfile}) {
     return (
         <FormikWrapper
             initialValues={initialValues}
@@ -59,12 +59,13 @@ export default function UpdateProfileForm({initialValues, setUpdateProfile, setP
                         />
                     </div>
                     <div className="flex flex-col md:flex-row gap-3 md:gap-4 mt-6 mb-12">
-                        <Button variant="primary" type="submit">
+                        <Button variant="primary" type="submit" disabled={!formik.dirty && profileImageUploaded == null && profileImageDeleted === false}>
                             Perbarui Profil
                         </Button>
                         <Button variant="secondary" onClick={() => {
                             setUpdateProfile(false)
                             setProfileImageUploaded(null)
+                            setProfileImageDeleted(false)
                             setProfileImageUploadedURL(originalProfileImage)
                         }}>
                             Batalkan
