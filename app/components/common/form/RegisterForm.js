@@ -76,7 +76,7 @@ export default function RegisterForm(){
                     Daftar
                 </h1>
                 <p className="text-sm mt-1">
-                    Buat akun untuk mulai melacak proyek Anda sekarang!
+                    Buat akun untuk mulai melakukan manajemen tugas Anda sekarang!
                 </p>
             </div>
             <div className="p-4 md:p-6 mt-4 bg-white shadow-lg w-5/6 lg:w-2/5 rounded-xl max-w-lg lg:max-w-2xl">
@@ -122,7 +122,7 @@ export default function RegisterForm(){
                                     placeholder="Masukkan konfirmasi kata sandi..."
                                 />
                             </div>
-                            {error && <p className="mb-2 text-md text-center text-danger-red font-bold">{errorMessage}</p>}
+                            {error && <p className="mb-2 text-md text-center text-danger-red font-medium">{errorMessage}</p>}
                             <div className="flex justify-center">
                                 <Button variant="primary" type="submit" className="w-full">
                                     Daftar
