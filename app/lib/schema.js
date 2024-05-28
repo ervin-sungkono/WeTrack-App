@@ -90,11 +90,11 @@ export const projectInformationSchema = yup.object().shape({
         .string()
         .required("Nama proyek harus diisi!")
         .matches(/^[a-zA-Z0-9\s]+$/, "Nama proyek tidak boleh mengandung karakter spesial!")
-        .max(50),
+        .max(50, "Nama proyek harus memiliki paling banyak 50 karakter!"),
     key: yup
         .string()
         .required("Kunci proyek harus diisi!")
-        .max(7)
+        .max(7, "Kunci proyek harus memiliki paling banyak 7 karakter!")
 })
 
 export const updateProjectSchema = yup.object().shape({
@@ -102,11 +102,11 @@ export const updateProjectSchema = yup.object().shape({
         .string()
         .required("Nama proyek harus diisi!")
         .matches(/^[a-zA-Z0-9\s]+$/, "Nama proyek tidak boleh mengandung karakter spesial!")
-        .max(50),
+        .max(50, "Nama proyek harus memiliki paling banyak 50 karakter!"),
     key: yup
         .string()
         .required("Kunci proyek harus diisi!")
-        .max(7)
+        .max(7, "Kunci proyek harus memiliki paling banyak 7 karakter!")
 })
 
 export const deleteProjectSchema = yup.object().shape({

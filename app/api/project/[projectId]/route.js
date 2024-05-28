@@ -149,7 +149,7 @@ export async function PUT(request, response) {
             const currentTaskSnapShotInEndStatus = await getDocs(q);
         
             await Promise.all(currentTaskSnapShotInEndStatus.docs.map(async (taskDoc) => {
-                if(!taskDoc.exists())return
+                if(!taskDoc.exists()) return
                 
                 await updateDoc(taskDoc.ref, {
                     finishedDate: null, 
@@ -164,6 +164,26 @@ export async function PUT(request, response) {
                     eventType: getHistoryEventType.task
                 });
         
+            }));
+
+            const q1 = query(collection(db, "tasks"), where("status", "==", updatedProjectSnap.data().endStatus));
+            const currentTaskSnapShotInCurrentEndStatus = await getDocs(q1);
+
+            await Promise.all(currentTaskSnapShotInCurrentEndStatus.docs.map(async (taskDoc) => {
+                if(!taskDoc.exists()) return
+                
+                await updateDoc(taskDoc.ref, {
+                    finishedDate: new Date().toISOString(), 
+                    updatedAt: serverTimestamp()
+                });
+
+                await createHistory({
+                    userId: userId,
+                    taskId: taskDoc.id,
+                    projectId: projectId,
+                    action: getHistoryAction.update,
+                    eventType: getHistoryEventType.task
+                });
             }));
         }
                  
