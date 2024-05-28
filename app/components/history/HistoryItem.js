@@ -125,9 +125,9 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                     </div>
                 )}
                 {(eventType === getHistoryEventType.status) && (action === getHistoryAction.create) && (
-                    <div className="flex gap-1.5">
-                        Anda membuat <b>Status Tugas</b> <Label color="#47389F" text={newValue.toUpperCase()}/> dalam proyek <LinkText link={`/projects/${projectId}/board`}>{project.projectName}</LinkText>.
-                    </div>
+                    <>
+                        Anda membuat <b>Status Tugas</b> baru dalam proyek <LinkText link={`/projects/${projectId}/board`}>{project.projectName}</LinkText>.
+                    </>
                 )}
                 {(eventType === getHistoryEventType.status) && (action === getHistoryAction.update) && (
                     <div className="flex flex-col gap-1.5">
@@ -143,7 +143,13 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                 )}
                 {(eventType === getHistoryEventType.status) && (action === getHistoryAction.delete) && (
                     <div className="flex gap-1.5">
-                        Anda menghapus <b>Status Tugas</b> <Label color="#47389F" text={deletedValue.toUpperCase()}/> dalam proyek <LinkText link={`/projects/${projectId}/board`}>{project.projectName}</LinkText>.
+                        <div>
+                            Anda menghapus <b>Status Tugas</b>
+                        </div>
+                        <Label color="#47389F" text={deletedValue.toUpperCase()}/>
+                        <div>
+                            dalam proyek <LinkText link={`/projects/${projectId}/board`}>{project.projectName}</LinkText>.
+                        </div>
                     </div>
                 )}
                 {(eventType === getHistoryEventType.comment) && (action === getHistoryAction.create) && (

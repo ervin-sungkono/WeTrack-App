@@ -256,7 +256,7 @@ export async function PUT(request, response) {
                 })
             }
 
-            if(updatedTaskData.assignedTo){
+            if(assignedTo !== undefined && updatedTaskData.assignedTo !== null){
                 await createNotification({
                     userId: updatedTaskData.assignedTo,
                     taskId: taskId,
