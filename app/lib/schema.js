@@ -128,6 +128,9 @@ export const deleteStatusSchema = yup.object().shape({
 })
 
 export const newTaskSchema = yup.object().shape({
+    projectId: yup
+        .string()
+        .required("Wajib memiliki setidaknya satu proyek"),
     type: yup.string()
         .default('Task')
         .required('Tipe harus diisi'),
