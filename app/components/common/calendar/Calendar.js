@@ -179,7 +179,7 @@ export default function Calendar({projectKey, projectId, tasks, isEditable}){
             buttonText={{
                 today: 'Hari Ini',
             }}
-            showNonCurrentDates={false}
+            // showNonCurrentDates={false}
             fixedWeekCount={false}
             weekNumbers={true}
             weekNumberFormat={{

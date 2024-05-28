@@ -5,6 +5,10 @@ import EmptyState from "../common/EmptyState";
 import { getPriority, getProgress } from "@/app/lib/string";
 import { useEffect, useState } from "react";
 
+ChartJS.defaults.font.family = 'Inter'
+ChartJS.defaults.font.size = 14;
+ChartJS.defaults.font.style = 'normal';
+ChartJS.defaults.font.weight = 700;
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
 export default function DashboardInsight({project}){
@@ -94,10 +98,6 @@ export default function DashboardInsight({project}){
                     display: true,
                     position: position,
                     labels: {
-                        font: {
-                            size: 14,
-                            weight: 'bold'
-                        },
                         color: 'rgba(0, 0, 0, 1)'
                     }
                 },
@@ -163,10 +163,6 @@ export default function DashboardInsight({project}){
                     display: false,
                     position: 'bottom',
                     labels: {
-                        font: {
-                            size: 14,
-                            weight: 'bold'
-                        },
                         color: 'rgba(0, 0, 0, 1)'
                     }
                 },
@@ -178,10 +174,6 @@ export default function DashboardInsight({project}){
                     },
                     ticks: {
                         display: true,
-                        font: {
-                            size: 14,
-                            weight: 'bold'
-                        },
                         color: 'rgba(0, 0, 0, 1)'
                     }
                 },
@@ -191,10 +183,6 @@ export default function DashboardInsight({project}){
                     },
                     ticks: {
                         display: false,
-                        font: {
-                            size: 14,
-                            weight: 'bold'
-                        },
                         color: 'rgba(0, 0, 0, 1)'
                     }
                 }
