@@ -269,7 +269,7 @@ export default function OverviewContent({ projectId }){
             {loading && <PopUpLoad />}
             {taskData.length === 0 ? (
                 <OverviewCard title="Tugas Terbaru">
-                    <div className="max-h-[300px] md:min-h-[200px] overflow-hidden flex flex-col justify-center items-center">
+                    <div className={`${validateUserRole({ userRole: role, minimumRole: 'Member' }) ? "max-h-[350px] h-[25vh]" : "h-[60vh]"} overflow-hidden flex flex-col justify-center items-center`}>
                         <div className="flex flex-col justify-center items-center">
                             <div className="flex flex-col justify-center items-center gap-2">
                                 <TaskListIcon size={48} className="text-dark-blue/60"/>
@@ -285,7 +285,7 @@ export default function OverviewContent({ projectId }){
                 </OverviewCard>
             ) : (
                 <OverviewCard title="Tugas Terbaru" action={"Lihat semua"} href={`/projects/${projectId}/tasks`}>
-                    <div className="max-h-[350px] md:h-[250px]">
+                    <div className={`${validateUserRole({ userRole: role, minimumRole: 'Member' }) ? "max-h-[350px] h-[25vh]" : "h-[60vh]"}`}>
                         <Table 
                             data={taskData}
                             columns={columns}
@@ -296,60 +296,62 @@ export default function OverviewContent({ projectId }){
                     </div>
                 </OverviewCard>
             )}
-            <div className="flex flex-col md:flex-row justify-between gap-4">
-                <OverviewCard title="Ditugaskan Kepada Saya">
-                    <div className="flex flex-col gap-2 max-h-[200px] md:h-[175px] overflow-x-hidden overflow-y-auto">
-                        {validateUserRole({ userRole: role, minimumRole: 'Member' }) && assignedTaskData && assignedTaskData.length > 0 ? (
-                            <>
-                                {assignedTaskData.map((task, index) => (
-                                    <AssignedTaskItem 
-                                        key={index}
-                                        title={task.taskName}
-                                        type={task.type}
-                                        startDate={task.startDate}
-                                        endDate={task.dueDate}
-                                        finishedDate={task.finishedDate}
-                                        status={task.statusData}
-                                        priority={task.priority}
-                                        projectKey={projectKey}
-                                        displayId={task.displayId}
-                                        href={`/projects/${projectId}/tasks?taskId=${task.id}`}
-                                    />
-                                ))}
-                            </>
-                        ) : (
-                            <div className="flex flex-col justify-center items-center gap-2 mt-8">
-                                <TaskIcon size={48} className="text-dark-blue/60"/>
-                                <p className="text-xs md:text-sm text-dark-blue/80 text-center">Belum ada tugas yang ditugaskan kepada Anda.</p>
-                            </div>
-                        )}
-                    </div>
-                </OverviewCard>
-                <OverviewCard title="Komentar Terbaru">
-                    <div className="flex flex-col gap-2 max-h-[200px] md:h-[175px] overflow-x-hidden overflow-y-auto">
-                        {assignedCommentData && assignedCommentData.length > 0 ? (
-                            <>
-                                {assignedCommentData.map((comment, index) => (
-                                    <AssignedCommentItem
-                                        key={index}
-                                        text={comment.commentText}
-                                        user={comment.user}
-                                        createdAt={comment.createdAt}
-                                        projectKey={projectKey}
-                                        displayId={comment.task.displayId}
-                                        href={`/projects/${projectId}/tasks?taskId=${comment.taskId}`}
-                                    />
-                                ))}
-                            </>
-                        ) : (
-                            <div className="flex flex-col justify-center items-center gap-2 mt-8">
-                                <CommentIcon size={48} className="text-dark-blue/60"/>
-                                <p className="text-xs md:text-sm text-dark-blue/80 text-center">Belum ada komentar yang menyebut Anda.</p>
-                            </div>
-                        )}
-                    </div>
-                </OverviewCard>
-            </div>
+            {validateUserRole({ userRole: role, minimumRole: 'Member' }) && (
+                <div className="flex flex-col md:flex-row justify-between gap-4">
+                    <OverviewCard title="Ditugaskan Kepada Saya">
+                        <div className="flex flex-col gap-2 max-h-[200px] md:h-[175px] overflow-x-hidden overflow-y-auto">
+                            {assignedTaskData && assignedTaskData.length > 0 ? (
+                                <>
+                                    {assignedTaskData.map((task, index) => (
+                                        <AssignedTaskItem 
+                                            key={index}
+                                            title={task.taskName}
+                                            type={task.type}
+                                            startDate={task.startDate}
+                                            endDate={task.dueDate}
+                                            finishedDate={task.finishedDate}
+                                            status={task.statusData}
+                                            priority={task.priority}
+                                            projectKey={projectKey}
+                                            displayId={task.displayId}
+                                            href={`/projects/${projectId}/tasks?taskId=${task.id}`}
+                                        />
+                                    ))}
+                                </>
+                            ) : (
+                                <div className="flex flex-col justify-center items-center gap-2 mt-4 md:mt-8">
+                                    <TaskIcon size={48} className="text-dark-blue/60"/>
+                                    <p className="text-xs md:text-sm text-dark-blue/80 text-center">Belum ada tugas yang ditugaskan kepada Anda.</p>
+                                </div>
+                            )}
+                        </div>
+                    </OverviewCard>
+                    <OverviewCard title="Komentar Terbaru">
+                        <div className="flex flex-col gap-2 max-h-[200px] md:h-[175px] overflow-x-hidden overflow-y-auto">
+                            {assignedCommentData && assignedCommentData.length > 0 ? (
+                                <>
+                                    {assignedCommentData.map((comment, index) => (
+                                        <AssignedCommentItem
+                                            key={index}
+                                            text={comment.commentText}
+                                            user={comment.user}
+                                            createdAt={comment.createdAt}
+                                            projectKey={projectKey}
+                                            displayId={comment.task.displayId}
+                                            href={`/projects/${projectId}/tasks?taskId=${comment.taskId}`}
+                                        />
+                                    ))}
+                                </>
+                            ) : (
+                                <div className="flex flex-col justify-center items-center gap-2 mt-4 md:mt-8">
+                                    <CommentIcon size={48} className="text-dark-blue/60"/>
+                                    <p className="text-xs md:text-sm text-dark-blue/80 text-center">Belum ada komentar yang menyebut Anda.</p>
+                                </div>
+                            )}
+                        </div>
+                    </OverviewCard>
+                </div>
+            )}
         </div>
     )
 }

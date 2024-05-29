@@ -62,6 +62,7 @@ export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, s
     }
 
     const getSelectRoleClass = () => {
+        if(editMode && deleteSelected) return "border-white text-white"
         switch(roleSelected){
             case "Owner":
                 return "border-[#E1B829] text-[#E1B829]"
@@ -123,7 +124,7 @@ export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, s
                 )}
                 {
                     (editMode && role != 'Owner') ? (
-                        <div className="mt-4 mb-6">
+                        <div className="my-4">
                             <SelectButton
                                 name={`${id}`}
                                 placeholder={roleSelected || role}

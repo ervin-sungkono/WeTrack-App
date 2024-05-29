@@ -1,5 +1,5 @@
 "use client"
-import { useSession } from "next-auth/react"
+import { getSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { getAllTeamMember } from "@/app/lib/fetch/team"
 import { useSessionStorage } from "usehooks-ts"
@@ -9,7 +9,7 @@ import UserIcon from "@/app/components/common/UserIcon"
 import Button from "@/app/components/common/button/Button"
 
 export default function CommentInput({ onSubmit }){
-    const { data: session, status } = useSession()
+    const [session, setSession] = useState()
     const [comment, setComment] = useState()
     const [focused, setFocus] = useState(false)
     const [users, setUsers] = useState([])
@@ -28,12 +28,15 @@ export default function CommentInput({ onSubmit }){
         }
     },[project])
 
+    useEffect(() => {
+        getSession().then(session => setSession(session))
+    }, [])
+
     const resetComment = () => {
         setComment("")
         setFocus(false)
     }
 
-    if(status === 'loading') return null
     return(
         <div className="flex gap-2.5 pl-2 py-2">
             <div>

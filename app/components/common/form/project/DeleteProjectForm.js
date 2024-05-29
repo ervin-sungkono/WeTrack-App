@@ -39,8 +39,8 @@ export default function DeleteProjectForm({onConfirm, onClose, error, errorMessa
                         </div>
                         {error && (<p className="mt-1 mb-2 text-xs text-left text-[#FF0000]">{errorMessage}</p>)}
                         <div className="mt-8 flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
-                            <Button variant="secondary" onClick={onClose}>Kembali</Button>
                             <Button variant="danger" type="submit">Hapus</Button>
+                            <Button variant="secondary" onClick={onClose}>Kembali</Button>
                         </div>
                     </>
                 )}

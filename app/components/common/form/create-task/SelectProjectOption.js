@@ -6,7 +6,7 @@ import { getAllProject } from "@/app/lib/fetch/project";
 
 export default function SelectProjectOption(){
     const [projectOptions, setProjectOptions] = useState(null)
-    const { values: { projectId }, setFieldValue } = useFormikContext()
+    const { values: { projectId }, setFieldValue, setFieldError } = useFormikContext()
 
     useEffect(() => {
         const fetchProjectOptions = async() => {
@@ -19,8 +19,9 @@ export default function SelectProjectOption(){
                         value: project.id
                     }))
                 )
-                setFieldValue('projectId', projects.data[0]?.id)
+                if(projects.data.length > 0) setFieldValue('projectId', projects.data[0].id)
             }
+            else setFieldError('Gagal menemukan proyek')
         }
         if(!projectId && !projectOptions) fetchProjectOptions()
     }, [projectId, projectOptions])
