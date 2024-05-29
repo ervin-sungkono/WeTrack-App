@@ -9,6 +9,8 @@ import { getDocumentReference, getQueryReference, getQueryReferenceOrderBy } fro
 import { getDoc, onSnapshot } from "firebase/firestore";
 import Calendar from "../../common/calendar/Calendar";
 import { validateUserRole } from "@/app/lib/helper";
+import Button from "../../common/button/Button";
+import { FaFilterCircleXmark as CloseFilterIcon } from "react-icons/fa6";
 
 export default function TimelineContent({ projectId }){
     const role = useRole()
@@ -16,9 +18,9 @@ export default function TimelineContent({ projectId }){
     const [labelsData, setLabelsData] = useState([])
     const [assigneesData, setAssigneesData] = useState([])
     const [statusData, setStatusData] = useState([])
-    const [label, setLabel] = useState("Label")
-    const [assignee, setAssignee] = useState("Penerima")
-    const [status, setStatus] = useState("Status")
+    const [label, setLabel] = useState(null)
+    const [assignee, setAssignee] = useState(null)
+    const [status, setStatus] = useState(null)
     const [filterDropdown, setFilterDropdown] = useState(false)
     const [projectKey, setProjectKey] = useState(null)
     const [taskData, setTaskData] = useState([])
@@ -49,10 +51,7 @@ export default function TimelineContent({ projectId }){
                     value: label.content
                 }
             })
-            setLabelsData([
-                {label: "Label", value: "Label"},
-                ...data
-            ])
+            setLabelsData(data)
         })
         const assigneeReference = getQueryReference({ collectionName: "teams", field: "projectId", id: projectId });
         const assigneeUnsubscribe = onSnapshot(assigneeReference, (snapshot) => {
@@ -66,10 +65,7 @@ export default function TimelineContent({ projectId }){
                         value: userData.fullName
                     };
                 }));
-                setAssigneesData([
-                    { label: "Penerima", value: "Penerima" },
-                    ...data
-                ]);
+                setAssigneesData(data);
             };
             fetchAssignees();
         });
@@ -82,10 +78,7 @@ export default function TimelineContent({ projectId }){
                     value: status.statusName
                 }
             })
-            setStatusData([
-                {label: "Status", value: "Status"},
-                ...data
-            ])
+            setStatusData(data)
         })
 
         return () => {
@@ -155,13 +148,13 @@ export default function TimelineContent({ projectId }){
 
     useEffect(() => {
         let filteredData = taskData;
-        if(assignee !== "Penerima"){
+        if(assignee != null){
             filteredData = filteredData.filter(item => item.taskName.toLowerCase().includes(query) && item.assignedToData?.fullName === assignee);
         }
-        if(status !== "Status"){
+        if(status != null){
             filteredData = filteredData.filter(item => item.taskName.toLowerCase().includes(query) && item.statusData?.statusName === status);
         }
-        if(label !== "Label"){
+        if(label != null){
             filteredData = filteredData.filter(item => item.taskName.toLowerCase().includes(query) && item.labelsData?.includes(label));
         }
         setTasks(filteredData);
@@ -179,6 +172,12 @@ export default function TimelineContent({ projectId }){
         setLabel(value)
     }
 
+    const resetFilter = () =>{
+        setAssignee(null)
+        setStatus(null)
+        setLabel(null)
+    }
+
     return (
         <div className="h-full overflow-y-auto flex flex-col gap-4">
             <div className="flex flex-col md:flex-row justify-between gap-4 items-center">
@@ -191,22 +190,29 @@ export default function TimelineContent({ projectId }){
                         <div className={`${filterDropdown ? "block" : "hidden"} border border-dark-blue/30 md:border-none md:flex z-fixed absolute -bottom-2 right-0 translate-y-full md:translate-y-0 px-2 py-3 bg-white rounded-md md:bg-transparent md:p-0 md:static flex flex-col md:flex-row gap-2 md:gap-4`}>
                             <SelectButton 
                                 name={"assignee-button"}
-                                placeholder={assignee}
-                                options={assigneesData}
+                                options={[{label: "Penerima", value: null},...assigneesData]}
                                 onChange={handleAssigneeChange}
+                                reset={!assignee}
                             />
                             <SelectButton 
                                 name={"status-button"}
-                                placeholder={status}
-                                options={statusData}
+                                options={[{label: "Status", value: null},...statusData]}
                                 onChange={handleStatusChange}
+                                reset={!status}
                             />
                             <SelectButton 
                                 name={"label-button"}
-                                placeholder={label}
-                                options={labelsData}
+                                options={[{label: "Label", value: null},...labelsData]}
                                 onChange={handleLabelChange}
+                                reset={!label}
                             />
+                            {(assignee || status || label) &&
+                            <Button variant="primary" size="sm" onClick={() => resetFilter()}>
+                                <div className="flex items-center gap-2">
+                                    <CloseFilterIcon size={16}/>
+                                    <p>Hapus Filter</p>
+                                </div>
+                            </Button>}
                         </div>
                     </div>
                 </div>

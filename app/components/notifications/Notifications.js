@@ -1,16 +1,20 @@
 "use client"
 import { useEffect, useState } from "react"
+import dynamic from "next/dynamic"
+import { getAllProject } from "@/app/lib/fetch/project"
 import { sortDateTimestampFn } from "@/app/lib/helper"
-import { getUserNotification } from "@/app/lib/fetch/user"
 import { IoFilter as FilterIcon } from "react-icons/io5"
 
 import Header from "../common/Header"
 import SelectButton from "../common/button/SelectButton"
 import SortButton from "../common/button/SortButton"
-import NotificationsList from "../notifications/NotificationList"
 import DashboardLayout from "../layout/DashboardLayout"
 import EmptyState from "../common/EmptyState"
-import { getAllProject } from "@/app/lib/fetch/project"
+import { getUserNotification } from "@/app/lib/fetch/user"
+import Button from "../common/button/Button"
+import { FaFilterCircleXmark as CloseFilterIcon } from "react-icons/fa6";
+
+const NotificationsList = dynamic(() => import("../notifications/NotificationList"))
 
 export default function Notifications(){
     const links = [
@@ -18,8 +22,8 @@ export default function Notifications(){
         {label: "Notifikasi", url: "/notifications"},
     ]
 
-    const [project, setProject] = useState("Semua Proyek")
-    const [type, setType] = useState("Semua Jenis")
+    const [project, setProject] = useState(null)
+    const [type, setType] = useState(null)
     const [pageIndex, setPageIndex] = useState(0)
     const [pageSize, setPageSize] = useState(10)
     const [pageCount, setPageCount] = useState(0)
@@ -56,17 +60,13 @@ export default function Notifications(){
                     label: project.projectName,
                     value: project.projectName
                 }));
-                setProjectOptions([
-                    {label: "Semua Proyek", value: "Semua Proyek"},
-                    ...options
-                ])
+                setProjectOptions(options)
             }
             else alert("Gagal memperoleh data proyek")
         })
     }, [])
 
     const typeOptions = [
-        {label: "Semua Jenis", value: "Semua Jenis"},
         {label: "Penugasan", value: "AssignedTask"},
         {label: "Komentar Baru", value: "AddedComment"},
         {label: "Penyebutan", value: "Mention"},
@@ -81,10 +81,10 @@ export default function Notifications(){
 
     useEffect(() => {
         let filteredData = dataFetched;
-        if(project !== "Semua Proyek"){
+        if(project != null){
             filteredData = filteredData.filter(item => item.project?.projectName === project);
         }
-        if(type !== "Semua Jenis"){
+        if(type != null){
             filteredData = filteredData.filter(item => item.type === type);
         }
         setNotificationsData(filteredData);
@@ -102,6 +102,11 @@ export default function Notifications(){
     const handlePageSizeChange = (value) => {
         setPageSize(value)
         setPageIndex(0)
+    }
+
+    const resetFilter = () =>{
+        setProject(null)
+        setType(null)
     }
 
     return (
@@ -122,29 +127,35 @@ export default function Notifications(){
                                         <b className="hidden xs:block text-xs md:text-sm">Proyek:</b>
                                         <SelectButton 
                                             name={"project-button"}
-                                            placeholder={project}
-                                            options={projectOptions}
+                                            options={[{label: "Proyek", value: null},...projectOptions]}
                                             onChange={handleProjectChange}
+                                            reset={!project}
                                         />
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <b className="hidden xs:block text-xs md:text-sm">Jenis:</b>
                                         <SelectButton 
                                             name={"type-button"}
-                                            placeholder={type} 
-                                            options={typeOptions}
+                                            options={[{label: "Jenis", value: null},...typeOptions]}
                                             onChange={handleTypeChange}
+                                            reset={!type}
                                         />
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <b className="hidden xs:block text-xs md:text-sm">Tampilkan:</b>
                                         <SelectButton 
                                             name={"page-size-button"}
-                                            placeholder={pageSize} 
                                             options={pageSizeOptions}
                                             onChange={handlePageSizeChange}
                                         />
                                     </div>
+                                    {(project || type) &&
+                                    <Button variant="primary" size="sm" onClick={() => resetFilter()}>
+                                        <div className="flex items-center gap-2">
+                                            <CloseFilterIcon size={16}/>
+                                            <p>Hapus Filter</p>
+                                        </div>
+                                    </Button>}
                                 </div>
                             </div>
                             <SortButton sorting={sorting} setSorting={setSorting}/>
