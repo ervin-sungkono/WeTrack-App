@@ -12,7 +12,7 @@ export default function NotificationsItem({type, task=null, taskId=null, sender=
     }
 
     return (
-        <div className="w-full bg-white flex justify-between items-center px-4 py-3 rounded shadow-md">
+        <div className="w-full bg-white flex flex-col md:flex-row gap-2 md:gap-0 items-end md:items-center px-4 py-3 rounded shadow-md">
             <div className="w-full text-xs md:text-sm">
                 {type === "AssignedTask" && (
                     <>
@@ -49,7 +49,7 @@ export default function NotificationsItem({type, task=null, taskId=null, sender=
                     </div>
                 )}
             </div>
-            <div className="w-3/10 md:w-1/4 text-xs md:text-sm text-right">
+            <div className="text-xs md:text-sm text-right whitespace-nowrap">
                 {listDateFormat(createdAt)}
             </div>
         </div>
