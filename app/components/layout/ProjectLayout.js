@@ -32,7 +32,7 @@ export default function ProjectLayout({ children, hideSidebar, projectId }){
 
     useEffect(() => {
         const fetchProjectDetail = async() => {
-            setLoading(true)
+            if(!project || (project.id != projectId)) setLoading(true)
             try{
                 const authorized = await getContentAuthorization({ projectId })
                 if(authorized){

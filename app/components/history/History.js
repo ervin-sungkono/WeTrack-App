@@ -12,6 +12,8 @@ import DashboardLayout from "../layout/DashboardLayout"
 import EmptyState from "../common/EmptyState"
 import { getUserHistory } from "@/app/lib/fetch/user"
 import { getHistoryEventType } from "@/app/lib/history"
+import Button from "../common/button/Button"
+import { FaFilterCircleXmark as CloseFilterIcon } from "react-icons/fa6";
 
 const HistoryList = dynamic(() => import("../history/HistoryList"))
 
@@ -21,8 +23,8 @@ export default function History(){
         {label: "Riwayat", url: "/history"},
     ]
 
-    const [project, setProject] = useState("Semua Proyek")
-    const [type, setType] = useState("Semua Jenis")
+    const [project, setProject] = useState(null)
+    const [type, setType] = useState(null)
     const [pageIndex, setPageIndex] = useState(0)
     const [pageSize, setPageSize] = useState(10)
     const [pageCount, setPageCount] = useState(0)
@@ -59,17 +61,13 @@ export default function History(){
                     label: project.projectName,
                     value: project.projectName
                 }));
-                setProjectOptions([
-                    {label: "Semua Proyek", value: "Semua Proyek"},
-                    ...options
-                ])
+                setProjectOptions(options)
             }
             else alert("Gagal memperoleh data proyek")
         })
     }, [])
 
     const typeOptions = [
-        {label: "Semua Jenis", value: "Semua Jenis"},
         {label: "Proyek", value: getHistoryEventType.project},
         {label: "Tugas", value: getHistoryEventType.task},
         {label: "Subtugas", value: getHistoryEventType.subtask},
@@ -80,6 +78,7 @@ export default function History(){
         {label: "Lampiran", value: getHistoryEventType.attachment},
         {label: "Profil", value: getHistoryEventType.profile}
     ]
+
     const pageSizeOptions = [
         {label: "10", value: 10},
         {label: "25", value: 25},
@@ -88,10 +87,10 @@ export default function History(){
 
     useEffect(() => {
         let filteredData = dataFetched;
-        if(project !== "Semua Proyek"){
+        if(project != null){
             filteredData = filteredData.filter(item => item.project?.projectName === project);
         }
-        if(type !== "Semua Jenis"){
+        if(type != null){
             filteredData = filteredData.filter(item => item.eventType === type);
         }
         setHistoryData(filteredData);
@@ -109,6 +108,11 @@ export default function History(){
     const handlePageSizeChange = (value) => {
         setPageSize(value)
         setPageIndex(0)
+    }
+
+    const resetFilter = () =>{
+        setProject(null)
+        setType(null)
     }
 
     return (
@@ -129,29 +133,35 @@ export default function History(){
                                         <b className="hidden xs:block text-xs md:text-sm">Proyek:</b>
                                         <SelectButton 
                                             name={"project-button"}
-                                            placeholder={project}
-                                            options={projectOptions}
+                                            options={[{label: "Proyek", value: null},...projectOptions]}
                                             onChange={handleProjectChange}
+                                            reset={!project}
                                         />
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <b className="hidden xs:block text-xs md:text-sm">Jenis:</b>
                                         <SelectButton 
                                             name={"type-button"}
-                                            placeholder={type}
-                                            options={typeOptions}
+                                            options={[{label: "Jenis", value: null},...typeOptions]}
                                             onChange={handleTypeChange}
+                                            reset={!type}
                                         />
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <b className="hidden xs:block text-xs md:text-sm">Tampilkan:</b>
                                         <SelectButton 
                                             name={"page-size-button"}
-                                            placeholder={pageSize} 
                                             options={pageSizeOptions}
                                             onChange={handlePageSizeChange}
                                         />
                                     </div>
+                                    {(project || type) &&
+                                    <Button variant="primary" size="sm" onClick={() => resetFilter()}>
+                                        <div className="flex items-center gap-2">
+                                            <CloseFilterIcon size={16}/>
+                                            <p>Hapus Filter</p>
+                                        </div>
+                                    </Button>}
                                 </div>
                             </div>
                             <SortButton sorting={sorting} setSorting={setSorting}/>

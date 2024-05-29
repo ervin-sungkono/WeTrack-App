@@ -4,13 +4,13 @@ import HistoryPagination from "./HistoryPagination"
 
 export default function HistoryList({historyData, pageSize, pageIndex, setPageIndex, pageCount, dataCount}){
     return (
-        <div className="flex flex-col justify-between h-screen">
+        <div className="flex flex-col justify-between min-h-screen">
             <div className="flex flex-col gap-2 md:gap-4 mb-auto">
                 {historyData.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize).map((item, index) => (
                     <HistoryItem key={index} {...item} />
                 ))}
             </div>
-            <div className="mt-8 pb-8">
+            <div className="mt-8">
                 <HistoryPagination
                     pageIndex={pageIndex}
                     pageSize={pageSize}

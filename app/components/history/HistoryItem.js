@@ -15,7 +15,7 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
     }
 
     return (
-        <div className="w-full bg-white flex flex-col md:flex-row items-end md:items-center px-4 py-3 rounded shadow-md">
+        <div className="w-full bg-white flex flex-col md:flex-row gap-2 md:gap-0 items-end md:items-center px-4 py-3 rounded shadow-md">
             <div className="w-full text-xs md:text-sm">
                 {(eventType === getHistoryEventType.project) && (action === getHistoryAction.create) && (
                     <>

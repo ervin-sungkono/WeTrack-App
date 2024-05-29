@@ -19,7 +19,7 @@ export default function SelectParentOption(){
                         value: task.id
                     }))
                 )
-                setFieldValue('parentId', tasks.data[0].id)
+                if(tasks.data.length > 0) setFieldValue('parentId', tasks.data[0].id)
             }
         }
         if(type === "SubTask") fetchTaskOptions()
@@ -35,6 +35,7 @@ export default function SelectParentOption(){
             placeholder={"-- Pilih Induk Tugas --"}
             defaultValue={taskOptions[0]}
             options={taskOptions}
+            disabled={!projectId}
         />
     )
 }

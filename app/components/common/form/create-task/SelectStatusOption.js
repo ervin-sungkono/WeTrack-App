@@ -32,6 +32,7 @@ export default function SelectStatusOption(){
                 name="statusId"
                 defaultValue={statusOptions[0]}
                 options={statusOptions}
+                disabled={!projectId}
             />
             <p className="text-xs text-dark-blue">Ini adalah status awal tugas setelah dibuat.</p>
         </div>
