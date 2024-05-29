@@ -32,6 +32,7 @@ export default function SelectAssigneeOption({ session }){
                 userId={session.user.uid}
                 options={teamOptions}
                 onChange={handleAssigneeChange}
+                disabled={!projectId}
             />
         </div>
     )

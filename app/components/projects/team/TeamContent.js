@@ -352,8 +352,8 @@ export default function TeamContent({ projectId }){
                     wrapContent
                 >
                     <div className="mt-4 flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
-                        <Button variant="secondary" onClick={() => setLeaveMode(false)}>Tidak</Button>
                         <Button variant="danger" onClick={handleLeaveProject}>Ya</Button>
+                        <Button variant="secondary" onClick={() => setLeaveMode(false)}>Tidak</Button>
                     </div>
                 </PopUpForm>
             )}

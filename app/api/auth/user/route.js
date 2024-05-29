@@ -186,9 +186,9 @@ export async function DELETE(request, response){
             }, { status: 404 })
         }
 
-        await deleteUser(auth.currentUser)
-
         await handleDeletedUser({ userId: userId })
+
+        await deleteUser(auth.currentUser)
 
         return NextResponse.json({
             success: true,

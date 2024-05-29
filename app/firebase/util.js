@@ -67,11 +67,11 @@ export const deleteProject = async({ projectId }) => {
             deletedAt: serverTimestamp()
         })
 
-        await Promise.all(teamSnapshot.docs.map(async(doc) => {
-            updateDoc(doc.ref, {
-                deletedAt: serverTimestamp()
-            })
-        }))
+        // await Promise.all(teamSnapshot.docs.map(async(doc) => {
+        //     updateDoc(doc.ref, {
+        //         deletedAt: serverTimestamp()
+        //     })
+        // }))
 
     } catch (error) {
         throw new Error("Something went wrong when deleting project")
@@ -214,7 +214,8 @@ export const handleDeletedUser = async({ userId }) => {
         if(!userId) return null
     
         const userDocRef = doc(db, "users", userId)
-        const updateDoc = await updateDoc(userDocRef, {
+        await updateDoc(userDocRef, {
+            email: null,
             deletedAt: serverTimestamp()
         })
     
@@ -222,9 +223,10 @@ export const handleDeletedUser = async({ userId }) => {
         const q = query(teamCollectionRef, where("userId", "==", userId))
         const teamDocs = await getDocs(q)
     
-        if(!teamDocs.empty()) {
+        if(!teamDocs.empty) {
             //list project id if project owner
-            const projects = teamDocs.docs.filter((item) => { item.data().role == "Owner" })
+            const projects = teamDocs.docs.filter((item) => (item.data().role == "Owner"))
+            console.log(projects)
 
             if(projects.length > 0) {
                 for(const project of projects) {
@@ -232,10 +234,14 @@ export const handleDeletedUser = async({ userId }) => {
                 }
             }
             
-            teamDocs.docs.forEach(async (item) => {
-                await deleteDoc(doc(db, "teams", item.id))
-            })
+            for (const item of teamDocs.docs) {
+                await deleteDoc(doc(db, "teams", item.id));
+            }
+
+            return null
         }
+
+        return
 
     } catch (error) {
         throw new Error("Something went wrong when handling deleted user")

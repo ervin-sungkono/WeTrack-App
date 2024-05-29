@@ -34,6 +34,12 @@ export async function GET(request, response){
             }, { status: 404 });
         }
 
+        if(profileData.deletedAt != null) {
+            return NextResponse.json({
+                message: "User not found"
+            }, {status:  404 })
+        }
+
         return NextResponse.json({
             data: {
                 id: profileSnap.id,

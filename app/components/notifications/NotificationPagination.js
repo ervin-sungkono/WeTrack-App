@@ -21,7 +21,7 @@ export default function NotificationPagination({
     const endIndex = Math.min((pageIndex + 1) * pageSize, dataCount)
 
     return(
-        <div className="flex justify-center items-center mt-auto">
+        <div className="flex justify-center items-center mt-auto mb-8">
             <div className="flex items-center">
                 <button 
                     className="hover:text-basic-blue p-1 disabled:text-dark-blue/60" 
