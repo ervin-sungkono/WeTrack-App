@@ -1,7 +1,7 @@
 "use client"
 import { useRef } from "react"
 
-export default function SimpleInputForm({ name, onSubmit, onBlur, placeholder }){
+export default function SimpleInputForm({ maxLength = 99999, name, onSubmit, onBlur, placeholder }){
     const buttonRef = useRef()
     return(
         <form 
@@ -19,6 +19,7 @@ export default function SimpleInputForm({ name, onSubmit, onBlur, placeholder })
                         buttonRef.current.click()
                     }
                 }}
+                maxLength={maxLength}
                 autoFocus
                 autoComplete="off"
                 placeholder={placeholder} 
