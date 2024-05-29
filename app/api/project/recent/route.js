@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
+import { sortDateFn } from '@/app/lib/helper';
 
 export async function GET(request, response) {
     try {
@@ -23,25 +24,16 @@ export async function GET(request, response) {
         const allProjects = await Promise.all(projectIds.map(async (item) => {
             const projectDoc = await getDoc(doc(db, "projects", item))
             if(projectDoc.exists()) {
-                const projectData = projectDoc.data()
-                const userDoc = await getDoc(doc(db, 'users', projectData.createdBy));
-
                 return {
                     id: projectDoc.id,
-                    ...projectData,
-                    createdBy: {
-                        id: userDoc.id,
-                        fullName: userDoc.data().fullName,
-                        email: userDoc.data().email,
-                        profileImage: userDoc.data().profileImage
-                    }
+                    ...projectDoc.data()
                 }
             }
             return null
         }))
 
         return NextResponse.json({
-            data: allProjects.slice(0,3),
+            data: sortDateFn({ data: allProjects, sortDirection: 'desc', key: 'createdAt' }),
             message: "Projects retrieved successfully"
         }, { status: 200 });
         
