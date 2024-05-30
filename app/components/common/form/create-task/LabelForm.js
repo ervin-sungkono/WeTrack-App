@@ -4,6 +4,8 @@ import PopUp from "../../alert/PopUp"
 import Button from "../../button/Button"
 import CustomTooltip from "../../CustomTooltip"
 import EditLabelForm from "./EditLabelForm"
+import PopUpLoad from "../../alert/PopUpLoad"
+import PopUpForm from "../../alert/PopUpForm"
 
 import { addLabel, updateLabel, deleteLabel } from "@/app/lib/fetch/label"
 import { pickTextColorBasedOnBgColor } from "@/app/lib/color"
@@ -16,42 +18,90 @@ import {
 
 export default function LabelForm({ labelData, projectId, onCancel }){
     const [isCreatingLabel, setCreatingLabel] = useState(false)
+    const [deleteConfirmation, setDeleteConfirmation] = useState(false)
     const [labelFocus, setLabelFocus] = useState()
+    const [deleteFocus, setDeleteFocus] = useState()
+    const [loading, setLoading] = useState(false)
 
     const handleAddLabel = async({ content, backgroundColor }) => {
-        const res = await addLabel({ content, backgroundColor, projectId })
+        try{
+            setLoading(true)
+            const res = await addLabel({ content, backgroundColor, projectId })
 
-        if(!res.success){
-            alert("Gagal menambahkan label baru")
-            console.log(res.message)
+            if(!res.success){
+                alert("Gagal menambahkan label baru")
+                console.log(res.message)
+            }
+        }catch(e){
+            console.log(e)
+        }finally{
+            setCreatingLabel(false)
+            setLoading(false)
         }
-        
-        setCreatingLabel(false)
     }
 
     const handleUpdateLabel = async({ content, backgroundColor }) => {
-        const res = await updateLabel({ content, backgroundColor, projectId, labelId: labelFocus })
+        try{
+            setLoading(true)
+            const res = await updateLabel({ content, backgroundColor, projectId, labelId: labelFocus })
 
-        if(!res.success){
-            alert("Gagal mengubah label")
-            console.log(res.message)
+            if(!res.success){
+                alert("Gagal mengubah label")
+                console.log(res.message)
+            }else{
+                setLabelFocus(null)
+            }
+        }catch(e){
+            console.log(e)
+        }finally{
+            setLoading(false)
         }
-
-        setLabelFocus(null)
     }
 
-    const handleDeleteLabel = async(id) => {
-        const res = await deleteLabel({ projectId, labelId: id })
+    const showLabelDeleteConfirmation = (id) => {
+        setDeleteFocus(id)
+        setDeleteConfirmation(true)
+    }
 
-        if(!res.success){
-            alert("Gagal menghapus label")
-            console.log(res.message)
+    const hideLabelDeleteConfirmation = () => {
+        setDeleteFocus(null)
+        setDeleteConfirmation(false)
+    }
+
+    const handleDeleteLabel = async() => {
+        try{
+            setLoading(true)
+            const res = await deleteLabel({ projectId, labelId: deleteFocus })
+
+            if(!res.success){
+                alert("Gagal menghapus label")
+                console.log(res.message)
+            }
+            else{
+                setDeleteFocus(null)
+            }
+        }catch(e){
+            console.log(e)
+        }finally{
+            setLoading(false)
         }
     }
 
     return(
         <PopUp>
             <div className="w-full h-full flex justify-center items-center">
+                {loading && <PopUpLoad/>}
+                {deleteConfirmation && 
+                <PopUpForm
+                    title={"Hapus Label"}
+                    message={deleteMode === 'single' ? 'Apakah Anda yakin ingin menghapus lampiran ini?' : 'Apakah Anda yakin ingin menghapus semua lampiran dalam tugas ini?'}
+                    wrapContent
+                >
+                    <div className="mt-4 flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
+                        <Button variant="danger" onClick={handleDeleteLabel}>Hapus</Button>
+                        <Button variant="secondary" onClick={hideLabelDeleteConfirmation}>Batal</Button>
+                    </div>
+                </PopUpForm>}
                 <div className={`w-64 md:w-80 flex flex-col gap-4 md:gap-6 px-4 py-4 md:px-8 md:py-6 bg-white text-dark-blue rounded-lg shadow-lg`}>
                     <div className="flex flex-col gap-2">
                         <div className="text-xs font-semibold text-dark-blue uppercase">Label (maksimal 10)</div>
@@ -77,7 +127,7 @@ export default function LabelForm({ labelData, projectId, onCancel }){
                                                 </button>
                                             </CustomTooltip>
                                             <CustomTooltip id={`delete-label-${id}`} content={"Hapus Label"}>
-                                                <button className="p-1.5 text-danger-red border border-danger-red rounded" onClick={() => handleDeleteLabel(id)}>
+                                                <button className="p-1.5 text-danger-red border border-danger-red rounded" onClick={() => showLabelDeleteConfirmation(id)}>
                                                     <DeleteIcon size={16}/>
                                                 </button>
                                             </CustomTooltip>

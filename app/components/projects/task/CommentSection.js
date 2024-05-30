@@ -70,7 +70,6 @@ export default function CommentSection({ taskId, comments }){
                 {deleteConfirmation && 
                 <PopUpForm
                     title={"Hapus Komentar"}
-                    titleSize="large"
                     message={'Apakah Anda yakin ingin menghapus komentar ini?'}
                     wrapContent
                 >
