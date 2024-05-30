@@ -109,11 +109,11 @@ export default function SettingForm({projectId}){
     }
 
     useEffect(() => {
-        if(!validateUserRole({ userRole: role, minimumRole: 'Owner' })){
+        if(!projectId) return
+        if(role != null && !validateUserRole({ userRole: role, minimumRole: 'Owner' })){
             router.push(`/projects/${projectId}`)
             return
         }
-        if(!projectId) return
         const reference = getDocumentReference({collectionName: "projects", id: projectId})
         const snapshot = getDoc(reference)
         snapshot.then(doc => {
@@ -132,7 +132,7 @@ export default function SettingForm({projectId}){
                 setLoading(false)
             }
         })
-    }, [projectId])
+    }, [projectId, role, router])
 
     useEffect(() => {
         const reference = getQueryReferenceOrderBy({collectionName: "taskStatuses", field: "projectId", id: projectId, orderByKey: "order"})
@@ -240,7 +240,7 @@ export default function SettingForm({projectId}){
                                         {formik.dirty && (
                                             <Button onClick={() => formik.resetForm()} variant="secondary">Batalkan</Button>
                                         )}
-                                        <Button type="submit" variant="primary">Perbarui</Button>
+                                        <Button disabled={!formik.dirty} type="submit" variant="primary">Perbarui</Button>
                                     </div>
                                 </div>
                             )}
