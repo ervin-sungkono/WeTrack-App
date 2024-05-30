@@ -185,7 +185,6 @@ export default function AttachmentSection({ taskId }){
             {deleteConfirmation && 
             <PopUpForm
                 title={deleteMode === 'single' ? "Hapus Lampiran" : "Hapus Semua Lampiran"}
-                titleSize="large"
                 message={deleteMode === 'single' ? 'Apakah Anda yakin ingin menghapus lampiran ini?' : 'Apakah Anda yakin ingin menghapus semua lampiran dalam tugas ini?'}
                 wrapContent
             >
