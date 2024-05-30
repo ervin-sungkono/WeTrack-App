@@ -29,7 +29,7 @@ export default function TemplateRadioOption({ name }){
                         <div role="group" className="grid grid-cols-1 xs:grid-cols-2 gap-2 md:gap-4">
                             <RadioButton 
                                 title={"Default"}
-                                description={"Templat bawaan untuk proyek"}
+                                description={"Template bawaan untuk proyek"}
                                 value={"default"}
                                 field={field}
                             />

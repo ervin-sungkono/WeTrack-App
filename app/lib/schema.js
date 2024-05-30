@@ -82,7 +82,7 @@ export const deleteProfileSchema = yup.object().shape({
 export const projectTemplateSchema = yup.object().shape({
     templateType: yup
         .string()
-        .required("Pilih salah satu dari templat proyek yang diberikan!")
+        .required("Pilih salah satu dari template proyek yang diberikan!")
 })
 
 export const projectInformationSchema = yup.object().shape({

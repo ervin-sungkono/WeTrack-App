@@ -533,6 +533,7 @@ export default function BoardContent({ projectId }){
                               <TailSpin width={32} height={32} color="#47389F"/>
                             </div> :
                             <SimpleInputForm
+                              maxLength={50}
                               name={"taskName"}
                               onSubmit={createTask}
                               onBlur={() => setActiveStatusId(null)}
@@ -570,6 +571,7 @@ export default function BoardContent({ projectId }){
         {isCreatingList && 
         (<div className="w-[278px] flex-shrink-0">
           <SimpleInputForm
+            maxLength={20}
             name={"taskStatusName"}
             placeholder="Nama status..."
             onSubmit={createTaskStatus}

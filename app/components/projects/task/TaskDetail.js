@@ -360,7 +360,6 @@ function TaskDetail({ taskId, closeFn }){
             {deleteConfirmation &&
               (<PopUpForm
                 title={"Hapus Tugas"}
-                titleSize="large"
                 message={'Apakah Anda yakin ingin menghapus tugas ini?'}
                 wrapContent
               >
