@@ -94,7 +94,7 @@ export default function LabelForm({ labelData, projectId, onCancel }){
                 {deleteConfirmation && 
                 <PopUpForm
                     title={"Hapus Label"}
-                    message={deleteMode === 'single' ? 'Apakah Anda yakin ingin menghapus lampiran ini?' : 'Apakah Anda yakin ingin menghapus semua lampiran dalam tugas ini?'}
+                    message={'Apakah Anda yakin ingin menghapus label ini?'}
                     wrapContent
                 >
                     <div className="mt-4 flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
