@@ -93,7 +93,7 @@ export default function LabelForm({ labelData, projectId, onCancel }){
                                 onCancel={() => setCreatingLabel(false)}
                                 onSubmit={handleAddLabel}
                             /> : 
-                            <Button variant="primary" size="sm" onClick={() => setCreatingLabel(true)}>
+                            <Button disabled={labelData.length >= 10} variant="primary" size="sm" onClick={() => setCreatingLabel(true)}>
                                 <div className="flex justify-center items-center gap-2">
                                     <PlusIcon size={16}/>
                                     <p>Buat Label</p>
