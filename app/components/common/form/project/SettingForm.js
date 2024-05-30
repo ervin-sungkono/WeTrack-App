@@ -109,6 +109,10 @@ export default function SettingForm({projectId}){
     }
 
     useEffect(() => {
+        if(!validateUserRole({ userRole: role, minimumRole: 'Owner' })){
+            router.push(`/projects/${projectId}`)
+            return
+        }
         if(!projectId) return
         const reference = getDocumentReference({collectionName: "projects", id: projectId})
         const snapshot = getDoc(reference)
