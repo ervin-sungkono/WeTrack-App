@@ -81,7 +81,7 @@ export default function ForgotPasswordForm(){
                                     placeholder="Masukkan email..."
                                 />
                             </div>
-                            <p className="mb-2 text-[10.8px] md:text-xs text-dark-blue/80">Tautan pengaturan ulang kata sandi hanya akan terkirim apabila email yang Anda masukkan terdaftar di WeTrack.</p>
+                            <p className="mb-2 text-[10.8px] md:text-xs text-dark-blue/80">Link pengaturan ulang kata sandi hanya akan terkirim apabila email yang Anda masukkan terdaftar di WeTrack.</p>
                             {error && <p className="text-xs md:text-sm text-center text-danger-red font-medium">{errorMessage}</p>}
                             <div className="flex justify-center">
                                 <Button variant="primary" type="submit" className="mt-2 w-full">
@@ -108,9 +108,9 @@ export default function ForgotPasswordForm(){
             {loading && <PopUpLoad />}
             {success &&
                 <PopUpInfo
-                    title={"Tautan Terkirim"}
+                    title={"Link Terkirim"}
                     titleSize={"default"}
-                    message={"Silakan cek email Anda untuk memperoleh tautan pengaturan ulang kata sandi yang telah dikirimkan."}
+                    message={"Silakan cek email Anda untuk memperoleh link pengaturan ulang kata sandi yang telah dikirimkan."}
                 >
                     <div className="flex justify-end gap-2 md:gap-4">
                         <Button onClick={() => {
