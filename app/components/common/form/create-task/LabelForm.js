@@ -83,6 +83,7 @@ export default function LabelForm({ labelData, projectId, onCancel }){
         }catch(e){
             console.log(e)
         }finally{
+            setDeleteConfirmation(false)
             setLoading(false)
         }
     }
