@@ -76,7 +76,8 @@ export async function POST(request, response){
         
         if(!backgroundColor){
             return NextResponse.json({
-                message: "Missing required parameters"
+                message: "Missing required parameters",
+                success: false
             }, { status: 400 })
         }
 
@@ -84,7 +85,8 @@ export async function POST(request, response){
         
         if(!docSnap.exists()){
             return NextResponse.json({
-                message: "Project not found"
+                message: "Project not found",
+                success: false
             }, { status: 404 })
         }
 
@@ -97,6 +99,15 @@ export async function POST(request, response){
         }
         
         const labelCollection = collection(db, "labels")
+        const q = query(labelCollection, where('projectId', '==', projectId))
+        const labelQuerySnap = await getDocs(q)
+        if(labelQuerySnap.docs.length >= 10){
+            return NextResponse.json({
+                message: "Label amount cannot exceed 10",
+                success: false
+            }, { status: 400 })
+        }
+
         await addDoc(labelCollection, {
             projectId: projectId,
             content: content,

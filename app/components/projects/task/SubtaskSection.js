@@ -188,6 +188,7 @@ export default function SubtaskSection({ projectId, taskId, statusOptions, teamO
                 </div>}
                 {isCreatingSubtask && <div className="absolute top-0 left-0 translate-y-10 w-full z-50">
                     <SimpleInputForm
+                        maxLength={50}
                         name={"subTaskName"}
                         onSubmit={createSubtask}
                         onBlur={() => setCreatingSubtask(false)}
