@@ -5,16 +5,16 @@ import EmptyState from "../common/EmptyState";
 import { getPriority, getProgress } from "@/app/lib/string";
 import { useEffect, useState } from "react";
 
+ChartJS.defaults.font.family = "'Inter', sans-serif"
+ChartJS.defaults.font.size = 14;
+ChartJS.defaults.font.style = 'normal';
+ChartJS.defaults.font.weight = 700;
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
+
 export default function DashboardInsight({project}){
     const [position, setPosition] = useState('right');
 
     useEffect(() => {
-        ChartJS.defaults.font.family = "'Inter', sans-serif"
-        ChartJS.defaults.font.size = 14;
-        ChartJS.defaults.font.style = 'normal';
-        ChartJS.defaults.font.weight = 700;
-        ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
-
         const handleResize = () => {
             if (window.matchMedia("(min-width: 1280px)").matches) {
                 setPosition('right');
