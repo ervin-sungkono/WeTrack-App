@@ -57,13 +57,15 @@ export default function LabelInput({ hideLabel = false, projectId, labelData, on
         duplicates: true,
         skipInvalid: true,
         userInput: false,
-        maxTags: 6,
+        maxTags: 10,
+        editTags: false,
         placeholder: "Masukkan label...",
         dropdown: {
             maxItems: 20,           // <- maximum allowed rendered suggestions
             classname: "tags-look", // <- custom classname for this dropdown, so it could be targeted
             enabled: 0,             // <- show suggestions on focus
             closeOnSelect: false,   // <- do not hide the suggestions dropdown once an item has been selected
+            searchKeys: ["id"]
         },
         transformTag: (tagData) => {
             tagData.style = `
@@ -84,7 +86,7 @@ export default function LabelInput({ hideLabel = false, projectId, labelData, on
             <label htmlFor="label" className="block font-semibold text-xs md:text-sm text-dark-blue">
                 Label
             </label>}
-            <div className="w-full flex flex-col xs:flex-row gap-2">
+            <div className="w-full xs:items-start flex flex-col xs:flex-row gap-2">
                 <Tags
                     name="label"
                     whitelist={labels.map(label => ({
@@ -100,7 +102,7 @@ export default function LabelInput({ hideLabel = false, projectId, labelData, on
                     onChange={onChange}
                 />
                 {validateUserRole({ userRole: role, minimumRole: 'Owner' }) && 
-                <Button variant="primary" size="sm" onClick={() => setLabelModal(true)}>
+                <Button variant="primary" onClick={() => setLabelModal(true)}>
                     <p>Pengaturan</p>
                 </Button>}
                 {labelModal && <LabelForm labelData={labels} projectId={projectId} onCancel={() => setLabelModal(false)}/>}

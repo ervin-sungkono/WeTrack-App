@@ -44,7 +44,7 @@ export async function PUT(request, response){
             }, { status: 401 })
         }
 
-        const projectData = await getDoc(doc(db, "projects", projectId))
+        const projectData = await getDoc(doc(db, "projects", docSnap.data().projectId))
         if(!projectData.exists()) {
             return NextResponse.json({
                 success: false,
