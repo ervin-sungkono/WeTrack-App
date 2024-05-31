@@ -82,7 +82,7 @@ export const deleteProfileSchema = yup.object().shape({
 export const projectTemplateSchema = yup.object().shape({
     templateType: yup
         .string()
-        .required("Pilih salah satu dari templat proyek yang diberikan!")
+        .required("Templat proyek harus dipilih!")
 })
 
 export const projectInformationSchema = yup.object().shape({
@@ -118,23 +118,23 @@ export const deleteProjectSchema = yup.object().shape({
 export const updateStatusSchema = yup.object().shape({
     statusName: yup
         .string()
-        .required("Nama status tugas wajib diisi")
-        .max(20, "Nama status harus memiliki paling banyak 20 karakter"),
+        .required("Nama status tugas harus diisi!")
+        .max(20, "Nama status harus memiliki paling banyak 20 karakter!"),
 })
 
 export const deleteStatusSchema = yup.object().shape({
     newStatusId: yup
         .string()
-        .required("Wajib memilih status tugas baru")
+        .required("Status tugas baru harus dipilih!")
 })
 
 export const newTaskSchema = yup.object().shape({
     projectId: yup
         .string()
-        .required("Wajib memiliki setidaknya satu proyek"),
+        .required("Anda harus memiliki setidaknya satu proyek untuk membuat tugas baru!"),
     type: yup.string()
         .default('Task')
-        .required('Tipe harus diisi'),
+        .required('Tipe harus diisi!'),
     priority: yup.number()
         .default(0),
     startDate: yup.date()
@@ -146,13 +146,13 @@ export const newTaskSchema = yup.object().shape({
         .when('startDate', {
             is: (startDate) => !!startDate,
             then: (s) => s.min(yup.ref('startDate'),
-                'Tenggat waktu harus sesudah tanggal mulai'
+                'Tenggat waktu harus dipilih setelah tanggal mulai!'
             ),
             otherwise: (s) => s
         }),
     taskName: yup.string()
-        .required("Nama tugas wajib diisi")
-        .max(50, "Nama tugas harus memiliki paling banyak 50 karakter"),
+        .required("Nama tugas harus diisi!")
+        .max(50, "Nama tugas harus memiliki paling banyak 50 karakter!"),
     description: yup.string()
         .nullable()
         .notRequired(),
@@ -164,7 +164,7 @@ export const newTaskSchema = yup.object().shape({
         .notRequired()
         .when('type', {
             is: 'SubTask',
-            then: (s) => s.required('Wajib salah satu induk ketika memilih tipe subtugas'),
+            then: (s) => s.required('Induk tugas harus dipilih untuk tipe subtugas!'),
             otherwise: (s) => s,
         }),
 })
@@ -172,6 +172,6 @@ export const newTaskSchema = yup.object().shape({
 export const updateTaskNameSchema = yup.object().shape({
     taskName: yup
         .string()
-        .required("Nama tugas wajib diisi")
-        .max(50, "Nama tugas harus memiliki paling banyak 50 karakter"),
+        .required("Nama tugas harus diisi!")
+        .max(50, "Nama tugas harus memiliki paling banyak 50 karakter!"),
 })

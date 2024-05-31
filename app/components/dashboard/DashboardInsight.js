@@ -5,7 +5,7 @@ import EmptyState from "../common/EmptyState";
 import { getPriority, getProgress } from "@/app/lib/string";
 import { useEffect, useState } from "react";
 
-ChartJS.defaults.font.family = 'Inter'
+ChartJS.defaults.font.family = "'Inter', sans-serif"
 ChartJS.defaults.font.size = 14;
 ChartJS.defaults.font.style = 'normal';
 ChartJS.defaults.font.weight = 700;

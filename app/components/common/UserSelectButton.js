@@ -26,9 +26,11 @@ export default function  UserSelectButton({ name, type = "default", userId, plac
         }
     }, [selected])
 
-    const handleSelectedUpdate = (e, value) => { 
+    const handleSelectedUpdate = (e, value, trigger = true) => { 
         e.stopPropagation()
-        buttonRef.current.click()
+        if(trigger){
+            buttonRef.current.click()
+        }
         setSelected(value)
         if(typeof onChange == "function") onChange(value)
     }
@@ -157,7 +159,7 @@ export default function  UserSelectButton({ name, type = "default", userId, plac
                 onClick={(e) => e.stopPropagation()}
             >
                 {(loaded || placeholder) && <div className="flex flex-grow gap-2 items-center">
-                    <UserIcon size="sm" fullName={placeholder?.fullName ?? selected.fullName} src={placeholder ? placeholder?.profileImage : (selected.fullName ? selected.profileImage?.attachmentStoragePath : '/images/user-placeholder.png')}/>
+                    <UserIcon size="sm" fullName={placeholder?.fullName ?? selected.fullName} src={placeholder ? placeholder.profileImage?.attachmentStoragePath : (selected.fullName ? selected.profileImage?.attachmentStoragePath : '/images/user-placeholder.png')}/>
                     <p className="text-start flex-grow truncate text-xs md:text-sm">{placeholder?.fullName ?? selected.fullName ?? "Belum Ditugaskan"}</p>
                 </div>}
                 {!disabled && <DropdownIcon size={16}/>}
@@ -198,7 +200,7 @@ export default function  UserSelectButton({ name, type = "default", userId, plac
             <button 
                 type="button"
                 className="text-[10.8px] py-1 md:text-xs text-basic-blue font-semibold hover:underline"
-                onClick={() => setSelected(options.find(({user}) => user.id === userId)?.user ?? {})}
+                onClick={(e) => {handleSelectedUpdate(e, options.find(({user},) => user.id === userId)?.user ?? {}, false)}}
             >
                 Tugaskan kepada saya
             </button>}

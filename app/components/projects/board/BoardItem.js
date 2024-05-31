@@ -114,7 +114,6 @@ export default function BoardItem({ item, index }){
             {deleteConfirmation &&
               (<PopUpForm
                 title={"Hapus Tugas"}
-                titleSize="large"
                 message={'Apakah Anda yakin ingin menghapus tugas ini?'}
                 wrapContent
               >

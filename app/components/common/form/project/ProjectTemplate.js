@@ -29,7 +29,7 @@ export default function ProjectTemplate({nextFormStep}){
                 return(
                     <div className="w-full flex flex-col gap-6">
                         <div className="flex flex-col gap-4">
-                            <div className="text-base md:text-xl font-semibold">Pilih Templat Proyek</div>
+                            <div className="text-base md:text-xl font-semibold">Pilih Template Proyek</div>
                             <TemplateRadioOption name="templateType"/>
                         </div>
                         <div className="flex justify-end">

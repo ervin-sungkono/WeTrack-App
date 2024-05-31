@@ -7,7 +7,14 @@ export async function POST(req){
     const { projectDescription } = await req.json()
     if(!projectDescription){
         return NextResponse.json({
-            message: "Deskripsi tugas wajib diisi",
+            message: "Deskripsi proyek harus diisi!",
+            success: false
+        }, { status: 400 });
+    }
+
+    if(projectDescription.length < 30){
+        return NextResponse.json({
+            message: "Deskripsi proyek harus memiliki paling sedikit 30 karakter!",
             success: false
         }, { status: 400 });
     }
@@ -18,7 +25,7 @@ export async function POST(req){
     // If the data attribute is null, then the AI failed to generate the task
     if(!jsonData.data){
         return NextResponse.json({
-            message: "Gagal untuk menghasilkan tugas dari deskripsi proyek yang diberikan.",
+            message: "Gagal untuk menghasilkan tugas dari deskripsi proyek yang diberikan, silakan coba lagi!",
             success: false
         }, { status: 500 });
     }
