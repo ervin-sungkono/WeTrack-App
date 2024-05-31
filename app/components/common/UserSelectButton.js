@@ -26,9 +26,11 @@ export default function  UserSelectButton({ name, type = "default", userId, plac
         }
     }, [selected])
 
-    const handleSelectedUpdate = (e, value) => { 
+    const handleSelectedUpdate = (e, value, trigger = true) => { 
         e.stopPropagation()
-        buttonRef.current.click()
+        if(trigger){
+            buttonRef.current.click()
+        }
         setSelected(value)
         if(typeof onChange == "function") onChange(value)
     }
@@ -198,7 +200,7 @@ export default function  UserSelectButton({ name, type = "default", userId, plac
             <button 
                 type="button"
                 className="text-[10.8px] py-1 md:text-xs text-basic-blue font-semibold hover:underline"
-                onClick={() => setSelected(options.find(({user}) => user.id === userId)?.user ?? {})}
+                onClick={(e) => {handleSelectedUpdate(e, options.find(({user},) => user.id === userId)?.user ?? {}, false)}}
             >
                 Tugaskan kepada saya
             </button>}
