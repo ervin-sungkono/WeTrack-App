@@ -111,8 +111,8 @@ function TaskDetail({ taskId, closeFn }){
     useEffect(() => {
         if(task && task.labels){
             const labels = task.labels.map(label => ({
-                id: label.id,
-                value: label.content,
+                value: label.id,
+                content: label.content,
                 tagColor: label.backgroundColor,
                 style: `--tag-bg:${label.backgroundColor};--tag-text-color:${pickTextColorBasedOnBgColor(label.backgroundColor)};--tag-hover:${label.backgroundColor};--tag-remove-btn-color:${pickTextColorBasedOnBgColor(label.backgroundColor)};--tag-remove-bg:${label.backgroundColor};--tag-remove-btn-bg--hover:${pickTextColorBasedOnBgColor(label.backgroundColor)};--tag-border-radius:99px;`
             }))
