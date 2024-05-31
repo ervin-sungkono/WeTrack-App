@@ -31,6 +31,7 @@ export function createNewTask({
     labels,
     parentId
 }){
+    const labelArr = labels && (labels.length > 0 ? [...new Set(JSON.parse(labels).map(label => label.value))] : null)
     const payload = {
         projectId,
         type,
@@ -41,7 +42,7 @@ export function createNewTask({
         description,
         statusId,
         assignedTo,
-        labels: labels && (labels.length > 0 ? JSON.parse(labels).map(label => label.id) : null),
+        labels: labelArr,
         parentId
     }
 
@@ -82,6 +83,7 @@ export function updateTask({
     labels,
     parentId
 }){
+    const labelArr = labels && (labels.length > 0 ? [...new Set(JSON.parse(labels).map(label => label.value))] : null)
     const payload = {
         startDate,
         dueDate,
@@ -89,7 +91,7 @@ export function updateTask({
         taskName,
         description,
         assignedTo,
-        labels: labels && (labels.length > 0 ? JSON.parse(labels).map(label => label.id) : null),
+        labels: labelArr,
         parentId
     }
     const response = fetch(`/api/task/${taskId}`, {
