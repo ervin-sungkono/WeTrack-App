@@ -6,6 +6,7 @@ import CustomTooltip from "../../CustomTooltip"
 import EditLabelForm from "./EditLabelForm"
 import PopUpLoad from "../../alert/PopUpLoad"
 import PopUpForm from "../../alert/PopUpForm"
+import PopUpInfo from "../../alert/PopUpInfo"
 
 import { addLabel, updateLabel, deleteLabel } from "@/app/lib/fetch/label"
 import { pickTextColorBasedOnBgColor } from "@/app/lib/color"
@@ -21,16 +22,17 @@ export default function LabelForm({ labelData, projectId, onCancel }){
     const [deleteConfirmation, setDeleteConfirmation] = useState(false)
     const [labelFocus, setLabelFocus] = useState()
     const [deleteFocus, setDeleteFocus] = useState()
+    const [errorMessage, setErrorMessage] = useState(null)
     const [loading, setLoading] = useState(false)
 
     const handleAddLabel = async({ content, backgroundColor }) => {
+        if(!content) return
         try{
             setLoading(true)
             const res = await addLabel({ content, backgroundColor, projectId })
 
             if(!res.success){
-                alert("Gagal menambahkan label baru")
-                console.log(res.message)
+                setErrorMessage({title: "Gagal Menambah Label", message: "Silahkan coba kembali dalam beberapa saat"})
             }
         }catch(e){
             console.log(e)
@@ -41,13 +43,13 @@ export default function LabelForm({ labelData, projectId, onCancel }){
     }
 
     const handleUpdateLabel = async({ content, backgroundColor }) => {
+        if(!content) return
         try{
             setLoading(true)
             const res = await updateLabel({ content, backgroundColor, projectId, labelId: labelFocus })
 
             if(!res.success){
-                alert("Gagal mengubah label")
-                console.log(res.message)
+                setErrorMessage({title: "Gagal Mengubah Label", message: "Silahkan coba kembali dalam beberapa saat"})
             }else{
                 setLabelFocus(null)
             }
@@ -74,8 +76,7 @@ export default function LabelForm({ labelData, projectId, onCancel }){
             const res = await deleteLabel({ projectId, labelId: deleteFocus })
 
             if(!res.success){
-                alert("Gagal menghapus label")
-                console.log(res.message)
+                setErrorMessage({title: "Gagal Menghapus Label", message: "Silahkan coba kembali dalam beberapa saat"})
             }
             else{
                 setDeleteFocus(null)
@@ -92,6 +93,15 @@ export default function LabelForm({ labelData, projectId, onCancel }){
         <PopUp>
             <div className="w-full h-full flex justify-center items-center">
                 {loading && <PopUpLoad/>}
+                {errorMessage &&
+                <PopUpInfo
+                    title={"Gagal Membuat Label"}
+                    message={errorMessage}
+                >
+                    <div className="flex justify-end gap-2 md:gap-4">
+                        <Button onClick={() => setErrorMessage(null)} className="w-24 md:w-32">OK</Button>
+                    </div>
+                </PopUpInfo>}
                 {deleteConfirmation && 
                 <PopUpForm
                     title={"Hapus Label"}
