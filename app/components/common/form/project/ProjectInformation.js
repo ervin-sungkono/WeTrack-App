@@ -16,12 +16,14 @@ import SkeletonButton from "@/app/components/skeleton/SkeletonButton"
 import KeyFormikField from "./KeyFormikField"
 import SkeletonTextarea from "@/app/components/skeleton/SkeletonTextarea"
 import PopUpLoad from "../../alert/PopUpLoad"
+import PopUpInfo from "../../alert/PopUpInfo"
 
 export default function ProjectInformation({prevFormStep}){
     const [isLoading, setLoading] = useState(true)
     const [completed, setCompleted] = useState(false)
     const [projectId, setProjectId] = useState(null)
     const [isSubmittingProject, setSubmitProject] = useState(false)
+    const [errorMessage, setErrorMessage] = useState(null)
     const { projectData, submitProjectData } = useProjectData()
     
     useEffect(() => setLoading(false), [])
@@ -32,18 +34,13 @@ export default function ProjectInformation({prevFormStep}){
         projectDescription: ""
     }
 
-    const onSubmit = async(values, { setSubmitting }) => {
+    const onSubmit = async(values) => {
         setSubmitProject(true)
         try{
             if(projectData.templateType === 'ai-generated'){
-                if(values.projectDescription.length < 30){
-                    alert("Deskripsi Proyek harus terdiri dari minimal 30 karakter.")
-                    setSubmitProject(false)
-                    return
-                }
                 const taskList = await generateTask(values)
                 if(!taskList.success){
-                    alert(taskList.message)
+                    setErrorMessage(taskList.message)
                     return
                 }
     
@@ -60,8 +57,7 @@ export default function ProjectInformation({prevFormStep}){
                         })
                     }))
                 }else{
-                    console.log(res)
-                    alert("Gagal mengirim data formulir")
+                    setErrorMessage("Gagal mengirim data formulir")
                 }
             }
             else if(projectData.templateType === 'default'){
@@ -71,8 +67,7 @@ export default function ProjectInformation({prevFormStep}){
                     setCompleted(true)
                     setProjectId(res.data.id)
                 }else{
-                    console.log(res)
-                    alert("Gagal mengirim data formulir")
+                    setErrorMessage("Gagal mengirim data formulir")
                 }
                 
             }
@@ -118,6 +113,15 @@ export default function ProjectInformation({prevFormStep}){
     return(
         <>
             {isSubmittingProject && <PopUpLoad/>}
+            {errorMessage &&
+            <PopUpInfo
+                title={"Gagal Membuat Proyek"}
+                message={errorMessage}
+            >
+                <div className="flex justify-end gap-2 md:gap-4">
+                    <Button onClick={() => setErrorMessage(null)} className="w-24 md:w-32">OK</Button>
+                </div>
+            </PopUpInfo>}
             <FormikWrapper
                 initialValues={initialValues}
                 onSubmit={onSubmit}

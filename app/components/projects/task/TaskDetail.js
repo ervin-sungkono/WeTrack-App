@@ -429,6 +429,7 @@ function TaskDetail({ taskId, closeFn }){
                             <SimpleDateForm
                                 name={`task-${taskId}-start-date`}
                                 value={task.startDate}
+                                max={task.dueDate}
                                 onChange={handleUpdateStartDate}
                                 onCancel={() => setEditStartDate(false)}
                             />}

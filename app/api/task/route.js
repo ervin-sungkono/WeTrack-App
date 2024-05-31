@@ -3,8 +3,7 @@ import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
-import { createHistory } from '@/app/firebase/util';
-import { getProjectRole } from '@/app/firebase/util';
+import { createHistory, createNotification, getProjectRole } from '@/app/firebase/util';
 import { getHistoryAction, getHistoryEventType } from '@/app/lib/history';
 
 export async function GET(request, response) {
