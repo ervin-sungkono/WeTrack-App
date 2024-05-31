@@ -25,7 +25,7 @@ export default function RegisterForm(){
     }
 
     const [error, setError] = useState("")
-    const [errorMessage, setErrorMessage] = useState("Ada kesalahan, silakan coba lagi nanti.")
+    const [errorMessage, setErrorMessage] = useState("Terjadi kesalahan, silakan coba lagi!")
     const [success, setSuccess] = useState(false)
     const [loading, setLoading] = useState(false)
     const router = useRouter()

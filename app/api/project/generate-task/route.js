@@ -11,6 +11,13 @@ export async function POST(req){
             success: false
         }, { status: 400 });
     }
+
+    if(projectDescription.length < 30){
+        return NextResponse.json({
+            message: "Deskripsi Proyek harus terdiri dari minimal 30 karakter.",
+            success: false
+        }, { status: 400 });
+    }
     
     const response = await generateTaskByPrompt(projectDescription)
     const jsonData = JSON.parse(response.message.content)
