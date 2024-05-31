@@ -60,7 +60,7 @@ export async function PUT(request, response){
         }
         
         await updateDoc(docRef, {
-            content: content,
+            content: content ?? projectData.data().content,
             backgroundColor: backgroundColor,
             updatedAt: serverTimestamp(),
         })
