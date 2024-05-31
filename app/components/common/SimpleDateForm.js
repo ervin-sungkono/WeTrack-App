@@ -7,8 +7,8 @@ export default function SimpleDateForm({ name, value, onChange, onCancel, ...pro
     const inputDateRef = useRef()
 
     useEffect(() => {
-        inputDateRef.current.showPicker()
-    }, [])
+        if(inputDateRef.current) inputDateRef.current.showPicker()
+    }, [inputDateRef])
 
     return(
         <div className="flex">
