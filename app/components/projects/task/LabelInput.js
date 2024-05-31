@@ -57,7 +57,7 @@ export default function LabelInput({ hideLabel = false, projectId, labelData, on
         duplicates: true,
         skipInvalid: true,
         userInput: false,
-        maxTags: 6,
+        maxTags: 10,
         placeholder: "Masukkan label...",
         dropdown: {
             maxItems: 20,           // <- maximum allowed rendered suggestions
