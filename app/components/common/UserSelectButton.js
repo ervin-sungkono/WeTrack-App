@@ -157,7 +157,7 @@ export default function  UserSelectButton({ name, type = "default", userId, plac
                 onClick={(e) => e.stopPropagation()}
             >
                 {(loaded || placeholder) && <div className="flex flex-grow gap-2 items-center">
-                    <UserIcon size="sm" fullName={placeholder?.fullName ?? selected.fullName} src={placeholder ? placeholder?.profileImage : (selected.fullName ? selected.profileImage?.attachmentStoragePath : '/images/user-placeholder.png')}/>
+                    <UserIcon size="sm" fullName={placeholder?.fullName ?? selected.fullName} src={placeholder ? placeholder.profileImage?.attachmentStoragePath : (selected.fullName ? selected.profileImage?.attachmentStoragePath : '/images/user-placeholder.png')}/>
                     <p className="text-start flex-grow truncate text-xs md:text-sm">{placeholder?.fullName ?? selected.fullName ?? "Belum Ditugaskan"}</p>
                 </div>}
                 {!disabled && <DropdownIcon size={16}/>}
