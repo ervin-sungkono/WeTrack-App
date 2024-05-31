@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useRef, useState } from "react";
-import Tags from "@/app/lib/tagify";
+import Tags from "@/app/lib/tagify"
 import LabelForm from "../../common/form/create-task/LabelForm";
 import Button from "../../common/button/Button";
 
@@ -54,18 +54,18 @@ export default function LabelInput({ hideLabel = false, projectId, labelData, on
 
     const tagifyRef = useRef()
     const tagifySettings = {
-        duplicates: true,
         skipInvalid: true,
         userInput: false,
         maxTags: 10,
         editTags: false,
+        tagTextProp: 'content',
         placeholder: "Masukkan label...",
         dropdown: {
             maxItems: 20,           // <- maximum allowed rendered suggestions
             classname: "tags-look", // <- custom classname for this dropdown, so it could be targeted
             enabled: 0,             // <- show suggestions on focus
             closeOnSelect: false,   // <- do not hide the suggestions dropdown once an item has been selected
-            searchKeys: ["id"]
+            mapValueTo: 'content'
         },
         transformTag: (tagData) => {
             tagData.style = `
@@ -90,8 +90,8 @@ export default function LabelInput({ hideLabel = false, projectId, labelData, on
                 <Tags
                     name="label"
                     whitelist={labels.map(label => ({
-                        id: label.id,
-                        value: label.content,
+                        value: label.id,
+                        content: label.content,
                         tagColor: label.backgroundColor,
                         style: `background-color: ${label.backgroundColor}; color: ${pickTextColorBasedOnBgColor(label.backgroundColor)};`
                     }))}
