@@ -2,7 +2,7 @@ import { db } from "@/app/firebase/config";
 import { createNotification } from "@/app/firebase/util";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { getUserSession } from "@/app/lib/session";
-import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import { deleteDoc, doc, getDoc, updateDoc, writeBatch, getDocs } from "firebase/firestore";
 import { getProjectRole } from "@/app/firebase/util";
 import { NextResponse } from "next/server";
 
@@ -161,6 +161,10 @@ export async function PUT(request, response){
             }, { status: 404 })
         }
 
+        if(role === "Viewer"){
+            
+        }
+
         await updateDoc(teamDocRef, {
             role: role ?? teamData.role,
             updatedAt: new Date().toISOString()
@@ -170,6 +174,20 @@ export async function PUT(request, response){
        
         if(updatedTeamDoc.exists()){
             const updatedTeamData = updatedTeamDoc.data()
+            if(updatedTeamData.role === "Viewer"){
+                const batch = writeBatch(db)
+
+                const tasksQuery = query(collection(db, 'tasks'), where('assignedTo', '==', updatedTeamData.userId))
+                const tasksWithAssignedUser = await getDocs(tasksQuery)
+
+                tasksWithAssignedUser.docs.forEach((taskDoc) => {
+                    batch.update(taskDoc.ref, {
+                        assignedTo: null
+                    })
+                })
+
+                await batch.commit()
+            }
             await createNotification({
                 userId: teamData.userId,
                 projectId: teamData.projectId,
@@ -256,7 +274,21 @@ export async function DELETE(request, response){
             }, { status: 401 })
         }
 
-        await deleteDoc(doc(db, "teams", teamId))
+        const batch = writeBatch(db)
+
+        const tasksQuery = query(collection(db, 'tasks'), where('assignedTo', '==', teamDoc.data().userId))
+        const tasksWithAssignedUser = await getDocs(tasksQuery)
+
+        tasksWithAssignedUser.docs.forEach((taskDoc) => {
+            batch.update(taskDoc.ref, {
+                assignedTo: null
+            })
+        })
+
+        const teamRef = doc(db, "teams", teamId)
+        batch.delete(teamRef)
+
+        await batch.commit()
 
         return NextResponse.json({
             success: true,
