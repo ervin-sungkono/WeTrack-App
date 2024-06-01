@@ -242,7 +242,7 @@ export const handleDeletedUser = async({ userId }) => {
                     await createHistory({
                         userId: userId,
                         taskId: taskDoc.id,
-                        projectId: taskData.projectId,
+                        projectId: taskDoc.data().projectId,
                         action: getHistoryAction.update,
                         eventType: getHistoryEventType.assignedTo,
                         previousValue: taskDoc.data().assignedTo == null ? null : {...oldAssignedToValue.data()},

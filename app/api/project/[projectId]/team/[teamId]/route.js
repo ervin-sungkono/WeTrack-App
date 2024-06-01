@@ -5,6 +5,7 @@ import { getUserSession } from "@/app/lib/session";
 import { doc, getDoc, updateDoc, writeBatch, getDocs, query, where, collection } from "firebase/firestore";
 import { getProjectRole } from "@/app/firebase/util";
 import { NextResponse } from "next/server";
+import { getHistoryAction, getHistoryEventType } from "@/app/lib/history";
 
 export async function GET(request, response){
     try {
@@ -184,7 +185,7 @@ export async function PUT(request, response){
                     await createHistory({
                         userId: userId,
                         taskId: taskDoc.id,
-                        projectId: taskData.projectId,
+                        projectId: taskDoc.data().projectId,
                         action: getHistoryAction.update,
                         eventType: getHistoryEventType.assignedTo,
                         previousValue: taskDoc.data().assignedTo == null ? null : {...oldAssignedToValue.data()},
@@ -293,7 +294,7 @@ export async function DELETE(request, response){
             await createHistory({
                 userId: userId,
                 taskId: taskDoc.id,
-                projectId: taskData.projectId,
+                projectId: taskDoc.data().projectId,
                 action: getHistoryAction.update,
                 eventType: getHistoryEventType.assignedTo,
                 previousValue: taskDoc.data().assignedTo == null ? null : {...oldAssignedToValue.data()},
