@@ -251,6 +251,7 @@ export const handleDeletedUser = async({ userId }) => {
                 })
 
                 batch.delete(teamDoc.ref)
+                await batch.commit()
             }
 
             return null
