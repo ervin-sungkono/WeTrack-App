@@ -44,9 +44,9 @@ export default function NotificationsItem({type, task=null, taskId=null, sender=
                     </div>
                 )}
                 {type === "RoleChange" && (
-                    <div className="flex gap-1">
+                    <>
                         Peran Anda dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText> telah diubah ke <LinkText>{newValue}</LinkText>.
-                    </div>
+                    </>
                 )}
             </div>
             <div className="text-xs md:text-sm text-right whitespace-nowrap">

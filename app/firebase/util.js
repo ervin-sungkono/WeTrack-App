@@ -1,5 +1,5 @@
 import { db } from "@/app/firebase/config"
-import { query, orderBy, where, collection, doc, and, getDocs, getDoc, updateDoc, serverTimestamp, addDoc, limit, deleteDoc } from "firebase/firestore"
+import { query, orderBy, where, collection, doc, and, getDocs, getDoc, updateDoc, serverTimestamp, addDoc, limit, deleteDoc, writeBatch } from "firebase/firestore"
 import { getSession } from "next-auth/react"
 import { deleteExistingFile } from "../lib/file"
 import { getHistoryAction, getHistoryEventType } from "../lib/history"
@@ -55,24 +55,24 @@ export const deleteProject = async({ projectId }) => {
     try {   
         if(!projectId) return null
     
-        // Get project reference to soft delete
+        const batch = writeBatch(db)
+
         const projectDocRef = doc(db, "projects", projectId)
 
-        // Get team reference to soft delete
         const teamQuery = query(collection(db, "teams"), where('projectId', '==', projectId))
         const teamSnapshot = await getDocs(teamQuery)
+
+        teamSnapshot.docs.forEach(doc => {
+            batch.update(doc.ref, {
+                deletedAt: serverTimestamp()
+            })
+        })
         
-        // Perform soft delete
-        await updateDoc(projectDocRef, {
+        batch.update(projectDocRef, {
             deletedAt: serverTimestamp()
         })
 
-        // await Promise.all(teamSnapshot.docs.map(async(doc) => {
-        //     updateDoc(doc.ref, {
-        //         deletedAt: serverTimestamp()
-        //     })
-        // }))
-
+        await batch.commit()
     } catch (error) {
         throw new Error("Something went wrong when deleting project")
     }
@@ -214,10 +214,6 @@ export const handleDeletedUser = async({ userId }) => {
         if(!userId) return null
     
         const userDocRef = doc(db, "users", userId)
-        await updateDoc(userDocRef, {
-            email: null,
-            deletedAt: serverTimestamp()
-        })
     
         const teamCollectionRef = collection(db, "teams")
         const q = query(teamCollectionRef, where("userId", "==", userId))
@@ -226,20 +222,46 @@ export const handleDeletedUser = async({ userId }) => {
         if(!teamDocs.empty) {
             //list project id if project owner
             const projects = teamDocs.docs.filter((item) => (item.data().role == "Owner"))
-            console.log(projects)
+            const teamMembers = teamDocs.docs.filter((item) => (item.data().role != "Owner"))
 
-            if(projects.length > 0) {
-                for(const project of projects) {
-                    await deleteProject({ projectId: project.projectId })
-                }
+            for(const project of projects) {
+                await deleteProject({ projectId: project.data().projectId })
             }
             
-            for (const item of teamDocs.docs) {
-                await deleteDoc(doc(db, "teams", item.id));
+            for (const teamDoc of teamMembers) {
+                const batch = writeBatch(db)
+
+                const tasksQuery = query(collection(db, 'tasks'), where('assignedTo', '==', teamDoc.data().userId))
+                const tasksWithAssignedUser = await getDocs(tasksQuery)
+
+                tasksWithAssignedUser.docs.forEach(async(taskDoc) => {
+                    batch.update(taskDoc.ref, {
+                        assignedTo: null
+                    })
+                    const oldAssignedToValue = taskDoc.data().assignedTo == null ? null : await getDoc(doc(db, "users", taskDoc.data().assignedTo))
+                    await createHistory({
+                        userId: userId,
+                        taskId: taskDoc.id,
+                        projectId: taskDoc.data().projectId,
+                        action: getHistoryAction.update,
+                        eventType: getHistoryEventType.assignedTo,
+                        previousValue: taskDoc.data().assignedTo == null ? null : {...oldAssignedToValue.data()},
+                        newValue: null
+                    })
+                })
+
+                batch.delete(teamDoc.ref)
+                await batch.commit()
             }
 
             return null
         }
+
+        
+        await updateDoc(userDocRef, {
+            email: null,
+            deletedAt: serverTimestamp()
+        })
 
         return
 

@@ -222,17 +222,20 @@ export default function OverviewContent({ projectId }){
             }
         },
         {
-            accessorKey: 'assignedTo',
+            // accessorKey: 'assignedTo',
+            accessorKey: 'assignedToData',
             header: 'Penerima',
             cell: ({ row }) => {
                 const id = row.getValue('id')
-                const assignedTo = row.getValue("assignedTo")
+                // const assignedTo = row.getValue("assignedTo")
+                const assignedToData = row.getValue("assignedToData")
                 return(
                     <div className="w-full h-full block">
                         <UserSelectButton 
                             name={`assignee-${id}`}
                             type="button"
-                            defaultValue={assigneesData.find(team => team.user.id === assignedTo)?.user ?? {}}
+                            // defaultValue={assigneesData.find(team => team.user.id === assignedTo)?.user ?? {}}
+                            defaultValue={assignedToData}
                             options={assigneesData}
                             disabled={!validateUserRole({ userRole: role, minimumRole: 'Member' })}
                             onChange={(value) => handleAssigneeChange(id, assignedTo, value)}
