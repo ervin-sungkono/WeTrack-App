@@ -73,7 +73,7 @@ export default function AcceptInvitationForm({ teamId }){
     if(!authorized && !loading) return(
         <div className="w-full h-full flex flex-col justify-center items-center px-6 pb-8">
             <IoClose size={128} className="text-danger-red"/>
-            <p className="text-sm md:text-base text-dark-blue/80 text-center">Tautan undangan tidak dapat digunakan!</p>
+            <p className="text-sm md:text-base text-dark-blue/80 text-center">Link undangan tidak dapat digunakan!</p>
         </div>
     )
     if(rejected) return(

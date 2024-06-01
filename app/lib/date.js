@@ -3,7 +3,7 @@ import "moment/locale/id"
 moment.locale("id")
 
 export const dateFormat = (date, includeTime = false) => {
-    const formatString = includeTime ? "D MMMM YYYY hh:mm" : "D MMMM YYYY"
+    const formatString = includeTime ? "D MMMM YYYY HH:mm" : "D MMMM YYYY"
     if(date == null){
         return null
     }else{

@@ -32,8 +32,8 @@ export async function DELETE(request, response) {
             await deleteDoc(commentDocRef)
             await createHistory({
                 userId: userId,
-                taskId: taskId,
-                projectId: taskSnap.projectId,
+                taskId: commentSnap.data().taskId,
+                projectId: commentSnap.data().projectId,
                 eventType: getHistoryEventType.comment,
                 action: getHistoryAction.delete
             })
