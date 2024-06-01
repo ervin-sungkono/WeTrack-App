@@ -2,7 +2,7 @@ import { db } from "@/app/firebase/config";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { deleteExistingFile } from "@/app/lib/file";
 import { getUserSession } from "@/app/lib/session";
-import { deleteDoc, doc, getDoc } from "firebase/firestore";
+import { deleteDoc, doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { createHistory, getProjectRole } from "@/app/firebase/util";
 import { NextResponse } from "next/server";
 import { getHistoryAction, getHistoryEventType } from "@/app/lib/history";
@@ -58,6 +58,20 @@ export async function DELETE(request, response) {
             await deleteExistingFile(attachmentData.attachmentStoragePath);
 
             await deleteDoc(attachmentDocRef)
+
+            const counterRef = doc(db, "attachmentCounters", attachmentData.taskId)
+            const currentAttachmentCount = await getDoc(counterRef)
+
+            if(!currentAttachmentCount.exists()) {
+                return NextResponse.json({
+                    message: "Attachment counters not found"
+                }, { status: 404 })
+            }
+
+            await updateDoc(counterRef, {
+                count: currentAttachmentCount.data().count == 0 ? 0 : currentAttachmentCount.data().count - 1,
+                updatedAt: serverTimestamp()
+            })
 
             await createHistory({
                 userId: userId,

@@ -32,7 +32,10 @@ export default function UpdateTaskNameForm({ taskName, onClose, onSubmit }){
                         </div>
                         <div className="flex gap-2 md:gap-4 items-center justify-end mt-4 md:mt-8">
                             <Button variant="secondary" onClick={onClose}>Batal</Button>
-                            <Button variant="primary" onClick={(e) => onSubmit(e, formik.values.taskName)}>Ubah</Button>
+                            <Button variant="primary" onClick={(e) => {
+                                e.stopPropagation()
+                                formik.submitForm()
+                            }}>Ubah</Button>
                         </div>
                     </>
                 )}

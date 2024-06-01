@@ -48,6 +48,7 @@ export default function CreateTaskForm({ onCancel }){
         try{
             const res = await createNewTask({
                 ...values,
+                taskName: values.taskName.trim(),
                 labels,
             })
 
