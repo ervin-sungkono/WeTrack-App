@@ -1,7 +1,7 @@
 import { db } from "@/app/firebase/config";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { getUserSession } from "@/app/lib/session";
-import { updateDoc, deleteDoc, doc, getDoc, serverTimestamp } from "firebase/firestore";
+import { updateDoc, doc, getDoc, serverTimestamp, writeBatch, query, collection, where, getDocs, arrayRemove } from "firebase/firestore";
 import { getProjectRole } from "@/app/firebase/util";
 import { NextResponse } from "next/server";
 
@@ -130,13 +130,26 @@ export async function DELETE(request, response){
             }, { status: 404 })
         }
 
-        await deleteDoc(doc(db, "labels", labelId))
+        const batch = writeBatch(db)
+
+        const tasksQuery = query(collection(db, 'tasks'), where('labels', 'array-contains', labelId))
+        const tasksWithLabelSnapshot = await getDocs(tasksQuery)
+
+        tasksWithLabelSnapshot.docs.forEach((taskDoc) => {
+            batch.update(taskDoc.ref, {
+                labels: arrayRemove(labelId)
+            })
+        })
+
+        const labelRef = doc(db, "labels", labelId)
+        batch.delete(labelRef)
+
+        await batch.commit()
 
         return NextResponse.json({
             message: "Successfully removed the label",
             success: true
         }, { status: 200 })
-
     } catch (error) {
         return NextResponse.json({
             message: error.message,
