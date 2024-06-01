@@ -1,8 +1,8 @@
 import { db } from "@/app/firebase/config";
-import { createNotification } from "@/app/firebase/util";
+import { createHistory, createNotification } from "@/app/firebase/util";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { getUserSession } from "@/app/lib/session";
-import { deleteDoc, doc, getDoc, updateDoc, writeBatch, getDocs } from "firebase/firestore";
+import { doc, getDoc, updateDoc, writeBatch, getDocs, query, where, collection } from "firebase/firestore";
 import { getProjectRole } from "@/app/firebase/util";
 import { NextResponse } from "next/server";
 
@@ -161,10 +161,6 @@ export async function PUT(request, response){
             }, { status: 404 })
         }
 
-        if(role === "Viewer"){
-            
-        }
-
         await updateDoc(teamDocRef, {
             role: role ?? teamData.role,
             updatedAt: new Date().toISOString()
@@ -180,9 +176,19 @@ export async function PUT(request, response){
                 const tasksQuery = query(collection(db, 'tasks'), where('assignedTo', '==', updatedTeamData.userId))
                 const tasksWithAssignedUser = await getDocs(tasksQuery)
 
-                tasksWithAssignedUser.docs.forEach((taskDoc) => {
+                tasksWithAssignedUser.docs.forEach(async(taskDoc) => {
                     batch.update(taskDoc.ref, {
                         assignedTo: null
+                    })
+                    const oldAssignedToValue = taskDoc.data().assignedTo == null ? null : await getDoc(doc(db, "users", taskDoc.data().assignedTo))
+                    await createHistory({
+                        userId: userId,
+                        taskId: taskDoc.id,
+                        projectId: taskData.projectId,
+                        action: getHistoryAction.update,
+                        eventType: getHistoryEventType.assignedTo,
+                        previousValue: taskDoc.data().assignedTo == null ? null : {...oldAssignedToValue.data()},
+                        newValue: null
                     })
                 })
 
@@ -279,9 +285,19 @@ export async function DELETE(request, response){
         const tasksQuery = query(collection(db, 'tasks'), where('assignedTo', '==', teamDoc.data().userId))
         const tasksWithAssignedUser = await getDocs(tasksQuery)
 
-        tasksWithAssignedUser.docs.forEach((taskDoc) => {
+        tasksWithAssignedUser.docs.forEach(async(taskDoc) => {
             batch.update(taskDoc.ref, {
                 assignedTo: null
+            })
+            const oldAssignedToValue = taskDoc.data().assignedTo == null ? null : await getDoc(doc(db, "users", taskDoc.data().assignedTo))
+            await createHistory({
+                userId: userId,
+                taskId: taskDoc.id,
+                projectId: taskData.projectId,
+                action: getHistoryAction.update,
+                eventType: getHistoryEventType.assignedTo,
+                previousValue: taskDoc.data().assignedTo == null ? null : {...oldAssignedToValue.data()},
+                newValue: null
             })
         })
 
