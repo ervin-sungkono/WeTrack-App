@@ -73,6 +73,13 @@ export async function GET(request, response){
             }, { status: 401 });
         }
 
+        if(teamDocSnap.data().status === "accepted"){
+            return NextResponse.json({
+                message: "You have already accepted the invitation",
+                success: false 
+            }, { status: 401 })
+        }
+
         return NextResponse.json({
             message: "Team data found",
             success: true

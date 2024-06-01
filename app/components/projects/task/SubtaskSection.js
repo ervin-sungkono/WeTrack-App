@@ -134,7 +134,7 @@ export default function SubtaskSection({ projectId, taskId, statusOptions, teamO
         
         debounce(
             createNewTask({
-                taskName, 
+                taskName: taskName.trim(), 
                 type: "SubTask",
                 projectId: project.id, 
                 statusId: project.startStatus,
