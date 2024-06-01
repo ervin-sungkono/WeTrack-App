@@ -87,7 +87,7 @@ export default function BoardContent({ projectId }){
     const taskName = formData.get("taskName")
     
     await createNewTask({
-      taskName, 
+      taskName: taskName.trim(), 
       projectId: projectId, 
       statusId: activeStatusId
     })
@@ -105,7 +105,7 @@ export default function BoardContent({ projectId }){
     debounce(
       createNewTaskStatus({
         projectId: projectId, 
-        statusName, 
+        statusName: statusName.trim(), 
       })
     , 100)
 

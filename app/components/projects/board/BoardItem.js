@@ -1,6 +1,5 @@
 "use client"
 import { Draggable } from "@hello-pangea/dnd"
-import { useState } from "react";
 import { FaCheckSquare as CheckIcon } from "react-icons/fa";
 import { useTaskData } from "@/app/lib/context/task";
 import { useSessionStorage } from "usehooks-ts";
@@ -8,13 +7,8 @@ import { useSessionStorage } from "usehooks-ts";
 import DotButton from "../../common/button/DotButton";
 import CustomTooltip from "../../common/CustomTooltip";
 import Label from "../../common/Label";
-import PopUpForm from "../../common/alert/PopUpForm";
-import Button from "../../common/button/Button";
-import PopUpLoad from "../../common/alert/PopUpLoad";
-import UpdateTaskNameForm from "../../common/form/UpdateTaskNameForm";
 import UserIcon from "../../common/UserIcon";
 
-import { deleteTask, updateTask } from "@/app/lib/fetch/task";
 import { validateUserRole } from "@/app/lib/helper";
 import { useRole } from "@/app/lib/context/role";
 import { getPriority } from "@/app/lib/string";
@@ -39,10 +33,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 })
 
 export default function BoardItem({ item, index }){
-    const { viewTask } = useTaskData()
-    const [loading, setLoading] = useState(false)
-    const [updateConfirmation, setUpdateConfirmation] = useState(false)
-    const [deleteConfirmation, setDeleteConfirmation] = useState(false)
+    const { viewTask, focusUpdateTask, focusDeleteTask } = useTaskData()
     const [project, _] = useSessionStorage("project")
 
     const role = useRole()
@@ -50,40 +41,13 @@ export default function BoardItem({ item, index }){
     const taskActions = [
       {
         label: "Ubah Nama Tugas",
-        fnCall: () => setUpdateConfirmation(true)
+        fnCall: () => focusUpdateTask(item)
       },
       {
         label: "Hapus",
-        fnCall: () => setDeleteConfirmation(true)
+        fnCall: () => focusDeleteTask(item)
       }
     ]
-
-    const handleUpdateTaskName = async(values) => {
-      setLoading(true)
-
-      try{
-        if(values.taskName !== item.taskName) await updateTask({ taskId: item.id, taskName: values.taskName })
-      }catch(e){
-        console.log(e)
-      }finally{
-        setUpdateConfirmation(false)
-        setLoading(false)
-      }
-    }
-
-    const handleDeleteTask = async(e) => {
-      e.stopPropagation()
-      setLoading(true)
-
-      try{
-        await deleteTask({ taskId: item.id })
-      }catch(e){
-        console.log(e)
-      }finally{
-        setDeleteConfirmation(false)
-        setLoading(false)
-      }
-    }
 
     const {label: priorityLabel, color: priorityColor} = getPriority(item.priority)
     return (
@@ -97,37 +61,8 @@ export default function BoardItem({ item, index }){
                     snapshot.isDragging,
                     provided.draggableProps.style
                 )}
-                onClick={(updateConfirmation || deleteConfirmation) ? null : () => viewTask(item.id)}
+                onClick={() => viewTask(item.id)}
             >
-              {loading && <PopUpLoad/>}
-              {updateConfirmation &&
-                <UpdateTaskNameForm 
-                  taskName={item.taskName} 
-                  onSubmit={handleUpdateTaskName} 
-                  onClose={(e) => {
-                    e.stopPropagation()
-                    setUpdateConfirmation(false)
-                  }}
-                />
-              }
-              {deleteConfirmation &&
-                (<PopUpForm
-                  title={"Hapus Tugas"}
-                  message={'Apakah Anda yakin ingin menghapus tugas ini?'}
-                  wrapContent
-                >
-                  <>
-                    <div className="mt-4 flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
-                      <Button variant="danger" onClick={handleDeleteTask}>Hapus</Button>
-                      <Button variant="secondary" onClick={(e) => {
-                          e.stopPropagation()
-                          setDeleteConfirmation(false)
-                        }}
-                      >Batal</Button>
-                    </div>
-                  </>
-                </PopUpForm>)
-              }
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
                   <p className="flex-grow text-xs md:text-sm font-semibold py-1.5">{item.taskName}</p>
