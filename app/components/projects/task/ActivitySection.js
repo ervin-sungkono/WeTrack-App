@@ -57,29 +57,11 @@ export default function ActivitySection({taskId}){
 
         const historyReference = getQueryReference({ collectionName: 'histories', field: 'taskId', id: taskId })
         const unsubscribeHistories = onSnapshot(historyReference, async(snapshot) => {
-            const updatedHistories = await Promise.all(snapshot.docs.map(async(document) => {
-                const userId = document.data().userId
-                if(userId){
-                    const userRef = getDocumentReference({ collectionName: "users", id: userId })
-                    const userSnap = await getDoc(userRef)
-                    const { fullName, profileImage } = userSnap.data()
-
-                    return({
-                        id: document.id,
-                        user: {
-                            id: userSnap.id,
-                            fullName,
-                            profileImage
-                        },
-                        ...document.data()
-                    })
-                }
-                return({
+            const updatedHistories = await Promise.all(snapshot.docs.map(async(document) => ({
                     id: document.id,
-                    user: null,
                     ...document.data()
                 })
-            }))
+            ))
             setHistoryData(updatedHistories)
         })
         
