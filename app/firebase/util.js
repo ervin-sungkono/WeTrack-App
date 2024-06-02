@@ -240,7 +240,7 @@ export const handleDeletedUser = async({ userId }) => {
                     })
                     const oldAssignedToValue = taskDoc.data().assignedTo == null ? null : await getDoc(doc(db, "users", taskDoc.data().assignedTo))
                     await createHistory({
-                        userId: userId,
+                        userId: null,
                         taskId: taskDoc.id,
                         projectId: taskDoc.data().projectId,
                         action: getHistoryAction.update,
@@ -272,8 +272,6 @@ export const handleDeletedUser = async({ userId }) => {
 
 export const createHistory = async({ userId, taskId, projectId, eventType, deletedValue, action, previousValue, newValue }) => {
     try {
-        if(!userId) return null
-
         const user = userId && await getDoc(doc(db, "users", userId));
         const task = taskId && await getDoc(doc(db, "tasks", taskId));
         const project = projectId && await getDoc(doc(db, "projects", projectId))
@@ -285,7 +283,7 @@ export const createHistory = async({ userId, taskId, projectId, eventType, delet
                 fullName: user.data().fullName,
                 profileImage: user.data().profileImage
             },
-            userId: userId,
+            userId: userId ?? null,
             task: taskId && {
                 id: task.id,
                 taskName: task.data().taskName
