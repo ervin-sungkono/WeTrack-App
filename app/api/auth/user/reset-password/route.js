@@ -5,8 +5,8 @@ import { NextResponse } from "next/server"
 export async function POST(request, response) {
     try {
         const { email } = await request.json()
-        console.log(auth)
-        sendPasswordResetEmail(auth, email)
+        // console.log(auth)
+        await sendPasswordResetEmail(auth, email)
             
         return NextResponse.json({
             success: true,
