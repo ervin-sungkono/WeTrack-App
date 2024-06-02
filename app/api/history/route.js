@@ -29,34 +29,14 @@ export async function GET(request, response) {
 
         const historyDocs = await getDocs(q);
 
-        const send = await Promise.all(historyDocs.docs.map(async (item) => {
-            const { userId, taskId, projectId } = item.data()
-            const userDoc = userId && await getDoc(doc(db, "users", userId));
-            const taskDoc = taskId && await getDoc(doc(db, "tasks", taskId));
-            const projectDoc = projectId && await getDoc(doc(db, "projects", projectId));
-
-            const userDetail = userDoc && userDoc.data()
-            const taskDetail = taskDoc && taskDoc.data()
-            const projectDetail = projectDoc && projectDoc.data()
-
-            return {
+        const historyData = await Promise.all(historyDocs.docs.map(async (item) => ({
                 id: item.id,
-                user: userDetail,
-                task: taskDetail,
-                taskId: item.data()?.taskId,
-                project: projectDetail,
-                projectId: item.data()?.projectId,
-                eventType: item.data().eventType,
-                action: item.data().action,
-                previousValue: item.data()?.previousValue,
-                newValue: item.data()?.newValue,
-                deletedValue: item.data()?.deletedValue,
-                createdAt: item.data().createdAt
-            };
-        }));
+                ...item.data()
+            })   
+        ));
 
         return NextResponse.json({
-            data: send,
+            data: historyData,
             message: "Successfully retrieved histories"
         }, { status: 200 });
 

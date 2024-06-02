@@ -47,11 +47,11 @@ export default function TaskHistoryItem({history}){
     
     return(
         <div key={history.id} className="flex items-start gap-2 md:gap-3">
-            <div><UserIcon size="sm" fullName={history.user.fullName} src={history.user.profileImage?.attachmentStoragePath}/></div>
+            <div><UserIcon size="sm" fullName={history.user?.fullName} src={ history.user ? history.user.profileImage?.attachmentStoragePath : "/images/user-placeholder.png"}/></div>
             <div className="flex flex-col gap-1.5 pt-1">
                 <div className="flex gap-2 items-center">
                     <p className="text-xs md:text-sm text-dark-blue">
-                        <span className="font-semibold">{history.user.fullName}</span> {history.action} <span className="font-semibold">{history.eventType}</span>
+                        <span className="font-semibold">{history.user?.fullName ?? "Sistem"}</span> {history.action} <span className="font-semibold">{history.eventType}</span>
                     </p>
                     <p className="text-[11.2px] md:text-sm text-dark-blue/80">{listDateFormat(history.createdAt)}</p>
                 </div>
