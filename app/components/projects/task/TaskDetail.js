@@ -31,12 +31,14 @@ import SimpleTextareaForm from "../../common/SimpleTextareaForm"
 import SimpleDateForm from "../../common/SimpleDateForm"
 import ParentSelectButton from "../../common/ParentSelectButton"
 import LabelInput from "./LabelInput"
+import EmptyState from "../../common/EmptyState"
 
 const AttachmentSection = dynamic(() => import("./AttachmentSection"))
 const SubtaskSection = dynamic(() => import("./SubtaskSection"))
 
 function TaskDetail({ taskId, closeFn }){
     const [task, setTask] = useState()
+    const [taskNotFound, setTaskNotFound] = useState(false)
     const [updateLoading, setUpdateLoading] = useState(false)
     const [updateConfirmation, setUpdateConfirmation] = useState(false)
     const [deleteConfirmation, setDeleteConfirmation] = useState(false)
@@ -151,9 +153,11 @@ function TaskDetail({ taskId, closeFn }){
                     assignedTo: assignedTo,
                     parent: parent,
                 })
+                setTaskNotFound(false)
                 return
             }
             setTask(null)
+            setTaskNotFound(true)
         })
 
         return () => unsubscribe()
@@ -316,6 +320,10 @@ function TaskDetail({ taskId, closeFn }){
             setUpdateLoading(false)
         }
     }
+
+    if(taskNotFound) return(
+        <EmptyState message="Tugas tidak dapat ditemukan."/>
+    )
 
     if(!task) return(
         <div className="w-full h-full flex flex-col gap-4 justify-center items-center">
