@@ -285,14 +285,17 @@ export const createHistory = async({ userId, taskId, projectId, eventType, delet
                 fullName: user.data().fullName,
                 profileImage: user.data().profileImage
             },
+            userId: userId,
             task: taskId && {
                 id: task.id,
                 taskName: task.data().taskName
             },
+            taskId: taskId ?? null,
             project: projectId && {
                 id: project.id,
                 projectName: project.data().projectName
             },
+            projectId: projectId ?? null,
             eventType: eventType,
             deletedValue: deletedValue ?? null,
             action: action, // create, update, delete
@@ -319,11 +322,13 @@ export const createNotification = async({ userId, senderId, taskId, projectId, t
         const notificationDocRef = collection(db, "notifications")
         const newNotification = await addDoc(notificationDocRef, {
             userId: userId,
+            senderId: senderId,
             sender: senderId && {
                 id: sender.id,
                 fullName: sender.data().fullName,
                 profileImage: sender.data().profileImage
             },
+            taskId: taskId ?? null,
             task: taskId && {
                 id: task.id,
                 taskName: task.data().taskName
