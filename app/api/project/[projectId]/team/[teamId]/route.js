@@ -183,7 +183,7 @@ export async function PUT(request, response){
                     })
                     const oldAssignedToValue = taskDoc.data().assignedTo == null ? null : await getDoc(doc(db, "users", taskDoc.data().assignedTo))
                     await createHistory({
-                        userId: userId,
+                        userId: null,
                         taskId: taskDoc.id,
                         projectId: taskDoc.data().projectId,
                         action: getHistoryAction.update,
@@ -292,7 +292,7 @@ export async function DELETE(request, response){
             })
             const oldAssignedToValue = taskDoc.data().assignedTo == null ? null : await getDoc(doc(db, "users", taskDoc.data().assignedTo))
             await createHistory({
-                userId: userId,
+                userId: null,
                 taskId: taskDoc.id,
                 projectId: taskDoc.data().projectId,
                 action: getHistoryAction.update,

@@ -240,7 +240,7 @@ export const handleDeletedUser = async({ userId }) => {
                     })
                     const oldAssignedToValue = taskDoc.data().assignedTo == null ? null : await getDoc(doc(db, "users", taskDoc.data().assignedTo))
                     await createHistory({
-                        userId: userId,
+                        userId: null,
                         taskId: taskDoc.id,
                         projectId: taskDoc.data().projectId,
                         action: getHistoryAction.update,
@@ -272,12 +272,27 @@ export const handleDeletedUser = async({ userId }) => {
 
 export const createHistory = async({ userId, taskId, projectId, eventType, deletedValue, action, previousValue, newValue }) => {
     try {
-        if(!userId) return null
+        const user = userId && await getDoc(doc(db, "users", userId));
+        const task = taskId && await getDoc(doc(db, "tasks", taskId));
+        const project = projectId && await getDoc(doc(db, "projects", projectId))
 
         const historyDocRef = collection(db, "histories")
         const newHistory =  await addDoc(historyDocRef, {
-            userId: userId,
+            user: userId && {
+                id: user.id,
+                fullName: user.data().fullName,
+                profileImage: user.data().profileImage
+            },
+            userId: userId ?? null,
+            task: taskId && {
+                id: task.id,
+                taskName: task.data().taskName
+            },
             taskId: taskId ?? null,
+            project: projectId && {
+                id: project.id,
+                projectName: project.data().projectName
+            },
             projectId: projectId ?? null,
             eventType: eventType,
             deletedValue: deletedValue ?? null,
@@ -298,11 +313,28 @@ export const createNotification = async({ userId, senderId, taskId, projectId, t
     try {
         if(!userId && !projectId) return null
 
+        const sender = senderId && await getDoc(doc(db, "users", sender));
+        const task = taskId && await getDoc(doc(db, "tasks", taskId));
+        const project = projectId && await getDoc(doc(db, "projects", projectId))
+
         const notificationDocRef = collection(db, "notifications")
         const newNotification = await addDoc(notificationDocRef, {
             userId: userId,
-            senderId: senderId ?? null,
+            senderId: senderId,
+            sender: senderId && {
+                id: sender.id,
+                fullName: sender.data().fullName,
+                profileImage: sender.data().profileImage
+            },
             taskId: taskId ?? null,
+            task: taskId && {
+                id: task.id,
+                taskName: task.data().taskName
+            },
+            project: projectId && {
+                id: project.id,
+                projectName: project.data().projectName
+            },
             projectId: projectId,
             type: type, // RoleChange, Mention, AddedComment, AssignedTask
             newValue: newValue ?? null,

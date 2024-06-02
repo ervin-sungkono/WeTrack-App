@@ -20,28 +20,11 @@ export async function GET(request, response) {
         const q = query(notificationColRef, where('userId', '==', userId), orderBy('createdAt', 'desc'))
         const notificationSnapshot = await getDocs(q);
 
-        const notificationsData = await Promise.all(notificationSnapshot.docs.map(async (item) => {
-            const { senderId, taskId, projectId } = item.data()
-            const senderDoc = senderId && await getDoc(doc(db, "users", senderId));
-            const taskDoc = taskId && await getDoc(doc(db, "tasks", taskId));
-            const projectDoc = projectId && await getDoc(doc(db, "projects", projectId));
-
-            const sender = senderDoc && senderDoc.data()
-            const task = taskDoc && taskDoc.data()
-            const project = projectDoc && projectDoc.data()
-
-            await updateDoc(doc(db, "notifications", item.id), {
-                status: 'open'
-            });
-
-            return {
+        const notificationsData = await Promise.all(notificationSnapshot.docs.map(async (item) => ({
                 id: item.id,
-                ...item.data(),
-                sender: sender,
-                task: task,
-                project: project
-            };
-        }));
+                ...item.data()
+            })
+        ));
 
         return NextResponse.json({
             data: notificationsData,
