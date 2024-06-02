@@ -270,7 +270,7 @@ export const handleDeletedUser = async({ userId }) => {
     }
 } 
 
-export const createHistory = async({ userId, taskId, projectId, eventType, deletedValue, action, previousValue, newValue }) => {
+export const createHistory = async({ userId = null, taskId = null, projectId = null, eventType, deletedValue = null, action, previousValue = null, newValue = null }) => {
     try {
         const user = userId && await getDoc(doc(db, "users", userId));
         const task = taskId && await getDoc(doc(db, "tasks", taskId));
@@ -283,22 +283,22 @@ export const createHistory = async({ userId, taskId, projectId, eventType, delet
                 fullName: user.data().fullName,
                 profileImage: user.data().profileImage
             },
-            userId: userId ?? null,
+            userId: userId,
             task: taskId && {
                 id: task.id,
                 taskName: task.data().taskName
             },
-            taskId: taskId ?? null,
+            taskId: taskId,
             project: projectId && {
                 id: project.id,
                 projectName: project.data().projectName
             },
-            projectId: projectId ?? null,
+            projectId: projectId,
             eventType: eventType,
-            deletedValue: deletedValue ?? null,
+            deletedValue: deletedValue,
             action: action, // create, update, delete
-            previousValue: previousValue ?? null,
-            newValue: newValue ?? null,
+            previousValue: previousValue,
+            newValue: newValue,
             createdAt: serverTimestamp()
         })
 
@@ -309,7 +309,7 @@ export const createHistory = async({ userId, taskId, projectId, eventType, delet
     }
 }
 
-export const createNotification = async({ userId, senderId, taskId, projectId, type, newValue }) => {
+export const createNotification = async({ userId, senderId = null, taskId = null, projectId, type, newValue = null }) => {
     try {
         if(!userId && !projectId) return null
 
@@ -326,7 +326,7 @@ export const createNotification = async({ userId, senderId, taskId, projectId, t
                 fullName: sender.data().fullName,
                 profileImage: sender.data().profileImage
             },
-            taskId: taskId ?? null,
+            taskId: taskId,
             task: taskId && {
                 id: task.id,
                 taskName: task.data().taskName
@@ -337,7 +337,7 @@ export const createNotification = async({ userId, senderId, taskId, projectId, t
             },
             projectId: projectId,
             type: type, // RoleChange, Mention, AddedComment, AssignedTask
-            newValue: newValue ?? null,
+            newValue: newValue,
             status: "new",
             createdAt: serverTimestamp()
         })
