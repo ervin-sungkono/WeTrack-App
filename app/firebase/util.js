@@ -274,11 +274,25 @@ export const createHistory = async({ userId, taskId, projectId, eventType, delet
     try {
         if(!userId) return null
 
+        const user = userId && await getDoc(doc(db, "users", userId));
+        const task = taskId && await getDoc(doc(db, "tasks", taskId));
+        const project = projectId && await getDoc(doc(db, "projects", projectId))
+
         const historyDocRef = collection(db, "histories")
         const newHistory =  await addDoc(historyDocRef, {
-            userId: userId,
-            taskId: taskId ?? null,
-            projectId: projectId ?? null,
+            user: userId && {
+                id: user.id,
+                fullName: user.data().fullName,
+                profileImage: user.data().profileImage
+            },
+            task: taskId && {
+                id: task.id,
+                taskName: task.data().taskName
+            },
+            project: projectId && {
+                id: project.id,
+                projectName: project.data().projectName
+            },
             eventType: eventType,
             deletedValue: deletedValue ?? null,
             action: action, // create, update, delete
@@ -298,11 +312,26 @@ export const createNotification = async({ userId, senderId, taskId, projectId, t
     try {
         if(!userId && !projectId) return null
 
+        const sender = senderId && await getDoc(doc(db, "users", sender));
+        const task = taskId && await getDoc(doc(db, "tasks", taskId));
+        const project = projectId && await getDoc(doc(db, "projects", projectId))
+
         const notificationDocRef = collection(db, "notifications")
         const newNotification = await addDoc(notificationDocRef, {
             userId: userId,
-            senderId: senderId ?? null,
-            taskId: taskId ?? null,
+            sender: senderId && {
+                id: sender.id,
+                fullName: sender.data().fullName,
+                profileImage: sender.data().profileImage
+            },
+            task: taskId && {
+                id: task.id,
+                taskName: task.data().taskName
+            },
+            project: projectId && {
+                id: project.id,
+                projectName: project.data().projectName
+            },
             projectId: projectId,
             type: type, // RoleChange, Mention, AddedComment, AssignedTask
             newValue: newValue ?? null,
