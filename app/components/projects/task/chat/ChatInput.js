@@ -40,6 +40,7 @@ export default function ChatInput({ name, onSubmit, placeholder, disabled = fals
                         disabled={disabled}
                         maxLength={1000}
                         rows={1}
+                        data-min-rows="1"
                         className="auto_expand bg-transparent w-full p-0 border-none focus:ring-0 resize-none h-auto md:max-h-[200px] text-xs md:text-sm"
                         onChange={(e) => setText(e.target.value)}
                         onInput={(e) => {

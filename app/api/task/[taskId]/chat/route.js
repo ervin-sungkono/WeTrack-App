@@ -1,9 +1,10 @@
 import { db } from "@/app/firebase/config";
 import { NextResponse } from "next/server";
-import { addDoc, collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
+import { addDoc, collection, query, where, getDocs, doc, getDoc, serverTimestamp, orderBy, limit } from "firebase/firestore";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { generateChatResponse } from "@/app/lib/OpenAIFunctions";
 import { getUserSession } from "@/app/lib/session";
+import { dateFormat } from "@/app/lib/date";
 
 // export async function GET(request, response){
 //     try{
@@ -123,26 +124,37 @@ export async function POST(request, response){
                 message: "Fail to create new chat"
             }, { status: 500 })
         }
-        
 
+        const chatSummaryCol = collection(db, "chatSummaries")
+        const chatSummaryQuery = query(chatSummaryCol, where("taskId", '==', taskId), orderBy("createdAt", "desc"), limit(8))
+        const chatSummarySnapshot = await getDocs(chatSummaryQuery)
+
+        const summary = chatSummarySnapshot.docs.map((doc)=> ({
+            role: "system",
+            content: `Summary: ${doc.data().content}. Created at: ${dateFormat(doc.data().createdAt.seconds, true)}`
+        }))
+        
         const chatResponse = await generateChatResponse({
             taskDescription: taskSnap.data().description,
+            summary,
             content
         })
 
-        const newAssistantChat = await addDoc(collection(db, 'chats'), {
+        const parsedResponse = JSON.parse(chatResponse.message.content)
+
+        await addDoc(collection(db, 'chats'), {
             taskId: taskId,
             role: "assistant",
-            content: chatResponse.message.content,
+            content: parsedResponse.response_chat,
             senderId: null,
             createdAt: new Date().toISOString(),
         });
 
-        if(!newAssistantChat){
-            return NextResponse.json({
-                message: "Fail to create new chat"
-            }, { status: 500 })
-        }
+        await addDoc(collection(db, "chatSummaries"), {
+            taskId: taskId,
+            content: parsedResponse.summarized_chat,
+            createdAt: serverTimestamp()
+        })
 
         return NextResponse.json({
             message: "Successfully create new chat"
