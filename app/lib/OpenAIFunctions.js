@@ -6,7 +6,7 @@ const openai = new OpenAI({
 
 const defaultPayload = {
     model: "gpt-3.5-turbo-0125",
-    max_tokens: 1000
+    max_tokens: 2048
 }
 
 export async function generateTaskByPrompt(projectDescription){
@@ -30,16 +30,21 @@ export async function generateTaskByPrompt(projectDescription){
     return response.choices[0]
 }
 
-export async function generateChatResponse({ taskDescription, content}){
+export async function generateChatResponse({ taskDescription, summary = [], content}){
     const response = await openai.chat.completions.create({
         ...defaultPayload,
         response_format: {
-            type: 'text'
+            type: 'json_object'
         },
         messages: [
             {
+                role: "system",
+                content: `You are given the last 8 chat history as a reference only for your next response, make sure to not include these chat histories directly on your response. IGNORE THESE HISTORIES IF IT DOES NOT ALIGN with the user's message`
+            },
+            ...summary,
+            {
                 role: "system", 
-                content: taskDescription ?? `From the given task description: ${taskDescription}, your job is to analyze it and answer anything related from the user's question. If the task description is vague or unclear, u may skip analyzing the task description and just answer what the user asks. DO NOT USE MARKDOWN FORMAT IN THE RESPONSE`
+                content: `${taskDescription ?? `From the given task description: ${taskDescription}, your job is to analyze it and answer anything related from the user's question. If the task description is vague or unclear, u may skip analyzing the task description and just answer what the user asks.`} Return the response format as a JSON object containing two attributes 'response_chat' which is the original response message to be given to the user and allows markdown usage, and 'summarized_chat' which is the summary of the conversation between the user and the assistant, no longer than 50 words without any markdowns allowed. Try to answer the question in Indonesian language, unless the user asks for another language in response`
             },
             {
                 role: "user", 
