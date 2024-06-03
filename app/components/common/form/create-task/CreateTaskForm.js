@@ -49,6 +49,7 @@ export default function CreateTaskForm({ onCancel }){
             const res = await createNewTask({
                 ...values,
                 taskName: values.taskName.trim(),
+                description: values.description?.trim(),
                 labels,
             })
 
@@ -146,6 +147,7 @@ export default function CreateTaskForm({ onCancel }){
                                 label="Deskripsi"
                                 name="description"
                                 placeholder={"Masukkan deskripsi tugas..."}
+                                max={1000}
                                 rows={5}
                             />
                             <div className="flex flex-col md:flex-row gap-2.5 md:gap-4">

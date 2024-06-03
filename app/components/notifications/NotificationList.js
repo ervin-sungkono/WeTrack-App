@@ -4,13 +4,13 @@ import NotificationPagination from "./NotificationPagination"
 
 export default function NotificationsList({notificationsData, pageSize, pageIndex, setPageIndex, pageCount, dataCount}){
     return (
-        <div className="flex flex-col justify-between min-h-screen">
-            <div className="flex flex-col gap-2 md:gap-4 mb-auto">
+        <div className="h-full overflow-y-auto flex flex-col justify-between min-h-screen">
+            <div className="h-full overflow-y-auto flex flex-col gap-2 md:gap-4 mb-auto custom-scrollbar">
                 {notificationsData.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize).map((item, index) => (
                     <NotificationsItem key={index} {...item}/>
                 ))}
             </div>
-            <div className="mt-8">
+            <div className="mt-4 md:mt-6">
                 <NotificationPagination
                     pageIndex={pageIndex}
                     pageSize={pageSize}
