@@ -129,10 +129,8 @@ export async function POST(request, response){
         const chatSummaryQuery = query(chatSummaryCol, where("taskId", '==', taskId), orderBy("createdAt", "desc"), limit(8))
         const chatSummarySnapshot = await getDocs(chatSummaryQuery)
 
-        const summary = chatSummarySnapshot.docs.map((doc)=> ({
-            role: "system",
-            content: `Summary: ${doc.data().content}. Created at: ${dateFormat(doc.data().createdAt.seconds, true)}`
-        }))
+        const summary = chatSummarySnapshot.docs.map((doc)=> (doc.data().content)).reverse().join(",")
+        console.log(summary)
         
         const chatResponse = await generateChatResponse({
             taskDescription: taskSnap.data().description,
