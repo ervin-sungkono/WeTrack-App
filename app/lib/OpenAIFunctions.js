@@ -39,12 +39,11 @@ export async function generateChatResponse({ taskDescription, summary = [], cont
         messages: [
             {
                 role: "system",
-                content: `You are given the last 8 chat history as a reference only for your next response, make sure to not include these chat histories directly on your response. IGNORE THESE HISTORIES IF IT DOES NOT ALIGN with the user's message`
+                content: `Last 8 message history: ${summary}. ONLY USE THIS HISTORY FOR REFERENCE ON YOUR RESPONSE, DO NOT INCLUDE IN YOUR RESPONSE`
             },
-            ...summary,
             {
                 role: "system", 
-                content: `${taskDescription ?? `From the given task description: ${taskDescription}, your job is to analyze it and answer anything related from the user's question. If the task description is vague or unclear, u may skip analyzing the task description and just answer what the user asks.`} Return the response format as a JSON object containing two attributes 'response_chat' which is the original response message to be given to the user and allows markdown usage, and 'summarized_chat' which is the summary of the conversation between the user and the assistant, no longer than 50 words without any markdowns allowed. Try to answer the question in Indonesian language, unless the user asks for another language in response`
+                content: `${taskDescription ?? `From the given task description: ${taskDescription}, your job is to analyze it and answer anything related from the user's question. If the task description is vague or unclear, u may skip analyzing the task description and just answer what the user asks.`} Return the response format as a JSON object containing two attributes 'response_chat' which is the original response message to be given to the user with an 800 words limit and allows markdown usage. 'summarized_chat' which is the summary of the conversation between the user and the assistant (example: the user asked ... and i responded with ...), 'summarized_chat' should not be longer than 60 words and no markdowns allowed. 'response_chat' must be in Indonesian language, unless the user asks for another language in response`
             },
             {
                 role: "user", 

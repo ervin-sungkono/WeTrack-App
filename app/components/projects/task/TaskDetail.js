@@ -312,7 +312,7 @@ function TaskDetail({ taskId, closeFn }){
         try{
             const res = await deleteTask({ taskId: taskId })
 
-            if(res.success) router.replace(`/projects/${project.id}/tasks`)
+            if(res.success && closeFn) closeFn()
         }catch(e){
             console.log(e)
         }finally{
