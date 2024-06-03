@@ -155,7 +155,8 @@ export const newTaskSchema = yup.object().shape({
         .max(50, "Nama tugas harus memiliki paling banyak 50 karakter!"),
     description: yup.string()
         .nullable()
-        .notRequired(),
+        .notRequired()
+        .max(1000, "Deskripsi melebihi batas karakter"),
     assignedTo: yup.string()
         .nullable()
         .notRequired(),

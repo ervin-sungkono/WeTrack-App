@@ -229,7 +229,7 @@ function TaskDetail({ taskId, closeFn }){
         const formData = new FormData(document.querySelector(`#task-${taskId}-description-form`))
         const taskDescription = formData.get(`task-${taskId}-description`) || null
 
-        if(taskDescription !== task.description) await updateTask({ taskId, description: taskDescription ? taskDescription : null})
+        if(taskDescription !== task.description) await updateTask({ taskId, description: taskDescription ? taskDescription.trim() : null})
 
         setUpdateLoading(false)
         setEditDescription(false)
@@ -514,6 +514,7 @@ function TaskDetail({ taskId, closeFn }){
                         </p> :
                         <SimpleTextareaForm
                             name={`task-${taskId}-description`}
+                            max={1000}
                             onSubmit={handleUpdateTaskDescription}
                             onBlur={() => setEditDescription(false)}
                             placeholder={"Masukkan deskripsi tugas..."}

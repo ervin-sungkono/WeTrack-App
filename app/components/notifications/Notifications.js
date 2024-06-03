@@ -111,68 +111,70 @@ export default function Notifications(){
 
     return (
         <DashboardLayout>
-            <div className="flex flex-col gap-4">
-                <Header title={"Notifikasi"} links={links}/>
-            </div>
-            <div className="h-full flex flex-col mt-4 md:mt-6 gap-4">
-                {notificationsData && (
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-2">
-                        <div className="w-full flex justify-between items-center gap-3 md:gap-6 z-almostFixed">
-                            <div className="relative">
-                                <button className="block md:hidden text-white bg-basic-blue hover:bg-basic-blue/80 rounded-md p-1.5" onClick={() => setFilterDropdown(!filterDropdown)}>
-                                    <FilterIcon size={20}/>
-                                </button>
-                                <div className={`${filterDropdown ? "block" : "hidden"} border border-dark-blue/30 md:border-none md:flex z-50 absolute -bottom-2 left-0 translate-y-full md:translate-y-0 px-2 py-3 bg-white rounded-md md:bg-transparent md:p-0 md:static flex flex-col md:flex-row gap-2 md:gap-4`}>
-                                    <div className="flex items-center gap-2">
-                                        <b className="hidden xs:block text-xs md:text-sm">Proyek:</b>
-                                        <SelectButton 
-                                            name={"project-button"}
-                                            options={[{label: "Proyek", value: null},...projectOptions]}
-                                            onChange={handleProjectChange}
-                                            reset={!project}
-                                        />
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <b className="hidden xs:block text-xs md:text-sm">Jenis:</b>
-                                        <SelectButton 
-                                            name={"type-button"}
-                                            options={[{label: "Jenis", value: null},...typeOptions]}
-                                            onChange={handleTypeChange}
-                                            reset={!type}
-                                        />
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <b className="hidden xs:block text-xs md:text-sm">Tampilkan:</b>
-                                        <SelectButton 
-                                            name={"page-size-button"}
-                                            options={pageSizeOptions}
-                                            onChange={handlePageSizeChange}
-                                        />
-                                    </div>
-                                    {(project || type) &&
-                                    <Button variant="primary" size="sm" onClick={() => resetFilter()}>
+            <div className="flex flex-col h-full overflow-y-auto">
+                <div className="flex flex-col gap-4">
+                    <Header title={"Notifikasi"} links={links}/>
+                </div>
+                <div className="flex-grow overflow-y-auto flex flex-col mt-4 md:mt-6 gap-4">
+                    {notificationsData && (
+                        <div className="flex flex-col md:flex-row justify-between items-center gap-2">
+                            <div className="w-full flex justify-between items-center gap-3 md:gap-6 z-almostFixed">
+                                <div className="relative">
+                                    <button className="block md:hidden text-white bg-basic-blue hover:bg-basic-blue/80 rounded-md p-1.5" onClick={() => setFilterDropdown(!filterDropdown)}>
+                                        <FilterIcon size={20}/>
+                                    </button>
+                                    <div className={`${filterDropdown ? "block" : "hidden"} border border-dark-blue/30 md:border-none md:flex z-50 absolute -bottom-2 left-0 translate-y-full md:translate-y-0 px-2 py-3 bg-white rounded-md md:bg-transparent md:p-0 md:static flex flex-col md:flex-row gap-2 md:gap-4`}>
                                         <div className="flex items-center gap-2">
-                                            <CloseFilterIcon size={16}/>
-                                            <p>Hapus Filter</p>
+                                            <b className="hidden xs:block text-xs md:text-sm">Proyek:</b>
+                                            <SelectButton 
+                                                name={"project-button"}
+                                                options={[{label: "Proyek", value: null},...projectOptions]}
+                                                onChange={handleProjectChange}
+                                                reset={!project}
+                                            />
                                         </div>
-                                    </Button>}
+                                        <div className="flex items-center gap-2">
+                                            <b className="hidden xs:block text-xs md:text-sm">Jenis:</b>
+                                            <SelectButton 
+                                                name={"type-button"}
+                                                options={[{label: "Jenis", value: null},...typeOptions]}
+                                                onChange={handleTypeChange}
+                                                reset={!type}
+                                            />
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <b className="hidden xs:block text-xs md:text-sm">Tampilkan:</b>
+                                            <SelectButton 
+                                                name={"page-size-button"}
+                                                options={pageSizeOptions}
+                                                onChange={handlePageSizeChange}
+                                            />
+                                        </div>
+                                        {(project || type) &&
+                                        <Button variant="primary" size="sm" onClick={() => resetFilter()}>
+                                            <div className="flex items-center gap-2">
+                                                <CloseFilterIcon size={16}/>
+                                                <p>Hapus Filter</p>
+                                            </div>
+                                        </Button>}
+                                    </div>
                                 </div>
+                                <SortButton sorting={sorting} setSorting={setSorting}/>
                             </div>
-                            <SortButton sorting={sorting} setSorting={setSorting}/>
                         </div>
-                    </div>
-                )}
-                {notificationsData && notificationsData.length > 0 ? 
-                    <NotificationsList
-                        notificationsData={sortDateTimestampFn({data: notificationsData, sortDirection: sorting})}
-                        pageSize={pageSize}
-                        pageIndex={pageIndex}
-                        setPageIndex={setPageIndex}
-                        pageCount={pageCount}
-                        dataCount={notificationsData.length}
-                    /> :
-                    <EmptyState message="Belum ada data notifikasi yang tersedia."/>
-                }
+                    )}
+                    {notificationsData && notificationsData.length > 0 ? 
+                        <NotificationsList
+                            notificationsData={sortDateTimestampFn({data: notificationsData, sortDirection: sorting})}
+                            pageSize={pageSize}
+                            pageIndex={pageIndex}
+                            setPageIndex={setPageIndex}
+                            pageCount={pageCount}
+                            dataCount={notificationsData.length}
+                        /> :
+                        <EmptyState message="Belum ada data notifikasi yang tersedia."/>
+                    }
+                </div>
             </div>
         </DashboardLayout>
     )
