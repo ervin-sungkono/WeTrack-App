@@ -25,7 +25,7 @@ export default function ChatInput({ name, onSubmit, placeholder, disabled = fals
             <form 
                 onSubmit={(e) => {
                     e.preventDefault()
-                    onSubmit(text)
+                    onSubmit(text.trim())
                     setText("")
                 }}
                 className="w-full flex gap-1"
@@ -38,8 +38,8 @@ export default function ChatInput({ name, onSubmit, placeholder, disabled = fals
                         placeholder={placeholder}
                         value={text}
                         disabled={disabled}
+                        maxLength={1000}
                         rows={1}
-                        data-min-rows="1"
                         className="auto_expand bg-transparent w-full p-0 border-none focus:ring-0 resize-none h-auto md:max-h-[200px] text-xs md:text-sm"
                         onChange={(e) => setText(e.target.value)}
                         onInput={(e) => {

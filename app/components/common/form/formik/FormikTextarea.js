@@ -4,7 +4,7 @@ import FormikErrorMessage from "./FormikErrorMessage"
 /**
  * FormikTextarea Component
  */
-export default function FormikTextarea({ name, required, label, placeholder, rows = 4, resize = true }){
+export default function FormikTextarea({ name, max = null, required, label, placeholder, rows = 4, resize = true }){
     return(
         <Field name={name}>
             {(formikField) => {
@@ -16,6 +16,7 @@ export default function FormikTextarea({ name, required, label, placeholder, row
                         </label>
                         <textarea
                             {...formikField.field}
+                            maxLength={max}
                             name={name}
                             placeholder={placeholder}
                             rows={rows}
@@ -25,7 +26,14 @@ export default function FormikTextarea({ name, required, label, placeholder, row
                                 ${resize ? "" : "resize-none"}` 
                             }
                         />
-                        <FormikErrorMessage name={name}/>
+                        <div className="flex items-start gap-1.5">
+                            <FormikErrorMessage name={name}/>
+                            <div className={`flex ml-auto items-center gap-1 text-xs ${formikField.meta.error ? "text-red-600" : "text-dark-blue/80"}`}>
+                                <p>{formikField.field.value?.trim().length ?? 0}</p>
+                                <p>/</p>
+                                <p>{max}</p>
+                            </div>
+                        </div>
                     </div>
                 );
             }}
