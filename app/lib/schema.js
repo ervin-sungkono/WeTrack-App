@@ -74,7 +74,7 @@ export const updateProfileSchema = yup.object().shape({
 })
 
 export const deleteProfileSchema = yup.object().shape({
-    password: yup
+    confirmationPassword: yup
         .string()
         .required("Kata sandi harus diisi!")
 })

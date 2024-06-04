@@ -22,9 +22,7 @@ export default function ChangePasswordForm({onConfirm, onClose}){
         >
             <FormikWrapper
                 initialValues={initialValues}
-                onSubmit={(values, { setFieldError }) => {
-                    onConfirm(values, setFieldError)
-                }}
+                onSubmit={onConfirm}
                 validationSchema={changePasswordSchema}
                 children={(formik) => (
                     <>
