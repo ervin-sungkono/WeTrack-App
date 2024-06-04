@@ -2,7 +2,7 @@
 import { useState } from "react"
 import PopUpForm from "./PopUpForm"
 
-export default function PopUpMultiStepForm({steps, onConfirm, onClose, error, errorMessage}){
+export default function PopUpMultiStepForm({steps, onConfirm, onClose}){
     const [formStep, setFormStep] = useState(0)
 
     const prevFormStep = () => setFormStep((currentStep) => currentStep - 1)
@@ -25,7 +25,14 @@ export default function PopUpMultiStepForm({steps, onConfirm, onClose, error, er
             </div>
             <div>
                 {steps.map((step, index) => (
-                    formStep === index && <step.Form nextFormStep={nextFormStep} prevFormStep={prevFormStep} onConfirm={onConfirm} onClose={onClose} error={error} errorMessage={errorMessage} key={step.label}/>
+                    formStep === index && 
+                    <step.Form 
+                        nextFormStep={nextFormStep} 
+                        prevFormStep={prevFormStep} 
+                        onConfirm={onConfirm} 
+                        onClose={onClose} 
+                        key={step.label}
+                    />
                 ))}
             </div>
         </PopUpForm>

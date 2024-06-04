@@ -49,7 +49,7 @@ export default function ForgotPasswordForm(){
             }
         }catch(error){
             setError(true)
-            setErrorMessage("Terjadi kesalahan, silakan coba lagi!")
+            setErrorMessage("Terjadi kesalahan, coba lagi nanti!")
         }finally{
             setLoading(false)
         }
