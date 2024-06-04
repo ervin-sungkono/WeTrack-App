@@ -276,6 +276,20 @@ input::-ms-clear {
     overflow: visible !important;
 }
 
+.fc-daygrid-day-bottom .fc-daygrid-more-link{
+    background-color: rgba(71, 56, 159, 0.3) !important;
+    color: $dark-blue !important;
+    margin-top: 6px !important;
+    padding: 4px 6px !important;
+    font-size: 12.8px !important;
+    border-radius: 99px !important;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.fc-daygrid-day-bottom .fc-daygrid-more-link:hover{
+    background-color: rgba(71, 56, 159, 0.5) !important;
+}
+
 // Tablets
 @media screen and (max-width: 768px) {
     .fc .fc-toolbar-title {
