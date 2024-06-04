@@ -1,4 +1,4 @@
-import { updateDoc, getDoc, doc, collection, where, orderBy, getDocs, query } from 'firebase/firestore';
+import { updateDoc, getDoc, doc, collection, where, orderBy, getDocs, query, writeBatch } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
@@ -65,6 +65,8 @@ export async function POST(request, response) {
             }, { status: 404 });
         }
 
+        const batch = writeBatch(db)
+
         const q = query(collection(db, 'taskStatuses'), where('projectId', '==', projectId), orderBy('order'))
         const querySnapshot = await getDocs(q)
         const taskDocList = querySnapshot.docs.map(doc => ({
@@ -73,24 +75,35 @@ export async function POST(request, response) {
         }))
 
         // update status order collection
-        await updateDoc(taskStatusDocRef, {
+        batch.update(taskStatusDocRef, {
             order: newIndex
         })
+        // await updateDoc(taskStatusDocRef, {
+        //     order: newIndex
+        // })
 
         if(newIndex > oldIndex){
             for(let i = oldIndex; i < newIndex; i++){
-                await updateDoc(taskDocList[i + 1].ref, {
+                batch.update(taskDocList[i + 1].ref, {
                     order: i
                 })
+                // await updateDoc(taskDocList[i + 1].ref, {
+                //     order: i
+                // })
             }
         }
         else if(newIndex < oldIndex){
             for(let i = oldIndex; i > newIndex; i--){
-                await updateDoc(taskDocList[i - 1].ref, {
+                batch.update(taskDocList[i - 1].ref, {
                     order: i
                 })
+                // await updateDoc(taskDocList[i - 1].ref, {
+                //     order: i
+                // })
             }
         }
+
+        await batch.commit()
 
         return NextResponse.json({
             message: 'Task updated successfully',
