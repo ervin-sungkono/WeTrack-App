@@ -1,4 +1,4 @@
-import { addDoc, updateDoc, getDoc, doc, collection, where, orderBy, getDocs, query, serverTimestamp, and, setDoc } from 'firebase/firestore';
+import { addDoc, updateDoc, getDoc, doc, collection, where, orderBy, getDocs, query, serverTimestamp, and, setDoc, writeBatch } from 'firebase/firestore';
 import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
@@ -46,7 +46,6 @@ export async function POST(request, response) {
         }
 
         const projectRole = await getProjectRole({projectId: taskSnap.data().projectId, userId})
-        console.log(projectRole)
         if(projectRole !== 'Owner' && projectRole !== 'Member'){
             return NextResponse.json({
                 message: "Unauthorized",
@@ -101,6 +100,7 @@ export async function POST(request, response) {
             }, { status: 200 });
         }
 
+        const batch = writeBatch(db)
         // if the old status is equal to new status
         if(taskSnap.data().status === newStatusId){
             const q = query(collection(db, 'tasks'), and(where('status', '==', newStatusId), where('type', '==', 'Task')), orderBy('order'))
@@ -110,27 +110,41 @@ export async function POST(request, response) {
                 order: doc.data().order
             }))
             // update status order collection
-            await updateDoc(taskRef, {
+            batch.update(taskRef, {
                 order: newIndex,
                 updatedAt: serverTimestamp()
             })
+            // await updateDoc(taskRef, {
+            //     order: newIndex,
+            //     updatedAt: serverTimestamp()
+            // })
 
             if(newIndex > oldIndex){
                 for(let i = oldIndex; i < newIndex; i++){
-                    await updateDoc(taskDocList[i + 1].ref, {
+                    batch.update(taskDocList[i + 1].ref, {
                         order: i,
                         updatedAt: serverTimestamp()
                     })
+                    // await updateDoc(taskDocList[i + 1].ref, {
+                    //     order: i,
+                    //     updatedAt: serverTimestamp()
+                    // })
                 }
             }
             else if(newIndex < oldIndex){
                 for(let i = oldIndex; i > newIndex; i--){
-                    await updateDoc(taskDocList[i - 1].ref, {
+                    batch.update(taskDocList[i - 1].ref, {
                         order: i,
                         updatedAt: serverTimestamp()
                     })
+                    // await updateDoc(taskDocList[i - 1].ref, {
+                    //     order: i,
+                    //     updatedAt: serverTimestamp()
+                    // })
                 }
             }
+
+            await batch.commit()
         }
         else{
             // Get the new status task query
@@ -154,44 +168,49 @@ export async function POST(request, response) {
 
             // Update the order for the other task
             for(let i = newIndexOrder; i < taskDocList.length; i++){
-                await updateDoc(taskDocList[i].ref, {
+                batch.update(taskDocList[i].ref, {
                     order: i + 1,
                     updatedAt: serverTimestamp()
                 })
+                // await updateDoc(taskDocList[i].ref, {
+                //     order: i + 1,
+                //     updatedAt: serverTimestamp()
+                // })
             }
 
             // Update the old status order counter
-            if(!statusCounterSnap.exists()){
-                await setDoc(statusCounterRef, {
-                    lastOrder: 0,
-                    updatedAt: serverTimestamp()
-                })
-            }else{
-                await updateDoc(statusCounterRef, {
-                    lastOrder: statusCounterSnap.data().lastOrder - 1,
-                    updatedAt: serverTimestamp()
-                })
-            }  
+            batch.set(statusCounterRef, {
+                lastOrder: statusCounterSnap.exists() ? statusCounterSnap.data().lastOrder - 1 : 0,
+                updatedAt: serverTimestamp()
+            })
+            // await setDoc(statusCounterRef, {
+            //     lastOrder: statusCounterSnap.exists() ? statusCounterSnap.data().lastOrder - 1 : 0,
+            //     updatedAt: serverTimestamp()
+            // })
 
             // Move the task to the new document
-            await updateDoc(taskRef, {
+            batch.update(taskRef, {
                 status: newStatusId,
                 order: newIndexOrder,
                 updatedAt: serverTimestamp()
             })
+            // await updateDoc(taskRef, {
+            //     status: newStatusId,
+            //     order: newIndexOrder,
+            //     updatedAt: serverTimestamp()
+            // })
 
             // Update the new status order counter
-            if(!newStatusCounterSnap.exists()){
-                await setDoc(newStatusCounterRef, {
-                    lastOrder: 0,
-                    updatedAt: serverTimestamp()
-                })
-            }else{
-                await updateDoc(newStatusCounterRef, {
-                    lastOrder: newStatusCounterSnap.data().lastOrder + 1,
-                    updatedAt: serverTimestamp()
-                })
-            }    
+            batch.set(newStatusCounterRef, {
+                lastOrder: newStatusCounterSnap.exists() ? newStatusCounterSnap.data().lastOrder + 1 : 0,
+                updatedAt: serverTimestamp()
+            })
+            // await setDoc(newStatusCounterRef, {
+            //     lastOrder: newStatusCounterSnap.exists() ? newStatusCounterSnap.data().lastOrder - 1 : 0,
+            //     updatedAt: serverTimestamp()
+            // })   
+
+            await batch.commit()
 
             await createHistory({
                 userId: userId,
