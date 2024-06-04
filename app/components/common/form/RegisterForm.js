@@ -1,7 +1,7 @@
 /* eslint-disable react/no-children-prop */
 "use client"
 
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import { registerSchema } from "@/app/lib/schema"
 import { useSession } from "next-auth/react"
@@ -24,13 +24,9 @@ export default function RegisterForm(){
         confirmPassword: ""
     }
 
-    const [error, setError] = useState("")
-    const [errorMessage, setErrorMessage] = useState("Terjadi kesalahan, silakan coba lagi!")
     const [success, setSuccess] = useState(false)
     const [loading, setLoading] = useState(false)
     const router = useRouter()
-    const searchParams = useSearchParams()
-    const callbackUrl = searchParams.get('callbackUrl')
     const { status } = useSession()
 
     useEffect(() => {
@@ -39,11 +35,10 @@ export default function RegisterForm(){
         }
     })
 
-    const handleSubmit = async (values) => {
+    const handleSubmit = async (values, setFieldError) => {
         let fullName = sanitizeName(values.fullName)
         let email = values.email.toLowerCase()
 
-        setError(false);
         setLoading(true);
         try {
             const res = await signUp({
@@ -52,19 +47,17 @@ export default function RegisterForm(){
                 email: email,
                 redirect: false
             });
-            if (res.error) {
+            if(res.error){
                 setError(true);
                 console.log(JSON.parse(res.error).errors)
-            } else {
+            }else{
                 setSuccess(true);
             }
-        } catch (error) {
-            setError(true);
+        }catch(error) {
             if(error.message.includes("auth/email-already-in-use")){
-                setErrorMessage("Email sudah digunakan!")
+                setFieldError("email", "Email sudah digunakan!")
             }
-            console.log(error.message)
-        } finally {
+        }finally{
             setLoading(false);
         }
     }
@@ -82,7 +75,9 @@ export default function RegisterForm(){
             <div className="p-4 md:p-6 mt-4 bg-white shadow-lg w-5/6 lg:w-2/5 rounded-xl max-w-lg lg:max-w-2xl">
                 <FormikWrapper
                     initialValues={initialValues}
-                    onSubmit={handleSubmit}
+                    onSubmit={(values, { setFieldError }) => {
+                        handleSubmit(values, setFieldError)
+                    }}
                     validationSchema={registerSchema}
                     children={(formik) => (
                         <div>
@@ -122,7 +117,6 @@ export default function RegisterForm(){
                                     placeholder="Masukkan konfirmasi kata sandi..."
                                 />
                             </div>
-                            {error && <p className="mb-2 text-md text-center text-danger-red font-medium">{errorMessage}</p>}
                             <div className="flex justify-center">
                                 <Button variant="primary" type="submit" className="w-full">
                                     Daftar

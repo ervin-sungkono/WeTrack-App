@@ -2,7 +2,7 @@ import PopUpMultiStepForm from "../../alert/PopUpMultiStepForm"
 import DeleteAccountConfirmationForm from "./DeleteAccountConfirmationForm"
 import DeleteAccountValidationForm from "./DeleteAccountValidationForm"
 
-export default function DeleteAccountForm({onConfirm, onClose, error, errorMessage}){
+export default function DeleteAccountForm({onConfirm, onClose}){
     const steps = [
         {
             label: "Konfirmasi Hapus Akun",
@@ -20,8 +20,6 @@ export default function DeleteAccountForm({onConfirm, onClose, error, errorMessa
             steps={steps}
             onConfirm={onConfirm}
             onClose={onClose}
-            error={error}
-            errorMessage={errorMessage}
         />
     )
 }

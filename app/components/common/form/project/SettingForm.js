@@ -17,11 +17,6 @@ import { useRole } from "@/app/lib/context/role";
 import { validateUserRole } from "@/app/lib/helper";
 
 export default function SettingForm({projectId}){
-
-    const [error, setError] = useState(false)
-    const [errorMessage, setErrorMessage] = useState("")
-    const [errorDelete, setErrorDelete] = useState(false)
-    const [errorDeleteMessage, setErrorDeleteMessage] = useState("")
     const [loading, setLoading] = useState(true)
     const router = useRouter()
     const role = useRole()
@@ -57,7 +52,6 @@ export default function SettingForm({projectId}){
     }
 
     const handleUpdateProject = async (values) => {
-        setError(false)
         setLoading(true)
         try{
             const res = await updateProject({
@@ -68,7 +62,6 @@ export default function SettingForm({projectId}){
                 endStatus: values.endStatus
             })
             if(res.error){
-                setError(true)
                 console.log(JSON.parse(res.error).errors)
             }else{
                 setSuccessUpdateProject(true)
@@ -80,13 +73,10 @@ export default function SettingForm({projectId}){
         }
     }
 
-    const handleDeleteProject = async (values) => {
-        setError(false)
-        setErrorDelete(false)
+    const handleDeleteProject = async (values, setFieldError) => {
         setLoading(true)
         if(values.projectName !== projectSettings.projectName){
-            setErrorDelete(true)
-            setErrorDeleteMessage("Nama proyek yang Anda masukkan tidak sesuai!")
+            setFieldError("projectName", "Nama proyek yang Anda masukkan tidak sesuai!")
             setLoading(false)
             return
         }
@@ -95,7 +85,6 @@ export default function SettingForm({projectId}){
                 id: projectId
             })
             if(res.error){
-                setErrorDelete(true)
                 console.log(JSON.parse(res.error).errors)
             }else{
                 setDeleteProjectMode(false)
@@ -128,7 +117,6 @@ export default function SettingForm({projectId}){
                 setProjectName(data.projectName)
                 setLoading(false)
             }else{
-                setError(true)
                 setLoading(false)
             }
         })
@@ -174,7 +162,6 @@ export default function SettingForm({projectId}){
                                     placeholder="Masukkan nama proyek..."
                                     disabled={validateUserRole({ userRole: role, minimumRole: 'Owner' }) ? false : true}
                                 />
-                                {error && <p className="text-xs md:text-sm text-danger-red font-medium">{errorMessage}</p>}
                             </div>
                             <div className="mb-4">
                                 <FormikField
@@ -185,7 +172,6 @@ export default function SettingForm({projectId}){
                                     placeholder="Masukkan kunci proyek..."
                                     disabled={validateUserRole({ userRole: role, minimumRole: 'Owner' }) ? false : true}
                                 />
-                                {error && <p className="text-xs md:text-sm text-danger-red font-medium">{errorMessage}</p>}
                             </div>
                             {validateUserRole({ userRole: role, minimumRole: 'Owner' }) ? (
                                 <>
@@ -232,7 +218,6 @@ export default function SettingForm({projectId}){
                                 <div className="flex justify-between">
                                     <div>
                                         <Button onClick={() => {
-                                            setErrorDelete(false)
                                             setDeleteProjectMode(true)
                                         }} variant="danger">Hapus Proyek</Button>
                                     </div>
@@ -251,8 +236,6 @@ export default function SettingForm({projectId}){
                     <DeleteProjectForm 
                         onConfirm={handleDeleteProject}
                         onClose={() => setDeleteProjectMode(false)}
-                        error={errorDelete}
-                        errorMessage={errorDeleteMessage}
                         projectName={projectName}
                     />
                 )}

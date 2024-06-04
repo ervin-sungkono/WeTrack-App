@@ -5,7 +5,7 @@ import Button from "../../button/Button"
 import FormikField from "../formik/FormikField"
 import FormikWrapper from "../formik/FormikWrapper"
 
-export default function DeleteAccountValidationForm({prevFormStep, onConfirm, error, errorMessage}){
+export default function DeleteAccountValidationForm({prevFormStep, onConfirm}){
     const initialValues = {
         password: ""
     }
@@ -19,7 +19,9 @@ export default function DeleteAccountValidationForm({prevFormStep, onConfirm, er
         >
             <FormikWrapper
                 initialValues={initialValues}
-                onSubmit={onConfirm}
+                onSubmit={(values, { setFieldError }) => {
+                    onConfirm(values, setFieldError)
+                }}
                 validationSchema={deleteProfileSchema}
                 children={(formik) => (
                     <>
@@ -32,7 +34,6 @@ export default function DeleteAccountValidationForm({prevFormStep, onConfirm, er
                                 placeholder="Masukkan kata sandi..."
                             />
                         </div>
-                        {error && (<p className="mt-1 mb-2 text-xs text-left text-[#FF0000]">{errorMessage}</p>)}
                         <div className="mt-8 flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
                             <Button variant="danger" type="submit">Hapus</Button>
                             <Button variant="secondary" onClick={prevFormStep}>Kembali</Button>
