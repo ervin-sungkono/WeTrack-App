@@ -126,7 +126,7 @@ export default function ProfileLayout(){
         )
     }
 
-    const handleChangePassword = async (values, setFieldError) => {
+    const handleChangePassword = async (values, { setFieldError }) => {
         setLoading(true);
         try{
             const res = await changeUserPassword({
@@ -192,26 +192,8 @@ export default function ProfileLayout(){
         }
     }
 
-    const handleDeleteAccount = async (values, setFieldError) => {
-        setLoading(true);
-        try{
-            const res = await deleteUserProfile({
-                password: values.password
-            })
-            if(res.error){
-                console.log(res.error)
-            }else{
-                setSuccessDeleteAccount(true)
-            }
-        }catch(error){
-            if(error.message.includes("auth/invalid-credential")){
-                setFieldError("password", "Kata sandi yang Anda masukkan tidak sesuai dengan kredensial Anda!")
-            }else if(error.message.includes("auth/too-many-requests")){
-                setFieldError("password", "Terlalu banyak percobaan yang gagal, coba lagi nanti!")
-            }
-        }finally{
-            setLoading(false);
-        }
+    const handleDeleteAccount = () => {
+        setSuccessDeleteAccount(true)
     }
     
     if(!session){
