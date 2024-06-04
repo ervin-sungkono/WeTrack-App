@@ -45,7 +45,7 @@ export const getContentAuthorization = async({ projectId }) => {
     const userId = session.user.uid
     if(!userId) return false
 
-    const q = query(collection(db, "teams"), and(where("projectId", '==', projectId), where("userId", '==', userId)))
+    const q = query(collection(db, "teams"), and(where("projectId", '==', projectId), where("userId", '==', userId), where("deletedAt", "==", null)))
     const querySnapshot = await getDocs(q)
 
     return !querySnapshot.empty
@@ -206,6 +206,63 @@ export const deleteAttachments = async({ taskId }) => {
 
     } catch (error) {
         throw new Error("Something went wrong when deleting label")
+    }
+}
+
+export const deleteComments = async({ taskId }) => {
+    try {
+        if(!taskId) return null
+
+        const collectionRef = collection(db, "comments")
+        const q = query(collectionRef, where("taskId", "==", taskId))
+        const commentDocs = await getDocs(q)
+
+        if(!commentDocs.empty) {
+            for(const doc of commentDocs.docs) {
+                await deleteDoc(doc.ref)
+            }
+        }
+
+    } catch (error) {
+        throw new Error("Something went wrong when deleting comments")
+    }
+}
+
+export const deleteChats = async({ taskId }) => {
+    try {
+        if(!taskId) return null
+
+        const collectionRef = collection(db, "chats")
+        const q = query(collectionRef, where("taskId", "==", taskId))
+        const chatDocs = await getDocs(q)
+
+        if(!chatDocs.empty) {
+            for(const doc of chatDocs.docs) {
+                await deleteDoc(doc.ref)
+            }
+        }
+
+    } catch (error) {
+        throw new Error("Something went wrong when deleting chats")
+    }
+}
+
+export const deleteChatSummaries = async({ taskId }) => {
+    try {
+        if(!taskId) return null
+
+        const collectionRef = collection(db, "chatSummaries")
+        const q = query(collectionRef, where("taskId", "==", taskId))
+        const chatSummaryDocs = await getDocs(q)
+
+        if(!chatSummaryDocs.empty) {
+            for(const doc of chatSummaryDocs.docs) {
+                await deleteDoc(doc.ref)
+            }
+        }
+
+    } catch (error) {
+        throw new Error("Something went wrong when deleting chat summaries")
     }
 }
 
