@@ -157,7 +157,7 @@ export async function PUT(request, response) {
                 });
 
                 await createHistory({
-                    userId: userId,
+                    userId: null,
                     taskId: taskDoc.id,
                     projectId: projectId,
                     action: getHistoryAction.update,
@@ -178,7 +178,7 @@ export async function PUT(request, response) {
                 });
 
                 await createHistory({
-                    userId: userId,
+                    userId: null,
                     taskId: taskDoc.id,
                     projectId: projectId,
                     action: getHistoryAction.update,
