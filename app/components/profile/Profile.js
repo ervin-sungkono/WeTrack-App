@@ -22,8 +22,6 @@ export default function ProfileLayout(){
     const { data: session, update } = useSession()
     const router = useRouter()
     const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(false)
-    const [errorMessage, setErrorMessage] = useState("")
     const [changePassword, setChangePassword] = useState(false)
     const [successChangePassword, setSuccessChangePassword] = useState(false)
     const [updateProfile, setUpdateProfile] = useState(false)
@@ -128,8 +126,7 @@ export default function ProfileLayout(){
         )
     }
 
-    const handleChangePassword = async (values) => {
-        setError(false);
+    const handleChangePassword = async (values, { setFieldError }) => {
         setLoading(true);
         try{
             const res = await changeUserPassword({
@@ -137,21 +134,22 @@ export default function ProfileLayout(){
                 newPassword: values.newPassword
             })
             if(res.error){
-                setError(true);
                 console.log(res.error)
             }else{
                 setSuccessChangePassword(true)
             }
         }catch(error){
-            setError(true);
-            setErrorMessage("Kata sandi lama yang Anda masukkan tidak sesuai dengan kredensial Anda!");
+            if(error.message.includes("auth/invalid-credential")){
+                setFieldError("oldPassword", "Kata sandi lama yang Anda masukkan tidak sesuai dengan kredensial Anda!")
+            }else if(error.message.includes("auth/too-many-requests")){
+                setFieldError("oldPassword", "Terlalu banyak percobaan yang gagal, coba lagi nanti!")
+            }
         }finally{
             setLoading(false);
         }
     }
 
     const handleUpdateProfile = async (values) => {
-        setError(false);
         setLoading(true);
         const formData = new FormData()
         formData.enctype = "multipart/form-data"
@@ -166,14 +164,12 @@ export default function ProfileLayout(){
         try {
             const res = await updateUserProfile(formData)
             if(res.error){
-                setError(true);
                 console.log(JSON.parse(res.error).errors)
             }else{
                 if(profileImageDeleted){
                     try {
                         const imageDeleteRes = await deleteUserImageProfile()
                         if(imageDeleteRes.error){
-                            setError(true);
                             console.log(imageDeleteRes.error)
                         }else{
                             setSuccessUpdateProfile(true)
@@ -190,32 +186,14 @@ export default function ProfileLayout(){
                 })
             }
         }catch(error){
-            setError(true);
             console.log(error)
         }finally{
             setLoading(false);
         }
     }
 
-    const handleDeleteAccount = async (values) => {
-        setError(false);
-        setLoading(true);
-        try {
-            const res = await deleteUserProfile({
-                password: values.password
-            })
-            if(res.error){
-                setError(true);
-                console.log(res.error)
-            }else{
-                setSuccessDeleteAccount(true)
-            }
-        }catch (error){
-            setError(true);
-            setErrorMessage("Kata sandi yang Anda masukkan tidak sesuai dengan kredensial Anda!");
-        }finally{
-            setLoading(false);
-        }
+    const handleDeleteAccount = () => {
+        setSuccessDeleteAccount(true)
     }
     
     if(!session){
@@ -313,22 +291,16 @@ export default function ProfileLayout(){
                                     <p className="text-base md:text-lg font-semibold">Kelola Akun</p>
                                     <div className="flex flex-col xs:flex-row gap-2 md:gap-4 mt-2 md:mt-4 mb-12">
                                         <Button variant="primary" onClick={() => {
-                                            setError(false)
-                                            setErrorMessage("")
                                             setChangePassword(true)
                                         }}>
                                             Ganti Kata Sandi
                                         </Button>
                                         <Button variant="primary" outline onClick={() => {
-                                            setError(false)
-                                            setErrorMessage("")
                                             setUpdateProfile(true)
                                         }}>
                                             Perbarui Profil
                                         </Button>
                                         <Button variant="danger" outline onClick={() => {
-                                            setError(false)
-                                            setErrorMessage("")
                                             setDeleteAccount(true)
                                         }}>
                                             Hapus Akun
@@ -343,8 +315,6 @@ export default function ProfileLayout(){
                     <ChangePasswordForm
                         onConfirm={handleChangePassword}
                         onClose={() => setChangePassword(false)}
-                        error={error}
-                        errorMessage={errorMessage}
                     />
                 )}
                 {successChangePassword &&
@@ -365,8 +335,6 @@ export default function ProfileLayout(){
                     <DeleteAccountForm
                         onConfirm={handleDeleteAccount}
                         onClose={() => setDeleteAccount(false)}
-                        error={error}
-                        errorMessage={errorMessage}
                     />
                 )}
                 {successDeleteAccount &&

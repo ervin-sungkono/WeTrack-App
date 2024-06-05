@@ -69,13 +69,13 @@ export default function AttachmentSection({ taskId }){
             fnCall: async() => {
                 const zip = new JSZip()
                 
-                await Promise.all(attachmentData.map(async(attachment) => {
+                attachmentData.forEach(async(attachment) => {
                     const image = await fetch(attachment.attachmentStoragePath)
                         .then(res => res.blob())
                         .catch(e => console.log(e))
 
                     zip.file(attachment.originalFileName, image)
-                }))
+                })
 
                 zip.generateAsync({type: "blob"}).then(function(content) {
                     saveAs(content, `${taskId}_attachments.zip`);
@@ -87,6 +87,14 @@ export default function AttachmentSection({ taskId }){
             fnCall: () => showDeleteConfirmation("all")
         }
     ]
+
+    const handleDownload = async(attachmentLocation, filename) => {
+        const image = await fetch(attachmentLocation)
+                .then(res => res.blob())
+                .catch(e => console.log(e))
+        
+        saveAs(image, filename)
+    }
 
     useEffect(() => {
         if(!taskId) return
@@ -134,7 +142,7 @@ export default function AttachmentSection({ taskId }){
                 return (
                     <div className="flex gap-1">
                         <CustomTooltip id={`download-file-${id}`} content={"Unduh Lampiran"}>
-                            <button onClick={() => saveAs(attachmentLocation, filename)} className="hover:bg-gray-200 p-1.5 rounded transition-colors duration-300">
+                            <button onClick={() => handleDownload(attachmentLocation, filename)} className="hover:bg-gray-200 p-1.5 rounded transition-colors duration-300">
                                 <DownloadIcon size={20}/>
                             </button>
                         </CustomTooltip>
