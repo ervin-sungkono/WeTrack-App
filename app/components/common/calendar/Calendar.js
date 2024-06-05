@@ -195,6 +195,7 @@ export default function Calendar({projectKey, projectId, tasks, isEditable}){
             eventResizableFromStart={isEditable}
             eventDrop={handleEventDrop}
             eventResize={handleEventResize}
+            dayMaxEvents={3}
         />
     )
 }

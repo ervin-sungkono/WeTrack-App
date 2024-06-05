@@ -5,7 +5,7 @@ import FormikWrapper from "../formik/FormikWrapper"
 import FormikField from "../formik/FormikField"
 import Button from "../../button/Button"
 
-export default function ChangePasswordForm({onConfirm, onClose, error, errorMessage}){
+export default function ChangePasswordForm({onConfirm, onClose}){
     const initialValues = {
         oldPassword: "",
         newPassword: "",
@@ -55,7 +55,6 @@ export default function ChangePasswordForm({onConfirm, onClose, error, errorMess
                                 />
                             </div>
                         </div>
-                        {error && (<p className="mt-1 mb-2 text-xs text-left text-[#FF0000]">{errorMessage}</p>)}
                         <div className="flex gap-2 md:gap-4 items-center justify-end mt-4 md:mt-8">
                             <Button variant="secondary" onClick={onClose}>Batal</Button>
                             <Button variant="primary" type="submit">Simpan Perubahan</Button>

@@ -1,45 +1,64 @@
+"use client"
 /* eslint-disable react/no-children-prop */
 import { deleteProfileSchema } from "@/app/lib/schema"
-import PopUpForm from "../../alert/PopUpForm"
+import { deleteUserProfile } from "@/app/lib/fetch/user"
 import Button from "../../button/Button"
 import FormikField from "../formik/FormikField"
 import FormikWrapper from "../formik/FormikWrapper"
+import { useState } from "react"
+import PopUpLoad from "../../alert/PopUpLoad"
 
-export default function DeleteAccountValidationForm({prevFormStep, onConfirm, error, errorMessage}){
+export default function DeleteAccountValidationForm({prevFormStep, onConfirm}){
+    const [loading, setLoading] = useState(false)
     const initialValues = {
-        password: ""
+        confirmationPassword: ""
+    }
+
+    const onSubmit = async(values, { setFieldError }) => {
+        setLoading(true);
+        try{
+            const res = await deleteUserProfile({
+                password: values.confirmationPassword
+            })
+            if(res.error){
+                console.log(res.error)
+            }else{
+                onConfirm()
+            }
+        }catch(error){
+            if(error.message.includes("auth/invalid-credential")){
+                setFieldError("confirmationPassword", "Kata sandi yang Anda masukkan tidak sesuai dengan kredensial Anda!")
+            }else if(error.message.includes("auth/too-many-requests")){
+                setFieldError("confirmationPassword", "Terlalu banyak percobaan yang gagal, coba lagi nanti!")
+            }
+        }finally{
+            setLoading(false);
+        }
     }
     
     return (
-        <PopUpForm
-            title={"Validasi Penghapusan Akun"}
-            titleSize={"large"}
-            message={"Masukkan kata sandi yang Anda gunakan dalam akun ini."}
-            wrapContent
-        >
-            <FormikWrapper
-                initialValues={initialValues}
-                onSubmit={onConfirm}
-                validationSchema={deleteProfileSchema}
-                children={(formik) => (
-                    <>
-                        <div>
-                            <FormikField
-                                name="password"
-                                required
-                                type="password"
-                                label="Kata Sandi"
-                                placeholder="Masukkan kata sandi..."
-                            />
-                        </div>
-                        {error && (<p className="mt-1 mb-2 text-xs text-left text-[#FF0000]">{errorMessage}</p>)}
-                        <div className="mt-8 flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
-                            <Button variant="danger" type="submit">Hapus</Button>
-                            <Button variant="secondary" onClick={prevFormStep}>Kembali</Button>
-                        </div>
-                    </>
-                )}
-            />
-        </PopUpForm>
+        <FormikWrapper
+            initialValues={initialValues}
+            onSubmit={onSubmit}
+            validationSchema={deleteProfileSchema}
+            children={(formik) => (
+                <>
+                    {loading && <PopUpLoad/>}
+                    <div>
+                        <FormikField
+                            name="confirmationPassword"
+                            required
+                            type="password"
+                            label="Kata Sandi"
+                            placeholder="Masukkan kata sandi..."
+                        />
+                    </div>
+                    <div className="mt-8 flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
+                        <Button variant="danger" type="submit">Hapus</Button>
+                        <Button variant="secondary" onClick={prevFormStep}>Kembali</Button>
+                    </div>
+                </>
+            )}
+        />
     )
 }

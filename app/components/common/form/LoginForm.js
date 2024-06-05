@@ -47,6 +47,8 @@ export default function LoginForm(){
                     setErrorMessage("Kredensial yang Anda masukkan salah!")
                 }else if(res.error.includes("Verifikasi")){
                     setErrorMessage("Verifikasi akun Anda terlebih dahulu!")
+                }else if(res.error.includes("auth/too-many-requests")){
+                    setErrorMessage("Terlalu banyak percobaan masuk yang gagal, coba lagi nanti!")
                 }
             }
         } catch (error) {

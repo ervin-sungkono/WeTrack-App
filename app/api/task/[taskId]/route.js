@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { db } from '@/app/firebase/config';
 import { getUserSession } from '@/app/lib/session';
 import { nextAuthOptions } from '@/app/lib/auth';
-import { createHistory, createNotification, deleteAttachments, deleteTask, getProjectRole } from '@/app/firebase/util';
+import { createHistory, createNotification, deleteAttachments, deleteChats, deleteChatSummaries, deleteComments, deleteTask, getProjectRole } from '@/app/firebase/util';
 import { getHistoryAction, getHistoryEventType } from '@/app/lib/history';
 
 export async function GET(request, response) {
@@ -324,6 +324,12 @@ export async function DELETE(request, response) {
             }, { status: 401 })
         }
 
+        await deleteTask({ taskId: taskId, userId: userId }) 
+        await deleteAttachments({ taskId: taskId })
+        await deleteComments({ taskId: taskId })
+        await deleteChats({ taskId: taskId })
+        await deleteChatSummaries({ taskId: taskId })
+
         await createHistory({ 
             userId: userId,
             taskId: taskId,
@@ -332,9 +338,6 @@ export async function DELETE(request, response) {
             action: getHistoryAction.delete,
             deletedValue: taskName
         })
-
-        await deleteTask({ taskId: taskId, userId: userId }) 
-        await deleteAttachments({ taskId: taskId })
 
         if(taskDoc.data().status !== null && taskDoc.data().type == "Task") {
             const currentLastOrderDoc = await getDoc(doc(db, "taskOrderCounters", taskDoc.data().status))

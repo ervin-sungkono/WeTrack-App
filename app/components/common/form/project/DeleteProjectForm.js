@@ -5,7 +5,7 @@ import Button from "../../button/Button"
 import FormikField from "../formik/FormikField"
 import FormikWrapper from "../formik/FormikWrapper"
 
-export default function DeleteProjectForm({onConfirm, onClose, error, errorMessage, projectName}){
+export default function DeleteProjectForm({onConfirm, onClose, projectName}){
     const initialValues = {
         projectName: ""
     }
@@ -24,7 +24,9 @@ export default function DeleteProjectForm({onConfirm, onClose, error, errorMessa
         >
             <FormikWrapper
                 initialValues={initialValues}
-                onSubmit={onConfirm}
+                onSubmit={(values, { setFieldError }) => {
+                    onConfirm(values, setFieldError)
+                }}
                 validationSchema={deleteProjectSchema}
                 children={(formik) => (
                     <>
@@ -37,7 +39,6 @@ export default function DeleteProjectForm({onConfirm, onClose, error, errorMessa
                                 placeholder="Masukkan nama proyek..."
                             />
                         </div>
-                        {error && (<p className="mt-1 mb-2 text-xs text-left text-[#FF0000]">{errorMessage}</p>)}
                         <div className="mt-8 flex flex-col xs:flex-row justify-end gap-2 md:gap-4">
                             <Button variant="danger" type="submit">Hapus</Button>
                             <Button variant="secondary" onClick={onClose}>Kembali</Button>

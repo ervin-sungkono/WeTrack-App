@@ -14,5 +14,6 @@ export const getHistoryEventType = {
     comment: "Komentar",
     attachment: "Lampiran",
     assignedTo: "Penerima",
-    profile: "Profil"
+    profile: "Profil",
+    invitation: "Undangan"
 }
