@@ -48,6 +48,19 @@ export default function NotificationsItem({type, task=null, taskId=null, sender=
                         Peran Anda dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText> telah diubah ke <LinkText>{newValue}</LinkText>.
                     </>
                 )}
+                {type === "ReceiveInvitation" && (
+                    <div className="flex items-center gap-2">
+                        <div>
+                            Anda mendapatkan undangan dari
+                        </div>
+                        <Link href={`/profile/${senderId}`}>
+                            <UserIcon fullName={sender.fullName} src={sender.profileImage?.attachmentStoragePath} size="xs"/>
+                        </Link>
+                        <div>
+                            untuk bergabung dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>, silakan cek email Anda.
+                        </div>
+                    </div>
+                )}
             </div>
             <div className="text-xs md:text-sm text-right whitespace-nowrap">
                 {listDateFormat(createdAt)}
