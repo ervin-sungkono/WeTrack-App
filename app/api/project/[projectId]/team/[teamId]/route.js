@@ -2,7 +2,7 @@ import { db } from "@/app/firebase/config";
 import { createHistory, createNotification } from "@/app/firebase/util";
 import { nextAuthOptions } from "@/app/lib/auth";
 import { getUserSession } from "@/app/lib/session";
-import { doc, getDoc, updateDoc, writeBatch, getDocs, query, where, collection } from "firebase/firestore";
+import { doc, getDoc, updateDoc, writeBatch, getDocs, query, where, collection, and } from "firebase/firestore";
 import { getProjectRole } from "@/app/firebase/util";
 import { NextResponse } from "next/server";
 import { getHistoryAction, getHistoryEventType } from "@/app/lib/history";
@@ -283,7 +283,7 @@ export async function DELETE(request, response){
 
         const batch = writeBatch(db)
 
-        const tasksQuery = query(collection(db, 'tasks'), where('assignedTo', '==', teamDoc.data().userId))
+        const tasksQuery = query(collection(db, 'tasks'),and(where('assignedTo', '==', teamDoc.data().userId), where("projectId", "==", teamDoc.data().projectId)))
         const tasksWithAssignedUser = await getDocs(tasksQuery)
 
         tasksWithAssignedUser.docs.forEach(async(taskDoc) => {
