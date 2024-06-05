@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserIcon from "../../common/UserIcon";
 import SelectButton from "../../common/button/SelectButton";
 import { IoIosCloseCircle as CloseCircle } from "react-icons/io";
@@ -9,6 +9,13 @@ export default function TeamItem({selectUpdate, setSelectUpdate, selectDelete, s
 
     const [roleSelected, setRoleSelected] = useState(role)
     const [deleteSelected, setDeleteSelected] = useState(false)
+
+    useEffect(() => {
+        if((selectUpdate && selectUpdate.length === 0) && (selectDelete && selectDelete.length === 0)){
+            setRoleSelected(role)
+            setDeleteSelected(false)
+        }
+    }, [selectUpdate, selectDelete, role])
 
     const roleOptions = [
         {label: "Member", value: "Member"},
