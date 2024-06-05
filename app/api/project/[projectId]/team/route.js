@@ -158,7 +158,7 @@ export async function POST(request, response){
             })).then(arr => arr.filter(user => user != null))
 
             const teamDocList = await Promise.all(teamList.map(async (team) => {
-                const invitedUser = await getDoc(doc, "users", team.id)
+                const invitedUser = await getDoc(doc(db, "users", team.id))
 
                 await createHistory({
                     userId: userId,
