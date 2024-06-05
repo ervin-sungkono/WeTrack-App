@@ -322,7 +322,6 @@ export const handleDeletedUser = async({ userId }) => {
 
         
         await updateDoc(userDocRef, {
-            email: null,
             deletedAt: serverTimestamp()
         })
 
@@ -339,8 +338,8 @@ export const createHistory = async({ userId = null, taskId = null, projectId = n
         const task = taskId && await getDoc(doc(db, "tasks", taskId));
         const project = projectId && await getDoc(doc(db, "projects", projectId))
 
-        const historyDocRef = collection(db, "histories")
-        const newHistory =  await addDoc(historyDocRef, {
+        const historyColRef = collection(db, "histories")
+        const newHistory =  await addDoc(historyColRef, {
             user: userId && {
                 id: user.id,
                 fullName: user.data().fullName,
@@ -376,12 +375,12 @@ export const createNotification = async({ userId, senderId = null, taskId = null
     try {
         if(!userId && !projectId) return null
 
-        const sender = senderId && await getDoc(doc(db, "users", sender));
+        const sender = senderId && await getDoc(doc(db, "users", senderId));
         const task = taskId && await getDoc(doc(db, "tasks", taskId));
         const project = projectId && await getDoc(doc(db, "projects", projectId))
 
-        const notificationDocRef = collection(db, "notifications")
-        const newNotification = await addDoc(notificationDocRef, {
+        const notificationColRef = collection(db, "notifications")
+        const newNotification = await addDoc(notificationColRef, {
             userId: userId,
             senderId: senderId,
             sender: senderId && {

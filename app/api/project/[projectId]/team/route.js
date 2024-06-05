@@ -143,7 +143,7 @@ export async function POST(request, response){
         let teamList = []
         if(teams){
             teamList = await Promise.all(teams.map(async(email) => {
-                const userDocRef = query(usersRef, and(where('email', '==', email), where('deletedAt', "!=", null)))
+                const userDocRef = query(usersRef, and(where('email', '==', email), where('deletedAt', '==', null)))
                 const userSnap = await getDocs(userDocRef)
                 const userData = userSnap.docs?.[0]
                 if(userData){
@@ -158,7 +158,7 @@ export async function POST(request, response){
             })).then(arr => arr.filter(user => user != null))
 
             const teamDocList = await Promise.all(teamList.map(async (team) => {
-                const invitedUser = await getDoc(doc, "users", team.id)
+                const invitedUser = await getDoc(doc(db, "users", team.id))
 
                 await createHistory({
                     userId: userId,
