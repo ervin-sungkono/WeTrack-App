@@ -243,6 +243,9 @@ export async function DELETE(request, response) {
         const projectName = projectDocSnap.data().projectName
 
         // await deleteDoc(projectDocRef);
+        
+        await deleteProject({ projectId: projectId })
+
         await createHistory({
             userId: userId,
             projectId: projectId,
@@ -250,8 +253,6 @@ export async function DELETE(request, response) {
             action: getHistoryAction.delete,
             deletedValue: projectName
         })
-
-        await deleteProject({ projectId: projectId })
         
         return NextResponse.json({
             message: "Project successfully deleted"
