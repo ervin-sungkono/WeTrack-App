@@ -218,9 +218,11 @@ export const deleteComments = async({ taskId }) => {
         const commentDocs = await getDocs(q)
 
         if(!commentDocs.empty) {
+            const batch = writeBatch(db)
             for(const doc of commentDocs.docs) {
-                await deleteDoc(doc.ref)
+                batch.delete(doc.ref)
             }
+            await batch.commit()
         }
 
     } catch (error) {
@@ -237,9 +239,11 @@ export const deleteChats = async({ taskId }) => {
         const chatDocs = await getDocs(q)
 
         if(!chatDocs.empty) {
+            const batch = writeBatch(db)
             for(const doc of chatDocs.docs) {
-                await deleteDoc(doc.ref)
+                batch.delete(doc.ref)
             }
+            await batch.commit()
         }
 
     } catch (error) {
@@ -256,9 +260,11 @@ export const deleteChatSummaries = async({ taskId }) => {
         const chatSummaryDocs = await getDocs(q)
 
         if(!chatSummaryDocs.empty) {
+            const batch = writeBatch(db)
             for(const doc of chatSummaryDocs.docs) {
-                await deleteDoc(doc.ref)
+                batch.delete(doc.ref)
             }
+            await batch.commit()
         }
 
     } catch (error) {
