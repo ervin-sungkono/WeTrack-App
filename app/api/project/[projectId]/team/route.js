@@ -3,7 +3,7 @@ import { nextAuthOptions } from "@/app/lib/auth";
 import { sendMail } from "@/app/lib/mail";
 import { getUserSession } from "@/app/lib/session";
 import { addDoc, collection, doc, getDoc, getDocs, query, serverTimestamp, where, and } from "firebase/firestore";
-import { getProjectRole } from "@/app/firebase/util";
+import { createNotification, getProjectRole } from "@/app/firebase/util";
 import { NextResponse } from "next/server";
 
 export async function GET(request, response){
@@ -170,18 +170,25 @@ export async function POST(request, response){
             }))
     
             const senderName = session.user.fullName;
-            await Promise.all(teamDocList.map(async(docRef) => {
+            teamDocList.forEach(async(docRef) => {
                 const doc = await getDoc(docRef)
                 const { email } = teamList.find(team => team.id === doc.data().userId)
                 
-                return sendMail({
+                await sendMail({
                     email,
                     senderName: senderName,
                     teamId: doc.id,
                     projectId: projectId,
                     projectName
                 })
-            }))
+
+                await createNotification({
+                    userId: doc.data().userId,
+                    senderId: userId,
+                    projectId: projectId,
+                    type: "ReceiveInvitation"
+                })
+            })
         }
 
         return NextResponse.json({
