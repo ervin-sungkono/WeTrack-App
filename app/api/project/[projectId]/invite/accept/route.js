@@ -1,5 +1,7 @@
 import { db } from "@/app/firebase/config";
+import { createHistory } from "@/app/firebase/util";
 import { nextAuthOptions } from "@/app/lib/auth";
+import { getHistoryAction, getHistoryEventType } from "@/app/lib/history";
 import { getUserSession } from "@/app/lib/session";
 import { collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { NextResponse } from "next/server";
@@ -66,6 +68,13 @@ export async function GET(request, response) {
             status: "accepted",
             updatedAt: new Date().toISOString()
         });
+
+        await createHistory({
+            userId: userId,
+            projectId: projectId,
+            action: getHistoryAction.update,
+            eventType: getHistoryEventType.invitation
+        })
 
         return NextResponse.json({
             success: true,
