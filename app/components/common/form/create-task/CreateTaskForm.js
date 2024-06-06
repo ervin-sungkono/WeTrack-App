@@ -167,7 +167,7 @@ export default function CreateTaskForm({ onCancel }){
                             <SelectParentOption/>
                         </div>
                         <div className="flex justify-end gap-2 md:gap-4">
-                            <Button variant="secondary" onClick={onCancel}>Batal</Button>
+                            <Button variant="secondary" onClick={onCancel}>Kembali</Button>
                             <Button type={"submit"} disabled={formik.isSubmitting} className="w-24 md:w-32">Buat</Button>
                         </div>
                     </>
