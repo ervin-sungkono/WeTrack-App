@@ -20,7 +20,6 @@ import PopUpInfo from "../common/alert/PopUpInfo";
 
 export default function ProfileLayout(){
     const { data: session, update } = useSession()
-    const router = useRouter()
     const [loading, setLoading] = useState(true)
     const [changePassword, setChangePassword] = useState(false)
     const [successChangePassword, setSuccessChangePassword] = useState(false)
@@ -87,6 +86,7 @@ export default function ProfileLayout(){
     const imageUploaderRef = useRef()
     const [originalProfileImageFile, setOriginalProfileImageFile] = useState(null)
     const [originalProfileImage, setOriginalProfileImage] = useState(null)
+    const [profileImageUploadError, setProfileImageUploadError] = useState(false)
     const [profileImageUploaded, setProfileImageUploaded] = useState(null)
     const [profileImageUploadedURL, setProfileImageUploadedURL] = useState(null)
     const [profileImageDeleted, setProfileImageDeleted] = useState(false)
@@ -102,8 +102,16 @@ export default function ProfileLayout(){
     }
 
     const handleImageUpload = (e) => {
-        setProfileImageUploaded(e.target.files[0])
-        setProfileImageUploadedURL(URL.createObjectURL(e.target.files[0]))
+        if(e.target.files.length > 0){
+            if(e.target.files[0].size > 2097152){
+                setProfileImageUploadError(true)
+                return
+            }
+            setProfileImageUploaded(e.target.files[0])
+            setProfileImageUploadedURL(URL.createObjectURL(e.target.files[0]))
+        }else{
+            return
+        }
     }
 
     const ProfileImageField = () => {
@@ -311,6 +319,19 @@ export default function ProfileLayout(){
                         )}
                     </div>
                 </div>
+                {profileImageUploadError && (
+                    <PopUpInfo
+                        title={"Foto Profil Tidak Terunggah"}
+                        titleSize={"default"}
+                        message={"Foto profil tidak boleh melebihi 2 MB, silakan coba lagi dengan foto lain!"}
+                    >
+                        <div className="flex justify-end gap-2 md:gap-4">
+                            <Button onClick={() => {
+                                setProfileImageUploadError(false)
+                            }} className="w-24 md:w-32">OK</Button>
+                        </div>
+                    </PopUpInfo>
+                )}
                 {changePassword && (
                     <ChangePasswordForm
                         onConfirm={handleChangePassword}
