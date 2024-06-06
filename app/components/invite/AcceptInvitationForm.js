@@ -93,7 +93,7 @@ export default function AcceptInvitationForm({ teamId }){
             <div className="w-full max-w-2xl flex flex-col gap-4 bg-white px-6 md:px-8 py-4 md:py-6 rounded-md shadow-md m-auto">
                 <div className="flex flex-col gap-1.5">
                     <div className="text-lg md:text-2xl font-bold text-dark-blue">Terima Undangan</div>
-                    <p className="text-xs md:text-sm text-dark-blue/80">Apakah Anda ingin menerima undangan dari {searchParams.get('senderName')} untuk bergabung di proyek <b>{searchParams.get('projectName')}</b>?</p>
+                    <p className="text-xs md:text-sm text-dark-blue/80">Apakah Anda ingin menerima undangan dari {searchParams.get('senderName')} untuk bergabung dalam proyek <b>{searchParams.get('projectName')}</b>?</p>
                 </div>
                 <div className="flex justify-end gap-2">
                     <Button disabled={loading} variant="danger" className={"flex-grow xs:max-w-32"} onClick={rejectInvitation}>Tolak</Button>

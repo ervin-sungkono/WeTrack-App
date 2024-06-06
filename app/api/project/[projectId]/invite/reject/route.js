@@ -1,5 +1,7 @@
 import { db } from "@/app/firebase/config";
+import { createHistory } from "@/app/firebase/util";
 import { nextAuthOptions } from "@/app/lib/auth";
+import { getHistoryAction, getHistoryEventType } from "@/app/lib/history";
 import { getUserSession } from "@/app/lib/session";
 import { collection, deleteDoc, doc, getDocs, getDoc, query, where } from "firebase/firestore";
 import { NextResponse } from "next/server";
@@ -63,6 +65,13 @@ export async function GET(request, response) {
         const teamDocRef = doc(db, 'teams', team[0].id);
         if(team[0].status == "pending"){
             await deleteDoc(teamDocRef)
+
+            await createHistory({
+                userId: userId,
+                projectId: projectId,
+                action: getHistoryAction.delete,
+                eventType: getHistoryEventType.invitation
+            })
     
             return NextResponse.json({
                 success: true,

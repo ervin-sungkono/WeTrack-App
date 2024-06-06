@@ -10,7 +10,7 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
         if(link != null){
             return <Link href={link} className="text-xs md:text-sm font-bold text-basic-blue">{children}</Link>
         }else{
-            return <span className="text-xs md:text-sm font-bold text-basic-blue">{children}</span>
+            return <span className="text-xs md:text-sm font-bold">{children}</span>
         }
     }
 
@@ -175,6 +175,34 @@ export default function HistoryItem({eventType, action, task=null, taskId=null, 
                 {(eventType === getHistoryEventType.profile) && (action === getHistoryAction.update) && (
                     <>
                         Anda melakukan perubahan data pada <LinkText link={`/profile`}>profil Anda</LinkText>.
+                    </>
+                )}
+                {(eventType === getHistoryEventType.invitation) && (action === getHistoryAction.create) && (
+                    <div className="flex items-center gap-1.5">
+                        <div>
+                            Anda mengundang
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <Link href={`/profile/${newValue?.id}`}>
+                                <UserIcon fullName={newValue?.fullName} src={newValue?.profileImage?.attachmentStoragePath} size="xs"/>
+                            </Link>
+                            <div>
+                                <LinkText link={`/profile/${newValue?.id}`}>{newValue?.fullName}</LinkText>
+                            </div>
+                        </div>
+                        <div>
+                            untuk bergabung dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
+                        </div>
+                    </div>
+                )}
+                {(eventType === getHistoryEventType.invitation) && (action === getHistoryAction.update) && (
+                    <>
+                        Anda menerima undangan untuk bergabung dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
+                    </>
+                )}
+                {(eventType === getHistoryEventType.invitation) && (action === getHistoryAction.delete) && (
+                    <>
+                        Anda menolak undangan untuk bergabung dalam proyek <LinkText>{project.projectName}</LinkText>.
                     </>
                 )}
             </div>

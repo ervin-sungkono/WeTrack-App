@@ -231,7 +231,15 @@ export default function TeamContent({ projectId }){
                         <>
                             {editMode ? (
                                 <div className="flex flex-col md:flex-row gap-2 md:gap-4">
-                                    <Button variant="danger" onClick={() => setEditMode(false)} outline>
+                                    <Button 
+                                        variant="danger" 
+                                        onClick={() => {
+                                            setEditMode(false)
+                                            setSelectUpdate([])
+                                            setSelectDelete([])
+                                        }} 
+                                        outline
+                                    >
                                         Batalkan Perubahan
                                     </Button>
                                     {(selectUpdate.length !== 0 || selectDelete.length !== 0) && (

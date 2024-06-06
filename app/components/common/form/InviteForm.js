@@ -71,13 +71,13 @@ export default function InviteForm({ onConfirm, onClose, team, setTeams, setRole
                                         Peran Anggota Tim
                                     </label>
                                     <div className="flex gap-4 items-center pl-1 text-xs md:text-sm">
-                                        <div className="flex gap-1 items-center">
-                                            <input name="role" value={"Member"} type="radio" onChange={handleRoleChange}/>
-                                            <label htmlFor="Member">Member</label>
+                                        <div className="flex gap-1.5 items-center">
+                                            <input name="role" value={"Member"} id="member" type="radio" onChange={handleRoleChange}/>
+                                            <label htmlFor="Member" for="member">Member</label>
                                         </div>
-                                        <div className="flex gap-1 items-center">
-                                            <input name="role" value={"Viewer"} type="radio" onChange={handleRoleChange}/>
-                                            <label htmlFor="Viewer">Viewer</label>
+                                        <div className="flex gap-1.5 items-center">
+                                            <input name="role" value={"Viewer"} id="viewer" type="radio" onChange={handleRoleChange}/>
+                                            <label htmlFor="Viewer" for="viewer">Viewer</label>
                                         </div>
                                     </div>
                                 </div>
