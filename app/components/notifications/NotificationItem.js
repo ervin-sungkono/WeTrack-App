@@ -7,7 +7,7 @@ export default function NotificationsItem({type, task=null, taskId=null, sender=
         if(link != null){
             return <Link href={link} className="text-xs md:text-sm font-bold text-basic-blue">{children}</Link>
         }else{
-            return <span className="text-xs md:text-sm font-bold text-basic-blue">{children}</span>
+            return <span className="text-xs md:text-sm font-bold">{children}</span>
         }
     }
 
@@ -20,26 +20,22 @@ export default function NotificationsItem({type, task=null, taskId=null, sender=
                     </>   
                 )}
                 {type === "AddedComment" && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5">
                         <Link href={`/profile/${senderId}`}>
                             <UserIcon fullName={sender.fullName} src={sender.profileImage?.attachmentStoragePath} size="xs"/>
                         </Link>
                         <div>
-                            <div>
-                                <LinkText link={`/profile/${senderId}`}>{sender.fullName}</LinkText> membuat komentar pada tugas Anda <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
-                            </div>
+                            <LinkText link={`/profile/${senderId}`}>{sender.fullName}</LinkText> membuat komentar pada tugas Anda <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
                         </div>
                     </div>
                 )}
                 {type === "Mention" && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5">
                         <Link href={`/profile/${senderId}`}>
                             <UserIcon fullName={sender.fullName} src={sender.profileImage?.attachmentStoragePath} size="xs"/>
                         </Link>
                         <div>
-                            <div>
-                                <LinkText link={`/profile/${senderId}`}>{sender.fullName}</LinkText> menyebut Anda dalam komentarnya pada tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
-                            </div>
+                            <LinkText link={`/profile/${senderId}`}>{sender.fullName}</LinkText> menyebut Anda dalam komentarnya pada tugas <LinkText link={`/projects/${projectId}/tasks?taskId=${taskId}`}>{task.taskName}</LinkText> dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText>.
                         </div>
                     </div>
                 )}
@@ -47,6 +43,16 @@ export default function NotificationsItem({type, task=null, taskId=null, sender=
                     <>
                         Peran Anda dalam proyek <LinkText link={`/projects/${projectId}`}>{project.projectName}</LinkText> telah diubah ke <LinkText>{newValue}</LinkText>.
                     </>
+                )}
+                {type === "ReceiveInvitation" && (
+                    <div className="flex items-center gap-1.5">
+                        <Link href={`/profile/${senderId}`}>
+                            <UserIcon fullName={sender.fullName} src={sender.profileImage?.attachmentStoragePath} size="xs"/>
+                        </Link>
+                        <div>
+                            <LinkText link={`/profile/${senderId}`}>{sender.fullName}</LinkText> mengundang Anda untuk bergabung dalam proyek <LinkText>{project.projectName}</LinkText>, silakan cek email Anda.
+                        </div>
+                    </div>
                 )}
             </div>
             <div className="text-xs md:text-sm text-right whitespace-nowrap">

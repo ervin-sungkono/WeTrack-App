@@ -13,7 +13,7 @@ export default function SelectProjectOption(){
             const projects = await getAllProject()
             if(projects.data){
                 setProjectOptions(projects.data
-                    .filter(project => project.role !== 'Viewer')
+                    .filter(project => project.projectRole !== 'Viewer')
                     .map(project => ({
                         label: project.projectName,
                         value: project.id

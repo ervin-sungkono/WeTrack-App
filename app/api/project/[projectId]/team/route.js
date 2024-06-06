@@ -3,8 +3,9 @@ import { nextAuthOptions } from "@/app/lib/auth";
 import { sendMail } from "@/app/lib/mail";
 import { getUserSession } from "@/app/lib/session";
 import { addDoc, collection, doc, getDoc, getDocs, query, serverTimestamp, where, and } from "firebase/firestore";
-import { getProjectRole } from "@/app/firebase/util";
+import { createHistory, createNotification, getProjectRole } from "@/app/firebase/util";
 import { NextResponse } from "next/server";
+import { getHistoryAction, getHistoryEventType } from "@/app/lib/history";
 
 export async function GET(request, response){
     try {
@@ -142,7 +143,7 @@ export async function POST(request, response){
         let teamList = []
         if(teams){
             teamList = await Promise.all(teams.map(async(email) => {
-                const userDocRef = query(usersRef, where('email', '==', email))
+                const userDocRef = query(usersRef, and(where('email', '==', email), where('deletedAt', '==', null)))
                 const userSnap = await getDocs(userDocRef)
                 const userData = userSnap.docs?.[0]
                 if(userData){
@@ -157,6 +158,20 @@ export async function POST(request, response){
             })).then(arr => arr.filter(user => user != null))
 
             const teamDocList = await Promise.all(teamList.map(async (team) => {
+                const invitedUser = await getDoc(doc(db, "users", team.id))
+
+                await createHistory({
+                    userId: userId,
+                    projectId: projectId,
+                    action: getHistoryAction.create,
+                    eventType: getHistoryEventType.invitation,
+                    newValue: invitedUser.exists() && {
+                        id: invitedUser.id,
+                        fullName: invitedUser.data().fullName,
+                        profileImage: invitedUser.data().profileImage
+                    }
+                })
+
                 return await addDoc(collection(db, "teams"), {
                     userId: team.id,
                     email: team.email,
@@ -170,18 +185,25 @@ export async function POST(request, response){
             }))
     
             const senderName = session.user.fullName;
-            await Promise.all(teamDocList.map(async(docRef) => {
+            teamDocList.forEach(async(docRef) => {
                 const doc = await getDoc(docRef)
                 const { email } = teamList.find(team => team.id === doc.data().userId)
                 
-                return sendMail({
+                await sendMail({
                     email,
                     senderName: senderName,
                     teamId: doc.id,
                     projectId: projectId,
                     projectName
                 })
-            }))
+
+                await createNotification({
+                    userId: doc.data().userId,
+                    senderId: userId,
+                    projectId: projectId,
+                    type: "ReceiveInvitation"
+                })
+            })
         }
 
         return NextResponse.json({
