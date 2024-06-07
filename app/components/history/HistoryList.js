@@ -5,7 +5,7 @@ import HistoryPagination from "./HistoryPagination"
 export default function HistoryList({historyData, pageSize, pageIndex, setPageIndex, pageCount, dataCount}){
     return (
         <div className="h-full overflow-y-auto flex flex-col justify-between">
-            <div className="h-full overflow-y-auto flex flex-col gap-2 md:gap-4 mb-auto pr-2 -ml-2 custom-scrollbar">
+            <div className="h-full overflow-y-auto flex flex-col gap-2 md:gap-4 mb-auto pr-2 custom-scrollbar">
                 {historyData.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize).map((item, index) => (
                     <HistoryItem key={index} {...item} />
                 ))}
