@@ -115,7 +115,7 @@ export default function ProjectContent(){
     ]
     
     return(
-        <div className="h-full flex flex-col mt-4 md:mt-6 gap-4">
+        <div className="h-full overflow-y-auto flex flex-col mt-4 md:mt-6 gap-4">
             <div className="flex flex-col md:flex-row justify-between items-center gap-2">
                 <div className="w-full flex justify-center md:justify-start items-center gap-3 md:gap-6">
                     <SearchBar placeholder={"Cari proyek..."} handleSearch={handleSearch}/>
