@@ -9,7 +9,7 @@ import { getAllProject } from "@/app/lib/fetch/project"
 import { getAllTask } from "@/app/lib/fetch/task"
 import PopUpLoad from "../common/alert/PopUpLoad"
 import EmptyState from "../common/EmptyState"
-import { getDocumentReference, getQueryReference } from "@/app/firebase/util"
+import { getDocumentReference, getProjects } from "@/app/firebase/util"
 import { getDoc, onSnapshot } from "firebase/firestore"
 import { getUserProfile } from "@/app/lib/fetch/user"
 
@@ -36,80 +36,38 @@ export default function Dashboard(){
     const [selectedProject, setSelectedProject] = useState([])
 
     useEffect(() => {
-        const reference = getQueryReference({ collectionName: "teams", field: "userId", id: userId })
-        const unsubscribe = onSnapshot(reference, async(snapshot) => {
-            const filteredProjects = snapshot.docs.filter(doc => {
-                const role = doc.data().role
-                const status = doc.data().status
-                return role !== "Viewer" && status !== "pending"
-            })
-
-            const projects = await Promise.all(filteredProjects.map(async(doc) => {
-                const projectRole = doc.data().role
-                const projectId = doc.data().projectId
-                if(projectId){
-                    const projectRef = getDocumentReference({collectionName: "projects", id: projectId})
-                    const projectSnap = await getDoc(projectRef)
-                    const projectData = projectSnap.data()
-                    const startStatusRef = getDocumentReference({collectionName: "taskStatuses", id: projectData.startStatus})
-                    const startStatusSnap = await getDoc(startStatusRef)
-                    projectData.startStatus = startStatusSnap.data().statusName
-                    const endStatusRef = getDocumentReference({collectionName: "taskStatuses", id: projectData.endStatus})
-                    const endStatusSnap = await getDoc(endStatusRef)
-                    projectData.endStatus = endStatusSnap.data().statusName
-                    const tasks = await getAllTask(projectId)
-                    tasks.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                    const assignedTasks = tasks.data.filter(task => task.assignedTo === userId)
-                    projectData.tasks = assignedTasks
-                    return {
-                        id: projectId,
-                        role: projectRole,
-                        ...projectData
-                    }
-                }
-            }))
-            const projectWithTasks = projects.filter(project => project.tasks.length > 0)
-            setProjectsData(projectWithTasks)
-            setSelectedProject(projectWithTasks[0])
-            setLoading(false)
+        if(!userId) return
+        getAllProject().then(projects => {
+            if(projects.data){
+                const tasks = projects.data.map(project => {
+                    const startStatusRef = getDocumentReference({collectionName: "taskStatuses", id: project.startStatus})
+                    const startStatusSnap = getDoc(startStatusRef)
+                    startStatusSnap.then(doc => {
+                        project.startStatus = doc.data().statusName
+                    })
+                    const endStatusRef = getDocumentReference({collectionName: "taskStatuses", id: project.endStatus})
+                    const endStatusSnap = getDoc(endStatusRef)
+                    endStatusSnap.then(doc => {
+                        project.endStatus = doc.data().statusName
+                    })
+                    return getAllTask(project.id).then(tasks => {
+                        tasks.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                        const assignedTasks = tasks.data.filter(task => task.assignedTo === userId)
+                        project.tasks = assignedTasks || []
+                    })
+                })
+                Promise.all(tasks).then(() => {
+                    projects.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                    const projectsWithTasks = projects.data.filter(project => project.tasks.length > 0)
+                    setProjectsData(projectsWithTasks)
+                    setSelectedProject(projectsWithTasks[0])
+                    setLoading(false)
+                })
+            }else{
+                alert("Gagal memperoleh data proyek")
+            }
         })
-        return () => unsubscribe()
     }, [userId])
-
-    // METHOD LAMA
-
-    // useEffect(() => {
-    //     if(!userId) return
-    //     getAllProject().then(projects => {
-    //         if(projects.data){
-    //             const tasks = projects.data.map(project => {
-    //                 const startStatusRef = getDocumentReference({collectionName: "taskStatuses", id: project.startStatus})
-    //                 const startStatusSnap = getDoc(startStatusRef)
-    //                 startStatusSnap.then(doc => {
-    //                     project.startStatus = doc.data().statusName
-    //                 })
-    //                 const endStatusRef = getDocumentReference({collectionName: "taskStatuses", id: project.endStatus})
-    //                 const endStatusSnap = getDoc(endStatusRef)
-    //                 endStatusSnap.then(doc => {
-    //                     project.endStatus = doc.data().statusName
-    //                 })
-    //                 return getAllTask(project.id).then(tasks => {
-    //                     tasks.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    //                     const assignedTasks = tasks.data.filter(task => task.assignedTo === userId)
-    //                     project.tasks = assignedTasks || []
-    //                 })
-    //             })
-    //             Promise.all(tasks).then(() => {
-    //                 projects.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    //                 setProjectsData(projects.data)
-    //                 setSelectedProject(projects.data[0])
-    //                 setLoading(false)
-    //             })
-    //         }else{
-    //             alert("Gagal memperoleh data proyek")
-    //         }
-    //     })
-    // }, [userId])
 
     if(loading){
         return (
