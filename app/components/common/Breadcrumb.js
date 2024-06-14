@@ -12,7 +12,6 @@ export default function Breadcrumb({ links }){
       if(project) setMounted(true)
     }, [project])
 
-    if(!mounted) return null
     return (
       <p className="text-dark-blue/80 text-xs md:text-sm flex items-center gap-1.5">
         {links.map(({url, label}, index) =>
@@ -23,11 +22,10 @@ export default function Breadcrumb({ links }){
               </Link>{' '}
               <ArrowIcon size={16}/>
             </span>
-          ) : (
+          ) : 
             <span className="cursor-default text-basic-blue font-medium" key={label}>
-              {label === "Nama Proyek" ? project.projectName : label}
+              {label === "Nama Proyek" ? (mounted ? project.projectName : "") : label}
             </span>
-          )
         )}
       </p>
     )
