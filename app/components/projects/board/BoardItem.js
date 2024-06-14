@@ -64,7 +64,7 @@ export default function BoardItem({ item, index }){
                 onClick={() => viewTask(item.id)}
             >
               <div className="flex flex-col">
-                <div className="flex items-center gap-2">
+                <div className="flex items-start gap-2">
                   <p className="flex-grow text-xs md:text-sm font-semibold py-1.5">{item.taskName}</p>
                   {validateUserRole({ userRole: role, minimumRole: 'Member' }) && 
                   <DotButton 
