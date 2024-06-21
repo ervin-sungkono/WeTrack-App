@@ -202,6 +202,7 @@ export async function DELETE(request, response){
             return await updateDoc(doc.ref, {
                 status: newStatusId,
                 order: newStatusCounterSnap.data().lastOrder + index,
+                finishedDate: newStatusId == endStatusId ? (doc.data().finishedDate ?? new Date().toISOString()) : null,
                 updatedAt: serverTimestamp(),
             })
         }))

@@ -192,6 +192,7 @@ export async function POST(request, response) {
             batch.update(taskRef, {
                 status: newStatusId,
                 order: newIndexOrder,
+                finishedDate: newStatusId == projectData.data().endStatus ? new Date().toISOString() : null,
                 updatedAt: serverTimestamp()
             })
             // await updateDoc(taskRef, {
