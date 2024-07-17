@@ -257,7 +257,7 @@ export default function BoardContent({ projectId }){
     setQuery(query.toLowerCase())
   }
 
-  async function onDragEnd(result) {
+  const onDragEnd = useCallback(async(result) => {
     setPlaceholderProps({});
     const { source, destination } = result;
 
@@ -302,9 +302,9 @@ export default function BoardContent({ projectId }){
       newIndex: destination.index,
     })
     return
-  }
+  }, [projectId, state])
 
-  const onDragUpdate = (event) => {
+  const onDragUpdate = useCallback((event) => {
     if (!event.destination) {
       return;
     }
@@ -356,9 +356,9 @@ export default function BoardContent({ projectId }){
         window.getComputedStyle(draggedDOM.parentNode).paddingLeft
       )
     });
-  };
+  }, [])
 
-  const onDragStart = (event) => {
+  const onDragStart = useCallback((event) => {
     const draggedDOM = getDraggedDom(event.draggableId);
 
     if (!draggedDOM) {
@@ -385,7 +385,7 @@ export default function BoardContent({ projectId }){
         window.getComputedStyle(draggedDOM.parentNode).paddingLeft
       )
     });
-  };
+  }, [])
 
   const getDraggedDom = (draggableId) => {
     const domQuery = `[${queryAttr}='${draggableId}']`;
