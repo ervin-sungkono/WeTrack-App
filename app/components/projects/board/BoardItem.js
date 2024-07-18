@@ -1,4 +1,5 @@
 "use client"
+import { memo } from "react";
 import { Draggable } from "@hello-pangea/dnd"
 import { FaCheckSquare as CheckIcon } from "react-icons/fa";
 import { useTaskData } from "@/app/lib/context/task";
@@ -32,7 +33,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
     ...draggableStyle,
 })
 
-export default function BoardItem({ item, index }){
+function BoardItem({ item, index }){
     const { viewTask, focusUpdateTask, focusDeleteTask } = useTaskData()
     const [project, _] = useSessionStorage("project")
 
@@ -102,3 +103,5 @@ export default function BoardItem({ item, index }){
         </Draggable> 
     );
 }
+
+export default memo(BoardItem)

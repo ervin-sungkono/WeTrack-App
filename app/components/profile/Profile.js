@@ -109,6 +109,7 @@ export default function ProfileLayout(){
             }
             setProfileImageUploaded(e.target.files[0])
             setProfileImageUploadedURL(URL.createObjectURL(e.target.files[0]))
+            setProfileImageDeleted(false)
         }else{
             return
         }
