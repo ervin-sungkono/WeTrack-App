@@ -274,7 +274,7 @@ export async function POST(request, response) {
                 description: description ?? null,
                 startDate: startDate ?? null,
                 dueDate: dueDate ?? null,
-                finishedDate: taskStatusDetails.status === 'Done' ? new Date().toISOString() : null,
+                finishedDate: statusId == projectDocSnap.data().endStatus ? new Date().toISOString() : null,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
                 deletedAt: null
