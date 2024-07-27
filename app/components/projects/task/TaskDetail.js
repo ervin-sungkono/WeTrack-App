@@ -189,11 +189,11 @@ function TaskDetail({ taskId, closeFn }){
         }
     }
 
-    const handleUpdateTaskName = async(e, taskName) => {
+    const handleUpdateTaskName = async(values) => {
         setUpdateLoading(true)
   
         try{
-          if(taskName !== task.taskName) await updateTask({ taskId: taskId, taskName })
+          if(values.taskName !== task.taskName) await updateTask({ taskId: taskId, taskName: values.taskName })
         }catch(e){
           console.log(e)
         }finally{
