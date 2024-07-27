@@ -324,12 +324,6 @@ export async function DELETE(request, response) {
             }, { status: 401 })
         }
 
-        await deleteTask({ taskId: taskId, userId: userId }) 
-        await deleteAttachments({ taskId: taskId })
-        await deleteComments({ taskId: taskId })
-        await deleteChats({ taskId: taskId })
-        await deleteChatSummaries({ taskId: taskId })
-
         await createHistory({ 
             userId: userId,
             taskId: taskId,
@@ -338,6 +332,12 @@ export async function DELETE(request, response) {
             action: getHistoryAction.delete,
             deletedValue: taskName
         })
+
+        await deleteTask({ taskId: taskId, userId: userId }) 
+        await deleteAttachments({ taskId: taskId })
+        await deleteComments({ taskId: taskId })
+        await deleteChats({ taskId: taskId })
+        await deleteChatSummaries({ taskId: taskId })
 
         if(taskDoc.data().status !== null && taskDoc.data().type == "Task") {
             const currentLastOrderDoc = await getDoc(doc(db, "taskOrderCounters", taskDoc.data().status))
@@ -353,7 +353,6 @@ export async function DELETE(request, response) {
             success: true,
             message: "Task successfully deleted"
         }, { status: 200 });
-
 
     } catch (error) {
         return NextResponse.json({
