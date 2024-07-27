@@ -46,7 +46,11 @@ export default function DashboardInsight({project}){
             }
             const statusName = task.status.statusName;
             if(statusName === projectStartStatus){
-                value["Belum Dimulai"] += 1;
+                if(dueDate && dateDifference < 0){
+                    value["Terlambat"] += 1;
+                }else{
+                    value["Belum Dimulai"] += 1;
+                }
             }else if(statusName === projectEndStatus){
                 value["Selesai"] += 1;
             }else if(statusName !== projectStartStatus && statusName !== projectEndStatus){
