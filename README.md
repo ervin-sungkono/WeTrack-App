@@ -1,5 +1,5 @@
-# Portfolio-Website-v2
-An improvement of my old portfolio website, built using NextJS and Tailwind to showcase my projects and designs, this project uses ISR(Incremental Static Regeneration) to increase website performance while reducing server load. 
+# WeTrack
+A task management app with features like team collaboration and AI recommendation, this project is built for the purpose of our Computer Science thesis.
 
 ## Key Features
 1. Task management and tracking
