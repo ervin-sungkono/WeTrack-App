@@ -1,5 +1,21 @@
 # WeTrack
-A task management app with features like team collaboration and AI recommendation, this project is built for the purpose of our Computer Science thesis.
+A task management app with features like team collaboration and AI recommendation, this project is built for the purpose of our Computer Science thesis project.
+
+## Resources
+- [NextJS v13](https://nextjs.org/)
+- [Nodemailer](https://www.npmjs.com/package/nodemailer)
+- [Chart.js](https://www.chartjs.org/)
+- [OpenAI API](https://platform.openai.com/docs/overview)
+- [Firebase](https://console.firebase.google.com/)
+- [Formik](https://www.npmjs.com/package/formik)
+- [FullCalendar](https://fullcalendar.io/docs)
+- [React Beautiful DnD(hello-pangea)](https://www.npmjs.com/package/@hello-pangea/dnd)
+- [React Icons](https://www.npmjs.com/package/react-icons)
+- [React Markdown](https://www.npmjs.com/package/react-markdown)
+- [React Mentions](https://www.npmjs.com/package/react-mentions)
+- [React Syntax Highlighter](https://www.npmjs.com/package/react-syntax-highlighter)
+- [React Table v8](https://tanstack.com/table/latest/docs/introduction)
+- [Tagify](https://www.npmjs.com/package/@yaireo/tagify)
 
 ## Key Features
 1. Task management and tracking
@@ -9,8 +25,8 @@ A task management app with features like team collaboration and AI recommendatio
 5. Kanban Board
 6. Attachments
 7. Dashboard
-8. History
-9. Notification
+8. History and Notification
+9. User Profile
 
 ## Preview Image
 <img src="https://raw.githubusercontent.com/ervin-sungkono/web-assets/master/images/WeTrack-App.png" width=480/>
@@ -36,6 +52,7 @@ cp .env.example .env
 | `NEXT_PUBLIC_FIREBASE_APP_ID` | Firebase credentials, get it [here](https://console.firebase.google.com/) |
 | `EMAIL` | Email used for sending project invitations |
 | `EMAIL_PASS` | Password for the email, [how to get it](https://knowledge.workspace.google.com/kb/how-to-create-app-passwords-000009237) |
+| `CHATGPT_SECRET_KEY` | ChatGPT API key, get it [here](https://platform.openai.com/api-keys) |
 
 3. Install dependency
 ```sh
