@@ -1,0 +1,42 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function activeUser() {
+      return request.auth != null
+        && request.auth.token.wetrack_verified_access == true
+        && firestore.exists(/databases/(default)/documents/users/$(request.auth.uid))
+        && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.get('deletedAt', null) == null;
+    }
+
+    function isProjectMember(projectId) {
+      return activeUser()
+        && projectId is string
+        && projectId in firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.get('activeProjectIds', [])
+        && firestore.exists(/databases/(default)/documents/projects/$(projectId))
+        && firestore.get(/databases/(default)/documents/projects/$(projectId)).data.get('deletedAt', null) == null;
+    }
+
+    // Profile images are a non-secret public profile projection. Project files
+    // are visible only to an active member; Admin SDK routes own every mutation.
+    match /profileImages/{userId}/{object=**} {
+      allow read: if activeUser();
+      allow write: if false;
+    }
+
+    match /project/{projectId}/tasks/{taskId}/{object=**} {
+      allow read: if isProjectMember(projectId);
+      allow write: if false;
+    }
+
+    match /projects/{projectId}/tasks/{taskId}/{object=**} {
+      allow read: if isProjectMember(projectId);
+      allow write: if false;
+    }
+
+    // All other objects have no client access.
+    match /{object=**} {
+      allow read, write: if false;
+    }
+  }
+}

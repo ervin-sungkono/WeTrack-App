@@ -1,0 +1,169 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null
+        && request.auth.token.wetrack_verified_access == true;
+    }
+
+    function userPath(userId) {
+      return /databases/$(database)/documents/users/$(userId);
+    }
+
+    function activeUser() {
+      return signedIn()
+        && exists(userPath(request.auth.uid))
+        && get(userPath(request.auth.uid)).data.get('deletedAt', null) == null;
+    }
+
+    function memberIndexPath(projectId, userId) {
+      return /databases/$(database)/documents/projectMembers/$(projectId + '_' + userId);
+    }
+
+    function projectPath(projectId) {
+      return /databases/$(database)/documents/projects/$(projectId);
+    }
+
+    function taskPath(taskId) {
+      return /databases/$(database)/documents/tasks/$(taskId);
+    }
+
+    function isProjectMember(projectId) {
+      return activeUser()
+        && projectId is string
+        && exists(memberIndexPath(projectId, request.auth.uid))
+        && get(memberIndexPath(projectId, request.auth.uid)).data.projectId == projectId
+        && get(memberIndexPath(projectId, request.auth.uid)).data.userId == request.auth.uid
+        && get(memberIndexPath(projectId, request.auth.uid)).data.role in ['Owner', 'Member', 'Viewer']
+        && exists(projectPath(projectId))
+        && get(projectPath(projectId)).data.get('deletedAt', null) == null;
+    }
+
+    function isProjectOwner(projectId) {
+      return isProjectMember(projectId)
+        && get(memberIndexPath(projectId, request.auth.uid)).data.role == 'Owner';
+    }
+
+    function isTaskProjectMember(taskId) {
+      return activeUser()
+        && taskId is string
+        && exists(taskPath(taskId))
+        && get(taskPath(taskId)).data.projectId is string
+        && isProjectMember(get(taskPath(taskId)).data.projectId);
+    }
+
+    function canReadProjectDocument() {
+      return resource.data.projectId is string && isProjectMember(resource.data.projectId);
+    }
+
+    function canReadProjectOrTaskDocument() {
+      return canReadProjectDocument()
+        || (resource.data.taskId is string && isTaskProjectMember(resource.data.taskId));
+    }
+
+    match /users/{userId} {
+      allow read: if activeUser() && request.auth.uid == userId;
+      allow write: if false;
+    }
+
+    // This is a deliberate non-secret projection used for collaborator labels
+    // and avatars. Email and account state remain in the owner-only users path.
+    match /publicProfiles/{userId} {
+      allow get: if activeUser()
+        && exists(userPath(userId))
+        && get(userPath(userId)).data.get('deletedAt', null) == null;
+      allow list: if false;
+      allow write: if false;
+    }
+
+    match /projectMembers/{membershipId} {
+      allow read: if activeUser() && resource.data.userId == request.auth.uid;
+      allow write: if false;
+    }
+
+    match /projects/{projectId} {
+      allow read: if isProjectMember(projectId) && resource.data.get('deletedAt', null) == null;
+      allow write: if false;
+    }
+
+    match /teams/{teamId} {
+      // Collection queries must constrain status so Firestore can prove the
+      // result set is fully authorized. Accepted rows are migrated to remove
+      // invitee email before these client reads are enabled.
+      allow read: if activeUser() && (
+        resource.data.userId == request.auth.uid
+        || (
+          resource.data.projectId is string
+          && resource.data.status == 'accepted'
+          && isProjectMember(resource.data.projectId)
+        )
+        || (
+          resource.data.projectId is string
+          && resource.data.status == 'pending'
+          && isProjectOwner(resource.data.projectId)
+        )
+      );
+      allow write: if false;
+    }
+
+    match /tasks/{taskId} {
+      allow read: if canReadProjectDocument();
+      allow write: if false;
+    }
+
+    match /taskStatuses/{statusId} {
+      allow read: if canReadProjectDocument();
+      allow write: if false;
+    }
+
+    match /labels/{labelId} {
+      allow read: if canReadProjectDocument();
+      allow write: if false;
+    }
+
+    match /comments/{commentId} {
+      allow read: if canReadProjectOrTaskDocument();
+      allow write: if false;
+    }
+
+    match /attachments/{attachmentId} {
+      allow read: if canReadProjectOrTaskDocument();
+      allow write: if false;
+    }
+
+    match /chats/{chatId} {
+      allow read: if canReadProjectOrTaskDocument();
+      allow write: if false;
+    }
+
+    match /chatSummaries/{summaryId} {
+      allow read: if canReadProjectOrTaskDocument();
+      allow write: if false;
+    }
+
+    match /histories/{historyId} {
+      allow read: if activeUser() && (
+        resource.data.userId == request.auth.uid
+        || (resource.data.projectId is string && isProjectMember(resource.data.projectId))
+        || (resource.data.taskId is string && isTaskProjectMember(resource.data.taskId))
+      );
+      allow write: if false;
+    }
+
+    match /notifications/{notificationId} {
+      allow read: if activeUser() && resource.data.userId == request.auth.uid;
+      allow write: if false;
+    }
+
+    // Task types are shared read-only configuration. All mutations use Admin.
+    match /taskTypes/{typeId} {
+      allow read: if activeUser();
+      allow write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

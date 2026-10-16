@@ -1,9 +1,10 @@
+@use "./mention";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @import "@yaireo/tagify/dist/tagify.css";
-@import "./mention.scss";
 
 $black: #2B2B2B;
 $dark-blue: #1A1B36;
@@ -59,7 +60,7 @@ textarea{
 }
 
 .container{
-    max-width: 1600px !important; 
+    max-width: 1600px !important;
 }
 
 .hamburger-btn{
@@ -137,7 +138,7 @@ input::-ms-clear {
     border-radius: 6px;
     border: 1px solid rgba(0, 0, 0, 0.3);
     padding: 4px 4px;
-    
+
     @media only screen and (max-width: 768px){
         padding: 0;
     }
@@ -167,7 +168,7 @@ input::-ms-clear {
     }
 
     .tagify__tag > div > :only-child {
-        width: unset; 
+        width: unset;
     }
 
     .tagify__tag-text{
@@ -190,16 +191,16 @@ input::-ms-clear {
     color: black;
     transition: 0s;
 }
-  
+
 .tags-look .tagify__dropdown__item--active{
     color: black;
 }
-  
+
 .tags-look .tagify__dropdown__item:hover{
     background: lightyellow;
     border-color: gold;
 }
-  
+
 .tags-look .tagify__dropdown__item--hidden {
     max-width: 0;
     max-height: initial;
@@ -220,7 +221,7 @@ input::-ms-clear {
 // .fc .fc-daygrid-day-number,
 // .fc .fc-event-title,
 // .fc .fc-daygrid-day-top {
-//     font-size: 1em; 
+//     font-size: 1em;
 // }
 
 .fc .fc-toolbar-title {
@@ -346,6 +347,3 @@ input::-ms-clear {
 //         font-size: 0.8em;
 //     }
 // }
-
-
-

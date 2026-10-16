@@ -2,7 +2,7 @@
 A task management app with features like team collaboration and AI recommendation, this project is built for the purpose of our Computer Science thesis project.
 
 ## Resources
-- [NextJS v13](https://nextjs.org/)
+- [Next.js 16](https://nextjs.org/)
 - [Nodemailer](https://www.npmjs.com/package/nodemailer)
 - [Chart.js](https://www.chartjs.org/)
 - [OpenAI API](https://platform.openai.com/docs/overview)
@@ -38,25 +38,15 @@ git clone https://github.com/ervin-sungkono/WeTrack-App.git
 ```
 2. Setup env variables
 ```sh
-cp .env.example .env
+cp .env.example .env.local
 ```
-| Variable | Description |
-| :--- | :--- |
-| `NEXTAUTH_SECRET` | Random string used to encrypt the NextAuth.js JWT, and to hash email verification tokens. |
-| `NEXT_PUBLIC_LOGIN_DOMAIN` | Your site's domain |
-| `NEXT_PUBLIC_FIREBASE_API_KEY` | Firebase credentials, get it [here](https://console.firebase.google.com/) |
-| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Firebase credentials, get it [here](https://console.firebase.google.com/) |
-| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Firebase credentials, get it [here](https://console.firebase.google.com/) |
-| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | Firebase credentials, get it [here](https://console.firebase.google.com/) |
-| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | Firebase credentials, get it [here](https://console.firebase.google.com/) | 
-| `NEXT_PUBLIC_FIREBASE_APP_ID` | Firebase credentials, get it [here](https://console.firebase.google.com/) |
-| `EMAIL` | Email used for sending project invitations |
-| `EMAIL_PASS` | Password for the email, [how to get it](https://knowledge.workspace.google.com/kb/how-to-create-app-passwords-000009237) |
-| `CHATGPT_SECRET_KEY` | ChatGPT API key, get it [here](https://platform.openai.com/api-keys) |
+Set the Firebase browser configuration, `NEXTAUTH_URL`, and a random `NEXTAUTH_SECRET`. Server operations now require Firebase Admin credentials through `FIREBASE_SERVICE_ACCOUNT_JSON` (the standard downloaded JSON) or application-default credentials. Credentials stay on the server. SMTP is required for verification/invitation emails; the existing AI key is required only for AI features.
+
+Use Node.js 24 (`.nvmrc`) and follow [the migration and rollout guide](docs/architecture.md) before deploying this branch against existing Firebase data. The access-control rules and membership/public-profile backfill are required parts of the migration.
 
 3. Install dependency
 ```sh
-npm install
+npm ci
 ```
 4. Run the app
 ```sh
@@ -70,3 +60,18 @@ This project is made by a team of 3 people:
 - Ervin Cahyadinata Sungkono
 - Christopher Vinantius
 - Kenneth Nathanael
+
+## Engineering and validation
+
+- [Architecture, security review and state-management decision](docs/architecture.md)
+- [Dependency choices and remaining tooling advisory](docs/dependencies.md)
+- [Verification evidence and integration limits](docs/verification.md)
+- `npm run typecheck`: strict TypeScript validation.
+- `npm run lint`: ESLint with Next.js, React and TypeScript rules.
+- `npm test`: security policy, input validation and quota regression tests.
+- `npm run build`: production build using Turbopack.
+- `npm run smoke`: start the production build and check public pages plus anonymous API denial cases.
+- `npm run migrate:attachment-privacy`: inspect persistent attachment URLs; `-- --apply` revokes the old download tokens.
+- `npm run migrate:firebase-access`: inspect the data backfill without writes; pass `-- --apply` after reviewing the dry run.
+
+All application source uses TypeScript/TSX. ESLint and PostCSS keep native `.mjs` configuration files because their loaders execute JavaScript configuration.
