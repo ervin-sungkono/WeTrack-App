@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      # Build/smoke identifiers only; no external provider calls are made.
+      NEXT_PUBLIC_FIREBASE_API_KEY: local-test-config-key
+      NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: demo-wetrack.firebaseapp.com
+      NEXT_PUBLIC_FIREBASE_PROJECT_ID: demo-wetrack
+      NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: demo-wetrack.appspot.com
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: ci-build-only-secret-not-for-deployment
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      - run: npm run smoke
+      - run: npm audit --omit=dev --audit-level=low

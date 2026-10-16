@@ -1,0 +1,23 @@
+import { Inter } from 'next/font/google'
+import type { Metadata } from 'next'
+import type { ReactNode } from 'react'
+import { AuthProviders } from './components/providers/AuthProviders'
+import './globals.scss'
+
+const inter = Inter({ subsets: ['latin'], display: 'swap' })
+
+export const metadata: Metadata = {
+  title: 'WeTrack',
+  description: 'WeTrack adalah sebuah platform manajemen tugas kolaboratif dan inovatif yang membantu Anda mempercepat proses pengerjaan tugas dengan efisiensi dan presisi, melalui integrasi dengan peralatan AI terkini untuk meningkatkan produktivitas dalam pengerjaan tugas Anda.',
+  metadataBase: new URL('https://wetrack-app.vercel.app')
+}
+
+export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+  return (
+    <html lang="en">
+      <body className={inter.className}>
+        <AuthProviders>{children}</AuthProviders>
+      </body>
+    </html>
+  )
+}
